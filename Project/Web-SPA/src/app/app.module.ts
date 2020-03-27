@@ -8,6 +8,8 @@ import { FlightMainFormComponent } from './flight-main-form/flight-main-form.com
 import { SignupComponent } from './signup/signup.component';
 import { HomeComponent } from './home/home.component';
 import { CarMainFormComponent } from './car-main-form/car-main-form.component';
+import { SigninComponent } from './signin/signin.component';
+import { SocialNetworkComponent } from './social-network/social-network.component';
 
 @NgModule({
    declarations: [
@@ -16,7 +18,9 @@ import { CarMainFormComponent } from './car-main-form/car-main-form.component';
       FlightMainFormComponent,
       SignupComponent,
       HomeComponent,
-      CarMainFormComponent
+      CarMainFormComponent,
+      SigninComponent,
+      SocialNetworkComponent
    ],
    imports: [
       BrowserModule,

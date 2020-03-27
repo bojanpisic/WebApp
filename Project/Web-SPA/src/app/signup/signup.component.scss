@@ -56,73 +56,10 @@ input {
     border: rgb(132, 0, 255);
 }
 
-.separator-div
-{
-	margin-bottom:2em;
-	text-align: center;
-}
-
-.seperator {
-	width: 30%;
-	display: inline-block;
-	border-color: 0.5px rgb(200, 200, 200);
-}
-
-.left {
-	margin-left:3em;
-	float: left;
-	margin-right: 10px;
-}
-.right {
-	margin-right:3em;
-	float: right;
-	margin-left:10px;
-}
-
-hr {
-	margin-top: 11px;
-}
-
-#or {
-	font-size: 0.7em;
-	color:rgb(66,66,66);
-}
-
-.account-div, .login-div
+.login-div
 {
 	margin: 0.8em 3em;
 	height: 55px;
 	text-align: center;
-}
-
-.account-div button
-{
-	padding:1em;
-	width:100%;
-	background-color: transparent;
-	border: 2px solid rgb(200, 200, 200);
-	border-radius: 10px;
-	cursor:pointer;
-}
-.button-content
-{
-	display:grid;
-	grid-template-columns: 5% auto;
-}
-
-.button-content p
-{	
-	color: rgba(66, 66, 66);
-	text-align: center;
-	font-weight: bold;
-}
-
-.login-div p {
 	font-size: .9em;
-}
-
-img {
-	height: 1.3em;
-	width: 1.3em;
-	margin-left: .8em;
 }
