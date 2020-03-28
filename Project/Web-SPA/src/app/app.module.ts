@@ -10,6 +10,9 @@ import { HomeComponent } from './home/home.component';
 import { CarMainFormComponent } from './car-main-form/car-main-form.component';
 import { SigninComponent } from './signin/signin.component';
 import { SocialNetworkComponent } from './social-network/social-network.component';
+import { BecomeAHostComponent } from './home/become-a-host/become-a-host.component';
+import { AirlinesComponent } from './home/airlines/airlines.component';
+import { RedirectToCarsComponent } from './home/redirect-to-cars/redirect-to-cars.component';
 
 @NgModule({
    declarations: [
@@ -20,7 +23,10 @@ import { SocialNetworkComponent } from './social-network/social-network.componen
       HomeComponent,
       CarMainFormComponent,
       SigninComponent,
-      SocialNetworkComponent
+      SocialNetworkComponent,
+      BecomeAHostComponent,
+      AirlinesComponent,
+      RedirectToCarsComponent
    ],
    imports: [
       BrowserModule,
