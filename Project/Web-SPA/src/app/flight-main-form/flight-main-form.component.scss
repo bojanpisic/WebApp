@@ -17,8 +17,8 @@ form {
     display: grid;
     grid-template-columns: 50% 50%;
     grid-template-rows: auto auto auto auto auto auto auto;
-    grid-template-areas: "where where"
-                         "wherei wherei"
+    grid-template-areas: "from where"
+                         "fromi wherei"
                          "checkin checkout"
                          "checkini checkouti"
                          "adults child"
@@ -66,6 +66,17 @@ input {
     border: 1px solid lightgrey;
 }
 
+#from{
+    grid-area: from;
+    margin-top: 0.2em;
+}
+
+#from-input{
+    grid-area: fromi;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+
 #where{
     grid-area: where;
     margin-top: 0.2em;
@@ -73,7 +84,9 @@ input {
 
 #where-input{
     grid-area: wherei;
-    border-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-left: 0;
 }
 
 #checkin{

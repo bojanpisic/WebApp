@@ -13,6 +13,7 @@ import { SocialNetworkComponent } from './social-network/social-network.componen
 import { BecomeAHostComponent } from './home/become-a-host/become-a-host.component';
 import { AirlinesComponent } from './home/airlines/airlines.component';
 import { RedirectToCarsComponent } from './home/redirect-to-cars/redirect-to-cars.component';
+import { BottomMenuComponent } from './bottom-menu/bottom-menu.component';
 
 @NgModule({
    declarations: [
@@ -26,7 +27,8 @@ import { RedirectToCarsComponent } from './home/redirect-to-cars/redirect-to-car
       SocialNetworkComponent,
       BecomeAHostComponent,
       AirlinesComponent,
-      RedirectToCarsComponent
+      RedirectToCarsComponent,
+      BottomMenuComponent
    ],
    imports: [
       BrowserModule,
