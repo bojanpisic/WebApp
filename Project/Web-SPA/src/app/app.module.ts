@@ -14,6 +14,7 @@ import { AirlinesComponent } from './home/airlines/airlines.component';
 import { RedirectToCarsComponent } from './home/redirect-to-cars/redirect-to-cars.component';
 import { BottomMenuComponent } from './bottom-menu/bottom-menu.component';
 import { FooterComponent } from './footer/footer.component';
+import { DriveMainFormComponent } from './home/drive-main-form/drive-main-form.component';
 
 @NgModule({
    declarations: [
@@ -28,7 +29,8 @@ import { FooterComponent } from './footer/footer.component';
       AirlinesComponent,
       RedirectToCarsComponent,
       BottomMenuComponent,
-      FooterComponent
+      FooterComponent,
+      DriveMainFormComponent
    ],
    imports: [
       BrowserModule,

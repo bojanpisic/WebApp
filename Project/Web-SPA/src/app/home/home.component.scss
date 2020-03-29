@@ -1,0 +1,39 @@
+h1 {
+    font-size: 1.9em;
+    margin: 0;
+    padding: 1.5em 1.5em .5em 1.5em;
+    line-height: 1em;
+}
+.container{
+    display: block;
+    margin-left: 3em;
+    margin-right: 3em;
+    text-align: center;
+    padding: 0.8em 0 1.9em 0;
+}
+
+button {
+    text-decoration: none;
+    font-size: 0.9em;
+    font-weight: 600;
+    color: rgb(66, 66, 66);
+    padding-bottom: 0.3em;
+    padding-top: 0.3em;
+
+    border: none;
+    background: transparent;
+    outline:none;
+}
+
+#fly {
+    padding: 0 0.8em 0.3em 1.4em;
+}
+
+#drive {
+    padding: 0 1.4em 0.3em 0.8em;
+}
+
+.choosen-option-class
+{
+    border-bottom: 3px solid darkorange;
+}
