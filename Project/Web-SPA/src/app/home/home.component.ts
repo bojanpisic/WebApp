@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-home',
@@ -10,6 +10,12 @@ export class HomeComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    console.log(window.innerHeight);
   }
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+      console.log(window.scrollY);
+      }
 
 }
