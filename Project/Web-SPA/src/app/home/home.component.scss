@@ -1,7 +1,13 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat&display=swap');
+
+* {
+    font-family: 'Montserrat', 'sans-serif';
+}
+
 h1 {
     font-size: 1.9em;
     margin: 0;
-    padding: 1.5em 1.5em .5em 1.5em;
+    padding: 1.5em 1.5em .5em 1em;
     line-height: 1em;
 }
 .container{

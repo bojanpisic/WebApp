@@ -15,6 +15,9 @@ import { RedirectToCarsComponent } from './home/redirect-to-cars/redirect-to-car
 import { BottomMenuComponent } from './bottom-menu/bottom-menu.component';
 import { FooterComponent } from './footer/footer.component';
 import { DriveMainFormComponent } from './home/drive-main-form/drive-main-form.component';
+import { FormsModule } from '@angular/forms';
+import { RedirectToAirlinesComponent } from './home/redirect-to-airlines/redirect-to-airlines.component';
+import { ShowRentACarServicesComponent } from './home/show-rent-a-car-services/show-rent-a-car-services.component';
 
 @NgModule({
    declarations: [
@@ -30,11 +33,14 @@ import { DriveMainFormComponent } from './home/drive-main-form/drive-main-form.c
       RedirectToCarsComponent,
       BottomMenuComponent,
       FooterComponent,
-      DriveMainFormComponent
+      DriveMainFormComponent,
+      RedirectToAirlinesComponent,
+      ShowRentACarServicesComponent
    ],
    imports: [
       BrowserModule,
-      AppRoutingModule
+      AppRoutingModule,
+      FormsModule
    ],
    providers: [],
    bootstrap: [
