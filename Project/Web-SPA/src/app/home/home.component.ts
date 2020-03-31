@@ -1,4 +1,5 @@
 import { Component, OnInit, HostListener } from '@angular/core';
+import { Airline } from '../entities/airline';
 
 @Component({
   selector: 'app-home',
@@ -8,6 +9,7 @@ import { Component, OnInit, HostListener } from '@angular/core';
 export class HomeComponent implements OnInit {
 
   option = 'fly';
+  data: Airline;
 
   constructor() { }
 

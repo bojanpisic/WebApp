@@ -5,7 +5,7 @@ import { CarRentService } from 'src/services/car-rent.service';
 @Component({
   selector: 'app-show-rent-a-car-services',
   templateUrl: './show-rent-a-car-services.component.html',
-  styleUrls: ['./show-rent-a-car-services.component.scss', '../airlines/airlines.component.scss']
+  styleUrls: ['./show-rent-a-car-services.component.scss', '../airlines-home/airlines-home.component.scss']
 })
 export class ShowRentACarServicesComponent implements OnInit {
 

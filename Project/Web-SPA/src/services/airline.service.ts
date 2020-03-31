@@ -48,9 +48,40 @@ export class AirlineService {
     // tslint:disable-next-line: max-line-length
     a3.promoDescription = 'Founded in 1927. We offer a new concept of in-flight comfort across our growing network of lines.Maximum comfort while traveling, regardless of the class.';
 
+
+    const a4 = new Airline('TurkishAirline', 'AIstanbul, Turkey');
+    a1.flightDestionations.push('Belgrade');
+    a1.flightDestionations.push('Instanbul');
+    a1.flightDestionations.push('Madrid');
+    a1.flightDestionations.push('Berlin');
+    a1.flightDestionations.push('London');
+    a1.averageRating = 4.7;
+    a1.promoDescription = 'Established back in 1933. Now we fly to more contries than any other airline.';
+
+    const a5 = new Airline('Air', 'Istanbul, Turkey');
+    a1.flightDestionations.push('Belgrade');
+    a1.flightDestionations.push('Instanbul');
+    a1.flightDestionations.push('Madrid');
+    a1.flightDestionations.push('Berlin');
+    a1.flightDestionations.push('London');
+    a1.averageRating = 4.7;
+    a1.promoDescription = 'Established back in 1933. Now we fly to more contries than any other airline.';
+
+    const a6 = new Airline('TurkishAirline', 'BIstanbul, Turkey');
+    a1.flightDestionations.push('Belgrade');
+    a1.flightDestionations.push('Instanbul');
+    a1.flightDestionations.push('Madrid');
+    a1.flightDestionations.push('Berlin');
+    a1.flightDestionations.push('London');
+    a1.averageRating = 4.7;
+    a1.promoDescription = 'Established back in 1933. Now we fly to more contries than any other airline.';
+
     allAirlines.push(a1);
     allAirlines.push(a2);
     allAirlines.push(a3);
+    allAirlines.push(a4);
+    allAirlines.push(a5);
+    allAirlines.push(a6);
 
     return allAirlines;
   }

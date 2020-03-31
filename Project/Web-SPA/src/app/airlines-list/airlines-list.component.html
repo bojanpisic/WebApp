@@ -1,0 +1,51 @@
+<header [ngStyle]="{'height': rotateArrow ? 'calc(.13 * 100vh)' : 'calc(.07 * 100vh)',
+                    'grid-template-rows' : rotateArrow ? '50% 50%' : 'auto'}">
+    <nav>
+        <a href="#" routerLink='/'>
+            <img src="../../assets/back.png" alt="">
+        </a>
+    </nav>
+    <div id ="sortby-div">
+        <button id="sortby-btn" (click)="travellersBtnClick()">
+            <span>SORT BY</span>
+            <img src="../../assets/back.png" id="arrow" [ngStyle]="{'transform': rotateArrow ? 'rotateZ(90deg)' : 'rotateZ(-90deg)'}"/>
+        </button>
+    </div>
+    <div class="by" [ngStyle]="{'visibility': rotateArrow ? 'visible' : 'hidden'}">
+        <button (click)="namedownClicked()" id="name" [ngStyle]="{'color': namedown ? 'white' : 'rgb(60,60,60)',
+        'background-color': namedown ? 'rgb(60,60,60)' : 'white'}">
+            Name
+            <img *ngIf="!namedown" id="next" src="../../assets/bold_arrow.svg" alt="" style="transform: rotateZ(-90deg);">
+            <img *ngIf="namedown" id="next" src="../../assets/bold_arrow_Lobe.svg" alt="" style="transform: rotateZ(-90deg);">
+        </button>
+        <button (click)="nameupClicked()" id="name" [ngStyle]="{'color': nameup ? 'white' : 'rgb(60,60,60)',
+        'background-color': nameup ? 'rgb(60,60,60)' : 'white'}">
+            Name
+            <img *ngIf="!nameup" id="next" src="../../assets/bold_arrow.svg" alt="" style="transform: rotateZ(90deg);">
+            <img *ngIf="nameup" id="next" src="../../assets/bold_arrow_Lobe.svg" alt="" style="transform: rotateZ(90deg);">
+        </button>
+        <button (click)="citydownClicked()" id="city" [ngStyle]="{'color': citydown ? 'white' : 'rgb(60,60,60)',
+        'background-color': citydown ? 'rgb(60,60,60)' : 'white'}">
+            City
+            <img *ngIf="!citydown" id="next" src="../../assets/bold_arrow.svg" alt="" style="transform: rotateZ(-90deg);">
+            <img *ngIf="citydown" id="next" src="../../assets/bold_arrow_Lobe.svg" alt="" style="transform: rotateZ(-90deg);">
+        </button>
+        <button (click)="cityupClicked()" id="city" [ngStyle]="{'color': cityup ? 'white' : 'rgb(60,60,60)',
+        'background-color': cityup ? 'rgb(60,60,60)' : 'white'}">
+            City
+            <img *ngIf="!cityup" id="next" src="../../assets/bold_arrow.svg" alt="" style="transform: rotateZ(90deg);">
+            <img *ngIf="cityup" id="next" src="../../assets/bold_arrow_Lobe.svg" alt="" style="transform: rotateZ(90deg);">
+        </button>
+    </div>
+</header> 
+<main>
+    <ul>
+        <li *ngFor = "let airline of allAirlines">
+            <app-airlines [data]="airline"></app-airlines>
+        </li>
+    </ul>
+</main>
+<app-bottom-menu></app-bottom-menu>
+<!-- <div class="separator-div">
+    <hr class="separator">
+</div> -->

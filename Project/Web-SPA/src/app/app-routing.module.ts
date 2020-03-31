@@ -5,11 +5,15 @@ import { HomeComponent } from './home/home.component';
 import { FlightMainFormComponent } from './home/flight-main-form/flight-main-form.component';
 import { SignupComponent } from './signup/signup.component';
 import { SigninComponent } from './signin/signin.component';
+import { AirlineInfoComponent } from './airline-info/airline-info.component';
+import { AirlinesListComponent } from './airlines-list/airlines-list.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'signup', component: SignupComponent},
-  {path: 'signin', component: SigninComponent}
+  {path: 'signin', component: SigninComponent},
+  {path: 'airline-info', component: AirlineInfoComponent},
+  {path: 'airlines-list', component: AirlinesListComponent}
 ];
 
 @NgModule({

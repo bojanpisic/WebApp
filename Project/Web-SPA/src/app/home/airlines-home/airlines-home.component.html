@@ -1,0 +1,17 @@
+<h1>Top-rated airlines</h1>
+<h6>Fly with some of the best-reviewed airlines.</h6>
+<div class="app">
+    <div class="full hide-scroll">
+        <ul class="hs">
+            <li class="item" *ngFor = "let airline of allAirlines">
+                <app-airlines [data]="airline"></app-airlines>
+            </li>
+        </ul>
+    </div>
+</div>
+<form>
+    <input id="submit" type="submit" routerLink='/airlines-list' value="SHOW ALL">
+</form>
+<div class="separator-div">
+    <hr class="separator">
+</div>

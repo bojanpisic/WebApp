@@ -9,15 +9,10 @@ export class BottomMenuComponent implements OnInit {
 
   scrolled =  false;
   lastPosition: number = window.innerHeight;
-  trenutniScroll: number;
 
   constructor() { }
 
   ngOnInit(): void {
-    console.log(document.body.offsetHeight);
-    console.log(document.body.scrollHeight);
-    console.log(document.body.clientHeight);
-    console.log(window.innerHeight);
     if (document.body.scrollHeight + 50 <= window.innerHeight) {
       this.scrolled =  true;
     }

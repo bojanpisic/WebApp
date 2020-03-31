@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Airline } from 'src/app/entities/airline';
 import { AirlineService } from 'src/services/airline.service';
 
@@ -9,21 +9,16 @@ import { AirlineService } from 'src/services/airline.service';
 })
 export class AirlinesComponent implements OnInit {
 
-  allAirlines: Array<Airline>;
+  @Input() data;
+
   colorsOfArilineDest: Array<string>;
 
   constructor(private airlineService: AirlineService) {
-    this.allAirlines = new Array<Airline>();
     this.colorsOfArilineDest = new Array<string>();
    }
 
   ngOnInit(): void {
-    this.loadAirlines();
     this.addColors();
-  }
-
-  loadAirlines() {
-    this.allAirlines = this.airlineService.loadAllAirlines();
   }
 
   addColors() {
@@ -33,5 +28,4 @@ export class AirlinesComponent implements OnInit {
     this.colorsOfArilineDest.push('#87DCC0');
     this.colorsOfArilineDest.push('#88BBE4');
   }
-
 }
