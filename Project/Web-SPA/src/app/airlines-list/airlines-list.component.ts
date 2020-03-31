@@ -39,15 +39,8 @@ export class AirlinesListComponent implements OnInit {
     this.colorsOfArilineDest.push('#88BBE4');
   }
 
-  travellersBtnClick() {
+  sortClick() {
     this.rotateArrow = this.rotateArrow === true ? false : true;
-    if (this.rotateArrow) {
-      document.getElementById('travellers-box').classList.remove('hide-travellers-box');
-      document.getElementById('travellers-box').classList.add('show-travellers-box');
-    } else {
-      document.getElementById('travellers-box').classList.add('hide-travellers-box');
-      document.getElementById('travellers-box').classList.remove('show-travellers-box');
-    }
   }
 
   // list.sort((a, b) => (a.color > b.color) ? 1 : (a.color === b.color) ? ((a.size > b.size) ? 1 : -1) : -1 )

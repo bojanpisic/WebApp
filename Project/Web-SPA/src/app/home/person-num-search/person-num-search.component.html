@@ -1,0 +1,26 @@
+<div id ="travellers-div">
+    <!-- <input  type="text" placeholder="1 adult"> -->
+    <button id="travellers-btn" (click)="travellersBtnClick()"> {{buttonContent}} 
+        <img src="../../assets/back.png" id="arrow" 
+        [ngStyle]="{'transform': rotateArrow ? 'rotateZ(-90deg)' : 'rotateZ(90deg)'}"/>
+    </button>
+</div>
+
+<div id="travellers-box" [ngStyle]="{'display': rotateArrow ? 'block' : 'none'}">  
+    <div class="travellers-box-items">
+        <p>{{numOfAdults}} Adults</p>
+        <div class="plus-minus-div">
+            <input type="button" value="-" class="minus" (click)="minus('adults')">
+            <input type="text" size="25" value={{numOfAdults}} class="count">
+            <input type="button" value="+" class="plus" (click)="plus('adults')">
+        </div>
+    </div>
+    <div class="travellers-box-items">
+        <p>{{numOfChildren}} Children</p>
+        <div class="plus-minus-div">
+            <input type="button" value="-" class="minus" (click)="minus('children')">
+            <input type="text" size="25" value={{numOfChildren}} class="count">
+            <input type="button" value="+" class="plus" (click)="plus('children')">
+        </div>
+    </div>          
+</div>

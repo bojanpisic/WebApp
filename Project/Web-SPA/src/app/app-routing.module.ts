@@ -12,8 +12,16 @@ const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'signup', component: SignupComponent},
   {path: 'signin', component: SigninComponent},
-  {path: 'airline-info', component: AirlineInfoComponent},
-  {path: 'airlines-list', component: AirlinesListComponent}
+
+  {
+    path: 'airlines',
+    children: [
+      {path: ':id/airline-info', component: AirlineInfoComponent},
+      {path: 'airlines-list', component: AirlinesListComponent}
+    ]
+  }
+
+
 ];
 
 @NgModule({

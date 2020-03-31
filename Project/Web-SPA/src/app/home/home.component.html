@@ -6,7 +6,7 @@
 </div>
 <app-flight-main-form *ngIf="option == 'fly'" ></app-flight-main-form>
 <app-drive-main-form *ngIf="option == 'drive'"></app-drive-main-form>
-<app-become-a-host></app-become-a-host>
+<app-become-a-host [option]='option'></app-become-a-host>
 <app-airlines-home *ngIf="option == 'fly'"></app-airlines-home>
 <app-show-rent-a-car-services *ngIf="option == 'drive'"></app-show-rent-a-car-services>
 <app-redirect-to-cars *ngIf="option == 'fly'"></app-redirect-to-cars>

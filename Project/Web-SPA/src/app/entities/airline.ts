@@ -2,6 +2,7 @@ import { Flight } from './flight';
 
 export class Airline {
 
+    id: number;
     name: string;
     address: string;
     promoDescription: string;

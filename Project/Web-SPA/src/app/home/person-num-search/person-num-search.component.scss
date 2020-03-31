@@ -1,0 +1,108 @@
+
+// #travellers-div input{
+//     width: 80%;
+//     padding: 0px; // pomera ceo input umesto samo text..lol
+//     border-radius: 3px;
+//     position: inline-block;
+// }
+
+#travellers-btn{
+    width: 100%;
+    border-radius: 3px;
+    background-color: transparent;
+    text-align: left;
+    height: 3em;
+    padding-left: 1em;
+    border: 1px solid lightgrey;
+    color: rgb(148, 148, 148);
+    outline: none;
+
+        #arrow{
+            height: 15px;
+            width: 20px;
+            float: right;
+            margin: 1px;
+            text-align: center;
+            font-size: 18px;
+            color: rgb(185, 185, 185);
+            transition: transform 0.5s;
+            transform: rotateZ(90deg);
+        }
+}
+
+.transform-class {
+    transform: rotateZ(-90deg);
+}
+
+#travellers-box{
+    width: 328px;
+    height: 100px;
+    border-radius: 3px;
+    border: 1px solid lightgrey;
+    z-index: 9999;
+    display: none;
+    position: absolute;
+    background-color: white;
+}
+
+// .show-travellers-box
+// {
+//     width: 328px;
+//     height: 100px;
+//     border-radius: 3px;
+//     border: 1px solid lightgrey;
+//     z-index: 9999;
+//     display: block;
+//     position: absolute;
+//     background-color: white;
+//     //margin-top: 234px;
+// }
+
+// .hide-travellers-box{
+//     display: none;
+// }
+
+.travellers-box-items{
+    width: 100%;
+    height: 30%;
+    margin-bottom: 10px;
+}
+
+.travellers-box-items p{
+    float: left;
+    width: 50%;
+    margin-left: 10px;
+    color: rgb(126, 126, 126);
+}
+
+.plus-minus-div{
+    float: right;
+    width: 40%;
+    padding-top: 10px;
+    // display: inline-block;
+    .plus, .minus{
+        width: 30px;
+        height: 30px;
+        border-radius: 50px;
+        text-align: center;
+        padding: 0px;
+        outline: none;
+        color: rgb(87, 87, 87);
+        border: 1px solid  rgb(201, 201, 201);
+
+    }
+    
+    .count{
+        width: 30px;
+        height: 30px;
+        border-radius: 50px;
+        margin-left: 5px;
+        margin-right: 5px;
+        text-align: center;
+        padding: 0px;
+        outline: none;
+        color: rgb(100, 100, 100);
+        border: 1px solid  rgb(194, 194, 194);
+    }
+}
+

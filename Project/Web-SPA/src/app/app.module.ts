@@ -21,6 +21,7 @@ import { AirlineInfoComponent } from './airline-info/airline-info.component';
 import { AirlinesListComponent } from './airlines-list/airlines-list.component';
 import { AirlinesHomeComponent } from './home/airlines-home/airlines-home.component';
 import { AirlinesComponent } from './airlines/airlines.component';
+import { PersonNumSearchComponent } from './home/person-num-search/person-num-search.component';
 
 @NgModule({
    declarations: [
@@ -41,7 +42,8 @@ import { AirlinesComponent } from './airlines/airlines.component';
       AirlineInfoComponent,
       AirlinesListComponent,
       AirlinesHomeComponent,
-      AirlinesComponent
+      AirlinesComponent,
+      PersonNumSearchComponent
    ],
    imports: [
       BrowserModule,

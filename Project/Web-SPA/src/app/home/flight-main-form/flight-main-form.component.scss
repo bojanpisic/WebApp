@@ -22,8 +22,10 @@ form {
                          "fromi wherei"
                          "checkin checkout"
                          "checkini checkouti"
-                         "adults child"
-                         "adultsi childi"
+                        //  "adults adults"
+                        //  "adultsi childi"
+                        "travellers travellers"
+                        "travellersi travellersi"
                          "submit submit";
 }
 
@@ -111,26 +113,34 @@ input {
     border-left: 0;
 }
 
-#adults{
-    grid-area: adults;
+#travellers{
+    grid-area: travellers;
 }
 
-#adults-input{
-    grid-area: adultsi;
-    border-top-left-radius: 3px;
-    border-bottom-left-radius: 3px;
+#travellers-div{
+    grid-area: travellersi;
 }
 
-#children{
-    grid-area: child;
-}
+// #adults{
+//     grid-area: adults;
+// }
 
-#children-input{
-    grid-area: childi;
-    border-top-right-radius: 3px;
-    border-bottom-right-radius: 3px;
-    border-left: 0;
-}
+// #adults-input{
+//     grid-area: adultsi;
+//     border-top-left-radius: 3px;
+//     border-bottom-left-radius: 3px;
+// }
+
+// #children{
+//     grid-area: child;
+// }
+
+// #children-input{
+//     grid-area: childi;
+//     border-top-right-radius: 3px;
+//     border-bottom-right-radius: 3px;
+//     border-left: 0;
+// }
 
 #submit{
     grid-area: submit;

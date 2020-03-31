@@ -17,6 +17,7 @@ export class AirlineService {
     let allAirlines = new Array<Airline>();
 
     const a1 = new Airline('TurkishAirline', 'Istanbul, Turkey');
+    a1.id = 0;
     a1.flightDestionations.push('Belgrade');
     a1.flightDestionations.push('Instanbul');
     a1.flightDestionations.push('Madrid');
@@ -27,6 +28,8 @@ export class AirlineService {
 
 
     const a2 = new Airline('QatarAirways', 'Doha, Qatar');
+    a2.id = 1;
+
     a2.flightDestionations.push('Belgrade');
     a2.flightDestionations.push('Instanbul');
     a2.flightDestionations.push('Madrid');
@@ -36,6 +39,8 @@ export class AirlineService {
     a2.promoDescription = 'World’s fastest-growing airline. We connect more than 160 destinations on the map every day.';
 
     const a3 = new Airline('AirSerbia', 'Belgrade, Serbia');
+    a3.id = 2;
+
     a3.flightDestionations.push('Belgrade');
     a3.flightDestionations.push('Instanbul');
     a3.flightDestionations.push('Madrid');
