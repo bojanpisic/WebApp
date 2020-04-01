@@ -1,6 +1,27 @@
-#airplane{
-    height: 50px;
-    width: 50px;
-    margin-left: 12px;
-    margin-top: 5px;
+@import url('https://fonts.googleapis.com/css?family=Montserrat&display=swap');
+
+* {
+    font-family: 'Montserrat', 'sans-serif';
+}
+
+.container {
+    padding: 30px;
+    display: grid;
+    grid-template-columns: auto 18% 20%;
+    align-items: center;
+}
+
+h1 {
+    display: inline;
+    font-size: 1.3em;
+}
+
+#next{
+    height: 20px;
+    width: 20px;
+}
+
+a, #airplane {
+    height: 60px;
+    width: 60px;
 }

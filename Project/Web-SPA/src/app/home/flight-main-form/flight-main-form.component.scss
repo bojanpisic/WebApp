@@ -69,6 +69,19 @@ input {
     border: 1px solid lightgrey;
 }
 
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: rgb(100, 100, 100);
+    opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: rgb(100, 100, 100);
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+    color: rgb(100, 100, 100);
+}
+
 #from{
     grid-area: from;
     margin-top: 0.2em;
@@ -120,27 +133,6 @@ input {
 #travellers-div{
     grid-area: travellersi;
 }
-
-// #adults{
-//     grid-area: adults;
-// }
-
-// #adults-input{
-//     grid-area: adultsi;
-//     border-top-left-radius: 3px;
-//     border-bottom-left-radius: 3px;
-// }
-
-// #children{
-//     grid-area: child;
-// }
-
-// #children-input{
-//     grid-area: childi;
-//     border-top-right-radius: 3px;
-//     border-bottom-right-radius: 3px;
-//     border-left: 0;
-// }
 
 #submit{
     grid-area: submit;
