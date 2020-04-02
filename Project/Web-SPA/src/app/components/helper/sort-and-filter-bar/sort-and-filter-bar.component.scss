@@ -5,13 +5,13 @@
     box-sizing: border-box;
 }
 
-.app {
-    background-color: white;
-}
+// .app {
+//     background-color: white;
+// }
 
-.full {
-    grid-column: 1 / -1;
-}
+// .full {
+//     grid-column: 1 / -1;
+// }
 
 .hs {
     margin-left: 1em;
@@ -19,7 +19,7 @@
     grid-gap: 5px;
     grid-template-columns: 0;
     grid-auto-flow: column;
-    grid-auto-columns: calc((100% - 3em)/4);
+    grid-auto-columns: auto;
     grid-template-rows: minmax(calc(.06 * 100vh - .5 * 20px), 1fr);
     
     overflow-x: scroll;
@@ -54,20 +54,22 @@
 button {
     color: rgb(60,60,60);
     background-color: white;
-    margin: 0 auto;
-    height: 100%;
-    width: 100%;
-    text-align: center;
     border: 2px solid rgb(60,60,60);
     outline: none;
     border-radius: 10px;
     font-weight: bold;
-    img {
-        // position: absolute;
-        // top: calc((100% - 12px)/2);
-        // right: 4px;
-        margin-left: 2px;
-        height: 12px;
-        width: 12px;
+    padding: .6em .8em;
+
+    div {
+        display: grid;
+        grid-template-columns: auto 22px;
+        align-items: center;
+        
+        img {
+          vertical-align: middle;
+          margin-left: 10px;
+          height: 12px;
+          width: 12px;
+      }
     }
 }

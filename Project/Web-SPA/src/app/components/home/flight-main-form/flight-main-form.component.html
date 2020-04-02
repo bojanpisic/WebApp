@@ -1,16 +1,51 @@
-<form action="">
-    <p id="from">FROM</p>
-    <input id="from-input" type="text" placeholder="Anywhere">
-    <p id="where">WHERE</p>
-    <input id="where-input" type="text" placeholder="Anywhere">
+<div class="radio-group">
+    <label class="radio">
+        <input (change)="oneWay()" type="radio" name="flight-type" value="one-way">
+        one-way
+        <span></span>
+    </label>
+    <label class="radio">
+        <input (click)="roundTrip()" type="radio" name="flight-type" value="round-trip">
+        round-trip
+        <span></span>
+    </label>
+    <label class="radio">
+        <input (click)="multiCity()" type="radio" name="flight-type" value="multi-city" checked>
+        multi-city
+        <span></span>
+    </label>
+</div>
+<form action="" *ngIf="oneWayFlight || roundTripFlight">
+    <p>FROM</p>
+    <p [ngStyle]="{'display': roundTripFlight ? 'block' : (multiCityFlight) ? 'block' : 'none'}">WHERE</p>
+    <input [ngStyle]="{'grid-column': oneWayFlight ? '1/ span 2' : '1/ 1',
+                       'border-top-right-radius': oneWayFlight ? '3px' : '0px',
+                       'border-bottom-right-radius': oneWayFlight ? '3px' : '0px'}"
+                        class="left-input" type="text" placeholder="Anywhere">
+    <input style="border-left: 0px;" [ngStyle]="{'display': roundTripFlight ? 'block' : (multiCityFlight) ? 'block' : 'none'}" class="right-input" type="text" placeholder="Anywhere">
     <p id="checkin">DEPART</p>
-    <input id="checkin-input" type="text" placeholder="mm/dd/yyyy">
-    <p id="checkout">RETURN</p>
-    <input id="checkout-input" type="text" placeholder="mm/dd/yyyy">
-    <p id = "travellers">TRAVELLERS</p>
+    <p id="checkout" [ngStyle]="{'display': roundTripFlight ? 'block' : 'none'}">RETURN</p>
+    <input [ngStyle]="{'grid-column': oneWayFlight || multiCityFlight ? '1/ span 2' : '1/ 1',
+                       'border-top-right-radius': oneWayFlight || multiCityFlight ? '3px' : '0px',
+                       'border-bottom-right-radius': oneWayFlight || multiCityFlight ? '3px' : '0px'}"
+                        class="left-input" type="text" placeholder="mm/dd/yyyy">
+    <input style="border-left: 0px;" [ngStyle]="{'display': roundTripFlight ? 'block' : 'none'}" class="right-input" type="text" placeholder="mm/dd/yyyy">
+    <p>TRAVELLERS</p>
     <app-person-num-search id="travellers-div"></app-person-num-search>
     <input id="submit" type="submit" value="SEARCH">
 </form>
+<form *ngIf="multiCityFlight" class="multiCityForm" action="">
+    <ul id="ul">
+        <li>
+            <app-flight-form-part></app-flight-form-part>
+        </li>
+    </ul>
+    <button id="remove">REMOVE</button><button (click)="addFlight()" id="new">NEW</button>
+    <p>TRAVELLERS</p>
+    <app-person-num-search id="travellers-div"></app-person-num-search>
+    <input id="submit" type="submit" value="SEARCH">
+</form>
+
 <div class="separator-div">
     <hr class="separator">
 </div>
