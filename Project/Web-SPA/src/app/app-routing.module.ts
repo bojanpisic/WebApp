@@ -8,12 +8,15 @@ import { AirlineInfoComponent } from './components/al-components/airline-info/ai
 import { RentACarServiceInfoComponent } from './components/rac-components/rent-a-car-service-info/rent-a-car-service-info.component';
 import { RentACarServicesComponent } from './components/rac-components/rent-a-car-services/rent-a-car-services.component';
 import { SortAndFilterBarComponent } from './components/helper/sort-and-filter-bar/sort-and-filter-bar.component';
+import { RegisterCompanyComponent } from './components/register-company/register-company.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'signup', component: SignupComponent},
   {path: 'signin', component: SigninComponent},
+  {path: ':username/signin', component: SigninComponent},
   {path: 'sortfilter', component: SortAndFilterBarComponent},
+  {path: ':username/:option/register-company', component: RegisterCompanyComponent},
 
   {
     path: 'airlines',

@@ -25,6 +25,7 @@ import { RentACarServiceInfoComponent } from './components/rac-components/rent-a
 import { TopRatedComponent } from './components/home/top-rated/top-rated.component';
 import { SortAndFilterBarComponent } from './components/helper/sort-and-filter-bar/sort-and-filter-bar.component';
 import { FlightFormPartComponent } from './components/home/flight-main-form/flight-form-part/flight-form-part.component';
+import { RegisterCompanyComponent } from './components/register-company/register-company.component';
 
 @NgModule({
    declarations: [
@@ -49,7 +50,8 @@ import { FlightFormPartComponent } from './components/home/flight-main-form/flig
       RentACarServicesComponent,
       RentACarServiceInfoComponent,
       SortAndFilterBarComponent,
-      FlightFormPartComponent
+      FlightFormPartComponent,
+      RegisterCompanyComponent
    ],
    imports: [
       BrowserModule,

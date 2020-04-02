@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
@@ -7,9 +8,21 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SignupComponent implements OnInit {
 
-  constructor() { }
+  step = 'step1';
+
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
+  }
+
+  next(nextStep: string) {
+    this.step = nextStep;
+
+    if (this.step === 'finish') {
+      setTimeout( () => {
+        this.router.navigate(['/']);
+        }, 300);
+    }
   }
 
 }

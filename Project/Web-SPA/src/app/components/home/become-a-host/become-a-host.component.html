@@ -4,7 +4,7 @@
         <h3 *ngIf="option === 'drive'">Let everyone drive with<br>your cars.</h3>
     </div>
     <form action="">
-        <input id="submit" type="submit" value="Become a partner">
+        <input id="submit" type="submit" (click) = 'btnClick()' value="Become a partner">
     </form>
 </div>
 <div class="separator-div">
