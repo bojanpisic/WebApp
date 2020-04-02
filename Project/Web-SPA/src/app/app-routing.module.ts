@@ -1,23 +1,33 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { NavComponent } from './nav/nav.component';
-import { HomeComponent } from './home/home.component';
-import { FlightMainFormComponent } from './home/flight-main-form/flight-main-form.component';
-import { SignupComponent } from './signup/signup.component';
-import { SigninComponent } from './signin/signin.component';
-import { AirlineInfoComponent } from './airline-info/airline-info.component';
-import { AirlinesListComponent } from './airlines-list/airlines-list.component';
+import { HomeComponent } from './components/home/home.component';
+import { SignupComponent } from './components/join/signup/signup.component';
+import { SigninComponent } from './components/join/signin/signin.component';
+import { AirlinesComponent } from './components/al-components/airlines/airlines.component';
+import { AirlineInfoComponent } from './components/al-components/airline-info/airline-info.component';
+import { RentACarServiceInfoComponent } from './components/rac-components/rent-a-car-service-info/rent-a-car-service-info.component';
+import { RentACarServicesComponent } from './components/rac-components/rent-a-car-services/rent-a-car-services.component';
+import { SortAndFilterBarComponent } from './components/helper/sort-and-filter-bar/sort-and-filter-bar.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'signup', component: SignupComponent},
   {path: 'signin', component: SigninComponent},
+  {path: 'sortfilter', component: SortAndFilterBarComponent},
 
   {
     path: 'airlines',
     children: [
       {path: ':id/airline-info', component: AirlineInfoComponent},
-      {path: 'airlines-list', component: AirlinesListComponent}
+      {path: '', component: AirlinesComponent}
+    ]
+  },
+
+  {
+    path: 'rent-a-car-services',
+    children: [
+      {path: ':id/rent-a-car-service-info', component: RentACarServiceInfoComponent},
+      {path: '', component: RentACarServicesComponent}
     ]
   }
 

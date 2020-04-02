@@ -3,25 +3,27 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { NavComponent } from './nav/nav.component';
-import { FlightMainFormComponent } from './home/flight-main-form/flight-main-form.component';
-import { SignupComponent } from './signup/signup.component';
-import { HomeComponent } from './home/home.component';
-import { SigninComponent } from './signin/signin.component';
-import { SocialNetworkComponent } from './social-network/social-network.component';
-import { BecomeAHostComponent } from './home/become-a-host/become-a-host.component';
-import { RedirectToCarsComponent } from './home/redirect-to-cars/redirect-to-cars.component';
-import { BottomMenuComponent } from './bottom-menu/bottom-menu.component';
-import { FooterComponent } from './footer/footer.component';
-import { DriveMainFormComponent } from './home/drive-main-form/drive-main-form.component';
+import { NavComponent } from './components/helper/nav/nav.component';
+import { FlightMainFormComponent } from './components/home/flight-main-form/flight-main-form.component';
+import { SignupComponent } from './components/join/signup/signup.component';
+import { HomeComponent } from './components/home/home.component';
+import { SigninComponent } from './components/join/signin/signin.component';
+import { SocialNetworkComponent } from './components/join/social-network/social-network.component';
+import { BecomeAHostComponent } from './components/home/become-a-host/become-a-host.component';
+import { RedirectToComponent } from './components/home/redirect-to/redirect-to.component';
+import { BottomMenuComponent } from './components/helper/bottom-menu/bottom-menu.component';
+import { FooterComponent } from './components/helper/footer/footer.component';
+import { DriveMainFormComponent } from './components/home/drive-main-form/drive-main-form.component';
 import { FormsModule } from '@angular/forms';
-import { RedirectToAirlinesComponent } from './home/redirect-to-airlines/redirect-to-airlines.component';
-import { ShowRentACarServicesComponent } from './home/show-rent-a-car-services/show-rent-a-car-services.component';
-import { AirlineInfoComponent } from './airline-info/airline-info.component';
-import { AirlinesListComponent } from './airlines-list/airlines-list.component';
-import { AirlinesHomeComponent } from './home/airlines-home/airlines-home.component';
-import { AirlinesComponent } from './airlines/airlines.component';
-import { PersonNumSearchComponent } from './home/person-num-search/person-num-search.component';
+import { AirlineComponent } from './components/al-components/airline/airline.component';
+import { AirlinesComponent } from './components/al-components/airlines/airlines.component';
+import { AirlineInfoComponent } from './components/al-components/airline-info/airline-info.component';
+import { PersonNumSearchComponent } from './components/helper/person-num-search/person-num-search.component';
+import { RentACarServiceComponent } from './components/rac-components/rent-a-car-service/rent-a-car-service.component';
+import { RentACarServicesComponent } from './components/rac-components/rent-a-car-services/rent-a-car-services.component';
+import { RentACarServiceInfoComponent } from './components/rac-components/rent-a-car-service-info/rent-a-car-service-info.component';
+import { TopRatedComponent } from './components/home/top-rated/top-rated.component';
+import { SortAndFilterBarComponent } from './components/helper/sort-and-filter-bar/sort-and-filter-bar.component';
 
 @NgModule({
    declarations: [
@@ -33,17 +35,19 @@ import { PersonNumSearchComponent } from './home/person-num-search/person-num-se
       SigninComponent,
       SocialNetworkComponent,
       BecomeAHostComponent,
-      RedirectToCarsComponent,
+      RedirectToComponent,
       BottomMenuComponent,
       FooterComponent,
       DriveMainFormComponent,
-      RedirectToAirlinesComponent,
-      ShowRentACarServicesComponent,
-      AirlineInfoComponent,
-      AirlinesListComponent,
-      AirlinesHomeComponent,
+      AirlineComponent,
       AirlinesComponent,
-      PersonNumSearchComponent
+      TopRatedComponent,
+      AirlineInfoComponent,
+      PersonNumSearchComponent,
+      RentACarServiceComponent,
+      RentACarServicesComponent,
+      RentACarServiceInfoComponent,
+      SortAndFilterBarComponent
    ],
    imports: [
       BrowserModule,

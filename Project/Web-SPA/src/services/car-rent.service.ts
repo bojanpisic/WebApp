@@ -17,6 +17,7 @@ export class CarRentService {
     let allServices = new Array<RentACarService>();
 
     const a1 = new RentACarService('Rent1', 'Istanbul, Turkey');
+    a1.id = 0;
     a1.branches.push('Belgrade');
     a1.branches.push('Instanbul');
     a1.branches.push('Madrid');
@@ -27,6 +28,7 @@ export class CarRentService {
 
 
     const a2 = new RentACarService('Rent2', 'Doha, Qatar');
+    a2.id = 1;
     a2.branches.push('Belgrade');
     a2.branches.push('Instanbul');
     a2.branches.push('Madrid');
@@ -36,6 +38,7 @@ export class CarRentService {
     a2.promoDescription = 'World’s fastest-growing airline. We connect more than 160 destinations on the map every day.';
 
     const a3 = new RentACarService('Rent3', 'Belgrade, Serbia');
+    a3.id = 2;
     a3.branches.push('Belgrade');
     a3.branches.push('Instanbul');
     a3.branches.push('Madrid');
