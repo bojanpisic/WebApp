@@ -9,9 +9,9 @@ export class FlightMainFormComponent implements OnInit {
 
   // let.flightType = form.controls['flight-type'].value;
   // u svaki radio input [ngModel]="let.flightType"
-  oneWayFlight = false;
+  oneWayFlight = true;
   roundTripFlight = false;
-  multiCityFlight = true;
+  multiCityFlight = false;
 
   constructor() { }
 

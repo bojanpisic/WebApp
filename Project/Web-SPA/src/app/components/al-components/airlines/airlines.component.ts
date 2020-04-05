@@ -16,6 +16,7 @@ export class AirlinesComponent implements OnInit {
   namedown = false;
   cityup = false;
   citydown = false;
+  scrolledY: number;
 
   constructor(private airlineService: AirlineService) {
     this.allAirlines = new Array<Airline>();
@@ -41,6 +42,7 @@ export class AirlinesComponent implements OnInit {
 
   sortClick() {
     this.rotateArrow = this.rotateArrow === true ? false : true;
+    this.scrolledY = window.scrollY;
   }
 
   // list.sort((a, b) => (a.color > b.color) ? 1 : (a.color === b.color) ? ((a.size > b.size) ? 1 : -1) : -1 )

@@ -15,18 +15,15 @@ export class TopRatedComponent implements OnInit {
 
   allRentACarServices: Array<RentACarService>;
   allAirlines: Array<Airline>;
-  colorsOfArilineDest: Array<string>;
 
   constructor(private airlineService: AirlineService, private rentService: CarRentService) {
     this.allRentACarServices = new Array<RentACarService>();
     this.allAirlines = new Array<Airline>();
-    this.colorsOfArilineDest = new Array<string>();
    }
 
   ngOnInit(): void {
     this.loadRentACarServices();
     this.loadAirlines();
-    this.addColors();
   }
 
   loadAirlines() {
@@ -35,14 +32,6 @@ export class TopRatedComponent implements OnInit {
 
   loadRentACarServices() {
     this.allRentACarServices = this.rentService.loadAllRentServices();
-  }
-
-  addColors() {
-    this.colorsOfArilineDest.push('#998AD3');
-    this.colorsOfArilineDest.push('#E494D3');
-    this.colorsOfArilineDest.push('#CDF1AF');
-    this.colorsOfArilineDest.push('#87DCC0');
-    this.colorsOfArilineDest.push('#88BBE4');
   }
 
 }
