@@ -1,6 +1,7 @@
 import { Component, OnInit} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
+import { UserService } from 'src/services/user.service';
 
 @Component({
   selector: 'app-signin',
@@ -12,7 +13,9 @@ export class SigninComponent implements OnInit {
 
   username: string;
   option: string;
-  constructor(private route: ActivatedRoute, private router: Router) {
+
+  loggedIn = false;
+  constructor(private route: ActivatedRoute, private router: Router, private userService: UserService) {
     route.params.subscribe(params => {
       this.username = params.username; this.option = params.option; }); //dobija se username onoga ko je kliknuo become a host
   }
@@ -21,8 +24,18 @@ export class SigninComponent implements OnInit {
   }
 
   signInClick() {
-    this.username === undefined ? this.router.navigate(['/']) :
-                      this.router.navigate([this.username + '/' + this.option + '/register-company']);
+    let loggedUser = this.userService.logIn((document.getElementById('email') as HTMLInputElement).value,
+    (document.getElementById('password') as HTMLInputElement).value);
+    if (loggedUser) {
+      alert('you are logged');
 
+      (loggedUser.userType === 'airlineAdmin' && this.username === undefined) ?
+      this.router.navigate(['/airlines/' + loggedUser.id + '/flight-add']) :
+      this.username === undefined ? this.router.navigate(['/']) :
+      this.router.navigate([this.username + '/' + this.option + '/register-company']);
+
+    } else {
+      alert('logging error');
+    }
   }
 }
