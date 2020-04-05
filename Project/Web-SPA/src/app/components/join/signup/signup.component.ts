@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { UserService } from 'src/services/user.service';
 
 @Component({
   selector: 'app-signup',
@@ -10,7 +11,7 @@ export class SignupComponent implements OnInit {
 
   step = 'step1';
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private userService: UserService) { }
 
   ngOnInit(): void {
   }
@@ -19,6 +20,7 @@ export class SignupComponent implements OnInit {
     this.step = nextStep;
 
     if (this.step === 'finish') {
+
       setTimeout( () => {
         this.router.navigate(['/']);
         }, 300);

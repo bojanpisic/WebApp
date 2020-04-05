@@ -9,6 +9,7 @@ import { RentACarServiceInfoComponent } from './components/rac-components/rent-a
 import { RentACarServicesComponent } from './components/rac-components/rent-a-car-services/rent-a-car-services.component';
 import { SortAndFilterBarComponent } from './components/helper/sort-and-filter-bar/sort-and-filter-bar.component';
 import { RegisterCompanyComponent } from './components/register-company/register-company.component';
+import { AddFlightComponent } from './components/al-components/add-flight/add-flight.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -21,8 +22,9 @@ const routes: Routes = [
   {
     path: 'airlines',
     children: [
+      {path: '', component: AirlinesComponent},
       {path: ':id/airline-info', component: AirlineInfoComponent},
-      {path: '', component: AirlinesComponent}
+      {path: ':id/flight-add', component: AddFlightComponent}
     ]
   },
 

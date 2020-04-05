@@ -39,8 +39,11 @@
         <li>
             <app-flight-form-part></app-flight-form-part>
         </li>
+        <li>
+        <ng-template #viewContainerRef></ng-template>
+        </li>
     </ul>
-    <button id="remove">REMOVE</button><button (click)="addFlight()" id="new">NEW</button>
+    <button id="remove" (click)="removeFlight()">REMOVE</button><button (click)="addFlight()" id="new">NEW</button>
     <p>TRAVELLERS</p>
     <app-person-num-search id="travellers-div"></app-person-num-search>
     <input id="submit" type="submit" value="SEARCH">

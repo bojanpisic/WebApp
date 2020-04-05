@@ -1,11 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import {ComponentRef, ComponentFactoryResolver, ViewContainerRef, ViewChild, Component, OnInit, Renderer2  } from '@angular/core';
+import { FlightFormPartComponent } from './flight-form-part/flight-form-part.component';
 
 @Component({
   selector: 'app-flight-main-form',
   templateUrl: './flight-main-form.component.html',
-  styleUrls: ['./flight-main-form.component.scss']
+  styleUrls: ['./flight-main-form.component.scss'],
 })
 export class FlightMainFormComponent implements OnInit {
+
+  @ViewChild('viewContainerRef', { read: ViewContainerRef }) VCR: ViewContainerRef;
+
 
   // let.flightType = form.controls['flight-type'].value;
   // u svaki radio input [ngModel]="let.flightType"
@@ -13,17 +17,39 @@ export class FlightMainFormComponent implements OnInit {
   roundTripFlight = false;
   multiCityFlight = false;
 
-  constructor() { }
+  componentsReferences = [];
 
-  addFlight() {
-    const ul = document.getElementById('ul');
-    ul.append('<li><app-flight-form-part></app-flight-form-part></li>');
-  }
+  constructor(private renderer: Renderer2, private CFR: ComponentFactoryResolver) { }
 
   ngOnInit(): void {
     console.log(this.oneWayFlight);
     console.log(this.roundTripFlight);
     console.log(this.multiCityFlight);
+  }
+
+  createComponent() {
+
+    const componentFactory = this.CFR.resolveComponentFactory(FlightFormPartComponent);
+    const componentRef: ComponentRef<FlightFormPartComponent> = this.VCR.createComponent(componentFactory);
+    // const currentComponent = componentRef.instance;
+
+    this.componentsReferences.push(componentRef);
+}
+
+  addFlight() {
+    this.createComponent();
+  }
+
+  removeFlight() {
+
+    if (this.VCR.length < 1) {
+            return;
+    }
+
+    const componentRef = this.componentsReferences[this.componentsReferences.length - 1];
+
+    this.VCR.remove(this.VCR.length - 1);
+    this.componentsReferences.pop();
   }
 
   oneWay() {

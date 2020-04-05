@@ -1,0 +1,182 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat&display=swap');
+
+* {
+    font-family: 'Montserrat', 'sans-serif';
+}
+
+h1 {
+    font-size: 1.3em;
+    margin: 0;
+    padding: 1.5em 1.5em 1em 1em;
+    line-height: 1em;
+    font-weight: 600;
+}
+
+
+form {
+    margin-left: 2em;
+    margin-right: 2em;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: auto auto auto auto auto auto auto;
+    grid-template-areas: "takeoffdate takeofftime"
+                         "takeoffdatei takeofftimei"
+                         "landingdate landingtime"
+                         "landingdatei landingtimei"
+                         "triptime triplen"
+                         "triptimei tripleni"
+                         "changeovernum changeover"
+                         "changeovernumi changeoveri"
+                         "changeoverelements changeoverelements"
+                         "submit submit";
+                         
+}
+
+#changeover-list{
+    grid-area: changeoverelements;
+    width: 100%;
+    height: 6em;
+    max-height: 6em;
+    overflow-y: scroll; 
+    input{
+        margin-top: 10px;
+        margin-right: 3px;
+        width: 20%; 
+        height: 30%;
+        display: inline;
+        background-color: rgb(81, 5, 221);
+        color: white;
+        border-radius: 10px;
+        outline :none;
+        border: none;
+        font-size: 12px;
+        text-align: center;
+        padding: 1px;
+    }
+}
+
+input{
+    height: 3em;
+    padding-left: 1em;
+    border: 1px solid lightgrey;
+}
+
+#takeofftime-p{
+    grid-area: takeofftime;
+}
+#takeoffdate-p{
+    grid-area: takeoffdate;
+}
+#landingtime-p{
+    grid-area: landingtime;
+}
+#landingdate-p{
+    grid-area: landingdate;
+}
+#triptime-p{
+    grid-area: triptime;
+}
+#triplen-p{
+    grid-area: triplen;
+}
+#changeovernum-p{
+    grid-area: changeovernum;
+}
+#changeover-p{
+    grid-area: changeover;
+}
+
+#submit{
+    grid-area: submit;
+}
+
+
+
+#takeofftime{
+    grid-area: takeofftimei;
+}
+#takeoffdate{
+    grid-area: takeoffdatei;
+}
+#landingtime{
+    grid-area: landingtimei;
+}
+#landingdate{
+    grid-area: landingdatei;
+}
+#triptime{
+    grid-area: triptimei;
+}
+#triplen{
+    grid-area: tripleni;
+}
+#changeovernum{
+    grid-area: changeovernumi;
+}
+#changeover{
+    grid-area: changeoveri;
+}
+
+
+
+p {
+    padding: 0;
+    font-size: 0.8em;
+    font-weight: 600;
+    margin: 1.5em 0 0.5em 0;
+    color: rgb(66, 66, 66);
+}
+
+
+
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: rgb(100, 100, 100);
+    opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: rgb(100, 100, 100);
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+    color: rgb(100, 100, 100);
+}
+
+#submit{
+    grid-column: 1/ span 2;
+    padding: 0;
+    margin: 2em 0 2em 0;
+    border-radius: 3px;
+    font-size: 0.8em;
+    font-weight: 600;
+    color: #fff;
+    background-color: #FF643C;
+    height: 3.5em;
+    border: #FF643C;
+    box-shadow: 0px 4px 8px gainsboro;
+}
+ 
+#myUL {
+    list-style-type: none;
+    padding: 0;
+    z-index: 1;
+    position: absolute;
+    margin-top: 349px;
+    margin-left: 155px;
+    width: 156px;
+}
+  
+#myUL li a {
+    border: 1px solid #ddd; /* Add a border to all links */
+    margin-top: -1px; /* Prevent double borders */
+    background-color: white; /* Grey background color */
+    padding: 12px; /* Add some padding */
+    text-decoration: none; /* Remove default text underline */
+    font-size: 18px; /* Increase the font-size */
+    color: rgb(66, 66, 66);
+    display: block; /* Make it into a block element to fill the whole list */
+}
+  
+#myUL li a:hover:not(.header) {
+    background-color: #eee; /* Add a hover effect to all links, except for headers */
+}

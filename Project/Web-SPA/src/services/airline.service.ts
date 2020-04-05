@@ -40,7 +40,7 @@ export class AirlineService {
 
     const a3 = new Airline('AirSerbia', 'Belgrade, Serbia');
     a3.id = 2;
-
+    a3.adminid = 0;
     a3.flightDestionations.push('Belgrade');
     a3.flightDestionations.push('Instanbul');
     a3.flightDestionations.push('Madrid');
