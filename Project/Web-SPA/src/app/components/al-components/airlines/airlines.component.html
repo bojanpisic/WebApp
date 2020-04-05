@@ -38,7 +38,7 @@
         </button>
     </div>
 </header> 
-<main [ngStyle]="{'padding-top': rotateArrow ? 'calc(.14 * 100vh + 1.5em)' : 'calc(.08 * 100vh + 1.5em)'}">
+<main [ngStyle]="{'padding-top': rotateArrow && scrolledY === 0 ? 'calc(.14 * 100vh + 1.5em)' : 'calc(.08 * 100vh + 1.5em)'}">
     <ul>
         <li *ngFor = "let airline of allAirlines">
             <app-airline [data]="airline"></app-airline>

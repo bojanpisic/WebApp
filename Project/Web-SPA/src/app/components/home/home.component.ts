@@ -8,19 +8,34 @@ import { Airline } from '../../entities/airline';
 })
 export class HomeComponent implements OnInit {
 
+  fly = true;
+  drive = false;
   option = 'fly';
+
   data: Airline;
 
   constructor() { }
 
   ngOnInit(): void {
     console.log(window.innerHeight);
+    console.log('fly' + this.fly);
+    console.log('drive' + this.drive);
   }
 
-  optionChanged( changedOption: string) {
-    this.option = changedOption;
-    document.getElementById(this.option).classList.add('choosen-option-class');
-    document.getElementById(this.option === 'fly' ? 'drive' : 'fly').classList.remove('choosen-option-class');
+  onFly() {
+    if (!this.fly) {
+      this.fly = true;
+      this.drive = false;
+      this.option = 'fly';
+    }
+  }
+
+  onDrive() {
+    if (!this.drive) {
+      this.fly = false;
+      this.drive = true;
+      this.option = 'drive';
+    }
   }
 
   @HostListener('window:scroll', [])

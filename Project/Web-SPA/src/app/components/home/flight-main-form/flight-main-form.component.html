@@ -1,6 +1,6 @@
 <div class="radio-group">
     <label class="radio">
-        <input (change)="oneWay()" type="radio" name="flight-type" value="one-way">
+        <input (change)="oneWay()" type="radio" name="flight-type" value="one-way" checked>
         one-way
         <span></span>
     </label>
@@ -10,7 +10,7 @@
         <span></span>
     </label>
     <label class="radio">
-        <input (click)="multiCity()" type="radio" name="flight-type" value="multi-city" checked>
+        <input (click)="multiCity()" type="radio" name="flight-type" value="multi-city">
         multi-city
         <span></span>
     </label>
@@ -48,7 +48,6 @@
     <app-person-num-search id="travellers-div"></app-person-num-search>
     <input id="submit" type="submit" value="SEARCH">
 </form>
-
 <div class="separator-div">
     <hr class="separator">
 </div>
