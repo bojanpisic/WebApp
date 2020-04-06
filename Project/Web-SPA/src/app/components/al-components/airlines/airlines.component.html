@@ -1,7 +1,7 @@
 <header [ngStyle]="{'height': rotateArrow ? 'calc(.13 * 100vh)' : 'calc(.07 * 100vh)',
                     'grid-template-rows' : rotateArrow ? '50% 50%' : 'auto'}">
     <nav>
-        <a href="#" routerLink='/'>
+        <a (click) = "goBack()">
             <img src="../../assets/back.png" alt="">
         </a>
     </nav>

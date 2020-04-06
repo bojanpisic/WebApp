@@ -1,6 +1,7 @@
 export class RentACarService {
 
     id: number;
+    adminId: number;
     name: string;
     address: string;
     promoDescription: string;

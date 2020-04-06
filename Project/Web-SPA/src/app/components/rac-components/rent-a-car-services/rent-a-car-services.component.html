@@ -1,7 +1,7 @@
-<!-- <header [ngStyle]="{'height': rotateArrow ? 'calc(.13 * 100vh)' : 'calc(.07 * 100vh)',
+<header [ngStyle]="{'height': rotateArrow ? 'calc(.13 * 100vh)' : 'calc(.07 * 100vh)',
                     'grid-template-rows' : rotateArrow ? '50% 50%' : 'auto'}">
     <nav>
-        <a href="#" routerLink='/'>
+        <a (click) = "goBack()">
             <img src="../../assets/back.png" alt="">
         </a>
     </nav>
@@ -38,11 +38,14 @@
         </button>
     </div>
 </header> 
-<main>
+<main [ngStyle]="{'padding-top': rotateArrow ? 'calc(.14 * 100vh + 1.5em)' : 'calc(.08 * 100vh + 1.5em)'}">
     <ul>
-        <li *ngFor = "let airline of allAirlines">
-            <app-airline [data]="airline"></app-airline>
+        <li *ngFor = "let service of allRentServices">
+            <app-rent-a-car-service [data]="service"></app-rent-a-car-service>
         </li>
     </ul>
 </main>
-<app-bottom-menu></app-bottom-menu> -->
+<app-bottom-menu></app-bottom-menu>
+<!-- <div class="separator-div">
+    <hr class="separator">
+</div> -->

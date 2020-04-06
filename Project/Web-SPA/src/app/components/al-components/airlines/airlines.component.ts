@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Airline } from 'src/app/entities/airline';
 import { AirlineService } from 'src/services/airline.service';
+import { Location } from '@angular/common';
+
 
 @Component({
   selector: 'app-airlines',
@@ -18,7 +20,7 @@ export class AirlinesComponent implements OnInit {
   citydown = false;
   scrolledY: number;
 
-  constructor(private airlineService: AirlineService) {
+  constructor(private airlineService: AirlineService, private location: Location) {
     this.allAirlines = new Array<Airline>();
     this.colorsOfArilineDest = new Array<string>();
    }
@@ -26,6 +28,10 @@ export class AirlinesComponent implements OnInit {
   ngOnInit(): void {
     this.loadAirlines();
     this.addColors();
+  }
+
+  goBack() {
+    this.location.back();
   }
 
   loadAirlines() {
