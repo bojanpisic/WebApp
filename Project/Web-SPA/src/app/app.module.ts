@@ -27,6 +27,9 @@ import { SortAndFilterBarComponent } from './components/helper/sort-and-filter-b
 import { FlightFormPartComponent } from './components/home/flight-main-form/flight-form-part/flight-form-part.component';
 import { RegisterCompanyComponent } from './components/register-company/register-company.component';
 import { AddFlightComponent } from './components/al-components/add-flight/add-flight.component';
+import { DestinationsComponent } from './components/helper/destinations/destinations.component';
+import { SpecialOffersComponent } from './components/al-components/special-offers/special-offers.component';
+
 
 @NgModule({
    declarations: [
@@ -53,12 +56,14 @@ import { AddFlightComponent } from './components/al-components/add-flight/add-fl
       SortAndFilterBarComponent,
       FlightFormPartComponent,
       RegisterCompanyComponent,
-      AddFlightComponent
+      AddFlightComponent,
+      DestinationsComponent,
+      SpecialOffersComponent
    ],
    imports: [
       BrowserModule,
       AppRoutingModule,
-      FormsModule
+      FormsModule,
    ],
    providers: [],
    bootstrap: [

@@ -16,9 +16,38 @@
         <span id="city">{{choosenAirline.address.split(',')[0]}}</span><span aria-hidden="true"> · </span> 
         <span id="state">{{choosenAirline.address.split(',')[1]}}</span>
     </div>
+    <div class="separator-div">
+        <hr class="separator">
+    </div>
     <div class="about">
         <p>ABOUT US:</p>
-        <p id="about">{{choosenAirline.promoDescription}}</p>
+        <br>
+        <ul>
+            <li *ngFor="let item of choosenAirline.promoDescription">
+                <p id="about">{{item}}</p>
+            <br>
+            </li>
+        </ul>
+    </div>
+    <div class="discount">
+        <h4>Don't hesitate.<br>Travel  the world</h4><br><h3 id="cheaper">CHEAPER</h3><br><h3 id="than">THAN</h3><br><h3 id="ever">EVER!</h3>
+        <button routerLink="/airlines/{{choosenAirline.id}}/airline-info/special-offers">SEE OFFER</button>
+    </div>
+    <div class="separator-div">
+        <hr class="separator">
+    </div>
+    <div id="dest">
+        <h3>Where would you like to travel?</h3>
+        <p>Choose your destination over here.</p>
+    </div>
+    <div class="app">
+        <div class="full hide-scroll">
+            <ul class="hs">
+                <li class="item" *ngFor = "let destination of destinations">
+                    <app-destinations [data]="destination"></app-destinations>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 <footer>

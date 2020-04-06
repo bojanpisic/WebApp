@@ -13,14 +13,31 @@ export class AirlineInfoComponent implements OnInit {
   id: number;
   allAirlines: Array<Airline>;
   choosenAirline: Airline;
+  destinations: Array<string>;
+  rotateArrow = false;
+  buttonContent = 'Paris';
 
   constructor(private route: ActivatedRoute, private airlineService: AirlineService) {
     route.params.subscribe(params => { this.id = params.id; });
     this.allAirlines = new Array<Airline>();
+    this.destinations = new Array<string>();
   }
 
   ngOnInit(): void {
     this.allAirlines = this.airlineService.loadAllAirlines();
     this.choosenAirline = this.allAirlines[this.id];
+    this.destinations = this.choosenAirline.flightDestionations;
+  }
+
+  destinationsClick() {
+    this.rotateArrow = this.rotateArrow === true ? false : true;
+
+    if (this.rotateArrow) {
+      document.getElementById('destinations').classList.remove('hide-destinations');
+      document.getElementById('destinations').classList.add('show-destinations');
+    } else {
+      document.getElementById('destinations').classList.add('hide-destinations');
+      document.getElementById('destinations').classList.remove('show-destinations');
+    }
   }
 }

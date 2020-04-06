@@ -24,7 +24,12 @@ export class AirlineService {
     a1.flightDestionations.push('Berlin');
     a1.flightDestionations.push('London');
     a1.averageRating = 4.7;
-    a1.promoDescription = 'Established back in 1933. Now we fly to more contries than any other airline.';
+    a1.promoDescription.push('Turkish airlines’ history as pioneer of the sky began in the year 1933.\
+    We started out as a small team and with perseverance and growing passion we branched out and\
+    become one huge family.It is with great pride and joy that we were the first to fly the sky for our country.');
+    a1.promoDescription.push('Keeping up to date with technology is an essential component of our innovation aims and in maintaining that\
+    we have the youngest and most modern fleet in Europe. Our fleet had flourished thanks to our high-tech,\
+    fuel-efficient and environmentally conscious aircraft purchases that provide a high level of comfort. ');
 
 
     const a2 = new Airline('QatarAirways', 'Doha, Qatar');
@@ -36,7 +41,11 @@ export class AirlineService {
     a2.flightDestionations.push('Berlin');
     a2.flightDestionations.push('London');
     a2.averageRating = 5.0;
-    a2.promoDescription = 'World’s fastest-growing airline. We connect more than 160 destinations on the map every day.';
+    // a2.promoDescription = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.\
+    //                        Corporis beatae adipisci consectetur ad rerum aspernatur, dicta omnis at ipsa explicabo\
+    //                        aperiam saepe optio, possimus nostrum aliquid commodi ex nesciunt non consequatur in\
+    //                        delectus tempore maxime? Nihil aliquam nobis nesciunt earum nulla. Voluptate, magni quas.\
+    //                        Cum molestiae voluptatem ea placeat quod?';
 
     const a3 = new Airline('AirSerbia', 'Belgrade, Serbia');
     a3.id = 2;
@@ -51,35 +60,36 @@ export class AirlineService {
     a3.flightDestionations.push('London');
     a3.averageRating = 4.3;
     // tslint:disable-next-line: max-line-length
-    a3.promoDescription = 'Founded in 1927. We offer a new concept of in-flight comfort across our growing network of lines.Maximum comfort while traveling, regardless of the class.';
+    // a3.promoDescription = 'Founded in 1927. We offer a new concept of in-flight comfort across our growing network of lines.Maximum comfort while traveling, regardless of the class.';
 
 
     const a4 = new Airline('TurkishAirline', 'AIstanbul, Turkey');
-    a1.flightDestionations.push('Belgrade');
-    a1.flightDestionations.push('Instanbul');
-    a1.flightDestionations.push('Madrid');
-    a1.flightDestionations.push('Berlin');
-    a1.flightDestionations.push('London');
-    a1.averageRating = 4.7;
-    a1.promoDescription = 'Established back in 1933. Now we fly to more contries than any other airline.';
+    a4.flightDestionations.push('Belgrade');
+    a4.flightDestionations.push('Instanbul');
+    a4.flightDestionations.push('Madrid');
+    a4.flightDestionations.push('Berlin');
+    a4.flightDestionations.push('London');
+    a4.averageRating = 4.7;
+    // a4.promoDescription = 'Established back in 1933. Now we fly to more contries than any other airline.';
+
 
     const a5 = new Airline('Air', 'Istanbul, Turkey');
-    a1.flightDestionations.push('Belgrade');
-    a1.flightDestionations.push('Instanbul');
-    a1.flightDestionations.push('Madrid');
-    a1.flightDestionations.push('Berlin');
-    a1.flightDestionations.push('London');
-    a1.averageRating = 4.7;
-    a1.promoDescription = 'Established back in 1933. Now we fly to more contries than any other airline.';
+    a5.flightDestionations.push('Belgrade');
+    a5.flightDestionations.push('Instanbul');
+    a5.flightDestionations.push('Madrid');
+    a5.flightDestionations.push('Berlin');
+    a5.flightDestionations.push('London');
+    a5.averageRating = 4.7;
+    // a5.promoDescription = 'Established back in 1933. Now we fly to more contries than any other airline.';
 
     const a6 = new Airline('TurkishAirline', 'BIstanbul, Turkey');
-    a1.flightDestionations.push('Belgrade');
-    a1.flightDestionations.push('Instanbul');
-    a1.flightDestionations.push('Madrid');
-    a1.flightDestionations.push('Berlin');
-    a1.flightDestionations.push('London');
-    a1.averageRating = 4.7;
-    a1.promoDescription = 'Established back in 1933. Now we fly to more contries than any other airline.';
+    a6.flightDestionations.push('Belgrade');
+    a6.flightDestionations.push('Instanbul');
+    a6.flightDestionations.push('Madrid');
+    a6.flightDestionations.push('Berlin');
+    a6.flightDestionations.push('London');
+    a6.averageRating = 4.7;
+    // a6.promoDescription = 'Established back in 1933. Now we fly to more contries than any other airline.';
 
     allAirlines.push(a1);
     allAirlines.push(a2);

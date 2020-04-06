@@ -6,7 +6,7 @@ export class Airline {
     adminid: number;
     name: string;
     address: string;
-    promoDescription: string;
+    promoDescription: Array<string>;
     flightDestionations: Array<string>;
     flights: Array<Flight>;
     averageRating: number;
@@ -15,7 +15,7 @@ export class Airline {
     constructor(name: string, address: string) {
         this.name = name;
         this.address = address;
-        this.promoDescription = '';
+        this.promoDescription = new Array<string>();
         this.flightDestionations = new Array<string>();
         this.flights = new Array<Flight>();
         this.averageRating = 0.0;

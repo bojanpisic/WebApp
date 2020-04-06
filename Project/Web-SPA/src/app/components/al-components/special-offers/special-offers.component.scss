@@ -1,0 +1,209 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat&display=swap');
+@import '../../../app.component.scss';
+
+.container{
+    display: grid;
+    margin: 1em;
+    padding: 1em 1.5em;
+    box-shadow: $lightest-shadow;
+    border-radius: 30px;
+    grid-template-columns: 110px calc(100% - 260px) 150px;
+    grid-template-rows: auto auto auto auto auto;
+    grid-template-areas: "spandate none spanairlines"
+                         "date none airlines"
+                         "from-full none to-full"
+                         "from none to"
+                         "spandeparture none spanarrival"
+                         "departure none arrival"
+                         "spanflight none spanseat"
+                         "flight none seat";
+    position: relative;
+
+    .price {
+        position: absolute;
+        bottom: 1em;
+        left: calc(50% - 50px);
+        
+        #oldprice {
+            font-size: .9em;
+            vertical-align: top;
+            font-weight: bold;
+        }
+
+        #oldprice:before {
+            content: "OLD";
+            position: absolute;
+            font-size: .65em;
+            font-weight: bold;
+            color: rgb(60,60,60);
+            top: -8px;
+            left: 0;
+        }
+
+        #newprice {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: white;
+            padding: .6em .5em .2em .5em;
+            background-color: $red;
+            border-radius: 10px;
+        }
+
+        #newprice:before {
+            content: "NEW";
+            position: absolute;
+            font-size: .5em;
+            font-weight: bold;
+            color: white;
+            top: -8px;
+            right: 33px;
+        }
+    }
+
+    #left {
+        position: absolute;
+        top: calc(50% - 25px);
+        left: calc(50% - 70px);
+        width: 40px;
+        border: 0;
+        border-bottom: 1.5px dashed $light-blue;
+    }
+
+    #right {
+        position: absolute;
+        top: calc(50% - 25px);
+        right: calc(50% - 70px);
+        width: 40px;
+        border: 0;
+        border-bottom: 1.5px dashed $light-blue;
+    }
+
+    #plane {
+        position: absolute;
+        height: 40px;
+        width: 40px;
+        top: calc(50% - 35px);
+        left: calc(50% - 20px);
+        transform: rotate(45deg);
+    }
+    
+    p {
+        margin: 0;
+        font-weight: bold;
+    }
+
+    #spandate, #spanairlines, #spandeparture,
+    #spanarrival, #spanflight, #spanseat {
+        color: rgb(60,60,60);
+        text-transform: uppercase;
+        font-size: .65em;
+        font-weight: bold;
+    }
+
+    #spandate {
+        grid-area: spandate;
+    }
+
+    #spanairlines {
+        grid-area: spanairlines;
+        text-align: right;
+    }
+
+    #date {
+        grid-area: date;
+        font-size: .85em;
+        margin-bottom: 20px;
+    }
+
+    #airlines {
+        grid-area: airlines;
+        text-align: right;
+        font-size: .85em;
+        margin-bottom: 20px;
+
+        img {
+            border-radius: 50%;
+            height: 17px;
+            width: 17px;
+            margin-right: 4px;
+            margin-bottom: 2px;
+            vertical-align: middle;
+        }
+    }
+
+    #from-full {
+        grid-area: from-full;
+        font-size: .7em;
+    }
+
+    #to-full {
+        grid-area: to-full;
+        text-align: right;
+        font-size: .7em;
+    }
+
+    #from {
+        grid-area: from;
+        font-size: 1.7em;
+        margin-bottom: 20px;
+        font-weight: bold;
+        color: $blue;
+    }
+
+    #to {
+        grid-area: to;
+        text-align: right;
+        font-size: 1.7em;
+        margin-bottom: 20px;
+        font-weight: bold;
+        color: $blue;
+    }
+
+    #spandeparture {
+        grid-area: spandeparture;
+    }
+
+    #departure {
+        grid-area: departure;
+        font-size: .85em;
+        margin-bottom: 15px;
+    }
+
+    #spanarrival {
+        grid-area: spanarrival;
+        text-align: right;
+    }
+
+    #arrival {
+        grid-area: arrival;
+        text-align: right;
+        font-size: .85em;
+        margin-bottom: 15px;
+    }
+
+    #spanflight {
+        grid-area: spanflight;
+    }
+
+    #flight {
+        grid-area: flight;
+        font-size: .85em;
+    }
+
+    #spanseat {
+        grid-area: spanseat;
+        text-align: right;
+    }
+
+    #seat {
+        grid-area: seat;
+        text-align: right;
+        font-size: .85em;
+        color: $red;
+    }
+
+
+}
+
+
+

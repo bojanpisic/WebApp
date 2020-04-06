@@ -1,29 +1,36 @@
-<h1>Sign up</h1>
-<form action="">
-  <div class="progress">
-  
-    <div class="progress-track"></div>
-    <div id="step1" class="progress-step" (click)="next('step1')" [ngClass]="{ 'is-active': step === 'step1', 'is-complete': step === 'step2' || step === 'finish'}">
-      Step One
+<header>
+  <nav>
+    <a href="#" routerLink='/'>
+        <img src="../../assets/back.png" alt="">
+    </a>
+  </nav>
+</header>
+<main>
+  <h1>Sign up</h1>
+  <form action="">
+    <div class="progress">
+    
+      <div class="progress-track"></div>
+      <div id="step1" class="progress-step" (click)="next('step1')" [ngClass]="{ 'is-active': step === 'step1', 'is-complete': step === 'step2' || step === 'finish'}">
+      </div>
+        
+      <div id="step2" class="progress-step" (click)="next('step2')" [ngClass]="{ 'is-active': step === 'step2', 'is-complete': step === 'finish'}">
+      </div>
     </div>
-      
-    <div id="step2" class="progress-step" (click)="next('step2')" [ngClass]="{ 'is-active': step === 'step2', 'is-complete': step === 'finish'}">
-      Step Two
-    </div>
+    <input id="first-name" type="text" placeholder="First Name" *ngIf="step === 'step1'">
+    <input id="last-name" type="text" placeholder="Last Name" *ngIf="step === 'step1'">
+    <input id="address" type="text" placeholder="Address" *ngIf="step === 'step1'">
+    <input type="tel" id="phone" name="phone" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" placeholder="Phone number" *ngIf="step === 'step1'">
+    <input id="email" type="email" placeholder="Email Address" *ngIf="step === 'step2'">
+    <input id="password" type="password" placeholder="Password" *ngIf="step === 'step2'">
+    <input id="confirm-password" type="password" placeholder="Confirm Password" *ngIf="step === 'step2'">
+    
+    <input id="submit" type="submit" (click)="next(step==='step2' ? 'finish' : 'step2')" [value]="step === 'step2' ? 'FINISH' : 'NEXT'">
+  </form>
+  <app-social-network></app-social-network>
+  <div class="login-div">
+    <p>Already have an account? <a href="#" routerLink='/signin' routerLinkActive="router-link-active" >Log in</a></p>
   </div>
-  <input id="first-name" type="text" placeholder="First Name" *ngIf="step === 'step1'">
-  <input id="last-name" type="text" placeholder="Last Name" *ngIf="step === 'step1'">
-  <input id="address" type="text" placeholder="Address" *ngIf="step === 'step1'">
-  <input type="tel" id="phone" name="phone" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" placeholder="Phone number" *ngIf="step === 'step1'">
-  <input id="email" type="email" placeholder="Email Address" *ngIf="step === 'step2'">
-  <input id="password" type="password" placeholder="Password" *ngIf="step === 'step2'">
-  <input id="confirm-password" type="password" placeholder="Confirm Password" *ngIf="step === 'step2'">
-  
-  <input id="submit" type="submit" (click)="next(step==='step2' ? 'finish' : 'step2')" [value]="step === 'step2' ? 'FINISH' : 'NEXT'">
-</form>
-<app-social-network></app-social-network>
-<div class="login-div">
-  <p>Already have an account? <a href="#" routerLink='/signin' routerLinkActive="router-link-active" >Log in</a></p>
-</div>
+</main>
 <app-bottom-menu></app-bottom-menu>
 
