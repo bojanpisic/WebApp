@@ -1,0 +1,32 @@
+@import '../../../app.component.scss';
+
+input {
+    height: 3em;
+    padding-left: 1em;
+    border: 1px solid lightgrey;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: rgb(100, 100, 100);
+    opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: rgb(100, 100, 100);
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+    color: rgb(100, 100, 100);
+}
+
+.two-columns{
+    grid-column: 1/ 1;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+.one-column{
+    grid-column: 1/ span 2;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}

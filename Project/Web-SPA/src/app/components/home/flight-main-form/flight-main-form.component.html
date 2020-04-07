@@ -18,11 +18,13 @@
 <form action="" *ngIf="oneWayFlight || roundTripFlight">
     <p>FROM</p>
     <p [ngStyle]="{'display': roundTripFlight ? 'block' : (multiCityFlight) ? 'block' : 'none'}">WHERE</p>
-    <input [ngStyle]="{'grid-column': oneWayFlight ? '1/ span 2' : '1/ 1',
+    <!-- <input [ngStyle]="{'grid-column': oneWayFlight ? '1/ span 2' : '1/ 1',
                        'border-top-right-radius': oneWayFlight ? '3px' : '0px',
                        'border-bottom-right-radius': oneWayFlight ? '3px' : '0px'}"
-                        class="left-input" type="text" placeholder="Anywhere">
-    <input style="border-left: 0px;" [ngStyle]="{'display': roundTripFlight ? 'block' : (multiCityFlight) ? 'block' : 'none'}" class="right-input" type="text" placeholder="Anywhere">
+                        class="left-input" type="text" placeholder="Anywhere"> -->
+    <app-places-search [oneColumn] = "oneWayFlight ? true : false"></app-places-search>
+    <!-- <input style="border-left: 0px;" [ngStyle]="{'display': roundTripFlight ? 'block' : (multiCityFlight) ? 'block' : 'none'}" class="right-input" type="text" placeholder="Anywhere"> -->
+    <app-places-search [oneColumn] = "oneWayFlight ? true : false" *ngIf="roundTripFlight || multiCityFlight"></app-places-search>
     <p id="checkin">DEPART</p>
     <p id="checkout" [ngStyle]="{'display': roundTripFlight ? 'block' : 'none'}">RETURN</p>
     <input [ngStyle]="{'grid-column': oneWayFlight || multiCityFlight ? '1/ span 2' : '1/ 1',

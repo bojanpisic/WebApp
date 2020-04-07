@@ -29,7 +29,11 @@ import { RegisterCompanyComponent } from './components/register-company/register
 import { AddFlightComponent } from './components/al-components/add-flight/add-flight.component';
 import { DestinationsComponent } from './components/helper/destinations/destinations.component';
 import { SpecialOffersComponent } from './components/al-components/special-offers/special-offers.component';
+import { PlacesSearchComponent } from './components/helper/places-search/places-search.component';
+import { MapComponent } from './components/helper/map/map.component';
 
+import { AgmCoreModule } from '@agm/core';
+import { PlacesPickerComponent } from './components/helper/places-picker/places-picker.component';
 
 @NgModule({
    declarations: [
@@ -58,12 +62,19 @@ import { SpecialOffersComponent } from './components/al-components/special-offer
       RegisterCompanyComponent,
       AddFlightComponent,
       DestinationsComponent,
-      SpecialOffersComponent
+      SpecialOffersComponent,
+      PlacesSearchComponent,
+      MapComponent,
+      PlacesPickerComponent
    ],
    imports: [
       BrowserModule,
       AppRoutingModule,
       FormsModule,
+      AgmCoreModule.forRoot({
+         apiKey: 'AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE',
+         libraries: ['places']
+      })
    ],
    providers: [],
    bootstrap: [

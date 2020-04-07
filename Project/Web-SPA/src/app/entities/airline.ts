@@ -5,14 +5,14 @@ export class Airline {
     id: number;
     adminid: number;
     name: string;
-    address: string;
+    address: any[];
     promoDescription: Array<string>;
     flightDestionations: Array<string>;
     flights: Array<Flight>;
     averageRating: number;
     rates: Array<number>;
 
-    constructor(name: string, address: string) {
+    constructor(name: string, address: any[]) {
         this.name = name;
         this.address = address;
         this.promoDescription = new Array<string>();

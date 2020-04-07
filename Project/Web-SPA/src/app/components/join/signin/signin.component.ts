@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { UserService } from 'src/services/user.service';
 
+
 @Component({
   selector: 'app-signin',
   templateUrl: './signin.component.html',
@@ -15,6 +16,7 @@ export class SigninComponent implements OnInit {
   option: string;
 
   loggedIn = false;
+
   constructor(private route: ActivatedRoute, private router: Router, private userService: UserService) {
     route.params.subscribe(params => {
       this.username = params.username; this.option = params.option; }); //dobija se username onoga ko je kliknuo become a host
@@ -38,4 +40,5 @@ export class SigninComponent implements OnInit {
       alert('logging error');
     }
   }
+
 }

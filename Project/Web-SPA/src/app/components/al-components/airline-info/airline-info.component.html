@@ -13,9 +13,12 @@
     </div>
     <div class="location">
         <img src="../../../assets/location_mark.png" alt="">
-        <span id="city">{{choosenAirline.address.split(',')[0]}}</span><span aria-hidden="true"> · </span> 
-        <span id="state">{{choosenAirline.address.split(',')[1]}}</span>
+        <span id="city">{{choosenAirline.address[0].split(',')[1]}}</span><span aria-hidden="true"> · </span> 
+        <span id="state">{{choosenAirline.address[0].split(',')[2]}}</span>
     </div>
+
+    <app-map [latitude] = 'choosenAirline.address[1]' [longitude] = 'choosenAirline.address[2]'></app-map>
+
     <div class="separator-div">
         <hr class="separator">
     </div>

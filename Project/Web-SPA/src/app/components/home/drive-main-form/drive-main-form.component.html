@@ -1,14 +1,32 @@
+<div class="radio-group">
+    <label class="radio">
+        <input (change)="sameLocation()" type="radio" name="flight-type" value="same-location" checked>
+        Same location
+        <span></span>
+    </label>
+    <label class="radio">
+        <input (click)="differentLocation()" type="radio" name="flight-type" value="different-location">
+        Different location
+        <span></span>
+    </label>
+</div>
 <form action="">
-    <p id="from">PICK UP LOCATION</p>
-    <input id="from-input" type="text" placeholder="Anywhere">
-    <p id="where">DROP OFF LOCATION</p>
-    <input id="where-input" type="text" placeholder="Anywhere">
-    <p id="checkin">PICK UP DATE</p>
-    <!-- <app-datepicker id = "checkin-input"></app-datepicker> -->
-    <input id="checkin-input" type="text" placeholder="mm/dd/yyyy">
-    <p id="checkout">DROP OFF DATE</p>
-    <input id="checkout-input" type="text" placeholder="mm/dd/yyyy">
-    <!-- <app-datepicker id="checkout-input"></!-->
+    <p>PICK-UP LOCATION</p>
+    <p [ngStyle]="{'display': sameLocationChoosed ? 'none' : 'block'}">DROP-OFF LOCATION</p>
+    <!-- <input [ngStyle]="{'grid-column': sameLocationChoosed ? '1/ span 2' : '1/ 1',
+                       'border-top-right-radius': sameLocationChoosed ? '3px' : '0px',
+                       'border-bottom-right-radius': sameLocationChoosed ? '3px' : '0px'}"
+                        class="left-input" type="text" placeholder="Anywhere">
+    <input style="border-left: 0px;" [ngStyle]="{'display': sameLocationChoosed ? 'none' : 'block'}" class="right-input" type="text" placeholder="Anywhere"> -->
+    <app-places-search [oneColumn] = "sameLocationChoosed ? true : false"></app-places-search>
+    <app-places-search [oneColumn] = "sameLocationChoosed ? true : false" *ngIf="!sameLocationChoosed"></app-places-search>
+    <p id="checkin">PICK-UP DATE</p>
+    <p id="checkout" [ngStyle]="{'display': sameLocationChoosed ? 'none' : 'block'}">DROP-OFF DATE</p>
+    <input [ngStyle]="{'grid-column': sameLocationChoosed ? '1/ span 2' : '1/ 1',
+                       'border-top-right-radius': sameLocationChoosed ? '3px' : '0px',
+                       'border-bottom-right-radius': sameLocationChoosed ? '3px' : '0px'}"
+                        class="left-input" type="text" placeholder="mm/dd/yyyy">
+    <input style="border-left: 0px;" [ngStyle]="{'display': sameLocationChoosed ? 'none' : 'block'}" class="right-input" type="text" placeholder="mm/dd/yyyy">
     <p id = "travellers">TRAVELLERS</p>
     <app-person-num-search id = "travellers-div"></app-person-num-search>
     <input id="submit" type="submit" value="SEARCH">

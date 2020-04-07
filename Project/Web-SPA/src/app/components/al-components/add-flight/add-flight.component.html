@@ -1,38 +1,29 @@
 <h1>ADD FLIGHT</h1>
 <form action = "">
     <p class="takeoff-datetime-p" id = 'takeoffdate-p'>TAKEOFF DATE</p>
-    <input type="date" id='takeoff-date' (click) = 'changeOverValue = ""'>
+    <input type="date" id='takeoff-date'>
     <p class="takeoff-datetime-p" id = 'takeofftime-p'>TAKEOFF TIME</p>
-    <input type="time" id='takeoff-time' (click) = 'changeOverValue = ""'>
+    <input type="time" id='takeoff-time'>
 
     <p class="landing-datetime-p" id = 'landingdate-p'>LANDING DATE</p>
-    <input type="date" id='landingdate' (click) = 'changeOverValue = ""'>
+    <input type="date" id='landingdate'>
 
     <p class="landing-datetime-p" id = 'landingtime-p'>LANDING TIME</p>
-    <input type="time" id='landingtime' (click) = 'changeOverValue = ""'>
+    <input type="time" id='landingtime'>
 
     
     <p class="trip-time-p" id = 'triptime-p'>TRIP TIME</p>
-    <input type="time" id='triptime' (click) = 'changeOverValue = ""'>
+    <input type="time" id='triptime'>
 
     <p class="trip-length-p" id = 'triplen-p'>TRIP LENGTH</p>
-    <input type="text" id='triplength' (click) = 'changeOverValue = ""'>
+    <input type="text" id='triplength'>
 
     <p class="changeover-num-p" id = 'changeovernum-p'>CHANGE OVER NUMBER</p>
-    <input type="number" id='changeovernum' (click) = 'changeOverValue = ""'>
+    <input type="number" id='changeovernum'>
 
     <p class="changeover--p" id = 'changeover-p'>CHANGE OVER</p>
-    <input type="text" id='changeover' (keyup)="searchFunc()"  placeholder="Search for names..">
-
-    <ul id="myUL" *ngIf ="changeOverValue !== ''">
-        <li *ngFor = "let changeover of changeoverlist">
-            <a (click) = "changeoverClicked(changeover)">{{changeover}}</a>
-        </li>
-    </ul>
-
-    <div id = "changeover-list" [ngStyle]="{'display': choosenChangeOvers.length > 0 ? 'block' : 'none'}">
-    </div>
-
+    <app-places-picker></app-places-picker>
+    
     <input type="submit" value="ADD" (click) = "addFlight()" id="submit">
-
 </form>
+<app-bottom-menu></app-bottom-menu>

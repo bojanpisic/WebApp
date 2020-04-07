@@ -7,9 +7,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DriveMainFormComponent implements OnInit {
 
+  sameLocationChoosed = true;
+
   constructor() { }
 
   ngOnInit(): void {
   }
 
+  sameLocation() {
+    this.sameLocationChoosed = true;
+  }
+
+  differentLocation() {
+    this.sameLocationChoosed = false;
+  }
 }

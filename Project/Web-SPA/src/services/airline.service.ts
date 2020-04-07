@@ -16,8 +16,10 @@ export class AirlineService {
 
     let allAirlines = new Array<Airline>();
 
-    const a1 = new Airline('TurkishAirline', 'Istanbul, Turkey');
+    const a1 = new Airline('TurkishAirline', ['', 40.1077995688, 32.974662768]);
     a1.id = 0;
+    a1.adminid = -1;
+
     a1.flightDestionations.push('Belgrade');
     a1.flightDestionations.push('Instanbul');
     a1.flightDestionations.push('Madrid');
@@ -32,9 +34,9 @@ export class AirlineService {
     fuel-efficient and environmentally conscious aircraft purchases that provide a high level of comfort. ');
 
 
-    const a2 = new Airline('QatarAirways', 'Doha, Qatar');
+    const a2 = new Airline('QatarAirways', ['', 25.27932, 51.52245]);
     a2.id = 1;
-
+    a2.adminid = -1;
     a2.flightDestionations.push('Belgrade');
     a2.flightDestionations.push('Instanbul');
     a2.flightDestionations.push('Madrid');
@@ -47,7 +49,7 @@ export class AirlineService {
     //                        delectus tempore maxime? Nihil aliquam nobis nesciunt earum nulla. Voluptate, magni quas.\
     //                        Cum molestiae voluptatem ea placeat quod?';
 
-    const a3 = new Airline('AirSerbia', 'Belgrade, Serbia');
+    const a3 = new Airline('AirSerbia', ['', 44.81833006, 20.30416545]);
     a3.id = 2;
     a3.adminid = 0;
     a3.flightDestionations.push('Belgrade');
@@ -60,10 +62,10 @@ export class AirlineService {
     a3.flightDestionations.push('London');
     a3.averageRating = 4.3;
     // tslint:disable-next-line: max-line-length
-    // a3.promoDescription = 'Founded in 1927. We offer a new concept of in-flight comfort across our growing network of lines.Maximum comfort while traveling, regardless of the class.';
+    a3.promoDescription.push('Founded in 1927. We offer a new concept of in-flight comfort across our growing network of lines.Maximum comfort while traveling, regardless of the class.');
 
 
-    const a4 = new Airline('TurkishAirline', 'AIstanbul, Turkey');
+    const a4 = new Airline('TurkishAirline', ['', 44.787197, 20.457273]);
     a4.flightDestionations.push('Belgrade');
     a4.flightDestionations.push('Instanbul');
     a4.flightDestionations.push('Madrid');
@@ -73,7 +75,7 @@ export class AirlineService {
     // a4.promoDescription = 'Established back in 1933. Now we fly to more contries than any other airline.';
 
 
-    const a5 = new Airline('Air', 'Istanbul, Turkey');
+    const a5 = new Airline('Air', ['', 44.787197, 20.457273]);
     a5.flightDestionations.push('Belgrade');
     a5.flightDestionations.push('Instanbul');
     a5.flightDestionations.push('Madrid');
@@ -82,7 +84,7 @@ export class AirlineService {
     a5.averageRating = 4.7;
     // a5.promoDescription = 'Established back in 1933. Now we fly to more contries than any other airline.';
 
-    const a6 = new Airline('TurkishAirline', 'BIstanbul, Turkey');
+    const a6 = new Airline('TurkishAirline', ['', 44.787197, 20.457273]);
     a6.flightDestionations.push('Belgrade');
     a6.flightDestionations.push('Instanbul');
     a6.flightDestionations.push('Madrid');

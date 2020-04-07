@@ -7,11 +7,13 @@
     <p id="pname">COMPANY NAME*</p>
     <input id="name" type="text" placeholder="">
     <p id="paddress">ADDRESS*</p>
-    <input id="where-input" type="text" placeholder="">
+    <!-- <input id="where-input" type="text" placeholder=""> -->
+    <app-places-search id="where-input" [oneColumn]='true'></app-places-search>
     <p id="ppromo">PROMO DESCRIPTION</p>
     <input id="promo-input" type="text" placeholder="">
     <p id="pdestinations">FLIGHT DESTINATIONS</p>
-    <input id="destinations-input" type="text" placeholder="">
+    <!-- <input id="destinations-input" type="text" placeholder=""> -->
+    <app-places-picker ></app-places-picker>
 
     <input id="submit" type="submit" value="REGISTER">
 </form>
@@ -19,11 +21,13 @@
     <p id="pname">COMPANY NAME*</p>
     <input id="name" type="text" placeholder="">
     <p id="paddress">ADDRESS*</p>
-    <input id="where-input" type="text" placeholder="">
+    <!-- <input id="where-input" type="text" placeholder=""> -->
+    <app-places-search id="where-input" [oneColumn]='true'></app-places-search>
     <p id="ppromo">PROMO DESCRIPTION</p>
     <input id="promo-input" type="text" placeholder="">
     <p id="pdestinations">BRANCHES</p>
-    <input id="destinations-input" type="text" placeholder="">
+    <!-- <input id="destinations-input" type="text" placeholder=""> -->
+    <app-places-picker></app-places-picker>
 
     <input id="submit" type="submit" value="REGISTER">
 </form>
