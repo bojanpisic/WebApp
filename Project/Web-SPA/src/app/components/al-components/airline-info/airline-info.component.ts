@@ -25,6 +25,7 @@ export class AirlineInfoComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    window.scroll(0, 0);
     this.allAirlines = this.airlineService.loadAllAirlines();
     this.choosenAirline = this.allAirlines[this.id];
     this.destinations = this.choosenAirline.flightDestionations;
