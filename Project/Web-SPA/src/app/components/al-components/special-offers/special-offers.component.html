@@ -1,72 +1,82 @@
 <ul class="all">
-    <li *ngFor="let flight of flights; let i = index" [ngStyle]="{'border-bottom': option === 'oneWay' ? 'none' : '1px dashed gainsboro'}">
+    <li *ngIf="specialOffers.length == 0">At the moment, there is no any special offer for this flight.</li>
+    <li *ngFor="let offer of specialOffers; let i = index" [ngStyle]="{'border-bottom': option === 'oneWay' ? 'none' : '1px dashed gainsboro'}">
         <div class="container">
             <hr id="left"><hr id="right">
             <img *ngIf="option !== 'roundTrip' || (option === 'roundTrip' && i === 0)" id="plane" src="../../../../assets/icons8-airplane-emoji-96.png" alt="">
             <img *ngIf="option === 'roundTrip' && i === 1" id="reverse-plane" src="../../../../assets/icons8-airplane-emoji-96.png" alt="">
             <span id="spandate">DATE</span>
-            <p id="date">May 24,2020</p>
+            <p id="date">{{offer.flight.takeOffDate | date:'dd-MM-yyyy'}}</p>
             <span id="spanairlines">AIRLINES</span>
-            <p id="airlines"><img src="../../../../assets/turkish_airlines_logo.png">Turkish Airlines</p>
-            <p id="from-full">Belgrade</p>
-            <p id="from">BEG</p>
-            <p id="to-full">New York</p>
-            <p id="to">NY</p>
+            <p id="airlines"><img src="{{airline.logoUrl}}">{{airline.name}}</p>
+            <p id="from-full">{{offer.flight.from.city}}</p>
+            <p id="from">{{offer.flight.from.shortName}}</p>
+            <p id="to-full">{{offer.flight.to.city}}</p>
+            <p id="to">{{offer.flight.to.shortName}}</p>
             <span id="spandeparture" [ngStyle]="{'grid-area': option === 'roundTrip' && i === 1 ? 'spanarrival' : 'spandeparture',
                                                  'text-align': option === 'roundTrip' && i === 1 ? 'right' : 'left'}">DEPARTURE</span>
             <p id="departure" [ngStyle]="{'grid-area': option === 'roundTrip' && i === 1 ? 'arrival' : 'departure',
-                                          'text-align': option === 'roundTrip' && i === 1 ? 'right' : 'left'}">08:10</p>
-            <span id="time"><img src="../../../../assets/icons8-clock.svg">11h 40min</span><!--pazi ako traje samo 50min ili cist sat tipa 3h-->
+                                          'text-align': option === 'roundTrip' && i === 1 ? 'right' : 'left'}">{{offer.flight.takeOffTime}}</p>
+            <span id="time"><img src="../../../../assets/icons8-clock.svg">{{offer.flight.tripTime}}</span><!--pazi ako traje samo 50min ili cist sat tipa 3h-->
             <span id="spanarrival" [ngStyle]="{'grid-area': option === 'roundTrip' && i === 1 ? 'spandeparture' : 'spanarrival',
                                                'text-align': option === 'roundTrip' && i === 1 ? 'left' : 'right'}">ARRIVAL</span> 
             <p id="arrival" [ngStyle]="{'grid-area': option === 'roundTrip' && i === 1 ? 'departure' : 'arrival',
-                                        'text-align': option === 'roundTrip' && i === 1 ? 'left' : 'right'}">13:50</p>
+                                        'text-align': option === 'roundTrip' && i === 1 ? 'left' : 'right'}">{{offer.flight.landingTime}}</p>
             <span id="spanflight">FLIGHT</span>
-            <p id="flight">TA194</p>
+            <p id="flight">{{offer.flight.flightNumber}}</p>
             <span id="spanseat">SEAT</span>
-            <p id="seat">19A</p>
+            <p id="seat">{{offer.seat}}</p>
             <div id="stops">
-                <span *ngIf="stops.length > 0">{{stops.length}} stops</span>
-                <ul *ngIf="stops.length > 0">
-                    <li *ngFor="let stop of stops; let i = index">
-                        <p *ngIf="i === stops.length -1">{{stop}}</p>
-                        <p *ngIf="i !== stops.length -1">{{stop}}, </p>
+                <span *ngIf="offer.flight.changeOverLocations.length > 0">{{offer.flight.changeOverLocations.length}} stops</span>
+                <ul *ngIf="offer.flight.changeOverLocations.length > 0">
+                    <li *ngFor="let stop of offer.flight.changeOverLocations; let i = index">
+                        <p *ngIf="i === offer.flight.changeOverLocations.length -1">{{stop[1].city}}</p>
+                        <p *ngIf="i !== offer.flight.changeOverLocations.length -1">{{stop[1].city}}, </p>
                     </li>
                 </ul>
-                <span *ngIf="stops.length === 0">direct</span>
+                <span *ngIf="offer.flight.changeOverLocations.length === 0">direct</span>
             </div>
         </div>
-        <div (click)="showStopsInfo(i)" id="stops-info-arrow" *ngIf="stops.length > 0">
+        <div (click)="showStopsInfo(i)" id="stops-info-arrow" *ngIf="offer.flight.changeOverLocations.length > 0">
             <img [ngStyle]="{'transform': showInfo[i] ? 'rotate(90deg)' : 'rotate(-90deg)'}" src="../../../../assets/back.png" alt="">
         </div>
         <div class="stops-info" *ngIf="showInfo[i]">
             <ul>
-                <li *ngFor="let item of stops">
-                    <span id="stop-from">Belgrade(<span>BEG</span>)</span>
+                <li *ngFor="let item of offer.flight.changeOverLocations; let ind = index">
+                    <span id="stop-from" *ngIf="ind == 0">{{offer.flight.from.city}}(<span>{{offer.flight.from.shortName}}</span>)</span>
+
+                    <span id="stop-from" *ngIf="ind != 0">{{offer.flight.changeOverLocations[ind-1][1].city}}(<span>{{offer.flight.changeOverLocations[ind-1][1].shortName}}</span>)</span>
+
                     <span id="stop-time"><img src="../../../../assets/icons8-clock.svg">1h 15min</span>
-                    <span id="stop-to">Vienna(<span>VIE</span>)</span>
-                    <span id="stop-departure">DEPARTURE: <span>08:10</span></span>
-                    <span id="stop-arrival">ARRIVAL: <span>09:25</span></span>
+
+                    <span id="stop-to" >{{item[1].city}}(<span>{{item[1].shortName}}</span>)</span>
+                    <span id="stop-departure" *ngIf="ind == 0">DEPARTURE: <span>{{offer.flight.takeOffTime}}</span></span>
+                    <span id="stop-departure" *ngIf="ind != 0">DEPARTURE: <span>{{item[0]}}</span></span>
+
+                    <span id="stop-arrival">ARRIVAL: <span>{{item[0]}}</span></span>
                     <div id="stop-pause">
-                        <span>Change planes in {{item}}</span>
+                        <span>Change planes in {{item.city}}</span>
                         <span id="stop-time"> - 0h 50min</span>
                     </div>
                 </li>
                 <li><!--od poslednjeg presedanja do krajnje lokacije-->
-                    <span id="stop-from">Vienna(<span>VIE</span>)</span>
+                    <span id="stop-from">{{offer.flight.changeOverLocations[offer.flight.changeOverLocations.length-1][1].city}}
+                        (<span>{{offer.flight.changeOverLocations[offer.flight.changeOverLocations.length-1][1].shortName}}</span>)</span>
                     <span id="stop-time"><img src="../../../../assets/icons8-clock.svg">9h 35min</span>
-                    <span id="stop-to">New York(<span>NY</span>)</span>
+                    <span id="stop-to">{{offer.flight.to.city}}(<span>{{offer.flight.to.shortName}}</span>)</span>
                     <span id="stop-departure">DEPARTURE: <span>10:15</span></span>
                     <span id="stop-arrival">ARRIVAL: <span>13:50</span></span>
                 </li>
             </ul>
         </div>
-    </li>
-    <li>
+        <!-- <li> -->
         <div class="price-more">
             <span id="total">TOTAL PRICE:</span>
-            <span id="oldprice">290€ </span><span id="newprice">190€</span>
+            <span id="oldprice">{{offer.flight.ticketPrice}}€ </span><span id="newprice">{{offer.newPrice}}€</span>
         </div>
+        <button id="book">BOOK</button>
+
+        <!-- </li> -->
     </li>
+
 </ul>
-<button id="book">BOOK</button>

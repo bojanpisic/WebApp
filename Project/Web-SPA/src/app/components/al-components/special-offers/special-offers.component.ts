@@ -1,4 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { SpecialOfferService } from 'src/services/special-offer.service';
+import { ActivatedRoute } from '@angular/router';
+import { SpecialOffer } from 'src/app/entities/special-offer';
+import { AirlineService } from 'src/services/airline.service';
+import { Airline } from 'src/app/entities/airline';
 
 @Component({
   selector: 'app-special-offers',
@@ -9,19 +14,26 @@ export class SpecialOffersComponent implements OnInit {
 
   option = 'oneWay';
   showInfo: Array<boolean>;
-  flights: Array<any>;
-  stops: Array<string>;
+  airlineId: number;
+  airline: Airline;
+  specialOffers: Array<SpecialOffer>;
+  anotherOneClicked = false;
 
-  constructor() {
-    this.flights = new Array<any>();
-    this.stops = new Array<string>();
+  constructor(private route: ActivatedRoute, private specOfferService: SpecialOfferService, private airlineService: AirlineService) {
+    route.params.subscribe(params => {
+      this.airlineId = params.id;
+    });
+    this.specialOffers = new Array<SpecialOffer>();
     this.showInfo = new Array<boolean>();
    }
 
   ngOnInit(): void {
-    this.flights.push(1);
+    this.specialOffers = this.specOfferService.getSpecialOffersOfSpecificAirline(this.airlineId);
+    this.getAirline();
     this.showInfo.push(false);
-    this.stops.push('VIE');
+  }
+  getAirline() {
+    this.airline = this.airlineService.getAirline(this.airlineId);
   }
 
   showStopsInfo(i: number) {

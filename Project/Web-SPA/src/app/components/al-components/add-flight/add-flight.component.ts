@@ -33,7 +33,7 @@ export class AddFlightComponent implements OnInit {
       }
     });
 
-    this.airlineService.allMockedAirlines().forEach(airline => {
+    this.airlineService.loadAllAirlines().forEach(airline => {
       if (airline.adminid === this.admin.id) {
         this.adminsAirline = airline;
       }
