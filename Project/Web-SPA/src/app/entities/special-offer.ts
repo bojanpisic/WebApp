@@ -1,13 +1,15 @@
 import { Flight } from './flight';
 
 export class SpecialOffer {
-    flight: Flight;
-    seat: string;
+    flights: Array<Flight>;
     newPrice: number;
+    tripType: string;
+    airlineId: number;
 
-    constructor(flight: Flight, seat: string, newPrice: number) {
-        this.flight = flight;
-        this.seat = seat;
+    constructor(flight: Array<Flight>, newPrice: number, type: string, airlineId: number) {
+        this.flights = flight;
         this.newPrice = newPrice;
+        this.tripType = type;
+        this.airlineId = airlineId;
     }
 }

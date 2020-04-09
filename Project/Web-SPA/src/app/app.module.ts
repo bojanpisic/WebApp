@@ -34,6 +34,7 @@ import { MapComponent } from './components/helper/map/map.component';
 
 import { AgmCoreModule } from '@agm/core';
 import { PlacesPickerComponent } from './components/helper/places-picker/places-picker.component';
+import { SpecialOfferComponent } from './components/al-components/special-offers/special-offer/special-offer.component';
 
 @NgModule({
    declarations: [
@@ -65,7 +66,8 @@ import { PlacesPickerComponent } from './components/helper/places-picker/places-
       SpecialOffersComponent,
       PlacesSearchComponent,
       MapComponent,
-      PlacesPickerComponent
+      PlacesPickerComponent,
+      SpecialOfferComponent
    ],
    imports: [
       BrowserModule,

@@ -12,32 +12,22 @@ import { Airline } from 'src/app/entities/airline';
 })
 export class SpecialOffersComponent implements OnInit {
 
-  option = 'oneWay';
-  showInfo: Array<boolean>;
   airlineId: number;
   airline: Airline;
   specialOffers: Array<SpecialOffer>;
   anotherOneClicked = false;
 
-  constructor(private route: ActivatedRoute, private specOfferService: SpecialOfferService, private airlineService: AirlineService) {
+  constructor(private route: ActivatedRoute, private specOfferService: SpecialOfferService) {
     route.params.subscribe(params => {
       this.airlineId = params.id;
     });
     this.specialOffers = new Array<SpecialOffer>();
-    this.showInfo = new Array<boolean>();
    }
 
   ngOnInit(): void {
     this.specialOffers = this.specOfferService.getSpecialOffersOfSpecificAirline(this.airlineId);
-    this.getAirline();
-    this.showInfo.push(false);
-  }
-  getAirline() {
-    this.airline = this.airlineService.getAirline(this.airlineId);
   }
 
-  showStopsInfo(i: number) {
-    this.showInfo[i] = !this.showInfo[i];
-  }
+
 
 }
