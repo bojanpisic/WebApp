@@ -39,6 +39,9 @@ import { FlightComponent } from './components/al-components/flight/flight.compon
 import { FilterComponent } from './components/al-components/filter/filter.component';
 import { AirlinesHeaderComponent } from './components/al-components/airlines/airlines-header/airlines-header.component';
 import { FlightsComponent } from './components/al-components/flights/flights.component';
+import { SearchBarComponent } from './components/helper/search-bar/search-bar.component';
+import { FriendsListComponent } from './components/friends-list/friends-list.component';
+import { FriendComponent } from './components/friend/friend.component';
 
 @NgModule({
    declarations: [
@@ -75,7 +78,10 @@ import { FlightsComponent } from './components/al-components/flights/flights.com
       FlightComponent,
       FilterComponent,
       AirlinesHeaderComponent,
-      FlightsComponent
+      FlightsComponent,
+      SearchBarComponent,
+      FriendsListComponent,
+      FriendComponent
    ],
    imports: [
       BrowserModule,
