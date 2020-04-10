@@ -32,4 +32,12 @@ export class SpecialOfferComponent implements OnInit {
     this.showInfo[i] = !this.showInfo[i];
   }
 
+  calculateFlightLength(departureTime: string, arrivalTime: string) {
+    const departureTimeInMinutes = Number(departureTime.split(':')[0]) * 60 + Number(departureTime.split(':')[1]);
+    const arrivalTimeInMinutes = Number(arrivalTime.split(':')[0]) * 60 + Number(arrivalTime.split(':')[1]);
+
+    return Math.floor((arrivalTimeInMinutes - departureTimeInMinutes) / 60) + 'h'
+         + Math.floor((arrivalTimeInMinutes - departureTimeInMinutes) % 60) + 'min';
+  }
+
 }

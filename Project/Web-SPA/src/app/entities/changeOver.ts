@@ -11,7 +11,11 @@ export class ChangeOver {
         this.departureTime = depTime;
         this.arrivalTime = arrTime;
         this.newDestination = newDest;
-        this.stopTime = (Math.abs(Number(this.departureTime.split(':')[0]) - Number(this.arrivalTime.split(':')[0]))).toString() + 'h' +
-                        (Math.abs(Number(this.departureTime.split(':')[1]) - Number(this.arrivalTime.split(':')[1]))).toString() + 'min';
+
+        const departureTimeInMinutes = Number(this.departureTime.split(':')[0]) * 60 + Number(this.departureTime.split(':')[1]);
+        const arrivalTimeInMinutes = Number(this.arrivalTime.split(':')[0]) * 60 + Number(this.arrivalTime.split(':')[1]);
+
+        this.stopTime = Math.floor((departureTimeInMinutes - arrivalTimeInMinutes) / 60) + 'h'
+                      + Math.floor((departureTimeInMinutes - arrivalTimeInMinutes) % 60) + 'min';
     }
 }

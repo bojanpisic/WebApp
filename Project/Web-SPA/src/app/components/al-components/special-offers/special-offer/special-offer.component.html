@@ -46,27 +46,32 @@
             </div>
             <div class="stops-info" *ngIf="showInfo[i]"> <!--ovdee su presedanja od tog jednog leta-->
                 <ul>
-                    <li *ngFor="let item of flight.changeOverLocations; let ind = index">
-                        <span id="stop-from" *ngIf="ind === 0">{{flight.from.city}}(<span>{{flight.from.shortName}}</span>)</span>
-                        <span id="stop-from" *ngIf="ind !== 0">{{item.newDestination.city}}(<span>{{item.newDestination.shortName}}</span>)</span>
-                        <span id="stop-time"><img src="../../../../assets/icons8-clock.svg">{{item.stopTime}}</span>
-                        <span id="stop-to">{{item.newDestination.city}}(<span>{{item.newDestination.shortName}}</span>)</span>
-                        <span id="stop-departure" *ngIf="ind===0">DEPARTURE: <span>{{flight.takeOffTime}}</span></span>
-                        <span id="stop-departure" *ngIf="ind!==0">DEPARTURE: <span>{{item.departureTime}}</span></span>
+                    <li>
+                        <span id="stop-from">{{flight.from.city}}(<span>{{flight.from.shortName}}</span>)</span>
+                        <span id="stop-time"><img src="../../../../assets/icons8-clock.svg">{{calculateFlightLength(flight.takeOffTime, flight.changeOverLocations[0].arrivalTime)}}</span>
+                        <span id="stop-to">{{flight.changeOverLocations[0].newDestination.city}}(<span>{{flight.changeOverLocations[0].newDestination.shortName}}</span>)</span>
+                        <span id="stop-departure">DEPARTURE: <span>{{flight.takeOffTime}}</span></span>
 
-                        <span id="stop-arrival">ARRIVAL: <span>{{item.arrivalTime}}</span></span>
+                        <span id="stop-arrival">ARRIVAL: <span>{{flight.changeOverLocations[0].arrivalTime}}</span></span>
                         <div id="stop-pause">
-                            <span>Change planes in {{item.newDestination.city}}</span>
-                            <span id="stop-time"> - 0h 50min</span>
+                            <span>Change planes in {{flight.changeOverLocations[0].newDestination.city}}</span>
+                            <span id="stop-time"> - {{flight.changeOverLocations[0].stopTime}}</span>
                         </div>
                     </li>
-                    <li><!--od poslednjeg presedanja do krajnje lokacije-->
-                        <span id="stop-from">{{flight.changeOverLocations[flight.changeOverLocations.length - 1].newDestination.city}}
-                            (<span>{{flight.changeOverLocations[flight.changeOverLocations.length - 1].newDestination.shortName}}</span>)</span>
-                        <span id="stop-time"><img src="../../../../assets/icons8-clock.svg">{{flight.changeOverLocations[flight.changeOverLocations.length - 1].stopTime}}</span>
-                        <span id="stop-to">{{flight.to.city}}(<span>{{flight.to.shortName}}</span>)</span>
-                        <span id="stop-departure">DEPARTURE: <span>{{flight.changeOverLocations[flight.changeOverLocations.length - 1].departureTime}}</span></span>
-                        <span id="stop-arrival">ARRIVAL: <span>{{flight.changeOverLocations[flight.changeOverLocations.length - 1].arrivalTime}}</span></span>
+                    <li *ngFor="let item of flight.changeOverLocations; let ind = index; last as isLast">
+                        <span id="stop-from">{{item.newDestination.city}}(<span>{{item.newDestination.shortName}}</span>)</span>
+                        <span id="stop-time" *ngIf="!isLast"><img src="../../../../assets/icons8-clock.svg">{{calculateFlightLength(item.departureTime, flight.changeOverLocations[ind + 1].arrivalTime)}}</span>
+                        <span id="stop-time" *ngIf="isLast"><img src="../../../../assets/icons8-clock.svg">{{calculateFlightLength(item.departureTime, flight.landingTime)}}</span>
+                        <span id="stop-to" *ngIf="!isLast">{{flight.changeOverLocations[ind + 1].newDestination.city}}(<span>{{flight.changeOverLocations[ind + 1].newDestination.shortName}}</span>)</span>
+                        <span id="stop-to" *ngIf="isLast">{{flight.to.city}}(<span>{{flight.to.shortName}}</span>)</span>
+                        <span id="stop-departure">DEPARTURE: <span>{{item.departureTime}}</span></span>
+
+                        <span id="stop-arrival" *ngIf="!isLast">ARRIVAL: <span>{{flight.changeOverLocations[ind + 1].arrivalTime}}</span></span>
+                        <span id="stop-arrival" *ngIf="isLast">ARRIVAL: <span>{{flight.landingTime}}</span></span>
+                        <div id="stop-pause" *ngIf="!isLast">
+                            <span>Change planes in {{flight.changeOverLocations[ind + 1].newDestination.city}}</span>
+                            <span id="stop-time"> - {{flight.changeOverLocations[ind + 1].stopTime}}</span>
+                        </div>
                     </li>
                 </ul>
             </div>

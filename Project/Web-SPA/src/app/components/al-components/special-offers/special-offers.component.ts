@@ -26,6 +26,7 @@ export class SpecialOffersComponent implements OnInit {
 
   ngOnInit(): void {
     this.specialOffers = this.specOfferService.getSpecialOffersOfSpecificAirline(this.airlineId);
+    console.log('MOLIM TE: ' + this.specialOffers.length + ' ID: ' + this.airlineId);
   }
 
 

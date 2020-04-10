@@ -38,6 +38,7 @@ import { SpecialOfferComponent } from './components/al-components/special-offers
 import { FlightComponent } from './components/al-components/flight/flight.component';
 import { FilterComponent } from './components/al-components/filter/filter.component';
 import { AirlinesHeaderComponent } from './components/al-components/airlines/airlines-header/airlines-header.component';
+import { FlightsComponent } from './components/al-components/flights/flights.component';
 
 @NgModule({
    declarations: [
@@ -73,7 +74,8 @@ import { AirlinesHeaderComponent } from './components/al-components/airlines/air
       SpecialOfferComponent,
       FlightComponent,
       FilterComponent,
-      AirlinesHeaderComponent
+      AirlinesHeaderComponent,
+      FlightsComponent
    ],
    imports: [
       BrowserModule,

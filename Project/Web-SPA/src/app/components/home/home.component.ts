@@ -17,9 +17,6 @@ export class HomeComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    console.log(window.innerHeight);
-    console.log('fly' + this.fly);
-    console.log('drive' + this.drive);
   }
 
   onFly() {
@@ -40,7 +37,6 @@ export class HomeComponent implements OnInit {
 
   @HostListener('window:scroll', [])
   onWindowScroll() {
-      console.log(window.scrollY);
       }
 
 }

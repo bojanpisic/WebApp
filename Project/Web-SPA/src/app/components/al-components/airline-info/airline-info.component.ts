@@ -30,6 +30,7 @@ export class AirlineInfoComponent implements OnInit {
     this.allAirlines = this.airlineService.loadAllAirlines();
     this.choosenAirline = this.allAirlines[this.id];
     this.destinations = this.choosenAirline.flightDestionations;
+    console.log('radi bez problema');
   }
 
   destinationsClick() {

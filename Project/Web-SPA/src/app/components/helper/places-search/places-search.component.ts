@@ -66,7 +66,6 @@ export class PlacesSearchComponent implements OnInit {
               'state': this.address.split(',')[1],
               'placePhoto': this.placePhoto
           }
-          console.log(place);
           this.cityName.emit(JSON.stringify(sendData));
         });
       });
@@ -87,7 +86,6 @@ export class PlacesSearchComponent implements OnInit {
  
  
   markerDragEnd($event: MouseEvent) {
-    console.log($event);
     this.latitude = $event.coords.lat;
     this.longitude = $event.coords.lng;
     this.getAddress(this.latitude, this.longitude);
@@ -95,8 +93,6 @@ export class PlacesSearchComponent implements OnInit {
  
   getAddress(latitude, longitude) {
     this.geoCoder.geocode({ 'location': { lat: latitude, lng: longitude } }, (results, status) => {
-      console.log(results);
-      console.log(status);
       if (status === 'OK') {
         if (results[0]) {
           this.zoom = 12;

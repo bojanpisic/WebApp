@@ -1,0 +1,6 @@
+<ul>
+    <!--ovde izlistavamo sve nase specijalne karte, svaka od njih moze biti oneway, roundtrip ili multicity-->
+    <li *ngFor="let flight of flights">
+        <app-flight [flight]="flight"></app-flight>
+    </li>
+</ul>

@@ -13,8 +13,6 @@ export class BottomMenuComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    console.log(document.body.scrollHeight);
-    console.log(window.innerHeight);
     this.scrolled =  true;
   }
 

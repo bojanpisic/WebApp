@@ -26,32 +26,39 @@ export class SpecialOfferService {
 
   getSpecialOffersOfSpecificAirline(airlineId: number) {
     let specOffers = new Array<SpecialOffer>();
-
     this.specialOffers.forEach(offer => {
       if (offer.airlineId == airlineId) {
         specOffers.push(offer);
       }
     });
-
     return specOffers;
   }
-  
+
+
   mockedSpecialOffers() {
-    const f1 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '03h 40min', 12,
-    [new ChangeOver('11:20', '10:30',new Destination('','Paris','France', 'PAR'))], 300.00, '234T',
-    new Destination('', 'Belgrade', 'Serbia', 'BG'), new Destination('', 'Madrid', 'Spain', 'MAD'), '06:20', '12:13',
+    const f1 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '5h 53min', 12,
+    [new ChangeOver('11:20', '10:30', new Destination('', 'Paris', 'France', 'PAR'))], 300.00, '234T',
+    new Destination('', 'Madrid', 'Spain', 'MAD'), new Destination('', 'Belgrade', 'Serbia', 'BG'), '06:20', '12:13',
     [new Seat(0, '33R')]);
 
     const s1 = new SpecialOffer([f1], 200.00, 'oneWay', 0);
 
-    const f2 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '03h 40min', 12,
-    [new ChangeOver('11:20', '10:30', new Destination('','Paris','France', 'PAR'))], 200.00, '234T',
-    new Destination('', 'Novi Sad', 'Serbia', 'NS'), new Destination('', 'Barcelona', 'Spain', 'BAR'), '06:20', '12:13',
+    const f2 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '7h 0min', 12,
+    [], 200.00, '234T',
+    new Destination('', 'New York', 'USA', 'NY'), new Destination('', 'Novi Sad', 'Serbia', 'NS'), '15:15', '22:15',
     [new Seat(0, '33R')]);
 
-    const s2 = new SpecialOffer([f2], 400.00, 'roundTrip', 0);
+    const f3 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '10h 0min', 12,
+    [new ChangeOver('10:00', '09:00', new Destination('', 'Paris', 'France', 'PAR')),
+    new ChangeOver('12:10', '11:20', new Destination('', 'London', 'England', 'LON'))], 200.00, '234T',
+    new Destination('', 'Novi Sad', 'Serbia', 'NS'), new Destination('', 'New York', 'USA', 'NY'), '06:00', '16:00',
+    [new Seat(0, '33R')]);
+
+    // AKO JE ROUND TRIP MORA IMATI DVA LETA, NE JEDAN
+    const s2 = new SpecialOffer([f3, f2], 400.00, 'roundTrip', 0);
 
     this.specialOffers.push(s1);
+    console.log('SPECIAL OFFERS LENGTH:' + this.specialOffers.length);
     this.specialOffers.push(s2);
   }
 }
