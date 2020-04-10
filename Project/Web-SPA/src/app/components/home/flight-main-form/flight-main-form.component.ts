@@ -1,4 +1,4 @@
-import {ComponentRef, ComponentFactoryResolver, ViewContainerRef, ViewChild, Component, OnInit, Renderer2  } from '@angular/core';
+import {ComponentRef, ComponentFactoryResolver, ViewContainerRef, ViewChild, Component, OnInit, Renderer2, Input  } from '@angular/core';
 import { FlightFormPartComponent } from './flight-form-part/flight-form-part.component';
 
 @Component({
@@ -13,18 +13,15 @@ export class FlightMainFormComponent implements OnInit {
 
   // let.flightType = form.controls['flight-type'].value;
   // u svaki radio input [ngModel]="let.flightType"
-  oneWayFlight = true;
-  roundTripFlight = false;
-  multiCityFlight = false;
+  flightType: string;
+  @Input() filterForm;
 
   componentsReferences = [];
 
   constructor(private renderer: Renderer2, private CFR: ComponentFactoryResolver) { }
 
   ngOnInit(): void {
-    console.log(this.oneWayFlight);
-    console.log(this.roundTripFlight);
-    console.log(this.multiCityFlight);
+    this.flightType = 'oneWayFlight';
   }
 
   createComponent() {
@@ -53,27 +50,15 @@ export class FlightMainFormComponent implements OnInit {
   }
 
   oneWay() {
-    if (!this.oneWayFlight) {
-      this.oneWayFlight = true;
-      this.roundTripFlight = false;
-      this.multiCityFlight = false;
-    }
+    this.flightType = 'oneWayFlight';
   }
 
   roundTrip() {
-    if (!this.roundTripFlight) {
-      this.roundTripFlight = true;
-      this.oneWayFlight = false;
-      this.multiCityFlight = false;
-    }
+    this.flightType = 'roundTripFlight';
   }
 
   multiCity() {
-    if (!this.multiCityFlight) {
-      this.multiCityFlight = true;
-      this.roundTripFlight = false;
-      this.oneWayFlight = false;
-    }
+    this.flightType = 'multiCityFlight';
   }
 
 }

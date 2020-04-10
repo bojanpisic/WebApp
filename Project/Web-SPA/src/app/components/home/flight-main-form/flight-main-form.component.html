@@ -15,31 +15,18 @@
         <span></span>
     </label>
 </div>
-<form action="" *ngIf="oneWayFlight || roundTripFlight">
-    <p>FROM</p>
-    <p [ngStyle]="{'display': roundTripFlight ? 'block' : (multiCityFlight) ? 'block' : 'none'}">WHERE</p>
-    <!-- <input [ngStyle]="{'grid-column': oneWayFlight ? '1/ span 2' : '1/ 1',
-                       'border-top-right-radius': oneWayFlight ? '3px' : '0px',
-                       'border-bottom-right-radius': oneWayFlight ? '3px' : '0px'}"
-                        class="left-input" type="text" placeholder="Anywhere"> -->
-    <app-places-search [oneColumn] = "oneWayFlight ? true : false"></app-places-search>
-    <!-- <input style="border-left: 0px;" [ngStyle]="{'display': roundTripFlight ? 'block' : (multiCityFlight) ? 'block' : 'none'}" class="right-input" type="text" placeholder="Anywhere"> -->
-    <app-places-search [oneColumn] = "oneWayFlight ? true : false" *ngIf="roundTripFlight || multiCityFlight"></app-places-search>
-    <p id="checkin">DEPART</p>
-    <p id="checkout" [ngStyle]="{'display': roundTripFlight ? 'block' : 'none'}">RETURN</p>
-    <input [ngStyle]="{'grid-column': oneWayFlight || multiCityFlight ? '1/ span 2' : '1/ 1',
-                       'border-top-right-radius': oneWayFlight || multiCityFlight ? '3px' : '0px',
-                       'border-bottom-right-radius': oneWayFlight || multiCityFlight ? '3px' : '0px'}"
-                        class="left-input" type="text" placeholder="mm/dd/yyyy">
-    <input style="border-left: 0px;" [ngStyle]="{'display': roundTripFlight ? 'block' : 'none'}" class="right-input" type="text" placeholder="mm/dd/yyyy">
+<form *ngIf="flightType !== 'multiCityFlight'" class="nonMultiCityForm" action="">
+    <div>
+        <app-flight-form-part [flightType]="flightType"></app-flight-form-part>
+    </div>
     <p>TRAVELLERS</p>
     <app-person-num-search id="travellers-div"></app-person-num-search>
-    <input id="submit" type="submit" value="SEARCH">
+    <input *ngIf="!filterForm" id="submit" type="submit" value="SEARCH">
 </form>
-<form *ngIf="multiCityFlight" class="multiCityForm" action="">
+<form *ngIf="flightType === 'multiCityFlight'" class="multiCityForm" action="">
     <ul id="ul">
         <li>
-            <app-flight-form-part></app-flight-form-part>
+            <app-flight-form-part [flightType]="flightType"></app-flight-form-part>
         </li>
         <li>
         <ng-template #viewContainerRef></ng-template>
@@ -48,8 +35,8 @@
     <button id="remove" (click)="removeFlight()">REMOVE</button><button (click)="addFlight()" id="new">NEW</button>
     <p>TRAVELLERS</p>
     <app-person-num-search id="travellers-div"></app-person-num-search>
-    <input id="submit" type="submit" value="SEARCH">
+    <input *ngIf="!filterForm" id="submit" type="submit" value="SEARCH">
 </form>
-<div class="separator-div">
+<div *ngIf="!filterForm" class="separator-div">
     <hr class="separator">
 </div>

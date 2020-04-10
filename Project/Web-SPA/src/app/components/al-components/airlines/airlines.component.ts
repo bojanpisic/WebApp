@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Airline } from 'src/app/entities/airline';
 import { AirlineService } from 'src/services/airline.service';
 import { Location } from '@angular/common';
@@ -10,7 +10,6 @@ import { Location } from '@angular/common';
   styleUrls: ['./airlines.component.scss']
 })
 export class AirlinesComponent implements OnInit {
-
   allAirlines: Array<Airline>;
   colorsOfArilineDest: Array<string>;
   rotateArrow = false;

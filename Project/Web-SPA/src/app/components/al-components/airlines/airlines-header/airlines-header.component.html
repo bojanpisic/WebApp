@@ -1,0 +1,65 @@
+<nav [ngStyle]="{'padding-bottom': rotateArrow ? '61px' : '20px'}">
+    <img src="../../../../assets/icons8-delete.svg">
+    <span id="show">Show flights</span>
+    <span id="sort" (click)="sortClick()">
+        Sort
+        <img [ngStyle]="{'transform': rotateArrow ? 'rotateZ(90deg)' : 'rotateZ(-90deg)'}"
+         src="../../../../../assets/icons8-back-50.png">
+    </span>
+</nav>
+<div class="sort" [ngStyle]="{'visibility': rotateArrow ? 'visible' : 'hidden'}">
+    <span (click)="namedownClicked()" id="name" [ngStyle]="{'color': namedown ? 'white' : 'rgb(60,60,60)',
+    'background-color': namedown ? '#1C4CB2' : 'white'}">
+        NAME
+        <img *ngIf="!namedown" id="next" src="../../../assets/bold_arrow.svg" alt="" style="transform: rotateZ(-90deg);">
+        <img *ngIf="namedown" id="next" src="../../../assets/bold_arrow_Lobe.svg" [ngStyle]="{'opacity': '1'}" alt="" style="transform: rotateZ(-90deg);">
+    </span>
+    <span (click)="nameupClicked()" id="name" [ngStyle]="{'color': nameup ? 'white' : 'rgb(60,60,60)',
+    'background-color': nameup ? '#1C4CB2' : 'white'}">
+        NAME
+        <img *ngIf="!nameup" id="next" src="../../../assets/bold_arrow.svg" alt="" style="transform: rotateZ(90deg);">
+        <img *ngIf="nameup" id="next" src="../../../assets/bold_arrow_Lobe.svg" [ngStyle]="{'opacity': '1'}" alt="" style="transform: rotateZ(90deg);">
+    </span>
+    <span (click)="citydownClicked()" id="name" [ngStyle]="{'color': citydown ? 'white' : 'rgb(60,60,60)',
+    'background-color': citydown ? '#1C4CB2' : 'white'}">
+        CITY
+        <img *ngIf="!citydown" id="next" src="../../../assets/bold_arrow.svg" alt="" style="transform: rotateZ(-90deg);">
+        <img *ngIf="citydown" id="next" src="../../../assets/bold_arrow_Lobe.svg" [ngStyle]="{'opacity': '1'}" alt="" style="transform: rotateZ(-90deg);">
+    </span>
+    <span (click)="cityupClicked()" id="name" [ngStyle]="{'color': cityup ? 'white' : 'rgb(60,60,60)',
+    'background-color': cityup ? '#1C4CB2' : 'white'}">
+        CITY
+        <img *ngIf="!cityup" id="next" src="../../../assets/bold_arrow.svg" alt="" style="transform: rotateZ(90deg);">
+        <img *ngIf="cityup" id="next" src="../../../assets/bold_arrow_Lobe.svg" [ngStyle]="{'opacity': '1'}" alt="" style="transform: rotateZ(90deg);">
+    </span>
+</div>
+<ul>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+    <li><h1>bla</h1></li>
+</ul>

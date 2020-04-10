@@ -33,7 +33,14 @@ import { PlacesSearchComponent } from './components/helper/places-search/places-
 import { MapComponent } from './components/helper/map/map.component';
 
 import { AgmCoreModule } from '@agm/core';
+// import { MDBBootstrapModule } from 'angular-bootstrap-md';
+// import { MDBBootstrapModulesPro, MDBSpinningPreloader } from 'ng-uikit-pro-standard';
+import {MDBBootstrapModule} from 'angular-bootstrap-md';
 import { PlacesPickerComponent } from './components/helper/places-picker/places-picker.component';
+import { SpecialOfferComponent } from './components/al-components/special-offers/special-offer/special-offer.component';
+import { FlightComponent } from './components/al-components/flight/flight.component';
+import { FilterComponent } from './components/al-components/filter/filter.component';
+import { AirlinesHeaderComponent } from './components/al-components/airlines/airlines-header/airlines-header.component';
 
 @NgModule({
    declarations: [
@@ -65,7 +72,11 @@ import { PlacesPickerComponent } from './components/helper/places-picker/places-
       SpecialOffersComponent,
       PlacesSearchComponent,
       MapComponent,
-      PlacesPickerComponent
+      PlacesPickerComponent,
+      SpecialOfferComponent,
+      FlightComponent,
+      FilterComponent,
+      AirlinesHeaderComponent
    ],
    imports: [
       BrowserModule,
@@ -74,7 +85,8 @@ import { PlacesPickerComponent } from './components/helper/places-picker/places-
       AgmCoreModule.forRoot({
          apiKey: 'AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE',
          libraries: ['places']
-      })
+      }),
+      MDBBootstrapModule.forRoot()
    ],
    providers: [],
    bootstrap: [

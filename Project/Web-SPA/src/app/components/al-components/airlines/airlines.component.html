@@ -37,7 +37,8 @@
             <img *ngIf="cityup" id="next" src="../../assets/bold_arrow_Lobe.svg" alt="" style="transform: rotateZ(90deg);">
         </button>
     </div>
-</header> 
+</header>
+<!-- <app-airlines-header></app-airlines-header> -->
 <main [ngStyle]="{'padding-top': rotateArrow && scrolledY === 0 ? 'calc(.14 * 100vh + 1.5em)' : 'calc(.08 * 100vh + 1.5em)'}">
     <ul>
         <li *ngFor = "let airline of allAirlines">

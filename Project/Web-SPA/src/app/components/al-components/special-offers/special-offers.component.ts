@@ -7,25 +7,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SpecialOffersComponent implements OnInit {
 
-  option = 'oneWay';
-  showInfo: Array<boolean>;
-  flights: Array<any>;
-  stops: Array<string>;
+  tickets: Array<any>;
 
   constructor() {
-    this.flights = new Array<any>();
-    this.stops = new Array<string>();
-    this.showInfo = new Array<boolean>();
-   }
-
-  ngOnInit(): void {
-    this.flights.push(1);
-    this.showInfo.push(false);
-    this.stops.push('VIE');
+    this.tickets = new Array<any>();
   }
 
-  showStopsInfo(i: number) {
-    this.showInfo[i] = !this.showInfo[i];
+  ngOnInit(): void {
+    this.tickets.push(1);
+    this.tickets.push(1);
+    this.tickets.push(1);
   }
 
 }

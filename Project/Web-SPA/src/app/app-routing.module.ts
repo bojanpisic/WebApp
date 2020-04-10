@@ -11,6 +11,9 @@ import { SortAndFilterBarComponent } from './components/helper/sort-and-filter-b
 import { RegisterCompanyComponent } from './components/register-company/register-company.component';
 import { AddFlightComponent } from './components/al-components/add-flight/add-flight.component';
 import { SpecialOffersComponent } from './components/al-components/special-offers/special-offers.component';
+import { FlightComponent } from './components/al-components/flight/flight.component';
+import { FilterComponent } from './components/al-components/filter/filter.component';
+import { AirlinesHeaderComponent } from './components/al-components/airlines/airlines-header/airlines-header.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -19,6 +22,9 @@ const routes: Routes = [
   {path: ':username/signin', component: SigninComponent},
   {path: 'sortfilter', component: SortAndFilterBarComponent},
   {path: ':username/:option/register-company', component: RegisterCompanyComponent},
+  {path: 'flight', component: FlightComponent},
+  {path: 'filter', component: FilterComponent},
+  {path: 'airlines-header', component: AirlinesHeaderComponent},
 
   {
     path: 'airlines',

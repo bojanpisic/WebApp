@@ -1,0 +1,119 @@
+<nav>
+    <img src="../../../../assets/icons8-delete.svg">
+    <span>Filters</span>
+    <span id="clear">Clear</span>
+</nav>
+<main>
+    <h3>Basic information</h3>
+    <app-flight-main-form [filterForm] = 'filterForm'></app-flight-main-form>
+    <div class="sep-div">
+        <hr class="sep">
+    </div>
+    <h3>Price range</h3>
+    <div class="middle">
+        <div class="multi-range-slider">
+            <input [(ngModel)]="slidingMinPriceValue" [ngStyle]="{'padding-right': getRightStylePrice()}" type="range" id="input-left" min="0" [max]="slidingMaxPriceValue" [value]="leftValuePrice()">
+            <input [(ngModel)]="slidingMaxPriceValue" [ngStyle]="{'padding-left': getLeftStylePrice()}" type="range" id="input-right" [min]="slidingMinPriceValue" max="100" [value]="rightValuePrice()">
+
+            <div class="slider">
+                <div class="track"></div>
+                <div class="range" [ngStyle]="{'left': getLeftStylePrice(), 'right': getRightStylePrice()}"></div>
+                <div class="thumb left" [ngStyle]="{'left': getLeftStylePrice()}"></div>
+                <div class="thumb right" [ngStyle]="{'right': getRightStylePrice()}"></div>
+            </div>
+        </div>
+    </div>
+    <div id="min-price">
+        <p>MIN PRICE:</p>
+        <input type="text" id="min" [value]="slidingMinPriceValue * 30 + '€'">
+    </div>
+    <div id="max-price">
+        <p>MAX PRICE:</p>
+        <input type="text" [value]="slidingMaxPriceValue * 30 + '€'">
+    </div>
+    <div class="sep-div">
+        <hr class="sep">
+    </div>
+    <h3>Cabin</h3>
+    <div class="cabin">
+        <div>
+            <label class="checkbox-label">
+                <input type="checkbox" checked>
+                <span class="checkbox-custom"></span>
+            </label>
+            <span class="cabin-span">Basic Economy</span>
+        </div>
+        <div>
+            <label class="checkbox-label">
+                <input type="checkbox" checked>
+                <span class="checkbox-custom"></span>
+            </label>
+            <span class="cabin-span">Economy</span>
+        </div>
+        <div>
+            <label class="checkbox-label">
+                <input type="checkbox" checked>
+                <span class="checkbox-custom"></span>
+            </label>
+            <span class="cabin-span">Business</span>
+        </div>
+        <div>
+            <label class="checkbox-label">
+                <input type="checkbox" checked>
+                <span class="checkbox-custom"></span>
+            </label>
+            <span class="cabin-span">First</span>
+        </div>
+    </div>
+    <div class="sep-div">
+        <hr class="sep">
+    </div>
+    <!-- <h3>Baggage per passanger</h3>
+    <div class="sep-div">
+        <hr class="sep">
+    </div> -->
+    <h3>Duration</h3>
+    <div class="middle">
+        <div class="multi-range-slider">
+            <input [(ngModel)]="slidingMinDurationValue" [ngStyle]="{'padding-right': getRightStyleDuration()}" type="range" id="input-left" min="0" [max]="slidingMaxDurationValue" [value]="leftValueDuration()">
+            <input [(ngModel)]="slidingMaxDurationValue" [ngStyle]="{'padding-left': getLeftStyleDuration()}" type="range" id="input-right" [min]="slidingMinDurationValue" max="100" [value]="rightValueDuration()">
+
+            <div class="slider">
+                <div class="track"></div>
+                <div class="range" [ngStyle]="{'left': getLeftStyleDuration(), 'right': getRightStyleDuration()}"></div>
+                <div class="thumb left" [ngStyle]="{'left': getLeftStyleDuration()}"></div>
+                <div class="thumb right" [ngStyle]="{'right': getRightStyleDuration()}"></div>
+            </div>
+        </div>
+    </div>
+    <div id="min-price">
+        <p>MIN DURATION:</p><!--treba dodati da kad ovde izmenim da se i tamo izmeni-->
+        <input type="text" id="min" [value]="minDuration">
+    </div>
+    <div id="max-price">
+        <p>MAX DURATION:</p>
+        <input type="text" [value]="maxDuration">
+    </div>
+    <div class="sep-div">
+        <hr class="sep">
+    </div>
+    <h3>Airlines</h3>
+    <span id="airlines-button" (click)="allAirlinesButton()">All</span>
+    <ul class="airlines">
+        <li *ngFor="let airline of allAirlines; let i = index">
+            <div>
+                <label class="checkbox-label">
+                    <input type="checkbox" [checked]="checkedAirlines[i]" (click)="toggleAirlineCheckBox(i)">
+                    <span class="checkbox-custom"></span>
+                </label>
+                <span>{{airline.name}}</span>
+            </div>
+        </li>
+    </ul>
+</main>
+<footer>
+    <form action="">
+        <input type="submit" value="SHOW RESULTS">
+    </form>
+</footer>
+

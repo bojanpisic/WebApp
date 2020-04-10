@@ -18,8 +18,8 @@
                        'border-bottom-right-radius': sameLocationChoosed ? '3px' : '0px'}"
                         class="left-input" type="text" placeholder="Anywhere">
     <input style="border-left: 0px;" [ngStyle]="{'display': sameLocationChoosed ? 'none' : 'block'}" class="right-input" type="text" placeholder="Anywhere"> -->
-    <app-places-search [oneColumn] = "sameLocationChoosed ? true : false"></app-places-search>
-    <app-places-search [oneColumn] = "sameLocationChoosed ? true : false" *ngIf="!sameLocationChoosed"></app-places-search>
+    <app-places-search [left] = "sameLocationChoosed ? true : false"></app-places-search>
+    <app-places-search [right] = "sameLocationChoosed ? true : false" *ngIf="!sameLocationChoosed"></app-places-search>
     <p id="checkin">PICK-UP DATE</p>
     <p id="checkout" [ngStyle]="{'display': sameLocationChoosed ? 'none' : 'block'}">DROP-OFF DATE</p>
     <input [ngStyle]="{'grid-column': sameLocationChoosed ? '1/ span 2' : '1/ 1',

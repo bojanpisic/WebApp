@@ -5,15 +5,17 @@
     box-sizing: border-box;
 }
 
-// .app {
-//     background-color: white;
-// }
+.app {
+    background-color: white;
+    padding-top: 60px;
+}
 
-// .full {
-//     grid-column: 1 / -1;
-// }
+.full {
+    grid-column: 1 / -1;
+}
 
 .hs {
+    position: fixed;
     margin-left: 1em;
     display: grid;
     grid-gap: 5px;

@@ -1,11 +1,13 @@
 @import '../../../app.component.scss';
 
 input {
+    width: 100%;
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    box-sizing: border-box; 
     height: 3em;
     padding-left: 1em;
     border: 1px solid lightgrey;
-    border-top-left-radius: 3px;
-    border-bottom-left-radius: 3px;
 }
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
     color: rgb(100, 100, 100);
@@ -18,15 +20,4 @@ input {
 
 ::-ms-input-placeholder { /* Microsoft Edge */
     color: rgb(100, 100, 100);
-}
-
-.two-columns{
-    grid-column: 1/ 1;
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px;
-}
-.one-column{
-    grid-column: 1/ span 2;
-    border-top-right-radius: 3px;
-    border-bottom-right-radius: 3px;
 }

@@ -15,7 +15,9 @@ export class PlacesSearchComponent implements OnInit {
 
 
   private geoCoder;
-  @Input() oneColumn = false;
+  // @Input() oneColumn = false;
+  @Input() left = false;
+  @Input() right = false;
 
   @ViewChild('search')
   public searchElementRef: ElementRef;
