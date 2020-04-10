@@ -1,6 +1,6 @@
 <ul>
     <!--ovde izlistavamo sve nase specijalne karte, svaka od njih moze biti oneway, roundtrip ili multicity-->
-    <li *ngFor="let item of tickets">
-        <app-special-offer></app-special-offer>
+    <li *ngFor="let offer of specialOffers">
+        <app-special-offer [offer] = "offer"></app-special-offer>
     </li>
 </ul>

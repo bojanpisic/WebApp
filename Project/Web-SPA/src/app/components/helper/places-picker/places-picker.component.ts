@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Destination } from 'src/app/entities/destination';
 
 @Component({
   selector: 'app-places-picker',
@@ -9,7 +10,8 @@ export class PlacesPickerComponent implements OnInit {
 
   constructor() { }
 
-  choosenChangeOvers: Array<string>;
+  choosenChangeOvers: Array<Destination>;
+  jsonObj: any;
 
   inputStyle = 'margin-top: 10px; \
                 margin-right: 3px; \
@@ -26,24 +28,25 @@ export class PlacesPickerComponent implements OnInit {
                 padding: 1px;';
 
   ngOnInit(): void {
-    this.choosenChangeOvers = new Array<string>();
+    this.choosenChangeOvers = new Array<Destination>();
   }
 
   getCityName($event) {
-    this.choosenChangeOvers.push($event);
+    this.jsonObj = JSON.parse($event);
+    this.choosenChangeOvers.push(new Destination(this.jsonObj.photoUrl, this.jsonObj.city, this.jsonObj.state, this.jsonObj.short_name));
     this.createDivChild();
   }
 
   createDivChild() {
     let child = document.createElement('input');
-    const elementName = this.choosenChangeOvers[this.choosenChangeOvers.length - 1].split(':')[2];
+    const elementName = this.jsonObj.city;
     child.setAttribute('value', elementName);
-    child.setAttribute('id', elementName);
+    child.setAttribute('id', this.choosenChangeOvers.length.toString());
     child.setAttribute('type', 'button');
     child.setAttribute('style', this.inputStyle);
     child.addEventListener('click', () => {
         document.getElementById(child.getAttribute('id')).remove();
-        this.choosenChangeOvers.splice(this.choosenChangeOvers.indexOf(child.getAttribute('id')), 1);
+        this.choosenChangeOvers.splice(Number(child.getAttribute('id')), 1);
     });
     document.getElementById('changeover-list').appendChild(child);
   }

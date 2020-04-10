@@ -7,9 +7,9 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class DestinationsComponent implements OnInit {
 
-  @Input() data: string;
+  @Input() data: any;
   selected = false;
-
+  imgUrl;
   constructor() { }
 
   ngOnInit(): void {

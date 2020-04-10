@@ -33,9 +33,6 @@ import { PlacesSearchComponent } from './components/helper/places-search/places-
 import { MapComponent } from './components/helper/map/map.component';
 
 import { AgmCoreModule } from '@agm/core';
-// import { MDBBootstrapModule } from 'angular-bootstrap-md';
-// import { MDBBootstrapModulesPro, MDBSpinningPreloader } from 'ng-uikit-pro-standard';
-import {MDBBootstrapModule} from 'angular-bootstrap-md';
 import { PlacesPickerComponent } from './components/helper/places-picker/places-picker.component';
 import { SpecialOfferComponent } from './components/al-components/special-offers/special-offer/special-offer.component';
 import { FlightComponent } from './components/al-components/flight/flight.component';
@@ -86,7 +83,6 @@ import { AirlinesHeaderComponent } from './components/al-components/airlines/air
          apiKey: 'AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE',
          libraries: ['places']
       }),
-      MDBBootstrapModule.forRoot()
    ],
    providers: [],
    bootstrap: [

@@ -85,9 +85,13 @@
             text-align: right;
         }
     
-        #date {         
+        // #date {         
+        //     grid-area: date;
+        //     font-size: .85em;
+        #date {
             grid-area: date;
             font-size: .85em;
+            margin-bottom: 20px;
         }
     
         #airlines {

@@ -3,6 +3,7 @@ import { AirlineService } from 'src/services/airline.service';
 import { Airline } from '../../../entities/airline';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
+import { Destination } from 'src/app/entities/destination';
 
 @Component({
   selector: 'app-airline-info',
@@ -14,14 +15,14 @@ export class AirlineInfoComponent implements OnInit {
   id: number;
   allAirlines: Array<Airline>;
   choosenAirline: Airline;
-  destinations: Array<string>;
+  destinations: Array<Destination>;
   rotateArrow = false;
   buttonContent = 'Paris';
 
   constructor(private route: ActivatedRoute, private airlineService: AirlineService, private location: Location) {
     route.params.subscribe(params => { this.id = params.id; });
     this.allAirlines = new Array<Airline>();
-    this.destinations = new Array<string>();
+    this.destinations = new Array<Destination>();
   }
 
   ngOnInit(): void {

@@ -17,7 +17,7 @@
         <span>Destinations: </span>
         <div class="cities">
             <p *ngFor = 'let destination of data.flightDestionations; let ind = index'
-             style="background-color: {{ colorsOfArilineDest[ind % colorsOfArilineDest.length] }};">{{destination}}</p>
+             style="background-color: {{ colorsOfArilineDest[ind % colorsOfArilineDest.length] }};">{{destination.city}}</p>
         </div>
     </div>               
 </a>

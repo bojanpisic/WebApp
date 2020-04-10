@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { AirlineService } from 'src/services/airline.service';
+import { Airline } from 'src/app/entities/airline';
 
 @Component({
   selector: 'app-special-offer',
@@ -7,23 +9,23 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SpecialOfferComponent implements OnInit {
 
-  option = 'roundTrip';
+  @Input() offer;
+  airline: Airline;
   showInfo: Array<boolean>;
-  flights: Array<any>;
-  stops: Array<string>;
+  i: number;
 
-  constructor() {
-    this.flights = new Array<any>();
-    this.stops = new Array<string>();
+
+  constructor(private airlineService: AirlineService) {
     this.showInfo = new Array<boolean>();
-   }
+  }
 
   ngOnInit(): void {
-    this.flights.push(1);
-    this.flights.push(1);
+    this.i = this.showInfo.length;
     this.showInfo.push(false);
-    this.showInfo.push(false);
-    this.stops.push('VIE');
+  }
+  getAirlineName(flightId: number) {
+    this.airline = this.airlineService.getAirline(flightId);
+    return this.airline.name;
   }
 
   showStopsInfo(i: number) {

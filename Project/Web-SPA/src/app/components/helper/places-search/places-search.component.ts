@@ -12,6 +12,7 @@ export class PlacesSearchComponent implements OnInit {
   longitude: number;
   zoom: number;
   address: string;
+  placePhoto: any;
 
 
   private geoCoder;
@@ -32,13 +33,14 @@ export class PlacesSearchComponent implements OnInit {
 
 
   ngOnInit() {
+
     //load Places Autocomplete
     this.mapsAPILoader.load().then(() => {
       this.setCurrentLocation();
       this.geoCoder = new google.maps.Geocoder;
  
       const autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement, {
-        types: ['geocode']
+        types: ['geocode'] // geocode
       });
       autocomplete.addListener('place_changed', () => {
         this.ngZone.run(() => {
@@ -54,8 +56,18 @@ export class PlacesSearchComponent implements OnInit {
           this.longitude = place.geometry.location.lng();
           this.address = place.formatted_address;
           this.zoom = 12;
+          this.placePhoto = place.photos[0].getUrl({maxWidth: 165, maxHeight: 112});
 
-          this.cityName.emit(this.latitude + ':' + this.longitude + ':' + this.address.split(',')[0]);
+          var sendData = {
+              'latitude': this.latitude,
+              'longitude': this.longitude,
+              'city': this.address.split(',')[0],
+              'short_name': place.address_components[0].short_name,
+              'state': this.address.split(',')[1],
+              'placePhoto': this.placePhoto
+          }
+          console.log(place);
+          this.cityName.emit(JSON.stringify(sendData));
         });
       });
     });
