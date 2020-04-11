@@ -8,6 +8,7 @@ import { Time } from '@angular/common';
 import { Destination } from 'src/app/entities/destination';
 import { ChangeOver } from 'src/app/entities/changeOver';
 import { Seat } from 'src/app/entities/seat';
+import { FlightService } from './flight.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ import { Seat } from 'src/app/entities/seat';
 export class SpecialOfferService {
 
   specialOffers: Array<SpecialOffer>;
-  constructor(private airlines: AirlineService) {
+  constructor(private airlines: AirlineService, private flightService: FlightService) {
     this.specialOffers = new Array<SpecialOffer>();
     this.mockedSpecialOffers();
   }
@@ -36,29 +37,22 @@ export class SpecialOfferService {
 
 
   mockedSpecialOffers() {
-    const f1 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '5h 53min', 12,
-    [new ChangeOver('11:20', '10:30', new Destination('', 'Paris', 'France', 'PAR'))], 300.00, '234T',
-    new Destination('', 'Madrid', 'Spain', 'MAD'), new Destination('', 'Belgrade', 'Serbia', 'BG'), '06:20', '12:13',
-    [new Seat(0, '33R')]);
 
-    const s1 = new SpecialOffer([f1], 200.00, 'oneWay', 0);
-
-    const f2 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '7h 0min', 12,
-    [], 200.00, '234T',
-    new Destination('', 'New York', 'USA', 'NY'), new Destination('', 'Novi Sad', 'Serbia', 'NS'), '15:15', '22:15',
-    [new Seat(0, '33R')]);
-
-    const f3 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '10h 0min', 12,
-    [new ChangeOver('10:00', '09:00', new Destination('', 'Paris', 'France', 'PAR')),
-    new ChangeOver('12:10', '11:20', new Destination('', 'London', 'England', 'LON'))], 200.00, '234T',
-    new Destination('', 'Novi Sad', 'Serbia', 'NS'), new Destination('', 'New York', 'USA', 'NY'), '06:00', '16:00',
-    [new Seat(0, '33R')]);
+    const flights = this.flightService.getAllFlights();
 
     // AKO JE ROUND TRIP MORA IMATI DVA LETA, NE JEDAN
-    const s2 = new SpecialOffer([f3, f2], 400.00, 'roundTrip', 0);
+    const s1 = new SpecialOffer([flights[0]], 200.00, 'oneWay', 0);
+    const s2 = new SpecialOffer([flights[2], flights[3]], 1000.00, 'roundTrip', 0);
+    const s3 = new SpecialOffer([flights[4], flights[0], flights[1]], 300.00, 'multicity', 0);
+    const s4 = new SpecialOffer([flights[4]], 130.00, 'oneWay', 0);
+    const s5 = new SpecialOffer([flights[5]], 100.00, 'oneWay', 0);
+    const s6 = new SpecialOffer([flights[1]], 150.00, 'oneWay', 0);
 
     this.specialOffers.push(s1);
-    console.log('SPECIAL OFFERS LENGTH:' + this.specialOffers.length);
     this.specialOffers.push(s2);
+    this.specialOffers.push(s3);
+    this.specialOffers.push(s4);
+    this.specialOffers.push(s5);
+    this.specialOffers.push(s6);
   }
 }

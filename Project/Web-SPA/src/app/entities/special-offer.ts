@@ -1,6 +1,8 @@
 import { Flight } from './flight';
 
 export class SpecialOffer {
+    // trip: Trip; OVAKO TREBA
+    // newPrice: number;
     flights: Array<Flight>;
     newPrice: number;
     tripType: string;

@@ -1,16 +1,14 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { AirlineService } from 'src/services/airline.service';
-import { Airline } from 'src/app/entities/airline';
 
 @Component({
-  selector: 'app-special-offer',
-  templateUrl: './special-offer.component.html',
-  styleUrls: ['./special-offer.component.scss']
+  selector: 'app-trip',
+  templateUrl: './trip.component.html',
+  styleUrls: ['./trip.component.scss']
 })
-export class SpecialOfferComponent implements OnInit {
+export class TripComponent implements OnInit {
 
-  @Input() offer;
-  airline: Airline;
+  @Input() trip;
   showInfo: Array<boolean>;
   i: number;
 
@@ -23,9 +21,8 @@ export class SpecialOfferComponent implements OnInit {
     this.i = this.showInfo.length;
     this.showInfo.push(false);
   }
-  getAirlineName(flightId: number) {
-    this.airline = this.airlineService.getAirline(flightId);
-    return this.airline.name;
+  getAirlineName(airlineId: number) {
+    return this.airlineService.getAirline(airlineId);
   }
 
   showStopsInfo(i: number) {
@@ -38,14 +35,6 @@ export class SpecialOfferComponent implements OnInit {
 
     return Math.floor((arrivalTimeInMinutes - departureTimeInMinutes) / 60) + 'h'
          + Math.floor((arrivalTimeInMinutes - departureTimeInMinutes) % 60) + 'min';
-  }
-
-  calculatePrice() { // kasnije cemo to vaditi iz Trip-a, pogledaj klasu special-offer i trip
-    let returnValue = 0;
-    this.offer.flights.forEach(flight => {
-      returnValue += flight.ticketPrice;
-    });
-    return returnValue;
   }
 
 }

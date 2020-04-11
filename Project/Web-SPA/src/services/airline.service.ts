@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Airline } from 'src/app/entities/airline';
 import { Destination } from 'src/app/entities/destination';
+import { Flight } from 'src/app/entities/flight';
+import { TripId } from 'src/app/entities/trip-id';
 
 @Injectable({
   providedIn: 'root'
@@ -8,8 +10,10 @@ import { Destination } from 'src/app/entities/destination';
 export class AirlineService {
 
   airlines: Array<Airline>;
+  flightsForTrip: Array<Flight>;
   constructor() {
     this.airlines = new Array<Airline>();
+    this.flightsForTrip = new Array<Flight>();
     this.allMockedAirlines();
    }
 
@@ -26,6 +30,21 @@ export class AirlineService {
     });
     return air;
   }
+
+  // getFlightsForTrip(tripId: TripId) {
+  //   const flights = new Array<Flight>();
+  //   let i = 0;
+  //   for (const item of this.airlines) {
+  //     if (item.id === tripId.airlineIds[i]) {
+  //       for (const flight of item.flights) {
+  //         if (flight.flightNumber === tripId.flightsIds[i]) {
+  //           flights.push(flight);
+  //         }
+  //       }
+  //       i += 1;
+  //     }
+  //   }
+  // }
 
   allMockedAirlines() {
 

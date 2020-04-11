@@ -15,6 +15,7 @@ import { FlightComponent } from './components/al-components/flight/flight.compon
 import { FilterComponent } from './components/al-components/filter/filter.component';
 import { AirlinesHeaderComponent } from './components/al-components/airlines/airlines-header/airlines-header.component';
 import { FlightsComponent } from './components/al-components/flights/flights.component';
+import { TripsComponent } from './components/al-components/trips/trips.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -23,9 +24,16 @@ const routes: Routes = [
   {path: ':username/signin', component: SigninComponent},
   {path: 'sortfilter', component: SortAndFilterBarComponent},
   {path: ':username/:option/register-company', component: RegisterCompanyComponent},
-  {path: 'flight', component: FlightComponent},
-  {path: 'flights', component: FlightsComponent},
-  {path: 'filter', component: FilterComponent},
+  // {path: 'flight', component: FlightComponent}, NE GLEDAJ OVO
+  // {path: 'flights', component: FlightsComponent},
+  {
+    path: 'trips',
+    children: [
+      {path: '', component: TripsComponent},
+      {path: 'filter', component: FilterComponent}
+    ]
+  },
+  // {path: '/trips/filter', component: FilterComponent},
   {path: 'airlines-header', component: AirlinesHeaderComponent},
 
   {

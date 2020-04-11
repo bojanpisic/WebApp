@@ -1,4 +1,4 @@
-<div id="image" (click)="select()" [ngStyle]="{'background': 'url('+data.imageUrl+')'}">
+<div id="image" (click)="select()" [ngStyle]="{'background': 'url('+data.imageUrl+') center / cover'}">
     <div id="select" [ngStyle]="{'border': selected ? '2px solid #317D32' : '2px solid gainsboro'}"></div>
     <img src="../../../../assets/icons8-checkmark.svg" alt="" [ngStyle]="{'visibility': selected ? 'visible' : 'hidden'}">
 </div>

@@ -3,11 +3,11 @@
     u flights se nalaze svi letovi koji se nalaze u special offeru(to je samo jedan flight ako je recimo od bg do ny)
     moze da bude i vise flightova ako je special offer round trip ili multicity-->
         <!--ZNACI SPECIAL OFFER IMA LISTU LETOVA TA LISTA SE IZLISTAVA OD SLEDECE LINIJE DO 70. LINIJE-->
-        <li *ngFor="let flight of offer.flights; let i = index"  [ngStyle]="{'border-bottom': offer.tripType === 'oneWay' ? 'none' : '.5px solid gainsboro'}">
+        <li *ngFor="let flight of trip.flights; let i = index"  [ngStyle]="{'border-bottom': '.5px solid gainsboro'}">
             <div class="container"> <!--ceo ovaj div je samo jedan let, recimo bg - lon-->
                 <hr id="left"><hr id="right">
-                <img *ngIf="offer.tripType !== 'roundTrip' || (offer.tripType === 'roundTrip' && i === 0)" id="plane" src="../../../../assets/icons8-airplane-emoji-96.png" alt="">
-                <img *ngIf="offer.tripType === 'roundTrip' && i === 1" id="reverse-plane" src="../../../../assets/icons8-airplane-emoji-96.png" alt="">
+                <img *ngIf="trip.tripType !== 'roundTrip' || (trip.tripType === 'roundTrip' && i === 0)" id="plane" src="../../../../assets/icons8-airplane-emoji-96.png" alt="">
+                <img *ngIf="trip.tripType === 'roundTrip' && i === 1" id="reverse-plane" src="../../../../assets/icons8-airplane-emoji-96.png" alt="">
                 <span id="spandate">DATE</span>
                 <p id="date">{{flight.takeOffDate | date: 'dd-MM-yyyy'}}</p><!--ako prelazi u novi dan ond mora ovako: May 24/25,2020 da bi stalo-->
                 <span id="spanairlines">AIRLINES</span>
@@ -16,15 +16,15 @@
                 <p id="from">{{flight.from.shortName}}</p>
                 <p id="to-full">{{flight.to.city}}</p>
                 <p id="to">{{flight.to.shortName}}</p>
-                <span id="spandeparture" [ngStyle]="{'grid-area': offer.tripType === 'roundTrip' && i === 1 ? 'spanarrival' : 'spandeparture',
-                                                     'text-align': offer.tripType === 'roundTrip' && i === 1 ? 'right' : 'left'}">DEPARTURE</span>
-                <p id="departure" [ngStyle]="{'grid-area': offer.tripType === 'roundTrip' && i === 1 ? 'arrival' : 'departure',
-                                              'text-align': offer.tripType === 'roundTrip' && i === 1 ? 'right' : 'left'}">{{flight.takeOffTime}}</p>
+                <span id="spandeparture" [ngStyle]="{'grid-area': trip.tripType === 'roundTrip' && i === 1 ? 'spanarrival' : 'spandeparture',
+                                                     'text-align': trip.tripType === 'roundTrip' && i === 1 ? 'right' : 'left'}">DEPARTURE</span>
+                <p id="departure" [ngStyle]="{'grid-area': trip.tripType === 'roundTrip' && i === 1 ? 'arrival' : 'departure',
+                                              'text-align': trip.tripType === 'roundTrip' && i === 1 ? 'right' : 'left'}">{{flight.takeOffTime}}</p>
                 <span id="time"><img src="../../../../assets/icons8-clock.svg">{{flight.tripTime}}</span><!--pazi ako traje samo 50min ili cist sat tipa 3h-->
-                <span id="spanarrival" [ngStyle]="{'grid-area': offer.tripType === 'roundTrip' && i === 1 ? 'spandeparture' : 'spanarrival',
-                                                   'text-align': offer.tripType === 'roundTrip' && i === 1 ? 'left' : 'right'}">ARRIVAL</span> 
-                <p id="arrival" [ngStyle]="{'grid-area': offer.tripType === 'roundTrip' && i === 1 ? 'departure' : 'arrival',
-                                            'text-align': offer.tripType === 'roundTrip' && i === 1 ? 'left' : 'right'}">{{flight.landingTime}}</p>
+                <span id="spanarrival" [ngStyle]="{'grid-area': trip.tripType === 'roundTrip' && i === 1 ? 'spandeparture' : 'spanarrival',
+                                                   'text-align': trip.tripType === 'roundTrip' && i === 1 ? 'left' : 'right'}">ARRIVAL</span> 
+                <p id="arrival" [ngStyle]="{'grid-area': trip.tripType === 'roundTrip' && i === 1 ? 'departure' : 'arrival',
+                                            'text-align': trip.tripType === 'roundTrip' && i === 1 ? 'left' : 'right'}">{{flight.landingTime}}</p>
                 <span id="spanflight">FLIGHT</span>
                 <p id="flight">{{flight.flightNumber}}</p>
                 <span id="spanseat">SEAT</span>
@@ -78,11 +78,11 @@
         </li>
         <!--nakon izlistavanja svih letova koji se nalaze u special offer prikazujemo njenu cenu i mozemo da je bookujemo-->
         <li>
-            <div class="price-more">
-                <span id="total">TOTAL PRICE:</span>
-                <span id="oldprice">{{calculatePrice()}}€</span><span id="newprice">{{offer.newPrice}}€</span>
-            </div>
+        <div class="price-more">
+            <span id="total">TOTAL PRICE:</span>
+            <span id="newprice">190€</span>
+        </div>
         </li>
     </ul>
-    <button id="book">BOOK</button>
+    <button id="book">VIEW DEAL</button>
     <!--ovde je kraj jedne special offer(odnosno karte) koja moze biti oneway,round trip, multicity-->

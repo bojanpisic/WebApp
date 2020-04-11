@@ -1,5 +1,8 @@
 import {ComponentRef, ComponentFactoryResolver, ViewContainerRef, ViewChild, Component, OnInit, Renderer2, Input  } from '@angular/core';
 import { FlightFormPartComponent } from './flight-form-part/flight-form-part.component';
+import { Router } from '@angular/router';
+import { MapTypeControlStyle } from '@agm/core/services/google-maps-types';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-flight-main-form',
@@ -18,7 +21,9 @@ export class FlightMainFormComponent implements OnInit {
 
   componentsReferences = [];
 
-  constructor(private renderer: Renderer2, private CFR: ComponentFactoryResolver) { }
+  // tslint:disable-next-line:max-line-length
+  constructor(private renderer: Renderer2, private CFR: ComponentFactoryResolver, private router: Router) {
+   }
 
   ngOnInit(): void {
     this.flightType = 'oneWayFlight';
@@ -59,6 +64,11 @@ export class FlightMainFormComponent implements OnInit {
 
   multiCity() {
     this.flightType = 'multiCityFlight';
+  }
+
+  onSubmit() {
+    this.router.navigate(['/trips']);
+    console.log('SUBMIT');
   }
 
 }
