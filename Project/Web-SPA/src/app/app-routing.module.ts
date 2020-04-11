@@ -16,6 +16,7 @@ import { FilterComponent } from './components/al-components/filter/filter.compon
 import { AirlinesHeaderComponent } from './components/al-components/airlines/airlines-header/airlines-header.component';
 import { FlightsComponent } from './components/al-components/flights/flights.component';
 import { TripsComponent } from './components/al-components/trips/trips.component';
+import { FriendsListComponent } from './components/friends-list/friends-list.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -35,6 +36,7 @@ const routes: Routes = [
   },
   // {path: '/trips/filter', component: FilterComponent},
   {path: 'airlines-header', component: AirlinesHeaderComponent},
+  {path: ':id/friends-list', component: FriendsListComponent},
 
   {
     path: 'airlines',

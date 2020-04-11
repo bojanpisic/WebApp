@@ -1,0 +1,65 @@
+@import '../../app.component.scss';
+
+.friend-div
+{
+    list-style: none;
+    margin-left: 10%;
+    margin-right: 10%;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    padding: 20px;
+    height: 100px;
+
+    .photo{
+        width: 70px;
+        float: left;
+        border-radius: 50%;
+        height: 70px;
+        margin-right: 20px;
+    }
+
+    #flname{
+        margin-left: 10px;
+        font-size: 20px;
+    }
+    #username{
+        margin-left: 10px;
+        margin-top: 1em;
+        color: grey;
+    }
+
+    .btns-div{
+        float:right;
+        margin-right: 12px;
+        
+        .btns{
+            height: 30px;
+            width: 80px;
+            text-align: center;
+            background-color: transparent;
+            border: 1px solid lightgray;
+            border-radius: 5px;
+            
+            img{
+                width: 30%;
+                height: 80%;
+                float: left;
+            }
+
+            span{
+                width: 60%;
+                padding-top: 5px;
+            }
+
+        }
+        #delete{
+            margin-left: 5px;
+        }
+    }
+
+    hr{
+        margin-left: 100px;
+        margin-top:30px;
+    }
+}
