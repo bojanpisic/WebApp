@@ -1,0 +1,14 @@
+<app-user-nav [user]='user'></app-user-nav>
+<form action="">
+    <img src="{{user.imageUrl == null ? '../../../../../../assets/avatar.png':''}}" alt="" (click)='changePhoto()'>
+    <input type='text' class="input" id='firstName' value="{{user.firstName}}" (change)="somethingChanged = true">
+    <input type='text' class="input" id='lastName' value="{{user.lastName}}" (change)="somethingChanged = true">
+    <input type='text' class="input" id='email' value="{{user.email}}" (change)="somethingChanged = true">
+    <input type='password' class="input" id='pasw' value="{{user.password}}" (change)="passwordChanged()">
+    <input *ngIf='passwordchanged' type='password' class="input" id='submit-pasw' value="" (change)="passwordChanged()">
+    <input type='text' class="input" id='address' value="{{user.address}}" (change)="somethingChanged = true">
+    <input type="text" class="input" id='phone' value="{{user.phone}}" (change)="somethingChanged = true">
+    <button id='submit' (click)='submitChanges()' *ngIf='somethingChanged'>Submit</button>
+</form>
+<div id="snackbar">Successfully changed.</div>
+<app-bottom-menu [user] = 'user'></app-bottom-menu>

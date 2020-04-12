@@ -77,4 +77,15 @@
         </div>
     </li> -->
 </ul>
-<button id="book">VIEW DEAL</button>
+<button id="book" *ngIf='!showRate && !showRemove'>VIEW DEAL</button>
+<button id="rate" *ngIf='showRate' (click)='rateClick()'>RATE</button>
+<button id="remove" *ngIf='showRemove' (click)='removeClick()'>REMOVE</button>
+<!-- kad klikne remove reg.user -->
+<div id="myModal" class="modal" >
+    <div class="modal-content">
+      <span class="close" (click)='closeModal()'>&times;</span>
+      <p>Are you sure?</p>
+      <button class="modal-btn" id='yes-btn' (click)='removeFlight(flight)'>Yes</button>
+      <button class="modal-btn" id='no-btn' (click)='closeModal()'>No</button>
+    </div>
+</div>

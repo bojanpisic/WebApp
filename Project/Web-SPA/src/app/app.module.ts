@@ -42,6 +42,9 @@ import { FlightsComponent } from './components/al-components/flights/flights.com
 import { SearchBarComponent } from './components/helper/search-bar/search-bar.component';
 import { FriendsListComponent } from './components/friends-list/friends-list.component';
 import { FriendComponent } from './components/friend/friend.component';
+import { ProfileComponent } from './components/helper/profile/profile.component';
+import { ShowFlightsComponent } from './components/registered-user/show-flights/show-flights.component';
+import { UserNavComponent } from './components/helper/user-nav/user-nav.component';
 
 @NgModule({
    declarations: [
@@ -81,7 +84,10 @@ import { FriendComponent } from './components/friend/friend.component';
       FlightsComponent,
       SearchBarComponent,
       FriendsListComponent,
-      FriendComponent
+      FriendComponent,
+      ProfileComponent,
+      ShowFlightsComponent,
+      UserNavComponent
    ],
    imports: [
       BrowserModule,

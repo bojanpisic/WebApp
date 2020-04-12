@@ -33,9 +33,10 @@ export class SigninComponent implements OnInit {
 
       (loggedUser.userType === 'airlineAdmin' && this.username === undefined) ?
       this.router.navigate(['/airlines/' + loggedUser.id + '/flight-add']) :
+      (loggedUser.userType === 'regular' && this.username === undefined) ?
+      (this.router.navigate([loggedUser.id + '/home']), localStorage.setItem(loggedUser.id.toString(), JSON.stringify(loggedUser))) :
       this.username === undefined ? this.router.navigate(['/']) :
       this.router.navigate([this.username + '/' + this.option + '/register-company']);
-
     } else {
       alert('logging error');
     }

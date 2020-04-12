@@ -1,5 +1,5 @@
 <div class="fly" [ngClass]="{'drive': drive}">
-    <app-nav></app-nav>
+    <app-nav *ngIf='user === undefined'></app-nav>
     <h6>Travel with us.</h6><h1>Skys&roads.</h1>
 </div>
 <div class="container">
@@ -13,4 +13,5 @@
 <app-top-rated [option]='option'></app-top-rated>
 <app-become-a-host [option]='option'></app-become-a-host>
 <app-redirect-to [option]='option'></app-redirect-to>
+<app-bottom-menu *ngIf='user !== undefined' [user] = "user"></app-bottom-menu>
 <app-footer></app-footer>

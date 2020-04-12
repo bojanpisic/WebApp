@@ -9,6 +9,7 @@ import { Interpolation } from '@angular/compiler';
 export class FriendComponent implements OnInit {
 
   @Input() friend;
+  @Input() add;
   constructor() { }
 
   ngOnInit(): void {

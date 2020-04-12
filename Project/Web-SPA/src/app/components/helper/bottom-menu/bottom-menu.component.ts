@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, Input } from '@angular/core';
 
 @Component({
   selector: 'app-bottom-menu',
@@ -9,6 +9,7 @@ export class BottomMenuComponent implements OnInit {
 
   scrolled =  false;
   lastPosition: number = window.innerHeight;
+  @Input() user;
 
   constructor() { }
 
