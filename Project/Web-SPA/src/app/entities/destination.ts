@@ -1,13 +1,11 @@
+import { Address } from './address';
+
 export class Destination {
     imageUrl: string;
-    city: string;
-    state: string;
-    shortName: string;
+    address: Address;
 
-    constructor(imgUrl: string, city: string, state: string, shortname: string) {
+    constructor(imgUrl: string, address: Address) {
         this.imageUrl = imgUrl;
-        this.city = city;
-        this.state = state;
-        this.shortName = shortname;
+        this.address = address;
     }
 }

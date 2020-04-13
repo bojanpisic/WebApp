@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Destination } from 'src/app/entities/destination';
+import { Address } from 'src/app/entities/address';
 
 @Component({
   selector: 'app-places-picker',
@@ -31,9 +32,11 @@ export class PlacesPickerComponent implements OnInit {
     this.choosenChangeOvers = new Array<Destination>();
   }
 
-  getCityName($event) {
+  getCityName($event) { 
     this.jsonObj = JSON.parse($event);
-    this.choosenChangeOvers.push(new Destination(this.jsonObj.photoUrl, this.jsonObj.city, this.jsonObj.state, this.jsonObj.short_name));
+    this.choosenChangeOvers.push(
+      new Destination(this.jsonObj.photoUrl,
+         new Address(this.jsonObj.city, this.jsonObj.state, this.jsonObj.short_name, this.jsonObj.longitude, this.jsonObj.latitude)));
     this.createDivChild();
   }
 

@@ -6,6 +6,7 @@ import { Flight } from 'src/app/entities/flight';
 import { Destination } from 'src/app/entities/destination';
 import { ChangeOver } from 'src/app/entities/changeOver';
 import { Seat } from 'src/app/entities/seat';
+import { Address } from 'src/app/entities/address';
 
 @Injectable({
   providedIn: 'root'
@@ -49,8 +50,8 @@ export class UserService {
     const user2 = new RegisteredUser('Bojan', 'Pisic', '123456', 'email', 'Rocevic', '00000000');
 
     const f1 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '03h 40min', 12,
-    [new ChangeOver('11:20', '10:30',new Destination('', 'Paris', 'France', 'PAR'))], 300.00, '234T',
-    new Destination('', 'Madrid', 'Spain', 'MAD'), new Destination('', 'Belgrade', 'Serbia', 'BG'), '06:20', '12:13',
+    [new ChangeOver('11:20', '10:30', new Address('Paris', 'France', 'PAR', 0,0))], 300.00, '234T',
+    new Address('Madrid', 'Spain', 'MAD', 0,0), new Address('Belgrade', 'Serbia', 'BG', 0,0), '06:20', '12:13',
     [new Seat(0, '33R')]);
 
     user1.flights.push(f1);

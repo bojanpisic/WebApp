@@ -1,15 +1,18 @@
+import { Destination } from './destination';
+import { Address } from './address';
+
 export class RentACarService {
 
     id: number;
     adminId: number;
     name: string;
-    address: string;
+    address: Address;
     promoDescription: string;
     branches: Array<string>;
     averageRating: number;
     rates: Array<number>;
 
-    constructor(name: string, address: string) {
+    constructor(name: string, address: Address) {
         this.name = name;
         this.address = address;
         this.promoDescription = '';

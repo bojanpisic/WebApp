@@ -13,10 +13,10 @@
     </div>
     <div class="location">
         <img src="../../../assets/location_mark.png" alt="">
-        <span id="city">{{choosenRentService.address[0].split(',')[1]}}</span><span aria-hidden="true"> · </span> 
-        <span id="state">{{choosenRentService.address[0].split(',')[2]}}</span>
+        <span id="city">{{choosenRentService.address.city}}</span><span aria-hidden="true"> · </span> 
+        <span id="state">{{choosenRentService.address.state}}</span>
     </div>
-    <app-map [latitude] = 'choosenRentService.address[1]' [longitude] = 'choosenRentService.address[2]'></app-map>
+    <app-map [latitude] = 'choosenRentService.address.lat' [longitude] = 'choosenRentService.address.lon'></app-map>
 
     <div class="separator-div">
         <hr class="separator">

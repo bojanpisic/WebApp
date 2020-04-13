@@ -1,10 +1,10 @@
 <div class="drive-container" *ngIf="option === 'drive'">
     <h1>Find your flight here!</h1>
     <img id="next" src="../../../assets/next.png" alt="">
-    <a><img id="airplane" src="../../../assets/airplane-icon.svg" alt=""></a>
+    <a routerLink='/trips'><img id="airplane" src="../../../assets/airplane-icon.svg" alt=""></a>
 </div>
 <div class="fly-container" *ngIf="option === 'fly'">
     <h1>Find your car here!</h1>
     <img id="next" src="../../../assets/next.png" alt="">
-    <a><img id="car" src="../../../assets/car-icon.svg" alt=""></a>
+    <a><img id="car" src="../../../assets/car-icon.svg" alt="" routerLink='/cars'></a>
 </div>

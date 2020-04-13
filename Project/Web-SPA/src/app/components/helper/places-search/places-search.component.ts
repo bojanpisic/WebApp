@@ -57,7 +57,7 @@ export class PlacesSearchComponent implements OnInit {
           this.longitude = place.geometry.location.lng();
           this.address = place.formatted_address;
           this.zoom = 12;
-          this.placePhoto = place.photos[0].getUrl({maxWidth: 165, maxHeight: 112});
+          this.placePhoto = place.photos[1].getUrl({maxWidth: 165, maxHeight: 112});
 
           var sendData = {
               'latitude': this.latitude,
@@ -67,6 +67,7 @@ export class PlacesSearchComponent implements OnInit {
               'state': this.address.split(',')[1],
               'placePhoto': this.placePhoto
           }
+          console.log(sendData.placePhoto);
           this.cityName.emit(JSON.stringify(sendData));
         });
       });

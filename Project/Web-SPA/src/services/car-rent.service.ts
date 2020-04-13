@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { RentACarService } from 'src/app/entities/rent-a-car-service';
+import { Address } from 'src/app/entities/address';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,7 @@ export class CarRentService {
 
     let allServices = new Array<RentACarService>();
 
-    const a1 = new RentACarService('Rent1', 'Istanbul, Turkey');
+    const a1 = new RentACarService('Instanbul Rent Service', new Address('Istanbul', 'Turkey', 'IST', 32.974662768,  40.1077995688));
     a1.id = 0;
     a1.branches.push('Belgrade');
     a1.branches.push('Instanbul');
@@ -27,7 +28,7 @@ export class CarRentService {
     a1.promoDescription = 'Established back in 1933. Now we fly to more contries than any other airline.';
 
 
-    const a2 = new RentACarService('Rent2', 'Doha, Qatar');
+    const a2 = new RentACarService('Doha Car Service', new Address('Doha', 'Qatar', 'DO',51.52245,25.27932 ));
     a2.id = 1;
     a2.branches.push('Belgrade');
     a2.branches.push('Instanbul');
@@ -37,7 +38,7 @@ export class CarRentService {
     a2.averageRating = 5.0;
     a2.promoDescription = 'World’s fastest-growing airline. We connect more than 160 destinations on the map every day.';
 
-    const a3 = new RentACarService('Rent3', 'Belgrade, Serbia');
+    const a3 = new RentACarService('Belgrade Rent Service', new Address('Beograd', 'Srbija', 'BG', 20.30416545, 44.81833006));
     a3.id = 2;
     a3.branches.push('Belgrade');
     a3.branches.push('Instanbul');

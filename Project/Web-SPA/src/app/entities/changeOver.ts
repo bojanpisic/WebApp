@@ -1,13 +1,14 @@
 import { Destination } from './destination';
 import { Time } from '@angular/common';
+import { Address } from './address';
 
 export class ChangeOver {
     private departureTime: string;
     private arrivalTime: string;
-    private newDestination: Destination;
+    private newDestination: Address;
     public stopTime: string;
 
-    constructor(depTime: string, arrTime: string, newDest: Destination) {
+    constructor(depTime: string, arrTime: string, newDest: Address) {
         this.departureTime = depTime;
         this.arrivalTime = arrTime;
         this.newDestination = newDest;

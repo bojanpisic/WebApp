@@ -1,12 +1,13 @@
 import { Flight } from './flight';
 import { Destination } from './destination';
+import { Address } from './address';
 
 export class Airline {
 
     id: number;
     adminid: number;
     name: string;
-    address: any[];
+    address: Address;
     promoDescription: Array<string>;
     flightDestionations: Array<Destination>;
     flights: Array<Flight>;
@@ -14,7 +15,7 @@ export class Airline {
     rates: Array<number>;
     logoUrl: string;
 
-    constructor(name: string, address: any[]) {
+    constructor(name: string, address: Address) {
         this.name = name;
         this.address = address;
         this.promoDescription = new Array<string>();

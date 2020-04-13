@@ -8,5 +8,7 @@ export class CarService {
 
   constructor() { }
 
-  getAllCars() { return new Array<Car>()}
+  getAllCars() { 
+    return new Array<Car>()
+  }
 }

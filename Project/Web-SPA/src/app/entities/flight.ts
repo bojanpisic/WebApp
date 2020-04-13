@@ -2,6 +2,7 @@ import { Time } from '@angular/common';
 import { Destination } from './destination';
 import { ChangeOver } from './changeOver';
 import { Seat } from './seat';
+import { Address } from './address';
 
 export class Flight {
     airlineId: number;
@@ -12,8 +13,8 @@ export class Flight {
     tripLength: number;
     changeOverLocations: Array<ChangeOver>;
     ticketPrice: number;
-    from: Destination;
-    to: Destination;
+    from: Address;
+    to: Address;
     takeOffTime: string;
     landingTime: string;
     seats: Array<Seat>;
@@ -21,7 +22,7 @@ export class Flight {
     constructor(airlineId: number, takeOffDate: Date, landingDate: Date, tripTime: string,
                 tripLength: number, changeOverLocations: Array<ChangeOver>,
                 ticketPrice: number, flightNumber: string,
-                from: Destination, to: Destination, takeofftime: string, landingtime: string,
+                from: Address, to: Address, takeofftime: string, landingtime: string,
                 seats: Array<Seat>) {
             this.airlineId = airlineId;
             this.takeOffDate = takeOffDate;
