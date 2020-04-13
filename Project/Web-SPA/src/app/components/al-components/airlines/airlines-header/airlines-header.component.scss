@@ -12,10 +12,9 @@ nav {
     opacity: 1;
     padding:20px 30px;
     border-bottom: 1px solid gainsboro;
-    grid-template-columns: auto auto auto;
+    grid-template-columns: 60px auto 60px;
     position: fixed;
     z-index: 2;
-    box-shadow: $lightest-shadow;
 
     img {
         height: 16px;
@@ -49,7 +48,7 @@ nav {
 
 .sort {
     position: fixed;
-    top: 60px;
+    top: 55px;
     left: 0;
     z-index: 3;
     padding: 0 30px;
@@ -68,7 +67,6 @@ nav {
         color: rgb(60,60,60);
         padding: 7px 9px;
         margin-bottom: 10px;
-        box-shadow: $lightest-small-shadow;
         transition: background-color 0.2s ease-in;
 
         img {

@@ -27,8 +27,8 @@
                                             'text-align': trip.tripType === 'roundTrip' && i === 1 ? 'left' : 'right'}">{{flight.landingTime}}</p>
                 <span id="spanflight">FLIGHT</span>
                 <p id="flight">{{flight.flightNumber}}</p>
-                <span id="spanseat">SEAT</span>
-                <p id="seat">{{flight.seats[0].seatNumber}}</p>
+                <span id="spandistance">DISTANCE</span>
+                <p id="distance">{{flight.tripLength}}km</p>
                 <div id="stops">
                     <span *ngIf="flight.changeOverLocations.length > 0">{{flight.changeOverLocations.length}} stops</span>
                     <ul *ngIf="flight.changeOverLocations.length > 0">
@@ -80,7 +80,7 @@
         <li>
         <div class="price-more">
             <span id="total">TOTAL PRICE:</span>
-            <span id="newprice">190€</span>
+            <span id="newprice">{{trip.minumumPrice}}€</span>
         </div>
         </li>
     </ul>

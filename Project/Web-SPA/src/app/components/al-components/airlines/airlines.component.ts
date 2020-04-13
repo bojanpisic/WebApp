@@ -22,7 +22,15 @@ export class AirlinesComponent implements OnInit {
   constructor(private airlineService: AirlineService, private location: Location) {
     this.allAirlines = new Array<Airline>();
     this.colorsOfArilineDest = new Array<string>();
-   }
+  }
+
+  applySort(sortList: Array<boolean>) {
+    this.namedown = sortList[0];
+    this.nameup = sortList[1];
+    this.citydown = sortList[2];
+    this.cityup = sortList[3];
+    this.sortBy();
+  }
 
   ngOnInit(): void {
     this.loadAirlines();

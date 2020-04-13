@@ -24,7 +24,7 @@ export class TripService {
     const flights = this.flightService.getAllFlights();
 
     const t1 = new Trip([flights[0]], 'oneWay', flights[0].ticketPrice);
-    const t2 = new Trip([flights[2], flights[3]], 'roundTrip', flights[3].ticketPrice + flights[4].ticketPrice);
+    const t2 = new Trip([flights[2], flights[3]], 'roundTrip', flights[2].ticketPrice + flights[3].ticketPrice);
     const t3 = new Trip([flights[4], flights[0], flights[1]],
                         'multiCity', flights[4].ticketPrice + flights[0].ticketPrice + flights[1].ticketPrice);
     const t4 = new Trip([flights[4]], 'oneWay', flights[4].ticketPrice);

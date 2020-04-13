@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { LiteralArrayExpr } from '@angular/compiler';
 
 @Component({
   selector: 'app-airlines-header',
@@ -7,11 +8,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AirlinesHeaderComponent implements OnInit {
 
-  rotateArrow = true;
+  rotateArrow = false;
   nameup = false;
   namedown = false;
   cityup = false;
   citydown = false;
+  @Output() sort = new EventEmitter<Array<boolean>>();
 
   constructor() { }
 
@@ -23,6 +25,7 @@ export class AirlinesHeaderComponent implements OnInit {
   }
 
   sortBy() {
+    this.sort.emit([this.namedown, this.nameup, this.citydown, this.cityup]);
   }
 
   namedownClicked() {

@@ -44,6 +44,8 @@ import { TripComponent } from './components/al-components/trips/trip/trip.compon
 import { SearchBarComponent } from './components/helper/search-bar/search-bar.component';
 import { FriendsListComponent } from './components/friends-list/friends-list.component';
 import { FriendComponent } from './components/friend/friend.component';
+import { CarsComponent } from './components/rac-components/cars/cars.component';
+import { CarComponent } from './components/rac-components/cars/car/car.component';
 
 @NgModule({
    declarations: [
@@ -85,7 +87,9 @@ import { FriendComponent } from './components/friend/friend.component';
       TripComponent,
       SearchBarComponent,
       FriendsListComponent,
-      FriendComponent
+      FriendComponent,
+      CarsComponent,
+      CarComponent
    ],
    imports: [
       BrowserModule,

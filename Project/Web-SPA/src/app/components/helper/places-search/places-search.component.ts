@@ -19,6 +19,7 @@ export class PlacesSearchComponent implements OnInit {
   // @Input() oneColumn = false;
   @Input() left = false;
   @Input() right = false;
+  @Input() pickUpLocation = false;
 
   @ViewChild('search')
   public searchElementRef: ElementRef;

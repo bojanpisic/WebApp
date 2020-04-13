@@ -29,9 +29,9 @@ export class FriendsService {
 
   private mockedUsers() {
     const u1 = new User('Bojan', 'Pisic', '', 'bojanpisic', 'male', '00');
-    const u2 = new User('Milos', 'Bakmaz', '','milosbakmaz', 'male', '00');
-    const u3 = new User('Neko', 'Neko', '','neko', 'male', '00');
-    const u4 = new User('Neko2', 'Neko2','', 'neko2', 'male', '00');
+    const u2 = new User('Milos', 'Bakmaz', '', 'milosbakmaz', 'male', '00');
+    const u3 = new User('Neko', 'Neko', '', 'neko', 'male', '00');
+    const u4 = new User('Neko2', 'Neko2', '', 'neko2', 'male', '00');
 
     u1.friendsList.push(u2);
     u1.friendsList.push(u3);

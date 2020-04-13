@@ -1,7 +1,9 @@
 <!-- <input type="text" [ngClass]="{'one-column': oneColumn, 'two-columns': !oneColumn}" (keydown.enter)="$event.preventDefault()" placeholder="Anywhere" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #search> -->
-<input type="text" [ngStyle]="{'border-top-right-radius': left ? '0px' : '3px',
+<input *ngIf="!pickUpLocation" type="text" [ngStyle]="{'border-top-right-radius': left ? '0px' : '3px',
                                'border-bottom-right-radius': left ? '0px' : '3px',
                                'border-top-left-radius': left ? '3px' : '0px',
                                'border-bottom-left-radius': left ? '3px' : '0px',
                                'border-left': right ? '0px' : '1px solid lightgrey'}" 
+(keydown.enter)="$event.preventDefault()" placeholder="Anywhere" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #search>
+<input *ngIf="pickUpLocation" type="text" [ngStyle]="{'border-radius': '3px', 'grid-column:' : '1/ span 4'}" 
 (keydown.enter)="$event.preventDefault()" placeholder="Anywhere" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #search>

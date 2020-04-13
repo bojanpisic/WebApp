@@ -10,8 +10,8 @@ export class MapComponent implements OnInit {
   @Input() latitude;
 
   @Input() longitude;
-  zoom = 15;
-  
+  zoom = 4;
+
   constructor() { }
 
   ngOnInit(): void {

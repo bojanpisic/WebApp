@@ -1,19 +1,13 @@
-<header>
-  <nav>
-    <a href="#" routerLink='/'>
-        <img src="../../assets/back.png" alt="">
-    </a>
-  </nav>
-</header>
+<nav>
+  <img routerLink='' src="../../assets/back.png" alt="">
+</nav>
 <main>
   <h1>Sign up</h1>
   <form action="">
     <div class="progress">
-    
       <div class="progress-track"></div>
       <div id="step1" class="progress-step" (click)="next('step1')" [ngClass]="{ 'is-active': step === 'step1', 'is-complete': step === 'step2' || step === 'finish'}">
       </div>
-        
       <div id="step2" class="progress-step" (click)="next('step2')" [ngClass]="{ 'is-active': step === 'step2', 'is-complete': step === 'finish'}">
       </div>
     </div>

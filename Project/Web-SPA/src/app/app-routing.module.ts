@@ -17,6 +17,7 @@ import { AirlinesHeaderComponent } from './components/al-components/airlines/air
 import { FlightsComponent } from './components/al-components/flights/flights.component';
 import { TripsComponent } from './components/al-components/trips/trips.component';
 import { FriendsListComponent } from './components/friends-list/friends-list.component';
+import { CarsComponent } from './components/rac-components/cars/cars.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -31,6 +32,13 @@ const routes: Routes = [
     path: 'trips',
     children: [
       {path: '', component: TripsComponent},
+      {path: 'filter', component: FilterComponent}
+    ]
+  },
+  {
+    path: 'cars',
+    children: [
+      {path: '', component: CarsComponent},
       {path: 'filter', component: FilterComponent}
     ]
   },

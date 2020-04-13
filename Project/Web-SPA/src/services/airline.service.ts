@@ -18,7 +18,11 @@ export class AirlineService {
    }
 
   loadAllAirlines() {
-    return this.airlines;
+    const retValue = new Array<Airline>();
+    for (const item of this.airlines) {
+      retValue.push(item);
+    }
+    return retValue;
   }
 
   getAirline(id: number) {
@@ -48,7 +52,7 @@ export class AirlineService {
 
   allMockedAirlines() {
 
-    const a1 = new Airline('TurkishAirline', ['', 40.1077995688, 32.974662768]);
+    const a1 = new Airline('TurkishAirlines', ['', 40.1077995688, 32.974662768]);
     a1.id = 0;
     a1.logoUrl = '../../../../assets/turkish_airlines_logo.png';
     a1.adminid = -1;
@@ -59,9 +63,13 @@ export class AirlineService {
     a1.promoDescription.push('Keeping up to date with technology is an essential component of our innovation aims and in maintaining that\
     we have the youngest and most modern fleet in Europe. Our fleet had flourished thanks to our high-tech,\
     fuel-efficient and environmentally conscious aircraft purchases that provide a high level of comfort. ');
+    // tslint:disable-next-line:max-line-length
     a1.flightDestionations.push(new Destination('https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAAJjefkEa6Yz0ln6aw3QMbcoSq5h6A0bqrZWYulINfBQ6moJ9sNHzaAuWayuSVY5dKSpx6AMfqlycO_idIppJoF1HF-mIziwcaOzqZXaJy8ypbpkNTiAE1-Unvc5nmkmVTEhDbjVEtzS2PGdBnuOSUI1jGGhSWE0vCQdKt4lUdwXnkDqE5c4mubA&3u165&4u112&5m1&2e1&callback=none&key=AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE&token=82881', 'Belgrade', 'Serbia', 'BG'));
+    // tslint:disable-next-line:max-line-length
     a1.flightDestionations.push(new Destination('https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAAvRCvcmBB933jEgkxe01viVqffaJ93xSQK7JXq1pLKC5S1UCqvU6LK_wJ-FTEB_kMWUHLZ1xfiw-2mb6JCecqQxlZQLIvZ7xvjSV5BrVSaVEmkTlhEJpQOPYaOgsNK8SfEhAnQOE5SkEgZS-C1rZv--JoGhT3kLbfH2bNMogrQt7G5jaXJ1Vz-A&3u165&4u112&5m1&2e1&callback=none&key=AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE&token=47718', 'Instanbul', 'Turkey', 'IST'));
+    // tslint:disable-next-line:max-line-length
     a1.flightDestionations.push(new Destination('https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAAANGchNCx123LryABu6uYusFbnTk9kS9V3vAdPLMnvxLVpQPLH9Drzj6ecMKCPREzATK8ty2cMQSLeedWyD3XxY9gRTEMOX_Z6XTVfw4ifU3Dy1Ar6PUbCWzHRH172w2HEhCErSPn9v8_Ac42PyoC7MoTGhQ9ff3UvtO6WGw2ueLLM9xXpTtNDA&3u165&4u112&5m1&2e1&callback=none&key=AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE&token=26411', 'Berlin', 'Germany','BER'));
+    // tslint:disable-next-line:max-line-length
     a1.flightDestionations.push(new Destination('https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAAHGuMOfwCKPSR7dMDgoQbKF2yQNn6eEie0OjdbkMEG4GdZ6D7xCJWcxaXzA9kjqpXY9_UKXSGSU8xeTBB0VE3Ata_y_kyOBfABXmeUkYqopBYvb3Cg4o5SHHtdb9G5susEhCgq2TRTjFpYSLNl8mFPVuIGhQkWT3TUKqi9kBcJ3UNoD2wMVtM5w&3u165&4u112&5m1&2e1&callback=none&key=AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE&token=47953', 'London', 'UK', 'LON'));
 
     const a2 = new Airline('QatarAirways', ['Doha, Qatar', 25.27932, 51.52245]);
