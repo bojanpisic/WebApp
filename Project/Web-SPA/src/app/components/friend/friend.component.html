@@ -1,5 +1,4 @@
-<div class='friend-div'>
-    <!-- <span onclick="this.parentElement.style.display='none'" class="delete-span">Delete</span> -->
+<!-- <div class='friend-div'>
     <img src="../../../assets/avatar.png" class="photo" style="width:85px">
     <div class="info">
       <span id="flname">{{friend.firstName}} {{friend.lastName}}</span><br>
@@ -7,7 +6,17 @@
     </div>
     <hr>
     <div class="btns-div">
-        <button class="btns" id='invite'><img src="../../../assets/inviteFriend.png"><span>Invite</span></button>
-        <button class="btns" id='delete'><img src="../../../assets/deleteFriend.png"><span>Delete</span></button>
+        <button class="btns" id='invite' *ngIf='!add'><img src="../../../assets/inviteFriend.png"><span>Invite</span></button>
+        <button class="btns" id='delete' *ngIf='!add'><img src="../../../assets/deleteFriend.png"><span>Delete</span></button>
+        <button class="btns" id='add' *ngIf='add'><img src="../../../assets/add-friend.svg"><span>Add</span></button>
     </div>
+</div> -->
+
+<div class="card">
+  <img src="../../../assets/avatar.png" alt="">
+  <h1>{{friend.firstName}} {{friend.lastName}}</h1>
+  <p class="title">{{friend.email}}</p>
+  <p><button id='invite' *ngIf='!add'>Invite</button></p>
+  <p><button id='delete' *ngIf='!add'>Delete</button></p>
+  <p><button id='delete' *ngIf='add'>+Add</button></p>
 </div>

@@ -1,6 +1,7 @@
 <ul>
+    <li *ngIf='flights.length == 0' style ='margin-left: 10px'> Flights list is empty.</li>
     <!--ovde izlistavamo sve nase specijalne karte, svaka od njih moze biti oneway, roundtrip ili multicity-->
     <li *ngFor="let flight of flights">
-        <app-flight [flight]="flight"></app-flight>
+        <app-flight [flight]="flight" [userFlightShowing] = 'userId != undefined'></app-flight>
     </li>
 </ul>

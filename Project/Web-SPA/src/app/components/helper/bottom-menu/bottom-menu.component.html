@@ -1,8 +1,56 @@
 <div [ngStyle]="{'visibility': scrolled ? 'visible' : 'hidden',
-                'opacity': scrolled ? '1' : '0'}" class="bottom-menu-div">
-    <div>
-        <a id="linkToHome" href="#" routerLink='/'>
-            <img src="../../../../assets/icons8-home.svg" alt="">
+                'opacity': scrolled ? '1' : '0', 'grid-template-columns': user !== undefined? 'auto auto auto auto auto' : 'none'}"
+                 class="bottom-menu-div">
+    <!-- <div *ngIf='user !== undefined'>
+        <a id="linkToHome" href="#" routerLink='/{{user.id}}/home'>
+            <img src="../../../../assets/explore.svg" alt="">
+            <p>Explore</p>
+        </a>
+    </div> -->
+    <div *ngIf='user !== undefined'>
+        <a id="linkToHome" href="#" routerLink='/{{user.id}}/flights'>
+            <img src="../../../../assets/airplane.svg" alt="">
+            <p>Trips</p>
         </a>
     </div>
+
+    <div *ngIf='user !== undefined'>
+        <a id="linkToHome" href="#" routerLink='/'>
+            <img src="../../../../assets/car-icon.svg" alt="">
+            <p>Cars</p>
+        </a>
+    </div>
+
+    <div *ngIf='user === undefined'>
+        <a id="linkToHome" href="#" routerLink='/'>
+            <img src="../../../../assets/icons8-home.svg" alt="">
+            <p>Home</p>
+        </a>
+    </div>
+    <div *ngIf='user !== undefined'>
+        <a id="linkToHome" href="#" routerLink='/{{user.id}}/home'>
+            <img src="../../../../assets/icons8-home.svg" alt="">
+            <p>Home</p>
+        </a>
+    </div>
+
+    <div *ngIf='user !== undefined'>
+        <a id="linkToHome" routerLink='/{{user.id}}/friends-list'>
+            <img src="../../../../assets/chat.svg" alt="" style="height: 20px; margin-left: 10px;">
+            <p>Messages</p>
+        </a>
+    </div>
+    <!-- <div *ngIf='user !== undefined'>
+        <a id="linkToHome" routerLink='/{{user.id}}/friends-list'>
+            <img src="../../../../assets/friends.svg" alt="">
+            <p>Friends</p>
+        </a>
+    </div> -->
+    <div *ngIf='user !== undefined'>
+        <a id="linkToHome" href="#" routerLink='/{{user.id}}/profile'>
+            <img src="../../../../assets/account.svg" alt="" >
+            <p>Profile</p>
+        </a>
+    </div>
+
 </div>

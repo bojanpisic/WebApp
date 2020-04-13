@@ -46,6 +46,9 @@ import { FriendsListComponent } from './components/friends-list/friends-list.com
 import { FriendComponent } from './components/friend/friend.component';
 import { CarsComponent } from './components/rac-components/cars/cars.component';
 import { CarComponent } from './components/rac-components/cars/car/car.component';
+import { ProfileComponent } from './components/helper/profile/profile.component';
+import { ShowFlightsComponent } from './components/registered-user/show-flights/show-flights.component';
+import { UserNavComponent } from './components/helper/user-nav/user-nav.component';
 
 @NgModule({
    declarations: [
@@ -89,7 +92,10 @@ import { CarComponent } from './components/rac-components/cars/car/car.component
       FriendsListComponent,
       FriendComponent,
       CarsComponent,
-      CarComponent
+      CarComponent,
+      ProfileComponent,
+      ShowFlightsComponent,
+      UserNavComponent
    ],
    imports: [
       BrowserModule,

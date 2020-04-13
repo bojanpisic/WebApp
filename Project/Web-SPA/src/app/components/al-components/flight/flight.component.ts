@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Airline } from 'src/app/entities/airline';
 import { AirlineService } from 'src/services/airline.service';
+import { Flight } from 'src/app/entities/flight';
 
 @Component({
   selector: 'app-flight',
@@ -11,6 +12,9 @@ export class FlightComponent implements OnInit {
 
   @Input() flight;
   airline: Airline;
+  showRemove = false;
+  showRate = false;
+  @Input() userFlightShowing = false;
   showInfo: Array<boolean>;
   i: number;
 
@@ -22,6 +26,12 @@ export class FlightComponent implements OnInit {
   ngOnInit(): void {
     this.i = this.showInfo.length;
     this.showInfo.push(false);
+
+    if (this.flight.landingDate > Date.now() && this.userFlightShowing) {
+      this.showRate = true;
+    } else if (this.userFlightShowing) {
+      this.showRemove = true;
+    }
   }
   getAirlineName(flightId: number) {
     this.airline = this.airlineService.getAirline(flightId);
@@ -38,6 +48,22 @@ export class FlightComponent implements OnInit {
 
     return Math.floor((arrivalTimeInMinutes - departureTimeInMinutes) / 60) + 'h'
          + Math.floor((arrivalTimeInMinutes - departureTimeInMinutes) % 60) + 'min';
+  }
+
+  // registered user functions
+
+  removeClick() {
+    (document.querySelector('.modal') as HTMLElement).style.display = 'block';
+  }
+  rateClick() {
+  }
+
+  closeModal() {
+    (document.querySelector('.modal') as HTMLElement).style.display = 'none';
+  }
+
+  removeFlight(flight: Flight) {
+    (document.querySelector('.modal') as HTMLElement).style.display = 'none';
   }
 
 }

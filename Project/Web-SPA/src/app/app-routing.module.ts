@@ -18,9 +18,12 @@ import { FlightsComponent } from './components/al-components/flights/flights.com
 import { TripsComponent } from './components/al-components/trips/trips.component';
 import { FriendsListComponent } from './components/friends-list/friends-list.component';
 import { CarsComponent } from './components/rac-components/cars/cars.component';
+import { ProfileComponent } from './components/helper/profile/profile.component';
+import { ShowFlightsComponent } from './components/registered-user/show-flights/show-flights.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
+  {path: ':id/home', component: HomeComponent},
   {path: 'signup', component: SignupComponent},
   {path: 'signin', component: SigninComponent},
   {path: ':username/signin', component: SigninComponent},
@@ -45,7 +48,9 @@ const routes: Routes = [
   // {path: '/trips/filter', component: FilterComponent},
   {path: 'airlines-header', component: AirlinesHeaderComponent},
   {path: ':id/friends-list', component: FriendsListComponent},
-
+  {path: ':id/profile', component: ProfileComponent},
+  {path: ':id/flights', component: ShowFlightsComponent},
+  
   {
     path: 'airlines',
     children: [
