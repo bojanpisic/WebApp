@@ -7,55 +7,87 @@ import { Address } from 'src/app/entities/address';
 })
 export class CarRentService {
 
-  constructor() { }
-  
+  rentACarServices: Array<RentACarService>;
+
+  constructor() { 
+    this.rentACarServices = new Array<RentACarService>();
+  }
+
   loadAllRentServices() {
     return this.allMockedRentServices();
   }
 
   allMockedRentServices() {
 
-    let allServices = new Array<RentACarService>();
+    const branch1 = new RentACarService('RentACarService01', new Address('Beograd', 'Srbija', 'BG', 20.30416545, 44.81833006));
+    const branch2 = new RentACarService('RentACarService02', new Address('Beograd', 'Srbija', 'BG', 20.30416545, 44.81833006));
+    const branch3 = new RentACarService('RentACarService03', new Address('Beograd', 'Srbija', 'BG', 20.30416545, 44.81833006));
+    const branch4 = new RentACarService('RentACarService04', new Address('Beograd', 'Srbija', 'BG', 20.30416545, 44.81833006));
+    const branch5 = new RentACarService('RentACarService05', new Address('Beograd', 'Srbija', 'BG', 20.30416545, 44.81833006));
+    const branch6 = new RentACarService('RentACarService06', new Address('Beograd', 'Srbija', 'BG', 20.30416545, 44.81833006));
+
 
     const a1 = new RentACarService('Instanbul Rent Service', new Address('Istanbul', 'Turkey', 'IST', 32.974662768,  40.1077995688));
     a1.id = 0;
-    a1.branches.push('Belgrade');
-    a1.branches.push('Instanbul');
-    a1.branches.push('Madrid');
-    a1.branches.push('Berlin');
-    a1.branches.push('London');
+    a1.branches.push(branch1);
+    a1.branches.push(branch2);
+    a1.branches.push(branch3);
+    a1.branches.push(branch4);
+    a1.branches.push(branch5);
+
     a1.averageRating = 4.7;
-    a1.promoDescription = 'Established back in 1933. Now we fly to more contries than any other airline.';
+    a1.promoDescription.push('Lorem ipsum, dolor sit amet consectetur adipisicing elit.\
+                              Voluptas omnis accusamus, odio in blanditiis animi accusantium velit tempore,\
+                              nam laborum quibusdam fugit aspernatur ullam nihil ipsam illo similique minima magni?');
+    a1.promoDescription.push('Nihil iste aliquid officiis excepturi! Molestiae id commodi vero accusantium reiciendis a,\
+                              magnam labore repellat impedit aliquid voluptatem molestias maxime quam autem, mollitia quas\
+                              repellendus excepturi aut eveniet eum perspiciatis nihil dicta officia illo. Ducimus aliquid\
+                              enim asperiores consequatur reprehenderit velit alias distinctio quia vitae, natus voluptatum\
+                              libero at doloremque possimus unde consectetur, corporis nostrum voluptate in tempore quod ullam\
+                              aliquam nulla? Nostrum impedit consequatur magni nulla quisquam temporibus laboriosam?');
 
 
     const a2 = new RentACarService('Doha Car Service', new Address('Doha', 'Qatar', 'DO',51.52245,25.27932 ));
     a2.id = 1;
-    a2.branches.push('Belgrade');
-    a2.branches.push('Instanbul');
-    a2.branches.push('Madrid');
-    a2.branches.push('Berlin');
-    a2.branches.push('London');
-    a2.averageRating = 5.0;
-    a2.promoDescription = 'World’s fastest-growing airline. We connect more than 160 destinations on the map every day.';
+    a2.branches.push(branch1);
+    a2.branches.push(branch2);
+    a2.branches.push(branch3);
+    a2.branches.push(branch4);
+    a2.branches.push(branch5);
+
+    a2.averageRating = 4.7;
+    a2.promoDescription.push('Lorem ipsum, dolor sit amet consectetur adipisicing elit.\
+                              Voluptas omnis accusamus, odio in blanditiis animi accusantium velit tempore,\
+                              nam laborum quibusdam fugit aspernatur ullam nihil ipsam illo similique minima magni?');
+    a2.promoDescription.push('Nihil iste aliquid officiis excepturi! Molestiae id commodi vero accusantium reiciendis a,\
+                              magnam labore repellat impedit aliquid voluptatem molestias maxime quam autem, mollitia quas\
+                              repellendus excepturi aut eveniet eum perspiciatis nihil dicta officia illo. Ducimus aliquid\
+                              enim asperiores consequatur reprehenderit velit alias distinctio quia vitae, natus voluptatum\
+                              libero at doloremque possimus unde consectetur, corporis nostrum voluptate in tempore quod ullam\
+                              aliquam nulla? Nostrum impedit consequatur magni nulla quisquam temporibus laboriosam?');
 
     const a3 = new RentACarService('Belgrade Rent Service', new Address('Beograd', 'Srbija', 'BG', 20.30416545, 44.81833006));
     a3.id = 2;
-    a3.branches.push('Belgrade');
-    a3.branches.push('Instanbul');
-    a3.branches.push('Madrid');
-    a3.branches.push('Berlin');
-    a3.branches.push('London');
-    a3.branches.push('Madrid');
-    a3.branches.push('Berlin');
-    a3.branches.push('London');
-    a3.averageRating = 4.3;
-    // tslint:disable-next-line: max-line-length
-    a3.promoDescription = 'Founded in 1927. We offer a new concept of in-flight comfort across our growing network of lines.Maximum comfort while traveling, regardless of the class.';
+    a3.branches.push(branch1);
+    a3.branches.push(branch2);
+    a3.branches.push(branch3);
+    a3.branches.push(branch4);
+    a3.branches.push(branch5);
 
-    allServices.push(a1);
-    allServices.push(a2);
-    allServices.push(a3);
+    a3.averageRating = 4.7;
+    a3.promoDescription.push('Lorem ipsum, dolor sit amet consectetur adipisicing elit.\
+                              Voluptas omnis accusamus, odio in blanditiis animi accusantium velit tempore,\
+                              nam laborum quibusdam fugit aspernatur ullam nihil ipsam illo similique minima magni?');
+    a3.promoDescription.push('Nihil iste aliquid officiis excepturi! Molestiae id commodi vero accusantium reiciendis a,\
+                              magnam labore repellat impedit aliquid voluptatem molestias maxime quam autem, mollitia quas\
+                              repellendus excepturi aut eveniet eum perspiciatis nihil dicta officia illo. Ducimus aliquid\
+                              enim asperiores consequatur reprehenderit velit alias distinctio quia vitae, natus voluptatum\
+                              libero at doloremque possimus unde consectetur, corporis nostrum voluptate in tempore quod ullam\
+                              aliquam nulla? Nostrum impedit consequatur magni nulla quisquam temporibus laboriosam?');
+    this.rentACarServices.push(a1);
+    this.rentACarServices.push(a2);
+    this.rentACarServices.push(a3);
 
-    return allServices;
+    return this.rentACarServices;
   }
 }

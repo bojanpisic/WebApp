@@ -11,9 +11,10 @@ export class Car {
     averageRate: number;
     pricePerDay: number;
     automatic: true; // false ako je manual gearbox
+    image: string;
 
     constructor(id: number, idOfService: number, idOfAffiliate: number, brand: string, model: string, year: number, type: string,
-                numberOfSeats: number, averageRate: number, pricePerDay: number) {
+                numberOfSeats: number, averageRate: number, pricePerDay: number, image: string) {
         this.id = id;
         this.idOfService = idOfService;
         this.idOfAffiliate = idOfAffiliate;
@@ -24,5 +25,6 @@ export class Car {
         this.numberOfSeats = numberOfSeats;
         this.averageRate = averageRate;
         this.pricePerDay = pricePerDay;
+        this.image = image;
     }
 }

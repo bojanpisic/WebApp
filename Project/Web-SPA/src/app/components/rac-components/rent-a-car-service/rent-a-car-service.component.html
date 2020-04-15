@@ -17,7 +17,7 @@
         <span>Branches: </span>
         <div class="cities">
             <p *ngFor = 'let destination of data.branches; let ind = index'
-             style="background-color: {{ colorsOfBranches[ind % colorsOfBranches.length] }};">{{destination}}</p>
+             style="background-color: {{ colorsOfBranches[ind % colorsOfBranches.length] }};">{{destination.address.city}}</p>
         </div>
     </div>                  
 </a>

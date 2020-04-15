@@ -43,15 +43,15 @@ export class UserService {
   }
 
   mockedUsers() {
-    const user1 = new RegisteredUser('Bojan', 'Pisic', '123456', 'bojanpisic', 'R', '00000000');
+    const user1 = new RegisteredUser('Susan', 'William', 'susanwilliam123', 'susan@gmail.com', 'Kings Road 201', '(+352)34 654-127');
     user1.userType = 'airlineAdmin';
     user1.id = this.allUsers.length;
 
-    const user2 = new RegisteredUser('Bojan', 'Pisic', '123456', 'email', 'Rocevic', '00000000');
+    const user2 = new RegisteredUser('Harry', 'Smith', 'harrysmith', 'harry@gmail.com', 'Bridge Street 103', '(+351)24 856-921');
 
     const f1 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '03h 40min', 12,
-    [new ChangeOver('11:20', '10:30', new Address('Paris', 'France', 'PAR', 0,0))], 300.00, '234T',
-    new Address('Madrid', 'Spain', 'MAD', 0,0), new Address('Belgrade', 'Serbia', 'BG', 0,0), '06:20', '12:13',
+    [new ChangeOver('11:20', '10:30', new Address('Paris', 'France', 'PAR', 0, 0))], 300.00, '234T',
+    new Address('Madrid', 'Spain', 'MAD', 0, 0), new Address('Belgrade', 'Serbia', 'BG', 0, 0), '06:20', '12:13',
     [new Seat(0, '33R')]);
 
     user1.flights.push(f1);

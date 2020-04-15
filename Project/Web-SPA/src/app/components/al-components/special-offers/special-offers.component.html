@@ -1,3 +1,7 @@
+<nav>
+    <img routerLink='/airlines/{{airlineId}}/airline-info' src="../../../../assets/back.png">
+    <a href="#" routerLink='/cars/filter' id="filter"><img src="../../../../assets/icons8-slider-100.png">Filters</a>
+</nav>
 <ul>
     <!--ovde izlistavamo sve nase specijalne karte, svaka od njih moze biti oneway, roundtrip ili multicity-->
     <li *ngFor="let offer of specialOffers">

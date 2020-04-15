@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-drive-main-form',
@@ -9,7 +10,7 @@ export class DriveMainFormComponent implements OnInit {
 
   sameLocationChoosed = true;
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
   }
@@ -20,5 +21,9 @@ export class DriveMainFormComponent implements OnInit {
 
   differentLocation() {
     this.sameLocationChoosed = false;
+  }
+
+  onSubmit() {
+    this.router.navigate(['/cars']);
   }
 }

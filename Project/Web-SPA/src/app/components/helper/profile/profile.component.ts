@@ -14,7 +14,7 @@ export class ProfileComponent implements OnInit {
   user: User;
   somethingChanged = false;
   passwordchanged = false;
-  constructor(private route: ActivatedRoute, private userService: UserService) { 
+  constructor(private route: ActivatedRoute, private userService: UserService) {
     route.params.subscribe(params => {
       this.userId = params.id;
     });
@@ -25,7 +25,7 @@ export class ProfileComponent implements OnInit {
   }
 
   submitChanges() {
-    (document.querySelector('#snackbar') as HTMLElement).className = "show";
+    (document.querySelector('#snackbar') as HTMLElement).className = 'show';
     this.somethingChanged = false;
     setTimeout( () => {
         (document.querySelector('#snackbar') as HTMLElement).className = '';
@@ -34,7 +34,7 @@ export class ProfileComponent implements OnInit {
   }
 
   changePhoto() {
-    
+
   }
   passwordChanged() {
     this.somethingChanged = true;

@@ -103,6 +103,8 @@ a {
   .name {
     font-size: 1.2em;
     font-weight: 600;
+    max-width: 200px;
+    overflow-wrap: break-word;
     // color: rgb(66, 66, 66);
   }
 

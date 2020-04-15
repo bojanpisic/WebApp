@@ -25,7 +25,7 @@
     <input style="border-left: 0px;" class="right-input" type="text" placeholder="mm/dd/yyyy">
     <p id = "travellers">TRAVELLERS</p>
     <app-person-num-search id = "travellers-div"></app-person-num-search>
-    <input id="submit" type="submit" value="SEARCH">
+    <input (click)="onSubmit()" id="submit" type="submit" value="SEARCH">
 </form>
 <div class="separator-div">
     <hr class="separator">

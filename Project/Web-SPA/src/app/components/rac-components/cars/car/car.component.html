@@ -1,6 +1,6 @@
 <div class="all">
     <div class="container1">
-        <div class="image">
+        <div class="image" [ngStyle]="{'background': 'url(' + car.image + ') no-repeat center / cover'}">
         </div>
         <!-- <div class="type">
             <span>LUXURY</span>
@@ -18,7 +18,7 @@
             <span>A</span>
         </div> -->
         <div class="name">
-            <span>Range Rover Sport 2020</span>
+            <span>{{car.brand}} {{car.model}} {{car.year}}</span>
         </div>
         <div class="racs-name">
             <span id="company">COMPANY: </span>
@@ -29,7 +29,7 @@
         <div class="grade">
             <span id="grade">
                 <svg viewBox="0 0 1000 1000" role="presentation" aria-hidden="true" focusable="false" style="fill: currentcolor;"><path d="M972 380c9 28 2 50-20 67L725 619l87 280c11 39-18 75-54 75-12 0-23-4-33-12L499 790 273 962a58 58 0 0 1-78-12 50 50 0 0 1-8-51l86-278L46 447c-21-17-28-39-19-67 8-24 29-40 52-40h280l87-279c7-23 28-39 52-39 25 0 47 17 54 41l87 277h280c24 0 45 16 53 40z"></path></svg>
-                4.75
+                {{car.averageRate}}
             </span>
         </div>
     </div>
@@ -39,124 +39,7 @@
     </div>
     <div class="price">
         <span id="total">TOTAL PRICE:</span>
-        <span id="newprice">50€</span>
+        <span id="newprice">{{car.pricePerDay}}€</span>
     </div>
     <button>VIEW DEAL</button>
 </div>
-<div class="all">
-    <div class="container1">
-        <div class="image">
-        </div>
-        <!-- <div class="type">
-            <span>LUXURY</span>
-        </div>
-        <div class="people">
-            <img src="../../../../../assets/cars/747376.svg">
-            <span>4</span>
-        </div>
-        <div class="bags">
-            <img src="../../../../../assets/cars/1516999.svg">
-            <span>2</span>
-        </div>
-        <div class="engine">
-            <img src="../../../../../assets/cars/gear-stick.svg">
-            <span>A</span>
-        </div> -->
-        <div class="name">
-            <span>Range Rover Sport 2020</span>
-        </div>
-        <div class="racs-name">
-            <span id="company">COMPANY: </span>
-            <span>
-                HERTZ CARS
-            </span>
-        </div>
-        <div class="grade">
-            <span id="grade">
-                <svg viewBox="0 0 1000 1000" role="presentation" aria-hidden="true" focusable="false" style="fill: currentcolor;"><path d="M972 380c9 28 2 50-20 67L725 619l87 280c11 39-18 75-54 75-12 0-23-4-33-12L499 790 273 962a58 58 0 0 1-78-12 50 50 0 0 1-8-51l86-278L46 447c-21-17-28-39-19-67 8-24 29-40 52-40h280l87-279c7-23 28-39 52-39 25 0 47 17 54 41l87 277h280c24 0 45 16 53 40z"></path></svg>
-                4.75
-            </span>
-        </div>
-    </div>
-    <div (click)="showStopsInfo()" id="stops-info-arrow"> <!--ovde imamo info
-        ukoliko taj let od malopre(bg-lon) ima neka presedanja-->
-            <img [ngStyle]="{'transform': showInfo ? 'rotate(90deg)' : 'rotate(-90deg)'}" src="../../../../assets/back.png" alt="">
-    </div>
-    <div class="price">
-        <span id="total">TOTAL PRICE:</span>
-        <span id="newprice">50€</span>
-    </div>
-    <button>VIEW DEAL</button>
-</div>
-<div class="all">
-    <div class="container1">
-        <div class="image">
-        </div>
-        <!-- <div class="type">
-            <span>LUXURY</span>
-        </div>
-        <div class="people">
-            <img src="../../../../../assets/cars/747376.svg">
-            <span>4</span>
-        </div>
-        <div class="bags">
-            <img src="../../../../../assets/cars/1516999.svg">
-            <span>2</span>
-        </div>
-        <div class="engine">
-            <img src="../../../../../assets/cars/gear-stick.svg">
-            <span>A</span>
-        </div> -->
-        <div class="name">
-            <span>Range Rover Sport 2020</span>
-        </div>
-        <div class="racs-name">
-            <span id="company">COMPANY: </span>
-            <span>
-                HERTZ CARS
-            </span>
-        </div>
-        <div class="grade">
-            <span id="grade">
-                <svg viewBox="0 0 1000 1000" role="presentation" aria-hidden="true" focusable="false" style="fill: currentcolor;"><path d="M972 380c9 28 2 50-20 67L725 619l87 280c11 39-18 75-54 75-12 0-23-4-33-12L499 790 273 962a58 58 0 0 1-78-12 50 50 0 0 1-8-51l86-278L46 447c-21-17-28-39-19-67 8-24 29-40 52-40h280l87-279c7-23 28-39 52-39 25 0 47 17 54 41l87 277h280c24 0 45 16 53 40z"></path></svg>
-                4.75
-            </span>
-        </div>
-    </div>
-    <div (click)="showStopsInfo()" id="stops-info-arrow"> <!--ovde imamo info
-        ukoliko taj let od malopre(bg-lon) ima neka presedanja-->
-            <img [ngStyle]="{'transform': showInfo ? 'rotate(90deg)' : 'rotate(-90deg)'}" src="../../../../assets/back.png" alt="">
-    </div>
-    <div class="price">
-        <span id="total">TOTAL PRICE:</span>
-        <span id="newprice">50€</span>
-    </div>
-    <button>VIEW DEAL</button>
-</div>
-<div class="container">
-    <span id="grade">
-        <svg viewBox="0 0 1000 1000" role="presentation" aria-hidden="true" focusable="false" style="fill: currentcolor;"><path d="M972 380c9 28 2 50-20 67L725 619l87 280c11 39-18 75-54 75-12 0-23-4-33-12L499 790 273 962a58 58 0 0 1-78-12 50 50 0 0 1-8-51l86-278L46 447c-21-17-28-39-19-67 8-24 29-40 52-40h280l87-279c7-23 28-39 52-39 25 0 47 17 54 41l87 277h280c24 0 45 16 53 40z"></path></svg>
-        4.75
-    </span>
-    <div class="image">
-    </div>
-    <div class="people">
-        <img src="../../../../../assets/cars/people.png">
-        <span>4</span>
-    </div>
-    <div class="bags">
-        <img src="../../../../../assets/cars/suitcase.png">
-        <span>2</span>
-    </div>
-    <div class="engine">
-        <img src="../../../../../assets/cars/automatic.png">
-    </div>
-    <div class="rac-service-name">
-        <p>RENT A CAR SERVICE:</p>
-        <span>
-            <img src="../../../../../assets/turkish_airlines_logo.png" alt="">
-            HERTZ CARS
-        </span>
-    </div>
-</div>
-

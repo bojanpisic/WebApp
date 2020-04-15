@@ -1,14 +1,25 @@
 <app-user-nav [user]='user'></app-user-nav>
 <form action="">
-    <img src="{{user.imageUrl == null ? '../../../../../../assets/avatar.png':''}}" alt="" (click)='changePhoto()'>
+    <h1>Hi {{user.firstName}}</h1>
+    <div id="image">
+        <img src="{{user.imageUrl == null ? '../../../../../../assets/girl.jpeg':''}}" alt="" (click)='changePhoto()'>
+    </div>
+    <h3>Edit profile</h3>
+    <p>NAME:</p>
     <input type='text' class="input" id='firstName' value="{{user.firstName}}" (change)="somethingChanged = true">
+    <p>LAST NAME:</p>
     <input type='text' class="input" id='lastName' value="{{user.lastName}}" (change)="somethingChanged = true">
+    <p>EMAIL:</p>
     <input type='text' class="input" id='email' value="{{user.email}}" (change)="somethingChanged = true">
+    <p>PASSWORD:</p>
     <input type='password' class="input" id='pasw' value="{{user.password}}" (change)="passwordChanged()">
+    <p *ngIf='passwordchanged'>CONFIRM PASSWORD:</p>
     <input *ngIf='passwordchanged' type='password' class="input" id='submit-pasw' value="" (change)="passwordChanged()">
+    <p>ADDRESS:</p>
     <input type='text' class="input" id='address' value="{{user.address}}" (change)="somethingChanged = true">
+    <p>PHONE:</p>
     <input type="text" class="input" id='phone' value="{{user.phone}}" (change)="somethingChanged = true">
-    <button id='submit' (click)='submitChanges()' *ngIf='somethingChanged'>Submit</button>
+    <button id='submit' (click)='submitChanges()' *ngIf='somethingChanged'>APPLY</button>
 </form>
 <div id="snackbar">Successfully changed.</div>
 <app-bottom-menu [user] = 'user'></app-bottom-menu>
