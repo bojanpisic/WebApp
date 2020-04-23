@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -23,7 +24,6 @@ import { RentACarServiceComponent } from './components/rac-components/rent-a-car
 import { RentACarServicesComponent } from './components/rac-components/rent-a-car-services/rent-a-car-services.component';
 import { RentACarServiceInfoComponent } from './components/rac-components/rent-a-car-service-info/rent-a-car-service-info.component';
 import { TopRatedComponent } from './components/home/top-rated/top-rated.component';
-import { SortAndFilterBarComponent } from './components/helper/sort-and-filter-bar/sort-and-filter-bar.component';
 import { FlightFormPartComponent } from './components/home/flight-main-form/flight-form-part/flight-form-part.component';
 import { RegisterCompanyComponent } from './components/register-company/register-company.component';
 import { AddFlightComponent } from './components/al-components/add-flight/add-flight.component';
@@ -35,20 +35,26 @@ import { MapComponent } from './components/helper/map/map.component';
 import { AgmCoreModule } from '@agm/core';
 import { PlacesPickerComponent } from './components/helper/places-picker/places-picker.component';
 import { SpecialOfferComponent } from './components/al-components/special-offers/special-offer/special-offer.component';
-import { FlightComponent } from './components/al-components/flight/flight.component';
 import { FilterComponent } from './components/al-components/filter/filter.component';
 import { AirlinesHeaderComponent } from './components/al-components/airlines/airlines-header/airlines-header.component';
-import { FlightsComponent } from './components/al-components/flights/flights.component';
 import { TripsComponent } from './components/al-components/trips/trips.component';
 import { TripComponent } from './components/al-components/trips/trip/trip.component';
 import { SearchBarComponent } from './components/helper/search-bar/search-bar.component';
-import { FriendsListComponent } from './components/friends-list/friends-list.component';
-import { FriendComponent } from './components/friend/friend.component';
+import { FriendsListComponent } from './components/registered-user/friends-list/friends-list.component';
+import { FriendComponent } from './components/registered-user/friends-list/friend/friend.component';
 import { CarsComponent } from './components/rac-components/cars/cars.component';
 import { CarComponent } from './components/rac-components/cars/car/car.component';
 import { ProfileComponent } from './components/helper/profile/profile.component';
 import { ShowFlightsComponent } from './components/registered-user/show-flights/show-flights.component';
 import { UserNavComponent } from './components/helper/user-nav/user-nav.component';
+import { MyFlightsComponent } from './components/registered-user/my-flights/my-flights.component';
+import { MyCarsComponent } from './components/registered-user/my-cars/my-cars.component';
+import { MessagesComponent } from './components/registered-user/messages/messages.component';
+import { MyFlightComponent } from './components/registered-user/my-flights/my-flight/my-flight.component';
+import { MyCarComponent } from './components/registered-user/my-cars/my-car/my-car.component';
+import { MessageComponent } from './components/registered-user/messages/message/message.component';
+import { MessageInfoComponent } from './components/registered-user/messages/message-info/message-info.component';
+import { EditProfileComponent } from './components/helper/profile/edit-profile/edit-profile.component';
 
 @NgModule({
    declarations: [
@@ -72,7 +78,6 @@ import { UserNavComponent } from './components/helper/user-nav/user-nav.componen
       RentACarServiceComponent,
       RentACarServicesComponent,
       RentACarServiceInfoComponent,
-      SortAndFilterBarComponent,
       FlightFormPartComponent,
       RegisterCompanyComponent,
       AddFlightComponent,
@@ -82,10 +87,8 @@ import { UserNavComponent } from './components/helper/user-nav/user-nav.componen
       MapComponent,
       PlacesPickerComponent,
       SpecialOfferComponent,
-      FlightComponent,
       FilterComponent,
       AirlinesHeaderComponent,
-      FlightsComponent,
       TripsComponent,
       TripComponent,
       SearchBarComponent,
@@ -95,12 +98,21 @@ import { UserNavComponent } from './components/helper/user-nav/user-nav.componen
       CarComponent,
       ProfileComponent,
       ShowFlightsComponent,
-      UserNavComponent
+      UserNavComponent,
+      MyFlightsComponent,
+      MyCarsComponent,
+      MessagesComponent,
+      MyFlightComponent,
+      MyCarComponent,
+      MessageComponent,
+      MessageInfoComponent,
+      EditProfileComponent
    ],
    imports: [
       BrowserModule,
       AppRoutingModule,
       FormsModule,
+      ReactiveFormsModule,
       AgmCoreModule.forRoot({
          apiKey: 'AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE',
          libraries: ['places']

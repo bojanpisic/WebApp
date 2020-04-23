@@ -1,45 +1,149 @@
 @import './../../../app.component.scss';
 
-form {
-    margin: 50px 0 100px 30px;
-    h1 {
-      display: inline-block;
-      color: rgb(60, 60, 60);
-      vertical-align: top;
-      margin-bottom: 50px;
-    }
+* {
+  box-sizing: border-box;
+}
 
-    h3 {
-      margin-bottom: 30px;
+header {
+  nav {
+    display: grid;
+    width: 100%;
+    height: 60px;
+    background: white;
+    opacity: 1;
+    padding:20px 30px;
+    border-bottom: 1px solid gainsboro;
+    grid-template-columns: 90px auto 90px;
+    position: fixed;
+    z-index: 9999;
+  
+    img {
+        height: 16px;
+        width: 16px;
+        margin: auto 0;
     }
-    .input{
-      font-size: 1em;
-        width: 70%;
-        height: 30px;
-        padding-left: 10px;
-        margin-bottom: 15px;
-        border: 0;
-        border-bottom: 1px solid lightgray;
-        outline: $purple;
+  
+    span, a {
+        font-size: 16px;
+        text-align: center;
+        font-weight: 600;
+        color: rgb(60,60,60);
     }
+  
+    .bonus {
+        text-align: right;
+        img {
+          height: 18px;
+          width: 18px;
+          vertical-align: middle;
+          margin-bottom: 3px;
+          margin-right: 5px;
+        }
+    }
+  }
+}
+
+main {
+  padding-top: 70px;
+
+  .personal-info {
+    margin-top: 30px;
+    margin-left: 29px;
+    svg {
+      vertical-align: middle;
+      margin-right: 6px;
+      margin-bottom: 2px;
+    }
+  
+    h4 {
+      display: inline;
+      color: rgb(60,60,60);
+      font-size: 20px;
+    }
+  }
+
+  .container {
+    margin: 30px 30px 40px 30px;
+    display: grid;
+    grid-template-columns: auto 120px;
+    grid-template-rows: 20px 30px 20px 30px 20px 35px 50px;
+    grid-template-areas: "spanfirstname image"
+                         "firstname image"
+                         "spanlastname image"
+                         "lastname image"
+                         "spanphone image"
+                         "phone image"
+                         "edit none";
 
     p {
-      font-size: .75em;
-      color: rgb(60, 60, 60);
+      margin: 0;
+      margin-top: 3px;
+      color: rgb(80, 80, 80);
+    }
+
+    span {
+      margin-top: 8px;
+      font-size: .85em;
       font-weight: bold;
-      margin-top: 0;
-      margin-bottom: 3px;
+      color: rgb(60, 60, 60);
+    }
+
+    #spanfirstname {
+      grid-area: spanfirstname;
+    }
+
+    #firstname {
+      grid-area: firstname;
+      font-size: 20px;
+    }
+
+    #spanlastname {
+      grid-area: spanlastname;
+    }
+
+    #lastname {
+      grid-area: lastname;
+      font-size: 20px;
+    }
+
+    #spanphone {
+      grid-area: spanphone;
+    }
+
+    #phone {
+      grid-area: phone;
+      font-size: 20px;
+    }
+
+    #edit {
+      grid-area: edit;
+      margin-top: 20px;
+      margin-right: auto;
+      padding: .4em .7em .4em .5em;
+      background-color: $light-blue;
+      text-decoration: none;
+      color: white;
+      font-size: 14px;
+      border-radius: 20px;
+      box-shadow: $lightest-shadow;
+
+      img {
+        height: 16px;
+        width: 16px;
+        vertical-align: middle;
+        margin-bottom: 5px;
+        margin-right: 2px;
+      }
     }
 
     #image {
-      float: right;
-      margin-right: 30px;
-      justify-self: right;
+      grid-area: image;
       width: 120px;
       height: 120px;
       position: relative;
       overflow: hidden;
       border-radius: 50%;
+      box-shadow: $gray-shadow;
       img{
         display: inline-block;
         margin-top: -20%;
@@ -48,57 +152,205 @@ form {
         width: auto;
       }
     }
-    button{
-        padding: 1em;
-        margin-top: 30px;
-        width: calc(100% - 60px);
-        border: none;
-        background-color: $purple;
-        color:white;
-        font-weight: bold;
-        border-radius: 20px;
-        font-size: 15px;
+  }
+
+  .friends {
+    display: grid;
+    grid-template-columns: auto auto;
+    margin-top: 30px;
+    margin-left: 29px;
+  
+    h4 {
+      display: inline;
+      color: rgb(60,60,60);
+      font-size: 20px;
+      margin: 0;
     }
+
+    a {
+      text-align: right;
+      margin-right: 30px;
+      color: rgb(60,60,60);
+      font-weight: bold;
+    }
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+    margin-left: 25px;
+    margin-top: 25px;
+    margin-bottom: 30px;
+
+    .friends-avatar {
+      display: inline-block;
+      width: 60px;
+      height: 60px;
+      background-image: url('../../../../assets/friend1.jpeg');
+      background-size: cover;
+      background-position: 50% 10%;
+      position: relative;
+      overflow: hidden;
+      border-radius: 50%;
+      border: 5px solid white;
+
+      img {
+        margin-left: 5px;
+        margin-top: 5px;
+        width: 50px;
+        height: 50px;
+      }
+
+      .plus {
+        text-align: center;
+        width: 50px;
+        height: 50px;
+        padding: 15px 0 15px 0;
+        line-height: 20px;
+        font-size: 40px;
+        color: white;
+        font-weight: bold;
+      }
+    }
+
+    li + li {
+      margin-left: -15px;
+    }
+  }
+
+  .points {
+    margin-left: 30px;
+    margin-top: 30px;
+    max-width: calc(100% - 60px);
+    font-size: 1.1em;
+    color: rgb(60,60,60);
+
+    img {
+      height: 18px;
+      width: 18px;
+      vertical-align: middle;
+      margin-bottom: 3px;
+      margin-right: 5px;
+    }
+    
+    span {
+      font-weight: bold;
+    }
+  }
+
+  button {
+    width: calc(100% - 60px);
+    margin: 30px 30px 0px 30px;
+    padding: .6em;
+    outline: none;
+    border-radius: 10px;
+    border: 2px solid rgb(60,60,60);
+    color: rgb(60,60,60);
+    font-weight: bold;
+    font-size: 1.1em;
+    background-color: white;
+  }
 }
 
-#snackbar {
-    visibility: hidden; 
-    min-width: 250px;
-    margin-left: -140px; 
-    background-color: #333;
-    color: #fff;
-    text-align: center; 
-    border-radius: 2px; 
-    padding: 16px; 
-    position: fixed; 
-    z-index: 1;
-    left: 50%; 
-    bottom: 120px; 
-  }
-  
-  #snackbar.show {
-    visibility: visible; 
+// form {
+//     margin: 50px 0 100px 30px;
+//     h1 {
+//       display: inline-block;
+//       color: rgb(60, 60, 60);
+//       vertical-align: top;
+//       margin-bottom: 50px;
+//     }
 
-    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-    animation: fadein 0.5s, fadeout 0.5s 2.5s;
-  }
+//     h3 {
+//       margin-bottom: 30px;
+//     }
+//     .input{
+//       font-size: 1em;
+//         width: 70%;
+//         height: 30px;
+//         padding-left: 10px;
+//         margin-bottom: 15px;
+//         border: 0;
+//         border-bottom: 1px solid lightgray;
+//         outline: $purple;
+//     }
+
+//     p {
+//       font-size: .75em;
+//       color: rgb(60, 60, 60);
+//       font-weight: bold;
+//       margin-top: 0;
+//       margin-bottom: 3px;
+//     }
+
+//     #image {
+//       float: right;
+//       margin-right: 30px;
+//       justify-self: right;
+//       width: 120px;
+//       height: 120px;
+//       position: relative;
+//       overflow: hidden;
+//       border-radius: 50%;
+//       img{
+//         display: inline-block;
+//         margin-top: -20%;
+//         margin-left: -35%;
+//         height: 120%;
+//         width: auto;
+//       }
+//     }
+//     button{
+//         padding: 1em;
+//         margin-top: 30px;
+//         width: calc(100% - 60px);
+//         border: none;
+//         background-color: $purple;
+//         color:white;
+//         font-weight: bold;
+//         border-radius: 20px;
+//         font-size: 15px;
+//     }
+// }
+
+// #snackbar {
+//     visibility: hidden; 
+//     min-width: 250px;
+//     margin-left: -140px; 
+//     background-color: #333;
+//     color: #fff;
+//     text-align: center; 
+//     border-radius: 2px; 
+//     padding: 16px; 
+//     position: fixed; 
+//     z-index: 1;
+//     left: 50%; 
+//     bottom: 120px; 
+//   }
   
-  @-webkit-keyframes fadein {
-    from {bottom: 0; opacity: 0;}
-    to {bottom: 30px; opacity: 1;}
-  }
+//   #snackbar.show {
+//     visibility: visible; 
+
+//     -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+//     animation: fadein 0.5s, fadeout 0.5s 2.5s;
+//   }
   
-  @keyframes fadein {
-    from {bottom: 0; opacity: 0;}
-    to {bottom: 30px; opacity: 1;}
-  }
+//   @-webkit-keyframes fadein {
+//     from {bottom: 0; opacity: 0;}
+//     to {bottom: 30px; opacity: 1;}
+//   }
   
-  @-webkit-keyframes fadeout {
-    from {bottom: 30px; opacity: 1;}
-    to {bottom: 0; opacity: 0;}
-  }
+//   @keyframes fadein {
+//     from {bottom: 0; opacity: 0;}
+//     to {bottom: 30px; opacity: 1;}
+//   }
   
-  @keyframes fadeout {
-    from {bottom: 30px; opacity: 1;}
-    to {bottom: 0; opacity: 0;}
-  }
+//   @-webkit-keyframes fadeout {
+//     from {bottom: 30px; opacity: 1;}
+//     to {bottom: 0; opacity: 0;}
+//   }
+  
+//   @keyframes fadeout {
+//     from {bottom: 30px; opacity: 1;}
+//     to {bottom: 0; opacity: 0;}
+//   }

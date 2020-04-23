@@ -27,13 +27,13 @@ export class AirlineService {
   }
 
   getAirline(id: number) {
-    let air: Airline;
+    let a;
     this.airlines.forEach(airline => {
-      if (airline.id == id) {
-        air = airline;
+      if (airline.id === id) {
+        a = airline;
       }
     });
-    return air;
+    return a;
   }
 
   allMockedAirlines() {

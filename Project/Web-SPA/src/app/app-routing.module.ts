@@ -7,19 +7,17 @@ import { AirlinesComponent } from './components/al-components/airlines/airlines.
 import { AirlineInfoComponent } from './components/al-components/airline-info/airline-info.component';
 import { RentACarServiceInfoComponent } from './components/rac-components/rent-a-car-service-info/rent-a-car-service-info.component';
 import { RentACarServicesComponent } from './components/rac-components/rent-a-car-services/rent-a-car-services.component';
-import { SortAndFilterBarComponent } from './components/helper/sort-and-filter-bar/sort-and-filter-bar.component';
 import { RegisterCompanyComponent } from './components/register-company/register-company.component';
 import { AddFlightComponent } from './components/al-components/add-flight/add-flight.component';
 import { SpecialOffersComponent } from './components/al-components/special-offers/special-offers.component';
-import { FlightComponent } from './components/al-components/flight/flight.component';
 import { FilterComponent } from './components/al-components/filter/filter.component';
 import { AirlinesHeaderComponent } from './components/al-components/airlines/airlines-header/airlines-header.component';
-import { FlightsComponent } from './components/al-components/flights/flights.component';
 import { TripsComponent } from './components/al-components/trips/trips.component';
-import { FriendsListComponent } from './components/friends-list/friends-list.component';
+import { FriendsListComponent } from './components/registered-user/friends-list/friends-list.component';
 import { CarsComponent } from './components/rac-components/cars/cars.component';
 import { ProfileComponent } from './components/helper/profile/profile.component';
 import { ShowFlightsComponent } from './components/registered-user/show-flights/show-flights.component';
+import { EditProfileComponent } from './components/helper/profile/edit-profile/edit-profile.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -27,10 +25,7 @@ const routes: Routes = [
   {path: 'signup', component: SignupComponent},
   {path: 'signin', component: SigninComponent},
   {path: ':username/signin', component: SigninComponent},
-  {path: 'sortfilter', component: SortAndFilterBarComponent},
   {path: ':username/:option/register-company', component: RegisterCompanyComponent},
-  // {path: 'flight', component: FlightComponent}, NE GLEDAJ OVO
-  // {path: 'flights', component: FlightsComponent},
   {
     path: 'trips',
     children: [
@@ -45,12 +40,18 @@ const routes: Routes = [
       {path: 'filter', component: FilterComponent}
     ]
   },
-  // {path: '/trips/filter', component: FilterComponent},
   {path: 'airlines-header', component: AirlinesHeaderComponent},
   {path: ':id/friends-list', component: FriendsListComponent},
-  {path: ':id/profile', component: ProfileComponent},
+  // {path: ':id/profile', component: ProfileComponent},
+  {
+    path: ':id/profile',
+    children: [
+      {path: '', component: ProfileComponent},
+      {path: 'edit-profile', component: EditProfileComponent}
+    ]
+  },
   {path: ':id/flights', component: ShowFlightsComponent},
-  
+
   {
     path: 'airlines',
     children: [

@@ -12,8 +12,6 @@ export class ProfileComponent implements OnInit {
 
   userId: number;
   user: User;
-  somethingChanged = false;
-  passwordchanged = false;
   constructor(private route: ActivatedRoute, private userService: UserService) {
     route.params.subscribe(params => {
       this.userId = params.id;
@@ -21,24 +19,7 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    window.scroll(0, 0);
     this.user = this.userService.getUser(this.userId);
   }
-
-  submitChanges() {
-    (document.querySelector('#snackbar') as HTMLElement).className = 'show';
-    this.somethingChanged = false;
-    setTimeout( () => {
-        (document.querySelector('#snackbar') as HTMLElement).className = '';
-        this.passwordchanged = false;
-       }, 2000);
-  }
-
-  changePhoto() {
-
-  }
-  passwordChanged() {
-    this.somethingChanged = true;
-    this.passwordchanged = true;
-  }
-
 }

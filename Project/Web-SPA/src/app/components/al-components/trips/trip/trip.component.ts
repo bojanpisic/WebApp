@@ -22,7 +22,8 @@ export class TripComponent implements OnInit {
     this.showInfo.push(false);
   }
   getAirlineName(airlineId: number) {
-    return this.airlineService.getAirline(airlineId);
+    const airline = this.airlineService.getAirline(airlineId);
+    return airline.name;
   }
 
   showStopsInfo(i: number) {

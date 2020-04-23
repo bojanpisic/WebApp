@@ -43,8 +43,8 @@ export class UserService {
   }
 
   mockedUsers() {
-    const user1 = new RegisteredUser('Susan', 'William', 'susanwilliam123', 'susan@gmail.com', 'Kings Road 201', '(+352)34 654-127');
-    user1.userType = 'airlineAdmin';
+    const user1 = new RegisteredUser('Susan', 'William', 'susanwilliam123', 'susan@gmail.com', 'Kings Road 201', '(+381)63/123-456');
+    user1.userType = 'regular';
     user1.id = this.allUsers.length;
 
     const user2 = new RegisteredUser('Harry', 'Smith', 'harrysmith', 'harry@gmail.com', 'Bridge Street 103', '(+351)24 856-921');
