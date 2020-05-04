@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Airline } from 'src/app/entities/airline';
 import { AirlineService } from 'src/services/airline.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-filter',
@@ -21,7 +22,7 @@ export class FilterComponent implements OnInit {
   allAirlines: Array<Airline>;
   checkedAirlines: Array<boolean>;
 
-  constructor(private airlineService: AirlineService) {
+  constructor(private airlineService: AirlineService, private location: Location) {
     this.slidingMinPriceValue = 25;
     this.slidingMaxPriceValue = 90;
     this.slidingMinDurationValue = 10;
@@ -81,5 +82,9 @@ export class FilterComponent implements OnInit {
 
   toggleAirlineCheckBox(index: number) {
     this.checkedAirlines[index] = !this.checkedAirlines[index];
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

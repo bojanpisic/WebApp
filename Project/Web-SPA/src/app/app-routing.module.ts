@@ -13,15 +13,34 @@ import { SpecialOffersComponent } from './components/al-components/special-offer
 import { FilterComponent } from './components/al-components/filter/filter.component';
 import { AirlinesHeaderComponent } from './components/al-components/airlines/airlines-header/airlines-header.component';
 import { TripsComponent } from './components/al-components/trips/trips.component';
-import { FriendsListComponent } from './components/registered-user/friends-list/friends-list.component';
 import { CarsComponent } from './components/rac-components/cars/cars.component';
 import { ProfileComponent } from './components/helper/profile/profile.component';
 import { ShowFlightsComponent } from './components/registered-user/show-flights/show-flights.component';
 import { EditProfileComponent } from './components/helper/profile/edit-profile/edit-profile.component';
+import { FriendsComponent } from './components/registered-user/friends/friends.component';
+import { MessagesComponent } from './components/registered-user/messages/messages.component';
+import { TripDetailsComponent } from './components/reservations/flight-reservation/trip-details/trip-details.component';
+import { TripParameter } from './entities/trip-parameter';
+import { PickSeatsComponent } from './components/reservations/flight-reservation/pick-seats/pick-seats.component';
+import { FlightReservationComponent } from './components/reservations/flight-reservation/flight-reservation.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: ':id/home', component: HomeComponent},
+  {path: ':id/cars', component: CarsComponent},
+  {
+    path: ':id/trips',
+    children: [
+      {path: '', component: TripsComponent},
+      {path: 'filter', component: FilterComponent},
+      {
+        path: 'trip-reservation',
+        children: [
+          {path: '', component: FlightReservationComponent},
+        ]
+      }
+    ]
+  },
   {path: 'signup', component: SignupComponent},
   {path: 'signin', component: SigninComponent},
   {path: ':username/signin', component: SigninComponent},
@@ -41,17 +60,16 @@ const routes: Routes = [
     ]
   },
   {path: 'airlines-header', component: AirlinesHeaderComponent},
-  {path: ':id/friends-list', component: FriendsListComponent},
-  // {path: ':id/profile', component: ProfileComponent},
   {
     path: ':id/profile',
     children: [
       {path: '', component: ProfileComponent},
-      {path: 'edit-profile', component: EditProfileComponent}
+      {path: 'edit-profile', component: EditProfileComponent},
+      {path: 'friends', component: FriendsComponent}
     ]
   },
   {path: ':id/flights', component: ShowFlightsComponent},
-
+  {path: ':id/messages', component: MessagesComponent},
   {
     path: 'airlines',
     children: [
@@ -74,7 +92,6 @@ const routes: Routes = [
       {path: '', component: RentACarServicesComponent}
     ]
   }
-
 
 ];
 

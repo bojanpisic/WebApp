@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 export class DriveMainFormComponent implements OnInit {
 
   sameLocationChoosed = true;
+  @Input() userId;
 
   constructor(private router: Router) { }
 
@@ -24,6 +25,10 @@ export class DriveMainFormComponent implements OnInit {
   }
 
   onSubmit() {
-    this.router.navigate(['/cars']);
+    if (this.userId !== undefined) {
+      this.router.navigate(['/' + this.userId + '/cars']);
+    } else {
+      this.router.navigate(['/cars']);
+    }
   }
 }

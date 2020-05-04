@@ -7,8 +7,8 @@
     <button type="button" (click) = "onDrive()" [ngClass]="{'choosen-option-class': drive}">DRIVE</button>
 </div>
 <div class="form">
-    <app-flight-main-form *ngIf="fly" ></app-flight-main-form>
-    <app-drive-main-form *ngIf="drive"></app-drive-main-form>
+    <app-flight-main-form [userId]="userId" *ngIf="fly" ></app-flight-main-form>
+    <app-drive-main-form [userId]="userId" *ngIf="drive"></app-drive-main-form>
 </div>
 <app-top-rated [option]='option'></app-top-rated>
 <app-become-a-host [option]='option'></app-become-a-host>

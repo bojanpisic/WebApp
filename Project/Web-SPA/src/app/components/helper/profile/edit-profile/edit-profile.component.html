@@ -47,7 +47,6 @@
         <button [disabled] = '!btnEMailEnabled' (click)="editEMail()">{{!showEMail ? 'Edit' : 'Cancel'}}</button>
         <p *ngIf="!showEMail">{{user.email}}</p>
         <div *ngIf="showEMail" class="edit">
-            <span>This is the name on your travel document, which could be a license or a passport.</span>
             <form [formGroup]="form" (ngSubmit)="saveEMail()">
                 <input [ngClass]="{'error-input': form.controls.email.invalid}" formControlName="email" type="text">
                 <div class="error" *ngIf="form.controls.email.errors?.required">

@@ -12,6 +12,7 @@ import { FormBuilder } from '@angular/forms';
 export class FlightMainFormComponent implements OnInit {
 
   @ViewChild('viewContainerRef', { read: ViewContainerRef }) VCR: ViewContainerRef;
+  @Input() userId;
 
 
   // let.flightType = form.controls['flight-type'].value;
@@ -67,8 +68,11 @@ export class FlightMainFormComponent implements OnInit {
   }
 
   onSubmit() {
-    this.router.navigate(['/trips']);
-    console.log('SUBMIT');
+    if (this.userId !== undefined) {
+      this.router.navigate(['/' + this.userId + '/trips']);
+    } else {
+      this.router.navigate(['/trips']);
+    }
   }
 
 }

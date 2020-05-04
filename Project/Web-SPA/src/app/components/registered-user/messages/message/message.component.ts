@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { MessageService } from 'src/services/message.service';
+import { Message } from 'src/app/entities/message';
 
 @Component({
   selector: 'app-message',
@@ -7,9 +9,22 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MessageComponent implements OnInit {
 
-  constructor() { }
+  @Input() message: Message;
+  @Output() action = new EventEmitter<Message>();
+
+  constructor(private messageService: MessageService) { }
 
   ngOnInit(): void {
+  }
+
+  deleteMessage() {
+    this.messageService.deleteMessage(this.message);
+    console.log(this.message);
+  }
+
+  readMessage() {
+    this.action.emit(this.message);
+    this.message.read = true;
   }
 
 }

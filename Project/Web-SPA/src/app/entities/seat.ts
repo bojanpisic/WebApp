@@ -1,9 +1,15 @@
 export class Seat {
-    flightId: number;
-    seatNumber: string;
+    class: string;
+    column: string;
+    row: number;
+    available: boolean;
+    reserved: boolean;
 
-    constructor(flighId: number, seatNum: string) {
-        this.flightId = flighId;
-        this.seatNumber = seatNum;
+    constructor(classParam: string, columnParam: string, rowParam: number) {
+        this.class = classParam;
+        this.column = columnParam;
+        this.row = rowParam;
+        this.available = true;
+        this.reserved = false;
     }
 }

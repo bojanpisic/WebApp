@@ -1,0 +1,9 @@
+<div class="container">On flight ({{flight.from.city}} - {{flight.to.city}}) you've reserved
+    seats 
+    <ul>
+        <li *ngFor="let seat of seats">
+            {{seat.class}} {{seat.column}} {{seat.row}}
+        </li>
+    </ul>
+    Enter passangers info or invite friends!
+</div>

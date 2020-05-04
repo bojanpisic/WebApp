@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, HostListener, ElementRef } from '@angular/core';
+import { Message } from 'src/app/entities/message';
 
 @Component({
   selector: 'app-message-info',
@@ -7,9 +8,39 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MessageInfoComponent implements OnInit {
 
-  constructor() { }
+  @Output() response = new EventEmitter<string>();
+  @Input() props: {message: Message, show: boolean};
+  closeIt = 0;
+
+  constructor(private eRef: ElementRef) { }
 
   ngOnInit(): void {
+  }
+
+  decline() {
+    this.response.emit('decline');
+  }
+
+  close() {
+    this.response.emit('close');
+  }
+
+  accept() {
+    this.response.emit('accept');
+  }
+
+  @HostListener('document:click', ['$event'])
+  clickout(event) {
+    if (this.closeIt < 1) {
+      this.closeIt = 1;
+    } else {
+      this.closeIt = 2;
+    }
+    if (!this.eRef.nativeElement.contains(event.target)) {
+      if (this.closeIt === 2) {
+        this.close();
+      }
+    }
   }
 
 }

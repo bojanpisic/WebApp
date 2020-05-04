@@ -1,1 +1,14 @@
-<p>message works!</p>
+<div [ngClass]="{'unread': !message.read}" class="container">
+    <span *ngIf="message.read" id="note">read</span>
+    <span *ngIf="!message.read" id="note">unread</span>
+    <div class="expires">
+        <img src="../../../../../assets/stopwatch.svg"><span>2h 35min</span>
+    </div>
+    <div class="image"></div>
+    <span id="name">{{message.sends.firstName}} {{message.sends.lastName}}</span>
+    <div class="text">
+        <span id="text">{{message.text}}</span>
+    </div>
+    <button id="delete" (click)='deleteMessage()'>Delete</button>
+    <button id="read" (click)='readMessage()'>Read</button>
+</div>

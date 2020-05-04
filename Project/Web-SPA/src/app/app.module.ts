@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+// import { HttpParams } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -40,8 +41,6 @@ import { AirlinesHeaderComponent } from './components/al-components/airlines/air
 import { TripsComponent } from './components/al-components/trips/trips.component';
 import { TripComponent } from './components/al-components/trips/trip/trip.component';
 import { SearchBarComponent } from './components/helper/search-bar/search-bar.component';
-import { FriendsListComponent } from './components/registered-user/friends-list/friends-list.component';
-import { FriendComponent } from './components/registered-user/friends-list/friend/friend.component';
 import { CarsComponent } from './components/rac-components/cars/cars.component';
 import { CarComponent } from './components/rac-components/cars/car/car.component';
 import { ProfileComponent } from './components/helper/profile/profile.component';
@@ -55,6 +54,17 @@ import { MyCarComponent } from './components/registered-user/my-cars/my-car/my-c
 import { MessageComponent } from './components/registered-user/messages/message/message.component';
 import { MessageInfoComponent } from './components/registered-user/messages/message-info/message-info.component';
 import { EditProfileComponent } from './components/helper/profile/edit-profile/edit-profile.component';
+import { FriendsComponent } from './components/registered-user/friends/friends.component';
+import { FindFriendPipe } from './pipes/find-friend.pipe';
+import { ModalComponent } from './components/helper/modal/modal.component';
+import { PickSeatsComponent } from './components/reservations/flight-reservation/pick-seats/pick-seats.component';
+import { InviteFriendsComponent } from './components/reservations/flight-reservation/invite-friends/invite-friends.component';
+// tslint:disable-next-line:max-line-length
+import { FillPassangersDetailsComponent } from './components/reservations/flight-reservation/fill-passangers-details/fill-passangers-details.component';
+import { OfferCarComponent } from './components/reservations/flight-reservation/offer-car/offer-car.component';
+import { TripDetailsComponent } from './components/reservations/flight-reservation/trip-details/trip-details.component';
+import { FlightReservationComponent } from './components/reservations/flight-reservation/flight-reservation.component';
+import { Location } from '@angular/common';
 
 @NgModule({
    declarations: [
@@ -92,8 +102,6 @@ import { EditProfileComponent } from './components/helper/profile/edit-profile/e
       TripsComponent,
       TripComponent,
       SearchBarComponent,
-      FriendsListComponent,
-      FriendComponent,
       CarsComponent,
       CarComponent,
       ProfileComponent,
@@ -106,7 +114,16 @@ import { EditProfileComponent } from './components/helper/profile/edit-profile/e
       MyCarComponent,
       MessageComponent,
       MessageInfoComponent,
-      EditProfileComponent
+      EditProfileComponent,
+      FriendsComponent,
+      FindFriendPipe,
+      ModalComponent,
+      PickSeatsComponent,
+      InviteFriendsComponent,
+      FillPassangersDetailsComponent,
+      OfferCarComponent,
+      TripDetailsComponent,
+      FlightReservationComponent
    ],
    imports: [
       BrowserModule,

@@ -1,0 +1,10 @@
+<div class="container">
+    <h3>pick seat for flight ({{flight.from.city}} - {{flight.to.city}})</h3>
+    <ul>
+        <li *ngFor="let seat of flight.seats; let i = index">
+            <div [ngStyle]="{'background-color': seat.reserved ? 'red': seat.available ? 'blue' : 'gray'}" (click)='book(seat)' class="seat">
+                <span>{{seat.class}}{{seat.column}}{{seat.row}}</span>
+            </div>
+        </li>
+    </ul>
+</div>

@@ -25,7 +25,7 @@
 <app-bottom-menu [user] = 'user'></app-bottom-menu> -->
 <header>
     <nav>
-        <img routerLink='/trips' src="../../../../assets/back.png">
+        <img routerLink='/{{userId}}/home' src="../../../../assets/back.png">
         <span>Profile</span>
         <div class="bonus">
             <img src="../../../../assets/icons8-coins-16.png">
@@ -63,7 +63,7 @@
         <li class="friends-avatar" style="background-image: url('../../../../../../assets/friend3.jpeg')"></li>
         <li class="friends-avatar" style="background-image: none; background-color: #FF643C;">
             <!-- <img src="../../../../assets/add-white-18dp.svg" alt=""> -->
-            <div class="plus">+</div>
+            <div class="plus" routerLink='/{{userId}}/profile/friends'>+</div>
         </li>
     </ul>
     <div class="separator-div" style="margin: 0 30px;">
@@ -71,6 +71,9 @@
     </div>
     <div class="points">
         <p>So far you've collect <img src="../../../../assets/icons8-coins-16.png"> <span>160</span> bonus points!</p>
+        <a href="#">Trips</a>
+        <br>
+        <a href="#">Cars</a>
     </div>
     <button>SIGN OUT</button>
 </main>

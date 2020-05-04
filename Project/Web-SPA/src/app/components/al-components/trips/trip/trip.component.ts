@@ -1,25 +1,39 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { AirlineService } from 'src/services/airline.service';
+import { Router, ActivatedRoute, NavigationExtras } from '@angular/router';
+import { Flight } from 'src/app/entities/flight';
+import { Trip } from 'src/app/entities/trip';
+import { TripParameter } from 'src/app/entities/trip-parameter';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-trip',
   templateUrl: './trip.component.html',
   styleUrls: ['./trip.component.scss']
 })
+
 export class TripComponent implements OnInit {
 
-  @Input() trip;
+  @Input() indexOfTrip;
+  @Input() trip: Trip;
+  @Input() userId;
+  // params: HttpParams;
   showInfo: Array<boolean>;
   i: number;
+  arrayOfValues: Array<TripParameter>;
 
 
-  constructor(private airlineService: AirlineService) {
+  constructor(private airlineService: AirlineService, private router: Router, private route: ActivatedRoute) {
     this.showInfo = new Array<boolean>();
+    this.arrayOfValues = new Array<TripParameter>();
   }
 
   ngOnInit(): void {
     this.i = this.showInfo.length;
     this.showInfo.push(false);
+    this.trip.flights.forEach(flight => {
+      this.arrayOfValues.push(new TripParameter(flight.airlineId, flight.flightNumber));
+    });
   }
   getAirlineName(airlineId: number) {
     const airline = this.airlineService.getAirline(airlineId);
@@ -36,6 +50,25 @@ export class TripComponent implements OnInit {
 
     return Math.floor((arrivalTimeInMinutes - departureTimeInMinutes) / 60) + 'h'
          + Math.floor((arrivalTimeInMinutes - departureTimeInMinutes) % 60) + 'min';
+  }
+
+  viewDeal() {
+    const queryParams: any = {};
+    // Create our array of values we want to pass as a query parameter
+    // const arrayOfValues = [new TripParameter(2, 'bla')];
+
+    // Add the array of values to the query parameter as a JSON string
+    queryParams.trip = JSON.stringify(this.arrayOfValues);
+
+    // Create our 'NaviationExtras' object which is expected by the Angular Router
+    const navigationExtras: NavigationExtras = {
+      queryParams
+    };
+    if (this.userId !== undefined) {
+      this.router.navigate([this.userId + '/trips/trip-reservation'], navigationExtras);
+    } else {
+      alert('niste ulogovani');
+    }
   }
 
 }

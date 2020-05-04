@@ -1,9 +1,8 @@
 <nav>
-    <img routerLink='' src="../../../../assets/back.png">
+    <img (click)='goBack()' src="../../../../assets/back.png">
     <a href="#" routerLink='/cars/filter' id="filter"><img src="../../../../assets/icons8-slider-100.png">Filters</a>
 </nav>
 <ul>
-    <!--ovde izlistavamo sve nase specijalne karte, svaka od njih moze biti oneway, roundtrip ili multicity-->
     <li *ngFor="let car of cars">
         <app-car [car]="car"></app-car>
     </li>
