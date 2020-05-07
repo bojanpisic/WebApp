@@ -10,6 +10,7 @@ export class ModalComponent implements OnInit {
 
   @Output() remove = new EventEmitter<boolean>();
   @Input() props: {friend: RegisteredUser, show: boolean};
+  @Input() type: string;
   closeIt = 0;
 
   constructor(private eRef: ElementRef) { }

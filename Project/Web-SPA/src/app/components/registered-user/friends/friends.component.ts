@@ -11,6 +11,7 @@ import { RegisteredUser } from 'src/app/entities/registeredUser';
 })
 export class FriendsComponent implements OnInit {
 
+  modal = 'unfriend';
   activeButton = 'all';
   myProps = {friend: undefined, show: false};
 

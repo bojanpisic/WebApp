@@ -98,7 +98,7 @@ export class UserService {
     const f1 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '03h 40min', 12,
     [new ChangeOver('11:20', '10:30', new Address('Paris', 'France', 'PAR', 0, 0))], 300.00, '234T',
     new Address('Madrid', 'Spain', 'MAD', 0, 0), new Address('Belgrade', 'Serbia', 'BG', 0, 0), '06:20', '12:13',
-    [new Seat('F', 'A', 1)]);
+    [new Seat('F', 'A', 1, 400)]);
 
     const trips = this.tripService.getAllTrips();
 

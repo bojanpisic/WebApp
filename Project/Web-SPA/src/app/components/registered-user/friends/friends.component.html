@@ -43,5 +43,5 @@
     </ul>
 </main>
 <div class="modal" *ngIf="myProps.show">
-    <app-modal [props]="myProps" (remove)="removeFriend($event)"></app-modal>
+    <app-modal [type]='modal' [props]="myProps" (remove)="removeFriend($event)"></app-modal>
 </div>

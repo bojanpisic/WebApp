@@ -5,8 +5,7 @@ import { Passenger } from './passenger';
 export class PassengersForFlight {
     public flight: Flight; // napisano skraceno da bi izbegli predugacak url
     public passengers: Array<Passenger>;
-    constructor(f: Flight, p: Array<Passenger>) {
-      this.flight = f;
-      this.passengers = p;
+    constructor() {
+      this.passengers = new Array<Passenger>();
     }
 }

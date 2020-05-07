@@ -60,11 +60,13 @@ import { ModalComponent } from './components/helper/modal/modal.component';
 import { PickSeatsComponent } from './components/reservations/flight-reservation/pick-seats/pick-seats.component';
 import { InviteFriendsComponent } from './components/reservations/flight-reservation/invite-friends/invite-friends.component';
 // tslint:disable-next-line:max-line-length
-import { FillPassangersDetailsComponent } from './components/reservations/flight-reservation/fill-passangers-details/fill-passangers-details.component';
+import { ConfirmTripReservationComponent } from './components/reservations/flight-reservation/confirm-trip-reservation/confirm-trip-reservation';
 import { OfferCarComponent } from './components/reservations/flight-reservation/offer-car/offer-car.component';
 import { TripDetailsComponent } from './components/reservations/flight-reservation/trip-details/trip-details.component';
 import { FlightReservationComponent } from './components/reservations/flight-reservation/flight-reservation.component';
 import { Location } from '@angular/common';
+import { ReservedSeatsPipe } from './pipes/reserved-seats.pipe';
+import { SeatPlacementPipe } from './pipes/seat-placement.pipe';
 
 @NgModule({
    declarations: [
@@ -120,10 +122,12 @@ import { Location } from '@angular/common';
       ModalComponent,
       PickSeatsComponent,
       InviteFriendsComponent,
-      FillPassangersDetailsComponent,
+      ConfirmTripReservationComponent,
       OfferCarComponent,
       TripDetailsComponent,
-      FlightReservationComponent
+      FlightReservationComponent,
+      ReservedSeatsPipe,
+      SeatPlacementPipe
    ],
    imports: [
       BrowserModule,

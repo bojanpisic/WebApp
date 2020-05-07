@@ -29,6 +29,15 @@ header {
         font-weight: bold;
         color: rgb(34, 34, 34);
         height: 44px;
+
+        img {
+            margin: 0px 3px 3px 3px;
+            height: 14px;
+            width: 14px;
+            vertical-align: bottom;
+            filter: opacity(.8);
+            transform: rotate(45deg);
+        }
     }
 
     span + span {
@@ -83,4 +92,26 @@ footer {
     #next {
         justify-self: end;
     }
+
+    #finish {
+        justify-self: end;
+        background-color: $pink;
+    }
+
+    #confirm {
+        grid-column: 1/ span 2;
+        height: 100%;
+        width: 100%;
+        border: none;
+        border-radius: 10px;
+        background-color: $pink;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+    }
+}
+
+.blur {
+    filter: blur(8px);
+    -webkit-filter: blur(8px);
 }

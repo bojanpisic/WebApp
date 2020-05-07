@@ -1,4 +1,4 @@
-<div class="popup">
+<div *ngIf="type === 'unfriend'" class="popup">
     <div class="remove-friend-header">
         <button (click)="return(false)">
             <svg aria-hidden="true" role="presentation" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display: block; fill: rgb(34, 34, 34); height: 16px; width: 16px; stroke: currentcolor; stroke-width: 4; overflow: visible;"><path d="m6 6 20 20"></path><path d="m26 6-20 20"></path></svg>
@@ -14,5 +14,37 @@
         <br>
         <button id="cancel" (click)="return(false)">Cancel</button>
         <button id="remove" (click)="return(true)">Remove</button>
+    </div>
+</div>
+<div *ngIf="type === 'exitReservation'" class="popup">
+    <div class="remove-friend-header">
+        <button (click)="return(false)">
+            <svg aria-hidden="true" role="presentation" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display: block; fill: rgb(34, 34, 34); height: 16px; width: 16px; stroke: currentcolor; stroke-width: 4; overflow: visible;"><path d="m6 6 20 20"></path><path d="m26 6-20 20"></path></svg>
+        </button>
+        <span>Exit reservation</span>
+    </div>
+    <div class="content">
+        <img src='../../../../assets/illustrations/undraw_reminder_pa79.png'>
+        <h4>All of the changes will be discard. Are you sure you want to exit?
+        </h4>
+        <br>
+        <button id="cancel" (click)="return(false)">No</button>
+        <button id="remove" (click)="return(true)">Yes</button>
+    </div>
+</div>
+<div *ngIf="type === 'errorReservation'" class="popup">
+    <div class="remove-friend-header">
+        <button (click)="return(false)">
+            <svg aria-hidden="true" role="presentation" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display: block; fill: rgb(34, 34, 34); height: 16px; width: 16px; stroke: currentcolor; stroke-width: 4; overflow: visible;"><path d="m6 6 20 20"></path><path d="m26 6-20 20"></path></svg>
+        </button>
+        <span>Error</span>
+    </div>
+    <div class="content">
+        <img src='../../../../assets/illustrations/undraw_access_denied_6w73.png'>
+        <h4>
+            You will have to pick at least one seat to proceed reservation process.
+        </h4>
+        <br>
+        <button style="grid-column: 1/span 2; width: calc(50% - 20px);" id="remove" (click)="return(true)">Ok</button>
     </div>
 </div>
