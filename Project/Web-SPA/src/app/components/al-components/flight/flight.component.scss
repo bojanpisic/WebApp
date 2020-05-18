@@ -1,0 +1,191 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat&display=swap');
+@import '../../../app.component.scss';
+
+.container{
+    position: relative;
+    display: grid;
+    // box-shadow: $lightest-shadow;
+    grid-template-columns: 110px calc(100% - 260px) 150px;
+    grid-template-rows: auto auto auto auto auto;
+    grid-template-areas: "spandate none spanairlines"
+                         "date none airlines"
+                         "spanfrom none spanto"
+                         "from none to"
+                         "spandeparture none spanarrival"
+                         "departure none arrival"
+                         "spanflight none spandistance"
+                         "flight none distance";
+
+    span {
+        font-size: 14px;
+        line-height: 18px;
+        color: rgb(113,113,113);
+        font-family: 'Roboto';
+    }
+
+    p {
+        margin: 0;
+        font-size: 16px;
+        line-height: 20px;
+        color: rgb(34,34,34);
+        font-weight: bold;
+    }
+
+    #left {
+        position: absolute;
+        top: calc(50% - 25px);
+        left: calc(50% - 70px);
+        width: 40px;
+        border: 0;
+        border-bottom: 1.5px dashed $light-blue;
+    }
+
+    #right {
+        position: absolute;
+        top: calc(50% - 25px);
+        right: calc(50% - 70px);
+        width: 40px;
+        border: 0;
+        border-bottom: 1.5px dashed $light-blue;
+    }
+
+    #plane {
+        position: absolute;
+        height: 40px;
+        width: 40px;
+        top: calc(50% - 35px);
+        left: calc(50% - 20px);
+        transform: rotate(45deg);
+    }
+
+    #spandate {
+        grid-area: spandate;
+    }
+
+    #spanairlines {
+        grid-area: spanairlines;
+        text-align: right;
+    }
+
+    #date {
+        grid-area: date;
+        margin-bottom: 20px;
+    }
+
+    #airlines {
+        grid-area: airlines;
+        text-align: right;
+        margin-bottom: 20px;
+
+        img {
+            border-radius: 50%;
+            height: 16px;
+            width: 16px;
+            margin-right: 4px;
+            margin-bottom: 2px;
+            vertical-align: middle;
+        }
+    }
+
+    #spanfrom {
+        grid-area: spanfrom;
+    }
+
+    #spanto {
+        grid-area: spanto;
+        text-align: right;
+    }
+
+    #from {
+        grid-area: from;
+        margin-bottom: 20px;
+        color: $blue;
+    }
+
+    #to {
+        grid-area: to;
+        text-align: right;
+        margin-bottom: 20px;
+        color: $blue;
+    }
+
+    #spandeparture {
+        grid-area: spandeparture;
+    }
+
+    #departure {
+        grid-area: departure;
+        margin-bottom: 15px;
+    }
+
+    #time {
+        img {
+            height: 12px;
+            width: 12px;
+            vertical-align: middle;
+            margin-right: 3px;
+        }
+        grid-column-start: 1;
+        grid-column-end: 4;
+        grid-row: 5;
+        text-transform: none;
+        margin: 0 auto;
+        color: rgb(60,60,60);
+        text-transform: uppercase;
+        font-size: .65em;
+        font-weight: bold;
+    }
+
+    #spanarrival {
+        grid-area: spanarrival;
+        text-align: right;
+    }
+
+    #arrival {
+        grid-area: arrival;
+        text-align: right;
+        margin-bottom: 15px;
+    }
+
+    #spanflight {
+        grid-area: spanflight;
+    }
+
+    #flight {
+        grid-area: flight;
+    }
+
+    #spandistance {
+        grid-area: spandistance;
+        text-align: right;
+    }
+
+    #distance {
+        grid-area: distance;
+        text-align: right;
+    }
+
+    #stops {
+        grid-column-start: 1;
+        grid-column-end: 4;
+        grid-row-start: 7;
+        grid-row-end: 9;
+        text-align: center;
+       
+        ul {
+            list-style-type: none;
+            padding: 0;
+            line-height: .95em;
+            transform: scaleX(.95);
+
+            li {
+                padding: 0;
+                display: inline;
+                p {
+                    display: inline;
+                }
+            }
+        }
+    }
+
+}

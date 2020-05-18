@@ -27,7 +27,7 @@ import { RentACarServiceInfoComponent } from './components/rac-components/rent-a
 import { TopRatedComponent } from './components/home/top-rated/top-rated.component';
 import { FlightFormPartComponent } from './components/home/flight-main-form/flight-form-part/flight-form-part.component';
 import { RegisterCompanyComponent } from './components/register-company/register-company.component';
-import { AddFlightComponent } from './components/al-components/add-flight/add-flight.component';
+import { AddFlightComponent } from './components/airline-admin/airline-flights/add-flight/add-flight.component';
 import { DestinationsComponent } from './components/helper/destinations/destinations.component';
 import { SpecialOffersComponent } from './components/al-components/special-offers/special-offers.component';
 import { PlacesSearchComponent } from './components/helper/places-search/places-search.component';
@@ -67,6 +67,19 @@ import { FlightReservationComponent } from './components/reservations/flight-res
 import { Location } from '@angular/common';
 import { ReservedSeatsPipe } from './pipes/reserved-seats.pipe';
 import { SeatPlacementPipe } from './pipes/seat-placement.pipe';
+import { AdminHomeComponent } from './components/airline-admin/admin-home/admin-home.component';
+import { AirlineProfileComponent } from './components/airline-admin/airline-profile/airline-profile.component';
+import { AirlineFlightsComponent } from './components/airline-admin/airline-flights/airline-flights.component';
+import { AirlineStatsComponent } from './components/airline-admin/airline-stats/airline-stats.component';
+import { AirlineDestinationsComponent } from './components/airline-admin/airline-destinations/airline-destinations.component';
+// tslint:disable-next-line:max-line-length
+import { AirlineDestinationComponent } from './components/airline-admin/airline-destinations/airline-destination/airline-destination.component';
+import { FlightStopComponent } from './components/airline-admin/airline-flights/add-flight/flight-stop/flight-stop.component';
+import { FlightComponent } from './components/al-components/flight/flight.component';
+import { FindFlightPipe } from './pipes/find-flight.pipe';
+import { ConfigureSeatsComponent } from './components/airline-admin/airline-flights/configure-seats/configure-seats.component';
+import { ConfigureSeatsModalComponent } from './components/airline-admin/airline-flights/configure-seats/configure-seats-modal/configure-seats-modal.component';
+import { PlaceSeatsPipe } from './pipes/place-seats.pipe';
 
 @NgModule({
    declarations: [
@@ -127,7 +140,19 @@ import { SeatPlacementPipe } from './pipes/seat-placement.pipe';
       TripDetailsComponent,
       FlightReservationComponent,
       ReservedSeatsPipe,
-      SeatPlacementPipe
+      SeatPlacementPipe,
+      AdminHomeComponent,
+      AirlineProfileComponent,
+      AirlineFlightsComponent,
+      AirlineStatsComponent,
+      AirlineDestinationsComponent,
+      AirlineDestinationComponent,
+      FlightStopComponent,
+      FlightComponent,
+      FindFlightPipe,
+      ConfigureSeatsComponent,
+      ConfigureSeatsModalComponent,
+      PlaceSeatsPipe
    ],
    imports: [
       BrowserModule,

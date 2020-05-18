@@ -1,4 +1,5 @@
 @import '../../../app.component.scss';
+@import '../../../scss/elements/inputs';
 
 input {
     width: 100%;
@@ -9,15 +10,36 @@ input {
     padding-left: 1em;
     border: 1px solid lightgrey;
 }
-::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-    color: rgb(100, 100, 100);
-    opacity: 1; /* Firefox */
+
+:focus {
+    outline: none;
 }
 
-:-ms-input-placeholder { /* Internet Explorer 10-11 */
-    color: rgb(100, 100, 100);
+.addFlight {
+    @extend %input;
+    width: 100%;
+    margin-top: 5px;
+    font-size: 16px;
+    line-height: 20px;
+    padding: 10px auto;
+    color: rgb(34, 34, 34);
 }
 
-::-ms-input-placeholder { /* Microsoft Edge */
-    color: rgb(100, 100, 100);
+.addFlight:focus {
+    @extend %focus;
+}
+
+.error {
+    @extend %error-input;
+}
+
+.pickAirlineLocation {
+    @extend %input2;
+    width: 100%;
+    padding: 8px 16px;
+    height: auto;
+}
+
+.pickAirlineLocation::placeholder {
+    color: rgb(34, 34, 34);
 }

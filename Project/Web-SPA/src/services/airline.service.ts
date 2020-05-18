@@ -35,6 +35,26 @@ export class AirlineService {
     return a;
   }
 
+  getAdminsAirlineId(adminId: number) {
+    let retVal;
+    this.airlines.forEach(airline => {
+      if (airline.adminid == adminId) {
+        retVal = airline.id;
+      }
+    });
+    return retVal;
+  }
+
+  getAdminsAirline(adminId: number) {
+    let retVal;
+    this.airlines.forEach(airline => {
+      if (airline.adminid == adminId) {
+        retVal = airline;
+      }
+    });
+    return retVal;
+  }
+
   getFlight(airlineId: number, flightNumber: string) {
     let f: Flight;
     this.airlines.forEach(airline => {
@@ -49,6 +69,36 @@ export class AirlineService {
     return f;
   }
 
+  getDestinations(airlineId: number) {
+    let d;
+    this.airlines.forEach(airline => {
+      if (airline.id === airlineId) {
+        d = airline.flightDestionations;
+      }
+    });
+    return d;
+  }
+
+  getFlights(airlineId: number) {
+    let f;
+    this.airlines.forEach(airline => {
+      if (airline.id === airlineId) {
+        f = airline.flights;
+      }
+    });
+    return f;
+  }
+
+  getAirlineId(adminId: number) {
+    let retVal;
+    this.airlines.forEach(airline => {
+      if (airline.adminid === adminId) {
+        retVal = airline.id;
+      }
+    });
+    return retVal;
+  }
+
   allMockedAirlines() {
 
     const allFlights = this.flightService.getAllFlights();
@@ -56,8 +106,14 @@ export class AirlineService {
     const a1 = new Airline('TurkishAirlines', new Address('Istanbul', 'Turkey', 'IST', 32.974662768,  40.1077995688));
     a1.id = 0;
     a1.logoUrl = '../../../../assets/turkish_airlines_logo.png';
-    a1.adminid = -1;
+    a1.adminid = 22;
     a1.averageRating = 4.7;
+    a1.about = 'Turkish airlines’ history as pioneer of the sky began in the year 1933.\
+    We started out as a small team and with perseverance and growing passion we branched out and\
+    become one huge family.It is with great pride and joy that we were the first to fly the sky for our country.\
+    \n\nKeeping up to date with technology is an essential component of our innovation aims and in maintaining that\
+    we have the youngest and most modern fleet in Europe. Our fleet had flourished thanks to our high-tech,\
+    fuel-efficient and environmentally conscious aircraft purchases that provide a high level of comfort.';
     a1.promoDescription.push('Turkish airlines’ history as pioneer of the sky began in the year 1933.\
     We started out as a small team and with perseverance and growing passion we branched out and\
     become one huge family.It is with great pride and joy that we were the first to fly the sky for our country.');
@@ -67,6 +123,15 @@ export class AirlineService {
     // tslint:disable-next-line:max-line-length
     a1.flightDestionations.push(new Destination('https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAANrZ0RokHLnFBCXpktNOn7tHV7DFJu8W71TSSmVxilyXczl4Q7lQeI8Ho_9h0kQQ3fkasuGLi9x6bUbbP59VkLR7qcxRuuETaRpAVZoctDTJJVRQk9-2HYoMslWeOPU0KEhBWObed7DCtHeoeMJ2bR8q3GhQKngWJ9c2k8kiKwp5ZN4pAWMbdDw&3u165&4u112&5m1&2e1&callback=none&key=AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE&token=42577',
       new Address('Belgrade', 'Serbia', 'BG', 0, 0)));
+    // tslint:disable-next-line:max-line-length
+    a1.flightDestionations.push(new Destination('https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAA5lfOUh29fXPXOppkClh_zzT9DdVg3nobFIh6mPUYLAB1mpQNS1SdR4Mb8fG0fHuZfb9niTcMPeKQOLvgAyRWNkSvLGx3hR0po9NwG6s9YBi5UjCELIlfYrrN10YigzJVEhBWz-pc26INInazmrx4bUeqGhROU7BSle7lJDMT9wjjRBA2p-9ncA&3u165&4u112&5m1&2e1&callback=none&key=AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE&token=72629',
+    new Address('Instanbul', 'Turkey', 'IST', 0, 0)));
+    // tslint:disable-next-line:max-line-length
+    a1.flightDestionations.push(new Destination('https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAA2P3mLvl5uzffhueijdHj3omyLUfN-qf0YG-mO4WeDwrnX4QrkUIFvEQEPw7It8fAhSwpdxIQltnVpBeDbLahszSj6WwAKVoqHaWbVsb-LzYaWmZIt3ulCkgcyiuiBDQGEhBBhP_nH7ecCA-Nq6f0hgpsGhTR3VE2LWER4--5bCjMvwMLTjEmbw&3u165&4u112&5m1&2e1&callback=none&key=AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE&token=54919',
+    new Address('Berlin', 'Germany', 'BER', 0, 0)));
+    // tslint:disable-next-line:max-line-length
+    a1.flightDestionations.push(new Destination('https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAADRGe0kwEohIRG9H_k87IbRabfMZ1OIBDsXznqMcRKASkpoDrffk_296wya4YsOHZYDmQfCHM_sosAYrgVKA1oYXLlYMrjJSx7hMwguj2MCpk5HQXgllqZEqox1_oo4CAEhBideOSt0ST72C6_8MLSId3GhQxbjakpYbP-aEkGRme0sgkpzcgxA&3u165&4u112&5m1&2e1&callback=none&key=AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE&token=128963',
+    new Address('London', 'UK', 'LON', 0, 0)));
     // tslint:disable-next-line:max-line-length
     a1.flightDestionations.push(new Destination('https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAA5lfOUh29fXPXOppkClh_zzT9DdVg3nobFIh6mPUYLAB1mpQNS1SdR4Mb8fG0fHuZfb9niTcMPeKQOLvgAyRWNkSvLGx3hR0po9NwG6s9YBi5UjCELIlfYrrN10YigzJVEhBWz-pc26INInazmrx4bUeqGhROU7BSle7lJDMT9wjjRBA2p-9ncA&3u165&4u112&5m1&2e1&callback=none&key=AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE&token=72629',
     new Address('Instanbul', 'Turkey', 'IST', 0, 0)));

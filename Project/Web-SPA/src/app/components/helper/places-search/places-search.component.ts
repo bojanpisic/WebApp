@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, NgZone, Input, Output, EventEmitter } from '@angular/core';
 import { MapsAPILoader, MouseEvent } from '@agm/core';
+import { Address } from 'src/app/entities/address';
 
 @Component({
   selector: 'app-places-search',
@@ -20,6 +21,15 @@ export class PlacesSearchComponent implements OnInit {
   @Input() left = false;
   @Input() right = false;
   @Input() pickUpLocation = false;
+  @Input() searchDestination = false;
+  @Input() addFlight = false;
+  @Input() pickAirlineLocation = false;
+  @Input() myLocation: Address;
+  @Input() error = false;
+  @Output() focused = new EventEmitter<boolean>();
+  @Output() inputValue = new EventEmitter<string>();
+  @Output() inputValueLocation = new EventEmitter<string>();
+  @Input() disabled = false;
 
   @ViewChild('search')
   public searchElementRef: ElementRef;
@@ -35,11 +45,11 @@ export class PlacesSearchComponent implements OnInit {
 
   ngOnInit() {
 
-    //load Places Autocomplete
+    // load Places Autocomplete
     this.mapsAPILoader.load().then(() => {
       this.setCurrentLocation();
       this.geoCoder = new google.maps.Geocoder;
- 
+
       const autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement, {
         types: ['geocode'] // geocode
       });
@@ -47,7 +57,7 @@ export class PlacesSearchComponent implements OnInit {
         this.ngZone.run(() => {
           // get the place result
           const place: google.maps.places.PlaceResult = autocomplete.getPlace();
-          
+
           // verify result
           if (place.geometry === undefined || place.geometry === null) {
             return;
@@ -59,21 +69,28 @@ export class PlacesSearchComponent implements OnInit {
           this.zoom = 12;
           this.placePhoto = place.photos[1].getUrl({maxWidth: 165, maxHeight: 112});
 
-          var sendData = {
-              'latitude': this.latitude,
-              'longitude': this.longitude,
-              'city': this.address.split(',')[0],
-              'short_name': place.address_components[0].short_name,
-              'state': this.address.split(',')[1],
-              'placePhoto': this.placePhoto
+          const separator = (this.address.split(',')[1] === undefined) ? ' - ' : ', ';
+
+          const sendData = {
+            latitude: this.latitude,
+            longitude: this.longitude,
+            city: this.address.split(separator)[0],
+            short_name: place.address_components[0].short_name,
+            state: this.address.split(separator)[1],
+            placePhoto: this.placePhoto
+          };
+          if (this.pickAirlineLocation) {
+            this.inputValueLocation.emit((<HTMLInputElement> document.getElementById('pickAirlineLocation')).value);
           }
-          console.log(sendData.placePhoto);
+          if (this.addFlight) {
+            this.inputValue.emit((<HTMLInputElement> document.getElementById('addFlight')).value);
+          }
           this.cityName.emit(JSON.stringify(sendData));
         });
       });
     });
   }
- 
+
   // Get Current Location Coordinates
   private setCurrentLocation() {
     if ('geolocation' in navigator) {
@@ -85,16 +102,16 @@ export class PlacesSearchComponent implements OnInit {
       });
     }
   }
- 
- 
+
+
   markerDragEnd($event: MouseEvent) {
     this.latitude = $event.coords.lat;
     this.longitude = $event.coords.lng;
     this.getAddress(this.latitude, this.longitude);
   }
- 
+
   getAddress(latitude, longitude) {
-    this.geoCoder.geocode({ 'location': { lat: latitude, lng: longitude } }, (results, status) => {
+    this.geoCoder.geocode({ location: { lat: latitude, lng: longitude } }, (results, status) => {
       if (status === 'OK') {
         if (results[0]) {
           this.zoom = 12;
@@ -105,8 +122,22 @@ export class PlacesSearchComponent implements OnInit {
       } else {
         window.alert('Geocoder failed due to: ' + status);
       }
- 
+
     });
+  }
+
+  onFocus() {
+    this.focused.emit(true);
+  }
+
+  onChange() {
+    const value = (<HTMLInputElement> document.getElementById('addFlight')).value;
+    this.inputValue.emit(value);
+  }
+
+  onChangeLocation() {
+    const value = (<HTMLInputElement> document.getElementById('pickAirlineLocation')).value;
+    this.inputValueLocation.emit(value);
   }
 
 }

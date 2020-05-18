@@ -3,80 +3,166 @@
 
     </div>
     <div class="class">
-        <span>${{firstClassPriceRange.minPrice}} - ${{firstClassPriceRange.maxPrice}}</span>
         <h3>First class</h3>
         <div class="container">
             <ul class="left">
-                <li *ngFor="let seat of (flight.seats | seatPlacement:'left':'F'); let i = index">
+                <!-- <li *ngFor="let seat of (flight.seats | seatPlacement:'left':'F'); let i = index">
                     <div [ngStyle]="{'background-color': seat.reserved ? '#ff3d3d': seat.available ? '#8795fa ' : '#bebebe'}" (click)='book(seat)' class="seat">
                         <p>{{seat.column}}{{seat.row}}</p>
                     </div>
+                </li> -->
+                <li *ngFor="let seat of (firstClassSeats | seatPlacement:'left':'F'); let i = index">
+                    <div *ngIf="seat !== 'left' && !seat.reserved && !mySeats.includes(seat)" (click)='book(seat)' class="seat-with-price not-reserved-f">
+                        <span>${{seat.price}}</span>
+                        <p>{{seat.column}}{{seat.row}}</p>
+                    </div>
+                    <div *ngIf="seat !== 'left' && mySeats.includes(seat)" (click)='book(seat)' class="seat-with-price my-seat">
+                        <span>${{seat.price}}</span>
+                        <p>{{seat.column}}{{seat.row}}</p>
+                    </div>
+                    <div *ngIf="seat !== 'left' && seat.reserved" class="seat reserved">
+                        <p>{{seat.column}}{{seat.row}}</p>
+                    </div>
+                    <div *ngIf="seat === 'left'" class="seat">
+                    </div>
                 </li>
             </ul>
             <ul class="right">
-                <li *ngFor="let seat of (flight.seats | seatPlacement:'right':'F'); let i = index">
+                <!-- <li *ngFor="let seat of (flight.seats | seatPlacement:'right':'F'); let i = index">
                     <div [ngStyle]="{'background-color': seat.reserved ? '#ff3d3d': seat.available ? '#8795fa' : '#bebebe'}" (click)='book(seat)' class="seat">
                         <p>{{seat.column}}{{seat.row}}</p>
                     </div>
+                </li> -->
+                <li *ngFor="let seat of (firstClassSeats | seatPlacement:'right':'F'); let i = index">
+                    <div *ngIf="seat !== 'right' && !seat.reserved && !mySeats.includes(seat)" (click)='book(seat)' class="seat-with-price not-reserved-f">
+                        <span>${{seat.price}}</span>
+                        <p>{{seat.column}}{{seat.row}}</p>
+                    </div>
+                    <div *ngIf="seat !== 'right' && mySeats.includes(seat)" (click)='book(seat)' class="seat-with-price my-seat">
+                        <span>${{seat.price}}</span>
+                        <p>{{seat.column}}{{seat.row}}</p>
+                    </div>
+                    <div *ngIf="seat !== 'right' && seat.reserved" class="seat reserved">
+                        <p>{{seat.column}}{{seat.row}}</p>
+                    </div>
+                    <div *ngIf="seat === 'right'" class="seat">
+                    </div>
                 </li>
             </ul>
         </div>
     </div>
     <div class="class">
-        <span>${{businessPriceRange.minPrice}} - ${{businessPriceRange.maxPrice}}</span>
         <h3>Business</h3>
         <div class="container">
             <ul class="left">
-                <li *ngFor="let seat of (flight.seats | seatPlacement:'left':'B'); let i = index">
-                    <div [ngStyle]="{'background-color': seat.reserved ? '#ff3d3d': seat.available ? '#fa8795' : '#bebebe'}" (click)='book(seat)' class="seat">
+                <li *ngFor="let seat of (businessSeats | seatPlacement:'left':'B'); let i = index">
+                    <div *ngIf="seat !== 'left' && !seat.reserved && !mySeats.includes(seat)" (click)='book(seat)' class="seat-with-price not-reserved-b">
+                        <span>${{seat.price}}</span>
                         <p>{{seat.column}}{{seat.row}}</p>
+                    </div>
+                    <div *ngIf="seat !== 'left' && mySeats.includes(seat)" (click)='book(seat)' class="seat-with-price my-seat">
+                        <span>${{seat.price}}</span>
+                        <p>{{seat.column}}{{seat.row}}</p>
+                    </div>
+                    <div *ngIf="seat !== 'left' && seat.reserved" class="seat reserved">
+                        <p>{{seat.column}}{{seat.row}}</p>
+                    </div>
+                    <div *ngIf="seat === 'left'" class="seat">
                     </div>
                 </li>
             </ul>
             <ul class="right">
-                <li *ngFor="let seat of (flight.seats | seatPlacement:'right':'B'); let i = index">
-                    <div [ngStyle]="{'background-color': seat.reserved ? '#ff3d3d': seat.available ? '#fa8795' : '#bebebe'}" (click)='book(seat)' class="seat">
+                <li *ngFor="let seat of (businessSeats | seatPlacement:'right':'B'); let i = index">
+                    <div *ngIf="seat !== 'right' && !seat.reserved && !mySeats.includes(seat)" (click)='book(seat)' class="seat-with-price not-reserved-b">
+                        <span>${{seat.price}}</span>
                         <p>{{seat.column}}{{seat.row}}</p>
+                    </div>
+                    <div *ngIf="seat !== 'right' && mySeats.includes(seat)" (click)='book(seat)' class="seat-with-price my-seat">
+                        <span>${{seat.price}}</span>
+                        <p>{{seat.column}}{{seat.row}}</p>
+                    </div>
+                    <div *ngIf="seat !== 'right' && seat.reserved" class="seat reserved">
+                        <p>{{seat.column}}{{seat.row}}</p>
+                    </div>
+                    <div *ngIf="seat === 'right'" class="seat">
                     </div>
                 </li>
             </ul>
         </div>
     </div>
     <div class="class">
-        <span>${{economyPriceRange.minPrice}} - ${{economyPriceRange.maxPrice}}</span>
         <h3>Economy</h3>
         <div class="container">
             <ul class="left">
-                <li *ngFor="let seat of (flight.seats | seatPlacement:'left':'E'); let i = index">
-                    <div [ngStyle]="{'background-color': seat.reserved ? '#ff3d3d': seat.available ? '#3eb0f7' : '#bebebe'}" (click)='book(seat)' class="seat">
+                <li *ngFor="let seat of (economySeats | seatPlacement:'left':'E'); let i = index">
+                    <div *ngIf="seat !== 'left' && !seat.reserved && !mySeats.includes(seat)" (click)='book(seat)' class="seat-with-price not-reserved-e">
+                        <span>${{seat.price}}</span>
                         <p>{{seat.column}}{{seat.row}}</p>
+                    </div>
+                    <div *ngIf="seat !== 'left' && mySeats.includes(seat)" (click)='book(seat)' class="seat-with-price my-seat">
+                        <span>${{seat.price}}</span>
+                        <p>{{seat.column}}{{seat.row}}</p>
+                    </div>
+                    <div *ngIf="seat !== 'left' && seat.reserved" class="seat reserved">
+                        <p>{{seat.column}}{{seat.row}}</p>
+                    </div>
+                    <div *ngIf="seat === 'left'" class="seat">
                     </div>
                 </li>
             </ul>
             <ul class="right">
-                <li *ngFor="let seat of (flight.seats | seatPlacement:'right':'E'); let i = index">
-                    <div [ngStyle]="{'background-color': seat.reserved ? '#ff3d3d': seat.available ? '#3eb0f7' : '#bebebe'}" (click)='book(seat)' class="seat">
+                <li *ngFor="let seat of (economySeats | seatPlacement:'right':'E'); let i = index">
+                    <div *ngIf="seat !== 'right' && !seat.reserved && !mySeats.includes(seat)" (click)='book(seat)' class="seat-with-price not-reserved-e">
+                        <span>${{seat.price}}</span>
                         <p>{{seat.column}}{{seat.row}}</p>
+                    </div>
+                    <div *ngIf="seat !== 'right' && mySeats.includes(seat)" (click)='book(seat)' class="seat-with-price my-seat">
+                        <span>${{seat.price}}</span>
+                        <p>{{seat.column}}{{seat.row}}</p>
+                    </div>
+                    <div *ngIf="seat !== 'right' && seat.reserved" class="seat reserved">
+                        <p>{{seat.column}}{{seat.row}}</p>
+                    </div>
+                    <div *ngIf="seat === 'right'" class="seat">
                     </div>
                 </li>
             </ul>
         </div>
     </div>
     <div class="class">
-        <span>${{basicEconomyPriceRange.minPrice}} - ${{basicEconomyPriceRange.maxPrice}}</span>
         <h3>Basic Economy</h3>
         <div class="container">
             <ul class="left">
-                <li *ngFor="let seat of (flight.seats | seatPlacement:'left':'BE'); let i = index">
-                    <div [ngStyle]="{'background-color': seat.reserved ? '#ff3d3d': seat.available ? '#fab387' : '#bebebe'}" (click)='book(seat)' class="seat">
+                <li *ngFor="let seat of (basicEconomySeats | seatPlacement:'left':'BE'); let i = index">
+                    <div *ngIf="seat !== 'left' && !seat.reserved && !mySeats.includes(seat)" (click)='book(seat)' class="seat-with-price not-reserved-be">
+                        <span>${{seat.price}}</span>
                         <p>{{seat.column}}{{seat.row}}</p>
+                    </div>
+                    <div *ngIf="seat !== 'left' && mySeats.includes(seat)" (click)='book(seat)' class="seat-with-price my-seat">
+                        <span>${{seat.price}}</span>
+                        <p>{{seat.column}}{{seat.row}}</p>
+                    </div>
+                    <div *ngIf="seat !== 'left' && seat.reserved" class="seat reserved">
+                        <p>{{seat.column}}{{seat.row}}</p>
+                    </div>
+                    <div *ngIf="seat === 'left'" class="seat">
                     </div>
                 </li>
             </ul>
             <ul class="right">
-                <li *ngFor="let seat of (flight.seats | seatPlacement:'right':'BE'); let i = index">
-                    <div [ngStyle]="{'background-color': seat.reserved ? '#ff3d3d': seat.available ? '#fab387' : '#bebebe'}" (click)='book(seat)' class="seat">
+                <li *ngFor="let seat of (basicEconomySeats | seatPlacement:'right':'BE'); let i = index">
+                    <div *ngIf="seat !== 'right' && !seat.reserved && !mySeats.includes(seat)" (click)='book(seat)' class="seat-with-price not-reserved-be">
+                        <span>${{seat.price}}</span>
                         <p>{{seat.column}}{{seat.row}}</p>
+                    </div>
+                    <div *ngIf="seat !== 'right' && mySeats.includes(seat)" (click)='book(seat)' class="seat-with-price my-seat">
+                        <span>${{seat.price}}</span>
+                        <p>{{seat.column}}{{seat.row}}</p>
+                    </div>
+                    <div *ngIf="seat !== 'right' && seat.reserved" class="seat reserved">
+                        <p>{{seat.column}}{{seat.row}}</p>
+                    </div>
+                    <div *ngIf="seat === 'right'" class="seat">
                     </div>
                 </li>
             </ul>

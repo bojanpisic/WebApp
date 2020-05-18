@@ -1,5 +1,6 @@
 import { Component, OnInit, EventEmitter, Output, Input, HostListener, ElementRef } from '@angular/core';
 import { RegisteredUser } from 'src/app/entities/registeredUser';
+import { Address } from 'src/app/entities/address';
 
 @Component({
   selector: 'app-modal',
@@ -10,13 +11,13 @@ export class ModalComponent implements OnInit {
 
   @Output() remove = new EventEmitter<boolean>();
   @Input() props: {friend: RegisteredUser, show: boolean};
+  @Input() destination: Address;
   @Input() type: string;
   closeIt = 0;
 
   constructor(private eRef: ElementRef) { }
 
   ngOnInit(): void {
-
   }
 
   return(value: boolean) {

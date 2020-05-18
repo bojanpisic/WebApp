@@ -7,6 +7,8 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class MapComponent implements OnInit {
 
+  @Input() home: boolean;
+
   @Input() latitude;
 
   @Input() longitude;

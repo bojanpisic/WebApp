@@ -8,7 +8,7 @@ import { AirlineInfoComponent } from './components/al-components/airline-info/ai
 import { RentACarServiceInfoComponent } from './components/rac-components/rent-a-car-service-info/rent-a-car-service-info.component';
 import { RentACarServicesComponent } from './components/rac-components/rent-a-car-services/rent-a-car-services.component';
 import { RegisterCompanyComponent } from './components/register-company/register-company.component';
-import { AddFlightComponent } from './components/al-components/add-flight/add-flight.component';
+import { AddFlightComponent } from './components/airline-admin/airline-flights/add-flight/add-flight.component';
 import { SpecialOffersComponent } from './components/al-components/special-offers/special-offers.component';
 import { FilterComponent } from './components/al-components/filter/filter.component';
 import { AirlinesHeaderComponent } from './components/al-components/airlines/airlines-header/airlines-header.component';
@@ -23,8 +23,25 @@ import { TripDetailsComponent } from './components/reservations/flight-reservati
 import { TripParameter } from './entities/trip-parameter';
 import { PickSeatsComponent } from './components/reservations/flight-reservation/pick-seats/pick-seats.component';
 import { FlightReservationComponent } from './components/reservations/flight-reservation/flight-reservation.component';
+import { AdminHomeComponent } from './components/airline-admin/admin-home/admin-home.component';
+import { AirlineDestinationsComponent } from './components/airline-admin/airline-destinations/airline-destinations.component';
+import { AirlineFlightsComponent } from './components/airline-admin/airline-flights/airline-flights.component';
+import { AirlineProfileComponent } from './components/airline-admin/airline-profile/airline-profile.component';
+import { ConfigureSeatsComponent } from './components/airline-admin/airline-flights/configure-seats/configure-seats.component';
 
 const routes: Routes = [
+  {path: 'admin/:id',
+  children: [
+    {path: '', component: AdminHomeComponent},
+    {path: 'destinations', component: AirlineDestinationsComponent},
+    {path: 'flights',
+    children : [
+      {path: '', component: AirlineFlightsComponent},
+      {path: 'add-flight', component: AddFlightComponent},
+      {path: ':flight/configure-seats', component: ConfigureSeatsComponent},
+    ]},
+    {path: 'airline-profile', component: AirlineProfileComponent},
+  ]},
   {path: '', component: HomeComponent},
   {path: ':id/home', component: HomeComponent},
   {path: ':id/cars', component: CarsComponent},

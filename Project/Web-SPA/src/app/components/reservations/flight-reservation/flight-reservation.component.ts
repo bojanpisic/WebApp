@@ -33,7 +33,7 @@ export class FlightReservationComponent implements OnInit {
 
   reservation: TripReservation;
   flights: Array<Flight>;
-  roundTrip = false;
+  mySeats: Array<{seats: Array<Seat>}>;
 
   arrayOfValues: Array<TripParameter>;
 
@@ -53,6 +53,8 @@ export class FlightReservationComponent implements OnInit {
     this.reservation = new TripReservation();
     this.flights = new Array<Flight>();
 
+    this.mySeats = [];
+
     this.index = -1;
   }
 
@@ -63,6 +65,10 @@ export class FlightReservationComponent implements OnInit {
 
       this.reservation.flights.push(flight);
       this.reservation.seats.push(new SeatsForFlight(flight));
+
+      this.mySeats.push({
+        seats: new Array<Seat>()
+      });
     }
   }
 
@@ -109,7 +115,7 @@ export class FlightReservationComponent implements OnInit {
       this.fillInfo = true;
       this.blur = true;
       this.pickedSeat = seat;
-      if (this.flights[this.index].seats[seatIndex].reserved) {
+      if (this.mySeats[this.index].seats.includes(seat)) {
         const takenSeatIndex = this.reservation.seats[this.index].seats.indexOf(seat);
         this.passenger = this.reservation.seats[this.index].seats[takenSeatIndex].passenger;
         if (this.passenger.passport === '') {
@@ -118,27 +124,51 @@ export class FlightReservationComponent implements OnInit {
       } else {
         this.passenger = undefined;
       }
+      // if (this.flights[this.index].seats[seatIndex].reserved) {
+      //   const takenSeatIndex = this.reservation.seats[this.index].seats.indexOf(seat);
+      //   this.passenger = this.reservation.seats[this.index].seats[takenSeatIndex].passenger;
+      //   if (this.passenger.passport === '') {
+      //     this.invitedFriend = true;
+      //   }
+      // } else {
+      //   this.passenger = undefined;
+      // }
     }
   }
 
   addPassenger(passenger: any) {
     // proveriti da li ima na letu putnik sa takvim pasosem
-    console.log('DOBRODOSAO' + passenger);
     const seatIndex = this.flights[this.index].seats.indexOf(this.pickedSeat);
+    // if (passenger !== null) {
+    //   // TREBA U BAZU ZAPISATI DA JE ZAUZETO
+    //   this.flights[this.index].seats[seatIndex].reserved = true;
+    //   this.pickedSeat.passenger = passenger;
+    //   this.reservation.seats[this.index].seats.push(this.pickedSeat);
+    // } else if (this.flights[this.index].seats[seatIndex].reserved) {
+    //   this.flights[this.index].seats[seatIndex].reserved = false;
+    //   // tslint:disable-next-line:prefer-for-of
+    //   for (let i = 0; i < this.reservation.seats.length; i++) {
+    //     if (this.reservation.seats[i].seats.includes(this.pickedSeat)) {
+    //       console.log(this.reservation.seats[i]);
+    //       const indexOfSeat = this.reservation.seats[i].seats.indexOf(this.pickedSeat);
+    //       this.reservation.seats[i].seats.splice(indexOfSeat, 1);
+    //       console.log(this.reservation.seats[i]);
+    //     }
+    //   }
+    // }
     if (passenger !== null) {
       // TREBA U BAZU ZAPISATI DA JE ZAUZETO
-      this.flights[this.index].seats[seatIndex].reserved = true;
       this.pickedSeat.passenger = passenger;
+      this.mySeats[this.index].seats.push(this.pickedSeat);
       this.reservation.seats[this.index].seats.push(this.pickedSeat);
-    } else if (this.flights[this.index].seats[seatIndex].reserved) {
-      this.flights[this.index].seats[seatIndex].reserved = false;
+    } else if (this.mySeats[this.index].seats.includes(this.pickedSeat)) {
+      const index = this.mySeats[this.index].seats.indexOf(this.pickedSeat);
+      this.mySeats[this.index].seats.splice(index, 1);
       // tslint:disable-next-line:prefer-for-of
       for (let i = 0; i < this.reservation.seats.length; i++) {
         if (this.reservation.seats[i].seats.includes(this.pickedSeat)) {
-          console.log(this.reservation.seats[i]);
           const indexOfSeat = this.reservation.seats[i].seats.indexOf(this.pickedSeat);
           this.reservation.seats[i].seats.splice(indexOfSeat, 1);
-          console.log(this.reservation.seats[i]);
         }
       }
     }
@@ -177,17 +207,19 @@ export class FlightReservationComponent implements OnInit {
     this.showConfirmReservation = (this.index === this.flights.length) ? true : false;
     if (this.showConfirmReservation) {
       console.log('INDEX JE' + this.index);
+      console.log(this.mySeats);
     }
   }
 
   // HELPERS
 
   emptyReserved() {
-    this.flights.forEach(flight => {
-      flight.seats.forEach(seat => {
-        seat.reserved = false;
-      });
-    });
+    // this.flights.forEach(flight => {
+    //   flight.seats.forEach(seat => {
+    //     seat.reserved = false;
+    //   });
+    // });
+    this.mySeats = [];
   }
 
   validateStep() {

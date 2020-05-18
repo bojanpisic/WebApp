@@ -6,6 +6,7 @@ import { Seat } from 'src/app/entities/seat';
 import { TripId } from 'src/app/entities/trip-id';
 import { Address } from 'src/app/entities/address';
 import { SeatsService } from './seats.service';
+import { Airline } from 'src/app/entities/airline';
 
 @Injectable({
   providedIn: 'root'
@@ -25,12 +26,23 @@ export class FlightService {
 
   getFlightsOfSpecificAirline(airlineId: number) {
     const flights = new Array<Flight>();
-    this.flights.forEach(a => {
-      if (a.airlineId == airlineId) {
-        flights.push(a);
+    this.flights.forEach(f => {
+      if (f.airlineId == airlineId) {
+        flights.push(f);
       }
     });
     return flights;
+  }
+
+  getFlight(id: number) {
+    let retVal;
+    this.flights.forEach(flight => {
+      if (flight.id == id) {
+        retVal = flight;
+      }
+    });
+
+    return retVal;
   }
 
   getAllFlights() {
@@ -47,36 +59,38 @@ export class FlightService {
     const seats5 = this.makeSeats();
     const seats6 = this.makeSeats();
 
-    const f1 = new Flight( 0, new Date(2020, 4, 28), new Date(Date.now()), '03h 40min', 12,
+    const f1 = new Flight(0, new Date(2020, 4, 28), new Date(Date.now()), '03h 40min', 12,
     [new ChangeOver('08:40', '08:10', new Address('Paris', 'France', 'PAR', 0, 0))], 300.00, '234A',
     new Address('Madrid', 'Spain', 'MAD', 0, 0), new Address('Belgrade', 'Serbia', 'BEG', 0, 0), '06:20', '10:00',
-    seats1);
+    seats1, [new Address('Paris', 'France', 'PAR', 0, 0)], new Airline('Turkish Airlines', new Address('Istanbul', 'Turkey', 'IST', 0, 0))
+    , 0);
 
     const f2 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '03h 10min', 12,
     [], 200.00, '234B',
     new Address('Belgrade', 'Serbia', 'BEG', 0, 0), new Address( 'Barcelona', 'Spain', 'BAR', 0, 0), '04:00', '07:10',
-    seats2);
+    seats2, [], new Airline('Turkish Airlines', new Address('Istanbul', 'Turkey', 'IST', 0, 0)), 1);
 
     const f3 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '10h 0min', 12,
     [new ChangeOver('10:00', '09:00', new Address('Paris', 'France', 'PAR', 0, 0)),
     new ChangeOver('12:10', '11:20', new Address('London', 'England', 'LON', 0, 0))], 700.00, '234C',
     new Address('Novi Sad', 'Serbia', 'NS', 0, 0), new Address('New York', 'USA', 'NY', 0, 0), '06:00', '16:00',
-    seats3);
+    seats3, [new Address('Paris', 'France', 'PAR', 0, 0), new Address('London', 'England', 'LON', 0, 0)],
+    new Airline('Turkish Airlines', new Address('Istanbul', 'Turkey', 'IST', 0, 0)), 2);
 
     const f4 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '8h 10min', 12,
     [], 700.00, '234D',
     new Address('New York', 'USA', 'NY', 0, 0), new Address('Novi Sad', 'Serbia', 'NS', 0, 0), '08:00', '16:10',
-    seats4);
+    seats4, [], new Airline('Turkish Airlines', new Address('Istanbul', 'Turkey', 'IST', 0, 0)), 3);
 
     const f5 = new Flight( 1, new Date(Date.now()), new Date(Date.now()), '1h 10min', 12,
     [], 220.00, 'V11T',
     new Address('Vienna', 'Austria', 'VIE', 0, 0), new Address('Belgrade', 'Serbia', 'BG', 0, 0), '14:10', '15:20',
-    seats5);
+    seats5, [], new Airline('Qatar Airlines', new Address('Doha', 'Qatar', 'IST', 0, 0)), 4);
 
     const f6 = new Flight( 1, new Date(Date.now()), new Date(Date.now()), '0h 50min', 12,
     [], 200.00, 'V11R',
     new Address('Sofia', 'Bulgaria', 'BUG', 0, 0), new Address('Belgrade', 'Serbia', 'BG', 0, 0), '12:15', '13:05',
-    seats6);
+    seats6, [], new Airline('Qatar Airlines', new Address('Doha', 'Qatar', 'IST', 0, 0)), 5);
 
     this.flights.push(f1);
     this.flights.push(f2);
@@ -84,6 +98,8 @@ export class FlightService {
     this.flights.push(f4);
     this.flights.push(f5);
     this.flights.push(f6);
+
+    console.log(this.flights);
   }
 
   makeSeats() {
@@ -124,6 +140,9 @@ export class FlightService {
     const s28 = new Seat('F', 'D', 5, 400);
     const s29 = new Seat('F', 'E', 5, 400);
     const s30 = new Seat('F', 'F', 5, 400);
+    const s301 = new Seat('F', 'A', 6, 400);
+    const s302 = new Seat('F', 'B', 6, 400);
+    const s303 = new Seat('F', 'C', 6, 400);
     const s31 = new Seat('B', 'A', 1, 300);
     const s32 = new Seat('B', 'B', 1, 300);
     const s33 = new Seat('B', 'C', 1, 300);
@@ -217,17 +236,17 @@ export class FlightService {
 
     seats.push(s1);
     seats.push(s2);
-    seats.push(s3);
+    // seats.push(s3);
     seats.push(s4);
-    seats.push(s5);
+    // seats.push(s5);
     seats.push(s6);
     seats.push(s7);
     seats.push(s8);
-    seats.push(s9);
-    seats.push(s10);
+    // seats.push(s9);
+    // seats.push(s10);
     s11.price = 487;
     seats.push(s11);
-    seats.push(s12);
+    // seats.push(s12);
     seats.push(s13);
     seats.push(s14);
     seats.push(s15);
@@ -246,6 +265,10 @@ export class FlightService {
     seats.push(s28);
     seats.push(s29);
     seats.push(s30);
+    seats.push(s301);
+    s302.reserved = true;
+    seats.push(s302);
+    seats.push(s303);
     seats.push(s31);
     seats.push(s32);
     seats.push(s33);

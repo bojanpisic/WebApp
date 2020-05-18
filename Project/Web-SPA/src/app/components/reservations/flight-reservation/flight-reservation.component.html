@@ -8,7 +8,7 @@
     <span *ngIf="showConfirmReservation">Confirm reservation</span>
 </header>
 <app-trip-details *ngIf="showTripDetails" [flights]="flights"></app-trip-details>
-<app-pick-seats *ngIf="pickSeats" (bookSeat)="onPickSeat($event)" [flight]="flights[(index < 0 || index > flights.length) ? 0 : index]" [blur]="blur"></app-pick-seats>
+<app-pick-seats *ngIf="pickSeats" (bookSeat)="onPickSeat($event)" [mySeats]="mySeats[this.index].seats" [flight]="flights[(index < 0 || index > flights.length) ? 0 : index]" [blur]="blur"></app-pick-seats>
 <app-modal *ngIf="exit" (remove)='onExitReservation($event)' [type]='exitReservation'></app-modal>
 <app-modal *ngIf="error" (remove)='onErrorReservation($event)' [type]='errorReservation'></app-modal>
 <app-invite-friends *ngIf="fillInfo" (passenger)="addPassenger($event)" [seat]="pickedSeat" [flight]="flights[(index < 0 || index > flights.length) ? 0 : index]" [person]="passenger"></app-invite-friends>

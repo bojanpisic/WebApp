@@ -8,6 +8,7 @@ export class Airline {
     adminid: number;
     name: string;
     address: Address;
+    about: string;
     promoDescription: Array<string>;
     flightDestionations: Array<Destination>;
     flights: Array<Flight>;

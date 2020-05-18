@@ -114,15 +114,12 @@ export class InviteFriendsComponent implements OnInit {
   @HostListener('document:click', ['$event'])
   clickout(event) {
     if (this.closeIt < 1) {
-      console.log('kec');
       this.closeIt = 1;
     } else {
-      console.log('dva');
       this.closeIt = 2;
     }
     if (!this.eRef.nativeElement.contains(event.target)) {
       if (this.closeIt === 2) {
-        console.log(event.target.value);
         this.close();
       }
     }

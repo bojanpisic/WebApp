@@ -48,3 +48,22 @@
         <button style="grid-column: 1/span 2; width: calc(50% - 20px);" id="remove" (click)="return(true)">Ok</button>
     </div>
 </div>
+<div *ngIf="type === 'deleteDestination'" class="popup">
+    <div class="remove-friend-header">
+        <button (click)="return(false)">
+            <svg aria-hidden="true" role="presentation" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display: block; fill: rgb(34, 34, 34); height: 16px; width: 16px; stroke: currentcolor; stroke-width: 4; overflow: visible;"><path d="m6 6 20 20"></path><path d="m26 6-20 20"></path></svg>
+        </button>
+        <span>Delete</span>
+    </div>
+    <div class="content">
+        <img src='../../../../assets/illustrations/undraw_having_fun_iais.svg'>
+        <h4>Are you sure you want to delete 
+            <h4>{{destination.city}} ({{destination.state}})
+            </h4>
+             from your list of destinations?
+        </h4>
+        <br>
+        <button id="cancel" (click)="return(false)">Cancel</button>
+        <button id="remove" (click)="return(true)">Delete</button>
+    </div>
+</div>

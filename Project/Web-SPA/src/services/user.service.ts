@@ -9,6 +9,7 @@ import { Seat } from 'src/app/entities/seat';
 import { Address } from 'src/app/entities/address';
 import { Message } from '../app/entities/message';
 import { TripService } from './trip.service';
+import { AirlineAdmin } from 'src/app/entities/airlineAdmin';
 
 @Injectable({
   providedIn: 'root'
@@ -16,9 +17,11 @@ import { TripService } from './trip.service';
 export class UserService {
 
   allUsers = new Array<RegisteredUser>();
+  airlineAdmins = new Array<AirlineAdmin>();
 
   constructor(private tripService: TripService) {
     this.mockedUsers();
+    this.mockedAirlineAdmins();
    }
 
   userRegistration(fname: string, lname: string, password: string,
@@ -78,6 +81,19 @@ export class UserService {
 
   getUser(id: number) {
     return this.allUsers.find(x => x.id == id);
+  }
+
+  getAirlineAdmin(id: number) {
+    return this.airlineAdmins.find(x => x.id == id);
+  }
+
+  mockedAirlineAdmins() {
+    const user1 = new AirlineAdmin('Milos', 'Bakmaz', 'bakmaz123', 'bakmaz@gmail.com', 'Kings Road 201', '(+381)63/123-456');
+    user1.userType = 'admin';
+    user1.id = 22;
+    user1.airlineId = 0;
+
+    this.airlineAdmins.push(user1);
   }
 
   mockedUsers() {
@@ -144,6 +160,7 @@ export class UserService {
     // this.allUsers.push(user8);
     // this.allUsers.push(user9);
     // this.allUsers.push(user10);
+
 
     return this.allUsers;
   }

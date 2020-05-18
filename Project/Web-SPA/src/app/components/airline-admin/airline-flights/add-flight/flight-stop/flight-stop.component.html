@@ -1,0 +1,2 @@
+<p>Location:</p>
+<app-places-search (focused)="removeErrorClass()" [error]="errorLocation" (inputValue)="onInputChange($event)" [addFlight]="true" [ngStyle]="{'padding-left': '0px'}" (cityName)='onLocation($event)'></app-places-search>

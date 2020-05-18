@@ -12,11 +12,18 @@ $pink: #ff3d9e;
 $error: #d93900;
 $error-background: #d93a0025;
 
+$info: #8795fa;
+$stats: #fa8795;
+$flights: #3eb0f7;
+$destinations: #fab387;
+
 $black-shadow: 0px 3px 6px black;
 $gray-shadow: 0px 3px 6px rgb(120, 120, 120);
 $lightest-shadow: 0px 3px 6px rgb(200, 200, 200);
 $lightest-small-shadow: 0px 2px 4px rgb(200, 200, 200);
 $smallest-shadow: 0px 5px 12px rgba(0, 0, 0, 0.15);
+$smallest-shadow-around: 0px 0px 20px 8px rgba(0, 0, 0, 0.05);
+$smallest-shadow-around2: 0px 0px 10px 2px rgba(0, 0, 0, 0.15);
 $lightest-big-shadow: 4px 4px 8px rgb(200, 200, 200);
 
 * {

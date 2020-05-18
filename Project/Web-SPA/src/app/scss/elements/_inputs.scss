@@ -17,6 +17,16 @@
     position: relative;
 }
 
+%input2 {
+    @extend %input;
+    width: 100%;
+    margin-top: 5px;
+    font-size: 16px;
+    line-height: 20px;
+    padding: 10px auto;
+    color: rgb(34, 34, 34);
+}
+
 %focus {
     outline: none;
     border: 2px solid $blue;

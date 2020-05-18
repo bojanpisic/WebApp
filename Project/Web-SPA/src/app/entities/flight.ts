@@ -3,15 +3,19 @@ import { Destination } from './destination';
 import { ChangeOver } from './changeOver';
 import { Seat } from './seat';
 import { Address } from './address';
+import { Airline } from './airline';
 
 export class Flight {
+    id: number;
     airlineId: number;
+    airline: Airline;
     flightNumber: string;
     takeOffDate: Date;
     landingDate: Date;
     tripTime: string;
     tripLength: number;
     changeOverLocations: Array<ChangeOver>;
+    stops: Array<Address>;
     ticketPrice: number;
     from: Address;
     to: Address;
@@ -19,23 +23,26 @@ export class Flight {
     landingTime: string;
     seats: Array<Seat>;
 
-    constructor(airlineId: number, takeOffDate: Date, landingDate: Date, tripTime: string,
-                tripLength: number, changeOverLocations: Array<ChangeOver>,
-                ticketPrice: number, flightNumber: string,
-                from: Address, to: Address, takeofftime: string, landingtime: string,
-                seats: Array<Seat>) {
+    constructor(airlineId?: number, takeOffDate?: Date, landingDate?: Date, tripTime?: string,
+                tripLength?: number, changeOverLocations?: Array<ChangeOver>,
+                ticketPrice?: number, flightNumber?: string,
+                from?: Address, to?: Address, takeofftime?: string, landingtime?: string,
+                seats?: Array<Seat>, stops?: Array<Address>, airline?: Airline, id?: number) {
+            this.id = id;
             this.airlineId = airlineId;
-            this.takeOffDate = takeOffDate;
-            this.landingDate = landingDate;
-            this.tripTime = tripTime;
-            this.tripLength = tripLength;
-            this.changeOverLocations = changeOverLocations;
-            this.ticketPrice = ticketPrice;
-            this.flightNumber = flightNumber;
-            this.from = from;
-            this.to = to;
-            this.landingTime = landingtime;
-            this.takeOffTime = takeofftime;
-            this.seats = seats;
+            this.takeOffDate = takeOffDate || null;
+            this.landingDate = landingDate || null;
+            this.tripTime = tripTime || null;
+            this.tripLength = tripLength || null;
+            this.changeOverLocations = changeOverLocations || new Array<ChangeOver>();
+            this.ticketPrice = ticketPrice || null;
+            this.flightNumber = flightNumber || null;
+            this.from = from || null;
+            this.to = to || null;
+            this.landingTime = landingtime || null;
+            this.takeOffTime = takeofftime || null;
+            this.seats = seats || new Array<Seat>();
+            this.stops = stops || new Array<Address>();
+            this.airline = airline || null;
     }
 }

@@ -18,7 +18,7 @@ export class AirlineInfoComponent implements OnInit {
   destinations: Array<Destination>;
   rotateArrow = false;
   buttonContent = 'Paris';
-  
+
   constructor(private route: ActivatedRoute, private airlineService: AirlineService, private location: Location) {
     route.params.subscribe(params => { this.id = params.id; });
     this.allAirlines = new Array<Airline>();
