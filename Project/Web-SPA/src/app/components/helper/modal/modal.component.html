@@ -48,6 +48,22 @@
         <button style="grid-column: 1/span 2; width: calc(50% - 20px);" id="remove" (click)="return(true)">Ok</button>
     </div>
 </div>
+<div *ngIf="type === 'carIsReserved'" class="popup">
+    <div class="remove-friend-header">
+        <button (click)="return(false)">
+            <svg aria-hidden="true" role="presentation" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display: block; fill: rgb(34, 34, 34); height: 16px; width: 16px; stroke: currentcolor; stroke-width: 4; overflow: visible;"><path d="m6 6 20 20"></path><path d="m26 6-20 20"></path></svg>
+        </button>
+        <span>Error</span>
+    </div>
+    <div class="content">
+        <img src='../../../../assets/illustrations/undraw_access_denied_6w73.png'>
+        <h4>
+            This car is reserved so you are not able to edit it.
+        </h4>
+        <br>
+        <button style="grid-column: 1/span 2; width: calc(50% - 20px);" id="remove" (click)="return(true)">Ok</button>
+    </div>
+</div>
 <div *ngIf="type === 'deleteDestination'" class="popup">
     <div class="remove-friend-header">
         <button (click)="return(false)">

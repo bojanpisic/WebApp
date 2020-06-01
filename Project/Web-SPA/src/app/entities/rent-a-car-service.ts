@@ -8,6 +8,7 @@ export class RentACarService {
     adminId: number;
     name: string;
     address: Address;
+    about: string;
     promoDescription: Array<string>;
     branches: Array<RentACarService>;
     averageRating: number;
@@ -18,6 +19,7 @@ export class RentACarService {
     constructor(name: string, address: Address) {
         this.name = name;
         this.address = address;
+        this.about = '';
         this.promoDescription = new Array<string>();
         this.branches = new Array<RentACarService>();
         this.averageRating = 0.0;

@@ -11,10 +11,26 @@ export class CarRentService {
 
   constructor() { 
     this.rentACarServices = new Array<RentACarService>();
+    this.allMockedRentServices();
   }
 
   loadAllRentServices() {
     return this.allMockedRentServices();
+  }
+
+  getAdminsRac(adminId: number) {
+    console.log(this.rentACarServices);
+    return this.rentACarServices[0];
+  }
+
+  getAdminsRACId(adminId: number) {
+    let retVal;
+    this.rentACarServices.forEach(rac => {
+      if (rac.adminId == adminId) {
+        retVal = rac.id;
+      }
+    });
+    return retVal;
   }
 
   allMockedRentServices() {
@@ -29,6 +45,7 @@ export class CarRentService {
 
     const a1 = new RentACarService('Instanbul Rent Service', new Address('Istanbul', 'Turkey', 'IST', 32.974662768,  40.1077995688));
     a1.id = 0;
+    a1.adminId = 33;
     a1.branches.push(branch1);
     a1.branches.push(branch2);
     a1.branches.push(branch3);
@@ -36,6 +53,12 @@ export class CarRentService {
     a1.branches.push(branch5);
 
     a1.averageRating = 4.7;
+    a1.about = 'Lorem ipsum dolor sit amet consectetur adipisicing elit. \
+    Quidem, praesentium? Sunt ipsum deserunt similique unde quo beatae. \
+    Expedita nemo veniam alias eum fuga ut quibusdam consequuntur labore, \
+    dolorum odit aut blanditiis saepe sequi impedit error beatae quos natus \
+    officia aliquam, aspernatur quod harum fugit molestias amet? Doloribus \
+    tempore temporibus earum?';
     a1.promoDescription.push('Lorem ipsum, dolor sit amet consectetur adipisicing elit.\
                               Voluptas omnis accusamus, odio in blanditiis animi accusantium velit tempore,\
                               nam laborum quibusdam fugit aspernatur ullam nihil ipsam illo similique minima magni?');
@@ -56,6 +79,12 @@ export class CarRentService {
     a2.branches.push(branch5);
 
     a2.averageRating = 4.7;
+    a2.about = 'Lorem ipsum dolor sit amet consectetur adipisicing elit. \
+    Quidem, praesentium? Sunt ipsum deserunt similique unde quo beatae. \
+    Expedita nemo veniam alias eum fuga ut quibusdam consequuntur labore, \
+    dolorum odit aut blanditiis saepe sequi impedit error beatae quos natus \
+    officia aliquam, aspernatur quod harum fugit molestias amet? Doloribus \
+    tempore temporibus earum?';
     a2.promoDescription.push('Lorem ipsum, dolor sit amet consectetur adipisicing elit.\
                               Voluptas omnis accusamus, odio in blanditiis animi accusantium velit tempore,\
                               nam laborum quibusdam fugit aspernatur ullam nihil ipsam illo similique minima magni?');
@@ -75,6 +104,12 @@ export class CarRentService {
     a3.branches.push(branch5);
 
     a3.averageRating = 4.7;
+    a3.about = 'Lorem ipsum dolor sit amet consectetur adipisicing elit. \
+    Quidem, praesentium? Sunt ipsum deserunt similique unde quo beatae. \
+    Expedita nemo veniam alias eum fuga ut quibusdam consequuntur labore, \
+    dolorum odit aut blanditiis saepe sequi impedit error beatae quos natus \
+    officia aliquam, aspernatur quod harum fugit molestias amet? Doloribus \
+    tempore temporibus earum?';
     a3.promoDescription.push('Lorem ipsum, dolor sit amet consectetur adipisicing elit.\
                               Voluptas omnis accusamus, odio in blanditiis animi accusantium velit tempore,\
                               nam laborum quibusdam fugit aspernatur ullam nihil ipsam illo similique minima magni?');

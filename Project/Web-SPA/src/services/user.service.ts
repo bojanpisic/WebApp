@@ -10,6 +10,7 @@ import { Address } from 'src/app/entities/address';
 import { Message } from '../app/entities/message';
 import { TripService } from './trip.service';
 import { AirlineAdmin } from 'src/app/entities/airlineAdmin';
+import { RacAdmin } from 'src/app/entities/racAdmin';
 
 @Injectable({
   providedIn: 'root'
@@ -18,10 +19,12 @@ export class UserService {
 
   allUsers = new Array<RegisteredUser>();
   airlineAdmins = new Array<AirlineAdmin>();
+  racAdmins = new Array<RacAdmin>();
 
   constructor(private tripService: TripService) {
     this.mockedUsers();
     this.mockedAirlineAdmins();
+    this.mockedRACAdmins();
    }
 
   userRegistration(fname: string, lname: string, password: string,
@@ -87,13 +90,26 @@ export class UserService {
     return this.airlineAdmins.find(x => x.id == id);
   }
 
+  getRACAdmin(id: number) {
+    return this.racAdmins.find(x => x.id == id);
+  }
+
   mockedAirlineAdmins() {
     const user1 = new AirlineAdmin('Milos', 'Bakmaz', 'bakmaz123', 'bakmaz@gmail.com', 'Kings Road 201', '(+381)63/123-456');
     user1.userType = 'admin';
-    user1.id = 22;
+    user1.id = 33;
     user1.airlineId = 0;
 
     this.airlineAdmins.push(user1);
+  }
+
+  mockedRACAdmins() {
+    const user1 = new RacAdmin('Milos', 'Bakmaz', 'bakmaz123', 'bakmaz@gmail.com', 'Kings Road 201', '(+381)63/123-456');
+    user1.userType = 'admin';
+    user1.id = 22;
+    user1.racId = 0;
+
+    this.racAdmins.push(user1);
   }
 
   mockedUsers() {

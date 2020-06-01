@@ -7,7 +7,7 @@
 (keydown.enter)="$event.preventDefault()" placeholder="Anywhere" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #search>
 <input *ngIf="pickUpLocation" type="text" [ngStyle]="{'border-radius': '3px', 'grid-column:' : '1/ span 4'}" 
 (keydown.enter)="$event.preventDefault()" placeholder="Anywhere" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #search>
-<input *ngIf="searchDestination" type="text" [ngStyle]="{'border': '0', 'padding-left': '30px', 'z-index' : 9999}" 
+<input *ngIf="searchDestination" id="searchDestination" type="text" [ngStyle]="{'border': '0', 'padding-left': '30px', 'z-index' : 9999}" 
 (keydown.enter)="$event.preventDefault()" placeholder="Find destination!" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #search>
 <input *ngIf="addFlight" [disabled]="disabled" type="text" id="addFlight" class="addFlight" [ngClass]="{'error': error}" (focus)="onFocus()" (input)="onChange()"
 (keydown.enter)="$event.preventDefault()" placeholder="Find destination!" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #search>

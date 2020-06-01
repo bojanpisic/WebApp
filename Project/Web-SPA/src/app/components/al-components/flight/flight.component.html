@@ -15,7 +15,7 @@
     <p id="arrival" [ngStyle]="{'grid-area': 'arrival', 'text-align': 'right'}">{{flight.landingTime}}</p>
     <span id="spanflight">Flight:</span>
     <p id="flight" [ngStyle]="{'color': markFlightName ? '#1C4CB2' : 'rgb(34, 34, 34)'}">{{flight.flightNumber}}</p>
-    <span id="spandistance">Disance:</span>
+    <span id="spandistance">Distance:</span>
     <p id="distance">{{flight.tripLength}}km</p>
     <div id="stops">
         <span *ngIf="flight.changeOverLocations.length > 0">{{flight.changeOverLocations.length}} {{(flight.stops.length === 1) ? 'stop' : 'stops'}}</span>
@@ -25,6 +25,6 @@
                 <p *ngIf="i !== flight.changeOverLocations.length -1">{{stop.newDestination.city}}, </p>
             </li>
         </ul>
-        <span *ngIf="flight.changeOverLocations.length === 0" style="color: rgb(34, 34, 34); font-weight: bold">direct</span>
+        <span *ngIf="flight.changeOverLocations.length === 0" style="color: rgb(34, 34, 34); font-weight: bold; font-family: Montserrat, sans-serif;">direct</span>
     </div>
 </div>

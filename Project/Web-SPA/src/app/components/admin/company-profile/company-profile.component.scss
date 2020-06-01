@@ -92,7 +92,6 @@ main {
         .error-input {
             @extend %error-input;
             margin-bottom: 5px;
-            border: 2px solid $error;
         }
 
         .error {
@@ -117,7 +116,7 @@ main {
             @extend %wide-button;
         }
 
-        :focus {
+        button:focus {
             outline: none;
             border: none;
         }

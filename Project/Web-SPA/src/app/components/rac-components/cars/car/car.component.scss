@@ -1,3 +1,367 @@
+// @import '../../../../app.component.scss';
+// @import url('https://fonts.googleapis.com/css?family=Bebas+Neue&display=swap');
+
+// * {
+//     box-sizing: border-box;
+// }
+
+// .container {
+//     position: relative;
+//     margin: 0 30px;
+//     height: 300px;
+//     border-radius: 10%;
+//     box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.1),
+//                 0px 4px 6px rgba(0, 0, 0, 0.15);
+//     margin-bottom: 20px;
+//     padding: 30px 15px;
+//     display: grid;
+//     grid-template-columns: 20% 80%;
+//     grid-template-rows: 25% 25% 25% 25%;
+//     grid-template-areas: "people img"
+//                          "bags img"
+//                          "engine img"
+//                          "none rac-service-name";
+//                          background-image: linear-gradient(41deg, rgba(107, 107, 107, 0.04) 0%, rgba(107, 107, 107, 0.04) 8%,rgba(31, 31, 31, 0.04) 8%, rgba(31, 31, 31, 0.04) 100%),linear-gradient(9deg, rgba(228, 228, 228, 0.04) 0%, rgba(228, 228, 228, 0.04) 62%,rgba(54, 54, 54, 0.04) 62%, rgba(54, 54, 54, 0.04) 100%),linear-gradient(124deg, rgba(18, 18, 18, 0.04) 0%, rgba(18, 18, 18, 0.04) 37%,rgba(233, 233, 233, 0.04) 37%, rgba(233, 233, 233, 0.04) 100%),linear-gradient(253deg, rgba(201, 201, 201, 0.04) 0%, rgba(201, 201, 201, 0.04) 55%,rgba(47, 47, 47, 0.04) 55%, rgba(47, 47, 47, 0.04) 100%),linear-gradient(270deg, rgba(172, 172, 172, 0.04) 0%, rgba(172, 172, 172, 0.04) 33%,rgba(26, 26, 26, 0.04) 33%, rgba(26, 26, 26, 0.04) 100%),linear-gradient(64deg, rgba(11, 11, 11, 0.04) 0%, rgba(11, 11, 11, 0.04) 38%,rgba(87, 87, 87, 0.04) 38%, rgba(87, 87, 87, 0.04) 100%),linear-gradient(347deg, rgba(199, 199, 199, 0.04) 0%, rgba(199, 199, 199, 0.04) 69%,rgba(4, 4, 4, 0.04) 69%, rgba(4, 4, 4, 0.04) 100%),linear-gradient(313deg, rgba(36, 36, 36, 0.04) 0%, rgba(36, 36, 36, 0.04) 20%,rgba(91, 91, 91, 0.04) 20%, rgba(91, 91, 91, 0.04) 100%),linear-gradient(90deg, rgb(10, 17, 72),rgb(35, 148, 228));
+
+//     #grade {
+//         position: absolute;
+//         top: -16px;
+//         left: 30px;
+//         font-size: 18px;
+//         font-weight: bold;
+//         color: white;
+//         text-align: right;
+//         background-color: $red;
+//         border-radius: 10px;
+//         padding: .3em .5em;
+//         margin-top: 2px;
+//         box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.1),
+//                 0px 4px 6px rgba(0, 0, 0, 0.15);
+//         svg {
+//             height: 14px;
+//             width: 14px;
+//             color: white;
+//         }
+//     }
+
+//     .image {
+//         grid-area: img;
+//         background: url('../../../../../assets/cars/download.jpg');
+//         background-repeat: no-repeat;
+//         background-position: center;
+//         background-size: cover;
+//         border-radius: 10%;
+//         position: relative;
+//         box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.1),
+//         0px 4px 6px rgba(0, 0, 0, 0.15);
+//     }
+
+//     .image:before {
+//         content: "Luxury";
+//         position: absolute;
+//         color: white;
+//         font-weight: bold;
+//         font-size: .9em;
+//         text-align: right;
+//         padding: .4em .8em;
+//         top: -7%;
+//         right: 20px;
+//         background: $purple;
+//         border-radius: 10px;
+//     }
+
+//     .image:after {
+//         content: "Range Rover Sport 2020";
+//         position: absolute;
+//         color: white;
+//         font-weight: bold;
+//         font-family: 'Bebas Neue', cursive;
+//         font-size: 1.2em;
+//         line-height: 1.1em;
+//         text-align: right;
+//         padding: .4em 1em;
+//         bottom: -8%;
+//         right: 0;
+//         background: $orange;
+//         letter-spacing: .9px;
+//         border-radius: 10px;
+//         box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.1),
+//                     0px 4px 6px rgba(0, 0, 0, 0.15);
+//     }
+
+//     .people {
+//         grid-area: people;
+//         margin: auto 0 auto 5px;
+//         span {
+//             line-height: 16px;
+//             font-size: 1em;
+//             color: white;
+//             margin-left: 7px;
+//         }
+//         img {
+//             display: inline-block;
+//             height: 16px;
+//             width: 16px;
+//             vertical-align: middle;
+//             margin-bottom: 3px;
+//         }
+//     }
+
+//     .bags {
+//         grid-area: bags;
+//         margin: auto 0 auto 5px;
+//         span {
+//             font-size: 1em;
+//             line-height: 16px;
+//             color: white;
+//             margin-left: 7px;
+//         }
+//         img {
+//             display: inline-block;
+//             height: 16px;
+//             width: 16px;
+//             vertical-align: middle;
+//             margin-bottom: 3px;
+//         }
+//     }
+
+//     .engine {
+//         grid-area: engine;
+//         margin: auto 0 auto 5px;
+//         img {
+//             height: 20px;
+//             width: 20px;
+//         }
+//     }
+
+//     .rac-service-name {
+//         grid-area: rac-service-name;
+//         margin-top: 40px;
+//         margin-right: 2px;
+//         text-align: right;
+
+//         p {
+//             margin: 0;
+//             font-size: .55em;
+//             font-weight: bold;
+//             color: white;
+//         }
+
+//         span {
+//             color: white;
+//             font-weight: bold;
+//             font-size: 1.25em;
+//             line-height: 1.25em;
+//             vertical-align: middle;
+//             img {
+//                 height: 22px;
+//                 width: 22px;
+//                 border-radius: 50%;
+//                 vertical-align: middle;
+//                 margin-bottom: 4px;
+//             }
+//         }
+//     }  
+// }
+
+// .all {
+//     border-radius: 30px;
+//     margin: 20px 30px;
+//     box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.1),
+//                 0px 4px 6px rgba(0, 0, 0, 0.15);
+// }
+
+// .container1 {
+//     border-top-left-radius: 30px;
+//     border-top-right-radius: 30px;
+//     display: grid;
+//     grid-template-columns: auto auto auto auto;
+//     grid-template-rows: 200px 35px 35px 30px;
+//     grid-template-areas: "img img img img"
+//                          "type people bags engine"
+//                          "name name name name"
+//                          "racs-name racs-name racs-name grade";
+//     .image {
+//         grid-area: img;
+//         background: url('../../../../../assets/cars/range.jpg');
+//         background-repeat: no-repeat;
+//         background-position: center;
+//         background-size: cover;
+//         border-top-left-radius: 30px;
+//         border-top-right-radius: 30px;
+//         box-shadow: inset 0 -14px 28px -14px black;
+//         position: relative;
+//     }
+
+//     .type {
+//         grid-area: type;
+//         margin: auto 0 auto 20px;
+//         span {
+//             font-size: .8em;
+//             line-height: 21px;
+//             color: black;
+//             padding: 2px 5px;
+//             border: 1px solid rgb(60,60,60);
+//             border-radius: 5px;
+//         }
+//     }
+
+//     .people{
+//         grid-area: people;
+//         margin: auto 0 auto 20px;
+//         span {
+//             line-height: 16px;
+//             font-size: 1em;
+//             color: black;
+//             margin-left: 7px;
+//         }
+//         img {
+//             display: inline-block;
+//             height: 16px;
+//             width: 16px;
+//             vertical-align: middle;
+//             margin-bottom: 3px;
+//         }
+//     }
+
+//     .bags {
+//         grid-area: bags;
+//         margin: auto 0 auto 10px;
+//         span {
+//             font-size: 1em;
+//             line-height: 16px;
+//             color: black;
+//             margin-left: 7px;
+//         }
+//         img {
+//             display: inline-block;
+//             height: 16px;
+//             width: 16px;
+//             vertical-align: middle;
+//             margin-bottom: 3px;
+//         }
+//     }
+
+//     .engine {
+//         grid-area: engine;
+//         margin: auto 0 auto 7px;
+//         span {
+//             font-size: 1em;
+//             color: black;
+//             margin-left: 3px;
+//         }
+//         img {
+//             display: inline-block;
+//             height: 16px;
+//             width: 16px;
+//             vertical-align: middle;
+//             margin-bottom: 3px;
+//         }
+//     }
+
+//     .name {
+//         grid-area: name;
+//         padding-left: 20px;
+//         span {
+//             font-size: 2em;
+//             font-family: 'Bebas Neue', cursive;
+//         }
+//     }
+
+//     .racs-name {
+//         grid-area: racs-name;
+//         padding-left: 20px;
+//         span {
+//             display: inline-block;
+//             color: black;
+//             font-weight: bold;
+//             font-size: 1em;
+//             font-family:'Bebas Neue', cursive;
+//         }
+//         #company {
+//             color: $purple;
+//             margin-right: 2px;
+//         }
+//     }
+
+//     .grade {
+//         grid-area: type;
+//         margin-left: 20px;
+//         margin-top: 9px;
+//         span {
+//             font-size: .9em;
+//             color: white;
+//             font-weight: bold;
+//             padding: 2px 10px;
+//             background-color: #FFBF0B;
+//             border-radius: 10px;
+//             box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
+//         }
+//         #grade {
+//             svg {
+//                 height: 14px;
+//                 width: 14px;
+//                 color: red;
+//             }
+//         }
+//     }
+// }
+
+
+// #stops-info-arrow {
+//     grid-area: arrow;
+//     width: 100%;
+//     padding-top: 5px;
+//     border-top: .5px solid gainsboro;
+//     text-align: center;
+//     margin-bottom: 0px;
+
+//     img {
+//         height: 15px;
+//         width: 15px;
+//         transform: rotate(-90deg);
+//         transition: transform 0.5s;
+//     }
+// }
+
+// .price {
+//     height: 40px;
+//     width: 100%;
+//     text-align: center;
+//     background-color: white;
+//     padding: 10px 0;
+//     border-top: .5px solid gainsboro;
+//     line-height: 18px;
+//     #total {
+//         display: inline-block;
+//         font-size: 14px;
+//         font-weight: 700;
+//         margin-right: 5px;
+//         color: rgb(60,60,60);
+//         transform: scaleX(.95);
+//     }
+//     #newprice {
+//         font-size: 18px;
+//         font-weight: bold;
+//         color: black;
+//     }
+// }
+
+// button {
+//     width: 100%;
+//     height: 2.2em;
+//     font-size: 1.1em;
+//     outline: none;
+//     background-color: white;
+//     background-color: $orange;
+//     color: white;
+//     border: 0;
+//     border-bottom-left-radius: 30px;
+//     border-bottom-right-radius: 30px;
+//     font-weight: bold;
+//     z-index: 10;
+// }
+
 @import '../../../../app.component.scss';
 @import url('https://fonts.googleapis.com/css?family=Bebas+Neue&display=swap');
 
@@ -5,277 +369,54 @@
     box-sizing: border-box;
 }
 
-.container {
-    position: relative;
-    margin: 0 30px;
-    height: 300px;
-    border-radius: 10%;
-    box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.1),
-                0px 4px 6px rgba(0, 0, 0, 0.15);
-    margin-bottom: 20px;
-    padding: 30px 15px;
-    display: grid;
-    grid-template-columns: 20% 80%;
-    grid-template-rows: 25% 25% 25% 25%;
-    grid-template-areas: "people img"
-                         "bags img"
-                         "engine img"
-                         "none rac-service-name";
-                         background-image: linear-gradient(41deg, rgba(107, 107, 107, 0.04) 0%, rgba(107, 107, 107, 0.04) 8%,rgba(31, 31, 31, 0.04) 8%, rgba(31, 31, 31, 0.04) 100%),linear-gradient(9deg, rgba(228, 228, 228, 0.04) 0%, rgba(228, 228, 228, 0.04) 62%,rgba(54, 54, 54, 0.04) 62%, rgba(54, 54, 54, 0.04) 100%),linear-gradient(124deg, rgba(18, 18, 18, 0.04) 0%, rgba(18, 18, 18, 0.04) 37%,rgba(233, 233, 233, 0.04) 37%, rgba(233, 233, 233, 0.04) 100%),linear-gradient(253deg, rgba(201, 201, 201, 0.04) 0%, rgba(201, 201, 201, 0.04) 55%,rgba(47, 47, 47, 0.04) 55%, rgba(47, 47, 47, 0.04) 100%),linear-gradient(270deg, rgba(172, 172, 172, 0.04) 0%, rgba(172, 172, 172, 0.04) 33%,rgba(26, 26, 26, 0.04) 33%, rgba(26, 26, 26, 0.04) 100%),linear-gradient(64deg, rgba(11, 11, 11, 0.04) 0%, rgba(11, 11, 11, 0.04) 38%,rgba(87, 87, 87, 0.04) 38%, rgba(87, 87, 87, 0.04) 100%),linear-gradient(347deg, rgba(199, 199, 199, 0.04) 0%, rgba(199, 199, 199, 0.04) 69%,rgba(4, 4, 4, 0.04) 69%, rgba(4, 4, 4, 0.04) 100%),linear-gradient(313deg, rgba(36, 36, 36, 0.04) 0%, rgba(36, 36, 36, 0.04) 20%,rgba(91, 91, 91, 0.04) 20%, rgba(91, 91, 91, 0.04) 100%),linear-gradient(90deg, rgb(10, 17, 72),rgb(35, 148, 228));
-
-    #grade {
-        position: absolute;
-        top: -16px;
-        left: 30px;
-        font-size: 18px;
-        font-weight: bold;
-        color: white;
-        text-align: right;
-        background-color: $red;
-        border-radius: 10px;
-        padding: .3em .5em;
-        margin-top: 2px;
-        box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.1),
-                0px 4px 6px rgba(0, 0, 0, 0.15);
-        svg {
-            height: 14px;
-            width: 14px;
-            color: white;
-        }
-    }
-
-    .image {
-        grid-area: img;
-        background: url('../../../../../assets/cars/download.jpg');
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: cover;
-        border-radius: 10%;
-        position: relative;
-        box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.1),
-        0px 4px 6px rgba(0, 0, 0, 0.15);
-    }
-
-    .image:before {
-        content: "Luxury";
-        position: absolute;
-        color: white;
-        font-weight: bold;
-        font-size: .9em;
-        text-align: right;
-        padding: .4em .8em;
-        top: -7%;
-        right: 20px;
-        background: $purple;
-        border-radius: 10px;
-    }
-
-    .image:after {
-        content: "Range Rover Sport 2020";
-        position: absolute;
-        color: white;
-        font-weight: bold;
-        font-family: 'Bebas Neue', cursive;
-        font-size: 1.2em;
-        line-height: 1.1em;
-        text-align: right;
-        padding: .4em 1em;
-        bottom: -8%;
-        right: 0;
-        background: $orange;
-        letter-spacing: .9px;
-        border-radius: 10px;
-        box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.1),
-                    0px 4px 6px rgba(0, 0, 0, 0.15);
-    }
-
-    .people {
-        grid-area: people;
-        margin: auto 0 auto 5px;
-        span {
-            line-height: 16px;
-            font-size: 1em;
-            color: white;
-            margin-left: 7px;
-        }
-        img {
-            display: inline-block;
-            height: 16px;
-            width: 16px;
-            vertical-align: middle;
-            margin-bottom: 3px;
-        }
-    }
-
-    .bags {
-        grid-area: bags;
-        margin: auto 0 auto 5px;
-        span {
-            font-size: 1em;
-            line-height: 16px;
-            color: white;
-            margin-left: 7px;
-        }
-        img {
-            display: inline-block;
-            height: 16px;
-            width: 16px;
-            vertical-align: middle;
-            margin-bottom: 3px;
-        }
-    }
-
-    .engine {
-        grid-area: engine;
-        margin: auto 0 auto 5px;
-        img {
-            height: 20px;
-            width: 20px;
-        }
-    }
-
-    .rac-service-name {
-        grid-area: rac-service-name;
-        margin-top: 40px;
-        margin-right: 2px;
-        text-align: right;
-
-        p {
-            margin: 0;
-            font-size: .55em;
-            font-weight: bold;
-            color: white;
-        }
-
-        span {
-            color: white;
-            font-weight: bold;
-            font-size: 1.25em;
-            line-height: 1.25em;
-            vertical-align: middle;
-            img {
-                height: 22px;
-                width: 22px;
-                border-radius: 50%;
-                vertical-align: middle;
-                margin-bottom: 4px;
-            }
-        }
-    }  
-}
-
 .all {
-    border-radius: 30px;
-    margin: 20px 30px;
-    box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.1),
-                0px 4px 6px rgba(0, 0, 0, 0.15);
+    border-radius: 3px;
+    margin:0px;
 }
 
-.container1 {
-    border-top-left-radius: 30px;
-    border-top-right-radius: 30px;
+.container {
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
     display: grid;
     grid-template-columns: auto auto auto auto;
-    grid-template-rows: 200px 35px 35px 30px;
+    grid-template-rows: 200px 36px 30px 26px 32px;
     grid-template-areas: "img img img img"
-                         "type people bags engine"
+                         "racs-name racs-name racs-name grade"
                          "name name name name"
-                         "racs-name racs-name racs-name grade";
+                         "extra extra extra book"
+                         "price price price book";
     .image {
         grid-area: img;
         background: url('../../../../../assets/cars/range.jpg');
         background-repeat: no-repeat;
         background-position: center;
         background-size: cover;
-        border-top-left-radius: 30px;
-        border-top-right-radius: 30px;
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
         box-shadow: inset 0 -14px 28px -14px black;
         position: relative;
     }
 
-    .type {
-        grid-area: type;
-        margin: auto 0 auto 20px;
-        span {
-            font-size: .8em;
-            line-height: 21px;
-            color: black;
-            padding: 2px 5px;
-            border: 1px solid rgb(60,60,60);
-            border-radius: 5px;
-        }
-    }
-
-    .people{
-        grid-area: people;
-        margin: auto 0 auto 20px;
-        span {
-            line-height: 16px;
-            font-size: 1em;
-            color: black;
-            margin-left: 7px;
-        }
-        img {
-            display: inline-block;
-            height: 16px;
-            width: 16px;
-            vertical-align: middle;
-            margin-bottom: 3px;
-        }
-    }
-
-    .bags {
-        grid-area: bags;
-        margin: auto 0 auto 10px;
-        span {
-            font-size: 1em;
-            line-height: 16px;
-            color: black;
-            margin-left: 7px;
-        }
-        img {
-            display: inline-block;
-            height: 16px;
-            width: 16px;
-            vertical-align: middle;
-            margin-bottom: 3px;
-        }
-    }
-
-    .engine {
-        grid-area: engine;
-        margin: auto 0 auto 7px;
-        span {
-            font-size: 1em;
-            color: black;
-            margin-left: 3px;
-        }
-        img {
-            display: inline-block;
-            height: 16px;
-            width: 16px;
-            vertical-align: middle;
-            margin-bottom: 3px;
-        }
-    }
-
     .name {
         grid-area: name;
-        padding-left: 20px;
+        padding-left: 8px;
         span {
-            font-size: 2em;
+            font-size: 24px;
+            line-height: 30px;
             font-family: 'Bebas Neue', cursive;
         }
     }
 
     .racs-name {
         grid-area: racs-name;
-        padding-left: 20px;
+        padding-left: 8px;
+        margin-top: 12px;
+        margin-bottom: 4px;
         span {
             display: inline-block;
-            color: black;
-            font-weight: bold;
-            font-size: 1em;
+            color: rgb(34, 34, 34);
+            font-size: 16px;
+            line-height: 20px;
             font-family:'Bebas Neue', cursive;
         }
         #company {
@@ -285,17 +426,15 @@
     }
 
     .grade {
-        grid-area: type;
-        margin-left: 20px;
-        margin-top: 9px;
+        grid-area: grade;
+        margin-top: 14px;
+        justify-self: end;
+        margin-right: 8px;
         span {
-            font-size: .9em;
-            color: white;
+            font-size: 14px;
+            line-height: 18px;
+            color: rgb(34, 34, 34);
             font-weight: bold;
-            padding: 2px 10px;
-            background-color: #FFBF0B;
-            border-radius: 10px;
-            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
         }
         #grade {
             svg {
@@ -305,59 +444,78 @@
             }
         }
     }
-}
 
-
-#stops-info-arrow {
-    grid-area: arrow;
-    width: 100%;
-    padding-top: 5px;
-    border-top: .5px solid gainsboro;
-    text-align: center;
-    margin-bottom: 0px;
-
-    img {
-        height: 15px;
-        width: 15px;
-        transform: rotate(-90deg);
-        transition: transform 0.5s;
-    }
-}
-
-.price {
-    height: 40px;
-    width: 100%;
-    text-align: center;
-    background-color: white;
-    padding: 10px 0;
-    border-top: .5px solid gainsboro;
-    line-height: 18px;
-    #total {
-        display: inline-block;
+    .extra {
+        grid-area: extra;
         font-size: 14px;
-        font-weight: 700;
-        margin-right: 5px;
-        color: rgb(60,60,60);
-        transform: scaleX(.95);
-    }
-    #newprice {
-        font-size: 18px;
-        font-weight: bold;
-        color: black;
-    }
-}
+        line-height: 20px;
+        color: rgb(72, 72, 72);
+        margin-left: 8px;
 
-button {
-    width: 100%;
-    height: 2.2em;
-    font-size: 1.1em;
-    outline: none;
-    background-color: white;
-    background-color: $orange;
-    color: white;
-    border: 0;
-    border-bottom-left-radius: 30px;
-    border-bottom-right-radius: 30px;
-    font-weight: bold;
-    z-index: 10;
+        #type {
+            padding: 1px 5px;
+            border: 1px solid rgb(34, 34, 34);
+            border-radius: 4px;
+            font-size: 12px;
+            color: rgb(34, 34, 34);
+            text-align: center;
+            margin-right: 8px;
+        }
+    }
+
+    .price {
+        grid-area: price;
+        padding-left: 8px;
+        margin-bottom: 12px;
+        span {
+            font-size: 16px;
+            line-height: 20px;
+            color: rgb(72, 72, 72);
+        }
+
+        #price {
+            color: $pink;
+            font-weight: bold;
+        }
+    }
+
+    .book {
+        grid-area: book;
+        justify-self: end;
+        margin-right: 8px;
+        a {
+            font-size: 16px;
+            line-height: 20px;
+            text-decoration: none;
+            font-family:'Bebas Neue', cursive;
+            color: $blue;
+        }
+    }
+
+    .edit {
+        grid-area: book;
+        justify-self: end;
+        margin: auto 8px 0 0;
+        height: 44px;
+        padding: 12px 0;
+
+        span {
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 16px;
+            color: $blue;
+
+            img {
+                display: inline-block;
+                height: 14px;
+                width: 14px;
+                transform: rotate(180deg);
+                vertical-align: top;
+                margin-left: 5px;
+                margin-top: 2px;
+            }
+        }
+    }
+
+
 }

@@ -1,19 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Airline } from 'src/app/entities/airline';
 import { AirlineService } from 'src/services/airline.service';
 import { ActivatedRoute } from '@angular/router';
 import { Address } from 'src/app/entities/address';
+import { CarRentService } from 'src/services/car-rent.service';
 
 @Component({
-  selector: 'app-airline-profile',
-  templateUrl: './airline-profile.component.html',
-  styleUrls: ['./airline-profile.component.scss']
+  selector: 'app-company-profile',
+  templateUrl: './company-profile.component.html',
+  styleUrls: ['./company-profile.component.scss']
 })
-export class AirlineProfileComponent implements OnInit {
+export class CompanyProfileComponent implements OnInit {
+
+  companyType: string;
 
   adminId: number;
-  airline: Airline;
+
+  companyFields: {name: string, location: Address, about: string};
 
   form: FormGroup;
 
@@ -23,21 +27,37 @@ export class AirlineProfileComponent implements OnInit {
 
   errorLocation = false;
 
-  constructor(private route: ActivatedRoute, private airlineService: AirlineService) {
+  constructor(private route: ActivatedRoute, private airlineService: AirlineService, private racService: CarRentService) {
     route.params.subscribe(params => {
       this.adminId = params.id;
+      this.companyType = params.type;
     });
   }
 
   ngOnInit(): void {
-    this.airline = this.airlineService.getAdminsAirline(this.adminId);
+    if (this.companyType === 'airline-profile') {
+      const airline = this.airlineService.getAdminsAirline(this.adminId);
+      this.companyFields = {
+        name: airline.name,
+        location: airline.address,
+        about: airline.about
+      };
+    } else if (this.companyType === 'rac-profile') {
+      const rac = this.racService.getAdminsRac(this.adminId);
+      console.log(rac);
+      this.companyFields = {
+        name: rac.name,
+        location: rac.address,
+        about: rac.about
+      };
+    }
     this.initForm();
   }
 
   initForm() {
     this.form = new FormGroup({
-      name: new FormControl('', Validators.required),
-      about: new FormControl(this.airline.about, Validators.required),
+      name: new FormControl(this.companyFields.name, Validators.required),
+      about: new FormControl(this.companyFields.about, Validators.required),
     });
   }
 
@@ -47,7 +67,7 @@ export class AirlineProfileComponent implements OnInit {
 
   onSubmit() {
     if (this.validateForm()) {
-      console.log(this.airline.about);
+      console.log(this.companyFields.about);
     }
   }
 
@@ -57,7 +77,7 @@ export class AirlineProfileComponent implements OnInit {
       return retVal;
     }
     if (this.lastLocationString === '') {
-      this.location = this.airline.address;
+      this.location = this.companyFields.location;
       return retVal;
     }
     if (this.lastGoodLocationString !== this.lastLocationString) {

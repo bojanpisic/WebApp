@@ -31,7 +31,7 @@ main {
 
     .search {
         @extend %search-container;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
 
         button {
             @extend %search-button;
@@ -59,6 +59,7 @@ main {
             padding: 0px;
             padding-bottom: 1px;
             margin-bottom: 30px;
+            border-radius: 3px;
             box-shadow: $smallest-shadow;
 
             button {
@@ -71,7 +72,7 @@ main {
                 color: $pink;
                 padding: 0;
                 display: block;
-                margin: 0 20px 20px auto;
+                margin: 15px 0 0 auto;
 
                 img {
                     display: inline-block;
@@ -111,4 +112,8 @@ footer {
         border: none;
         outline: none;
     }
+}
+
+.blur {
+    filter: blur(8px);
 }

@@ -34,6 +34,10 @@ header {
             input {
                 @extend %search-input;
             }
+
+            ::placeholder {
+                color: rgb(113, 113, 113);
+            }
         }
     }
 
@@ -43,7 +47,7 @@ ul {
     margin: 0;
     padding: 94px 24px 30px 24px;
     list-style: none;
-    background-color: $destinations;
+    background-color: white;
     min-height: 100vh;
 
     li {

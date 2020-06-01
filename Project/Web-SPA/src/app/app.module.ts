@@ -68,7 +68,7 @@ import { Location } from '@angular/common';
 import { ReservedSeatsPipe } from './pipes/reserved-seats.pipe';
 import { SeatPlacementPipe } from './pipes/seat-placement.pipe';
 import { AdminHomeComponent } from './components/airline-admin/admin-home/admin-home.component';
-import { AirlineProfileComponent } from './components/airline-admin/airline-profile/airline-profile.component';
+import { CompanyProfileComponent } from './components/admin/company-profile/company-profile.component';
 import { AirlineFlightsComponent } from './components/airline-admin/airline-flights/airline-flights.component';
 import { AirlineStatsComponent } from './components/airline-admin/airline-stats/airline-stats.component';
 import { AirlineDestinationsComponent } from './components/airline-admin/airline-destinations/airline-destinations.component';
@@ -78,8 +78,14 @@ import { FlightStopComponent } from './components/airline-admin/airline-flights/
 import { FlightComponent } from './components/al-components/flight/flight.component';
 import { FindFlightPipe } from './pipes/find-flight.pipe';
 import { ConfigureSeatsComponent } from './components/airline-admin/airline-flights/configure-seats/configure-seats.component';
+// tslint:disable-next-line:max-line-length
 import { ConfigureSeatsModalComponent } from './components/airline-admin/airline-flights/configure-seats/configure-seats-modal/configure-seats-modal.component';
 import { PlaceSeatsPipe } from './pipes/place-seats.pipe';
+import { RacAdminHomeComponent } from './components/rac-admin/rac-admin-home/rac-admin-home.component';
+import { RacStatsComponent } from './components/rac-admin/rac-stats/rac-stats.component';
+import { RacCarsComponent } from './components/rac-admin/rac-cars/rac-cars.component';
+import { RacBranchesComponent } from './components/rac-admin/rac-branches/rac-branches.component';
+import { AddCarComponent } from './components/rac-admin/rac-cars/add-car/add-car.component';
 
 @NgModule({
    declarations: [
@@ -142,7 +148,7 @@ import { PlaceSeatsPipe } from './pipes/place-seats.pipe';
       ReservedSeatsPipe,
       SeatPlacementPipe,
       AdminHomeComponent,
-      AirlineProfileComponent,
+      CompanyProfileComponent,
       AirlineFlightsComponent,
       AirlineStatsComponent,
       AirlineDestinationsComponent,
@@ -152,7 +158,12 @@ import { PlaceSeatsPipe } from './pipes/place-seats.pipe';
       FindFlightPipe,
       ConfigureSeatsComponent,
       ConfigureSeatsModalComponent,
-      PlaceSeatsPipe
+      PlaceSeatsPipe,
+      RacAdminHomeComponent,
+      RacStatsComponent,
+      RacCarsComponent,
+      RacBranchesComponent,
+      AddCarComponent
    ],
    imports: [
       BrowserModule,

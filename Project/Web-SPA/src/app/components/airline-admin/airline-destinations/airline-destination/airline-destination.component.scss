@@ -17,6 +17,7 @@
         border-radius: 10px;
         border: 2px solid white;
         position: relative;
+        box-shadow: $smallest-shadow;
 
         img {
             border-top-left-radius: 10px;
@@ -54,7 +55,7 @@
             font-size: 16px;
             font-weight: bold;
             color: rgb(34, 34, 34);
-            margin-left: 11px;
+            margin-left: 8px;
             color: darken($destinations, 20%);
             overflow: hidden;
             text-overflow: ellipsis;

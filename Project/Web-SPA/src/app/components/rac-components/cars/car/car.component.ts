@@ -1,4 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Car } from 'src/app/entities/car';
 
 @Component({
   selector: 'app-car',
@@ -7,16 +8,18 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class CarComponent implements OnInit {
 
-  @Input() car;
-  showInfo = false;
+  @Input() car: Car;
+  @Input() customerView: boolean;
+  @Output() editButtonClicked = new EventEmitter<number>();
 
   constructor() { }
 
   ngOnInit(): void {
   }
 
-  showStopsInfo() {
-    this.showInfo = !this.showInfo;
+  onEdit() {
+    console.log('emitujem:' + this.car.id);
+    this.editButtonClicked.emit(this.car.id);
   }
 
 }

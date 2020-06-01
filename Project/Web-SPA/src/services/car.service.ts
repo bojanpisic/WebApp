@@ -13,6 +13,10 @@ export class CarService {
     this.mockedCars();
   }
 
+  getCarsOfSpecificRAC(racId: number) {
+    return this.getAllCars();
+  }
+
   getAllCars() {
     return this.cars;
   }

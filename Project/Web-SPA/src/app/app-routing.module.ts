@@ -26,8 +26,12 @@ import { FlightReservationComponent } from './components/reservations/flight-res
 import { AdminHomeComponent } from './components/airline-admin/admin-home/admin-home.component';
 import { AirlineDestinationsComponent } from './components/airline-admin/airline-destinations/airline-destinations.component';
 import { AirlineFlightsComponent } from './components/airline-admin/airline-flights/airline-flights.component';
-import { AirlineProfileComponent } from './components/airline-admin/airline-profile/airline-profile.component';
+import { CompanyProfileComponent } from './components/admin/company-profile/company-profile.component';
 import { ConfigureSeatsComponent } from './components/airline-admin/airline-flights/configure-seats/configure-seats.component';
+import { RacAdminHomeComponent } from './components/rac-admin/rac-admin-home/rac-admin-home.component';
+import { RacBranchesComponent } from './components/rac-admin/rac-branches/rac-branches.component';
+import { RacCarsComponent } from './components/rac-admin/rac-cars/rac-cars.component';
+import { AddCarComponent } from './components/rac-admin/rac-cars/add-car/add-car.component';
 
 const routes: Routes = [
   {path: 'admin/:id',
@@ -40,7 +44,19 @@ const routes: Routes = [
       {path: 'add-flight', component: AddFlightComponent},
       {path: ':flight/configure-seats', component: ConfigureSeatsComponent},
     ]},
-    {path: 'airline-profile', component: AirlineProfileComponent},
+    {path: ':type', component: CompanyProfileComponent},
+  ]},
+  {path: 'rac-admin/:id',
+  children: [
+    {path: '', component: RacAdminHomeComponent},
+    {path: 'branches', component: RacBranchesComponent},
+    {path: 'cars',
+    children : [
+      {path: '', component: RacCarsComponent},
+      {path: 'add-car', component: AddCarComponent},
+      // {path: ':flight/configure-seats', component: ConfigureSeatsComponent},
+    ]},
+    {path: ':type', component: CompanyProfileComponent},
   ]},
   {path: '', component: HomeComponent},
   {path: ':id/home', component: HomeComponent},
