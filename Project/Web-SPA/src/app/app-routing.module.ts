@@ -32,6 +32,9 @@ import { RacAdminHomeComponent } from './components/rac-admin/rac-admin-home/rac
 import { RacBranchesComponent } from './components/rac-admin/rac-branches/rac-branches.component';
 import { RacCarsComponent } from './components/rac-admin/rac-cars/rac-cars.component';
 import { AddCarComponent } from './components/rac-admin/rac-cars/add-car/add-car.component';
+import { EditCarComponent } from './components/rac-admin/rac-cars/edit-car/edit-car.component';
+import { AirlineSpecialOffersComponent } from './components/airline-admin/airline-special-offers/airline-special-offers.component';
+import { AddSpecialOfferComponent } from './components/airline-admin/airline-special-offers/add-special-offer/add-special-offer.component';
 
 const routes: Routes = [
   {path: 'admin/:id',
@@ -44,6 +47,11 @@ const routes: Routes = [
       {path: 'add-flight', component: AddFlightComponent},
       {path: ':flight/configure-seats', component: ConfigureSeatsComponent},
     ]},
+    {path: 'special-offers',
+    children : [
+      {path: '',  component: AirlineSpecialOffersComponent},
+      {path: 'add-special-offer', component: AddSpecialOfferComponent},
+    ]},
     {path: ':type', component: CompanyProfileComponent},
   ]},
   {path: 'rac-admin/:id',
@@ -54,7 +62,7 @@ const routes: Routes = [
     children : [
       {path: '', component: RacCarsComponent},
       {path: 'add-car', component: AddCarComponent},
-      // {path: ':flight/configure-seats', component: ConfigureSeatsComponent},
+      {path: ':car/edit-car', component: EditCarComponent},
     ]},
     {path: ':type', component: CompanyProfileComponent},
   ]},

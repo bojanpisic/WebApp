@@ -9,6 +9,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 })
 export class ConfigureSeatsModalComponent implements OnInit {
 
+  @Input() special = false;
   @Input() seat: Seat;
   @Output() changePrice = new EventEmitter<number>();
   @Output() delete = new EventEmitter<boolean>();
@@ -23,9 +24,15 @@ export class ConfigureSeatsModalComponent implements OnInit {
   }
 
   initForm() {
-    this.form = new FormGroup({
-      price: new FormControl(this.seat.price, Validators.required)
-    });
+    if (this.special) {
+      this.form = new FormGroup({
+        price: new FormControl(this.seat.price, [Validators.required, Validators.max(this.seat.price)])
+      });
+    } else {
+      this.form = new FormGroup({
+        price: new FormControl(this.seat.price, Validators.required)
+      });
+    }
   }
 
   onChangePrice() {

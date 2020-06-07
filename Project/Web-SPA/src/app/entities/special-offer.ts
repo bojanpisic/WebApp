@@ -1,17 +1,15 @@
 import { Flight } from './flight';
+import { Trip } from './trip';
+import { Seat } from './seat';
 
 export class SpecialOffer {
-    // trip: Trip; OVAKO TREBA
-    // newPrice: number;
     flights: Array<Flight>;
+    seats: Array<Seat>;
     newPrice: number;
-    tripType: string;
-    airlineId: number;
 
-    constructor(flight: Array<Flight>, newPrice: number, type: string, airlineId: number) {
-        this.flights = flight;
-        this.newPrice = newPrice;
-        this.tripType = type;
-        this.airlineId = airlineId;
+    constructor(flights?: Array<Flight>, seats?: Array<Seat>, newPrice?: number) {
+        this.flights = flights || new Array<Flight>();
+        this.seats = seats || null;
+        this.newPrice = newPrice || null;
     }
 }

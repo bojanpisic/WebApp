@@ -17,7 +17,6 @@ export class TripComponent implements OnInit {
   @Input() indexOfTrip;
   @Input() trip: Trip;
   @Input() userId;
-  // params: HttpParams;
   showInfo: Array<boolean>;
   i: number;
   arrayOfValues: Array<TripParameter>;
@@ -40,9 +39,6 @@ export class TripComponent implements OnInit {
     return airline.name;
   }
 
-  showStopsInfo(i: number) {
-    this.showInfo[i] = !this.showInfo[i];
-  }
 
   calculateFlightLength(departureTime: string, arrivalTime: string) {
     const departureTimeInMinutes = Number(departureTime.split(':')[0]) * 60 + Number(departureTime.split(':')[1]);

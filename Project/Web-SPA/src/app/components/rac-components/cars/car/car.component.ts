@@ -18,7 +18,6 @@ export class CarComponent implements OnInit {
   }
 
   onEdit() {
-    console.log('emitujem:' + this.car.id);
     this.editButtonClicked.emit(this.car.id);
   }
 

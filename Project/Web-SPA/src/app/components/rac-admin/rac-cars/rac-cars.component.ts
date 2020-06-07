@@ -36,6 +36,8 @@ export class RacCarsComponent implements OnInit {
     if (this.isReserved()) {
       this.carIsReserved = true;
       this.blur = true;
+    } else {
+      this.router.navigate(['/rac-admin/' + this.adminId + '/cars/' + value + '/edit-car']);
     }
   }
 
@@ -50,7 +52,7 @@ export class RacCarsComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/admin/' + this.adminId]);
+    this.router.navigate(['/rac-admin/' + this.adminId]);
   }
 
   focusInput() {

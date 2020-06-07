@@ -86,6 +86,10 @@ import { RacStatsComponent } from './components/rac-admin/rac-stats/rac-stats.co
 import { RacCarsComponent } from './components/rac-admin/rac-cars/rac-cars.component';
 import { RacBranchesComponent } from './components/rac-admin/rac-branches/rac-branches.component';
 import { AddCarComponent } from './components/rac-admin/rac-cars/add-car/add-car.component';
+import { EditCarComponent } from './components/rac-admin/rac-cars/edit-car/edit-car.component';
+import { AirlineSpecialOffersComponent } from './components/airline-admin/airline-special-offers/airline-special-offers.component';
+import { AddSpecialOfferComponent } from './components/airline-admin/airline-special-offers/add-special-offer/add-special-offer.component';
+import { AddSeatsSpecialOfferComponent } from './components/airline-admin/airline-special-offers/add-special-offer/add-seats-special-offer/add-seats-special-offer.component';
 
 @NgModule({
    declarations: [
@@ -163,7 +167,11 @@ import { AddCarComponent } from './components/rac-admin/rac-cars/add-car/add-car
       RacStatsComponent,
       RacCarsComponent,
       RacBranchesComponent,
-      AddCarComponent
+      AddCarComponent,
+      EditCarComponent,
+      AirlineSpecialOffersComponent,
+      AddSpecialOfferComponent,
+      AddSeatsSpecialOfferComponent
    ],
    imports: [
       BrowserModule,

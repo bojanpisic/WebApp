@@ -26,13 +26,7 @@ export class SpecialOfferService {
   }
 
   getSpecialOffersOfSpecificAirline(airlineId: number) {
-    let specOffers = new Array<SpecialOffer>();
-    this.specialOffers.forEach(offer => {
-      if (offer.airlineId == airlineId) {
-        specOffers.push(offer);
-      }
-    });
-    return specOffers;
+    return this.specialOffers;
   }
 
 
@@ -41,12 +35,20 @@ export class SpecialOfferService {
     const flights = this.flightService.getAllFlights();
 
     // AKO JE ROUND TRIP MORA IMATI DVA LETA, NE JEDAN
-    const s1 = new SpecialOffer([flights[0]], 200.00, 'oneWay', 0);
-    const s2 = new SpecialOffer([flights[2], flights[3]], 1000.00, 'roundTrip', 0);
-    const s3 = new SpecialOffer([flights[4], flights[0], flights[1]], 300.00, 'multicity', 0);
-    const s4 = new SpecialOffer([flights[4]], 130.00, 'oneWay', 0);
-    const s5 = new SpecialOffer([flights[5]], 100.00, 'oneWay', 0);
-    const s6 = new SpecialOffer([flights[1]], 150.00, 'oneWay', 0);
+    // const s1 = new SpecialOffer([flights[0]], 200.00, 'oneWay', 0);
+    // const s2 = new SpecialOffer([flights[2], flights[3]], 1000.00, 'roundTrip', 0);
+    // const s3 = new SpecialOffer([flights[4], flights[0], flights[1]], 300.00, 'multicity', 0);
+    // const s4 = new SpecialOffer([flights[4]], 130.00, 'oneWay', 0);
+    // const s5 = new SpecialOffer([flights[5]], 100.00, 'oneWay', 0);
+    // const s6 = new SpecialOffer([flights[1]], 150.00, 'oneWay', 0);
+
+    const s1 = new SpecialOffer([flights[0]], [new Seat('F', 'A', 1, 250)], 200.00);
+    const s2 = new SpecialOffer([flights[2], flights[3]], [new Seat('F', 'A', 1, 250), new Seat('F', 'B', 1, 250)], 1000.00);
+    const s3 = new SpecialOffer([flights[4], flights[0], flights[1]],
+    [new Seat('F', 'A', 1, 250), new Seat('F', 'B', 1, 250), new Seat('F', 'C', 1, 250)], 300.00);
+    const s4 = new SpecialOffer([flights[4]], [new Seat('F', 'A', 1, 250)], 130.00);
+    const s5 = new SpecialOffer([flights[5]], [new Seat('F', 'A', 1, 250)], 100.00);
+    const s6 = new SpecialOffer([flights[1]], [new Seat('F', 'A', 1, 250)], 150.00);
 
     this.specialOffers.push(s1);
     this.specialOffers.push(s2);

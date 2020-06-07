@@ -45,20 +45,29 @@ export class FlightReservationComponent implements OnInit {
               private airlineService: AirlineService) {
 
     const trip = this.activatedRoute.snapshot.queryParamMap.get('trip');
+    console.log('1');
     if (trip === null) {
       this.arrayOfValues = new Array<TripParameter>();
+      console.log('2');
     } else {
       this.arrayOfValues = JSON.parse(trip);
+      console.log('3');
     }
+    console.log('4');
     this.reservation = new TripReservation();
     this.flights = new Array<Flight>();
 
     this.mySeats = [];
 
     this.index = -1;
+    console.log('5' + this.arrayOfValues);
   }
 
   ngOnInit(): void {
+    console.log('BALALA');
+  }
+
+  initialize() {
     for (const item of this.arrayOfValues) {
       const flight = this.airlineService.getFlight(item.a, item.f);
       this.flights.push(flight);
@@ -88,6 +97,9 @@ export class FlightReservationComponent implements OnInit {
   }
 
   nextStep() {
+    if (this.index === -1) {
+      this.initialize();
+    }
     if (this.validateStep()) {
       this.index++;
       this.updateVariables();
@@ -124,38 +136,11 @@ export class FlightReservationComponent implements OnInit {
       } else {
         this.passenger = undefined;
       }
-      // if (this.flights[this.index].seats[seatIndex].reserved) {
-      //   const takenSeatIndex = this.reservation.seats[this.index].seats.indexOf(seat);
-      //   this.passenger = this.reservation.seats[this.index].seats[takenSeatIndex].passenger;
-      //   if (this.passenger.passport === '') {
-      //     this.invitedFriend = true;
-      //   }
-      // } else {
-      //   this.passenger = undefined;
-      // }
     }
   }
 
   addPassenger(passenger: any) {
-    // proveriti da li ima na letu putnik sa takvim pasosem
     const seatIndex = this.flights[this.index].seats.indexOf(this.pickedSeat);
-    // if (passenger !== null) {
-    //   // TREBA U BAZU ZAPISATI DA JE ZAUZETO
-    //   this.flights[this.index].seats[seatIndex].reserved = true;
-    //   this.pickedSeat.passenger = passenger;
-    //   this.reservation.seats[this.index].seats.push(this.pickedSeat);
-    // } else if (this.flights[this.index].seats[seatIndex].reserved) {
-    //   this.flights[this.index].seats[seatIndex].reserved = false;
-    //   // tslint:disable-next-line:prefer-for-of
-    //   for (let i = 0; i < this.reservation.seats.length; i++) {
-    //     if (this.reservation.seats[i].seats.includes(this.pickedSeat)) {
-    //       console.log(this.reservation.seats[i]);
-    //       const indexOfSeat = this.reservation.seats[i].seats.indexOf(this.pickedSeat);
-    //       this.reservation.seats[i].seats.splice(indexOfSeat, 1);
-    //       console.log(this.reservation.seats[i]);
-    //     }
-    //   }
-    // }
     if (passenger !== null) {
       // TREBA U BAZU ZAPISATI DA JE ZAUZETO
       this.pickedSeat.passenger = passenger;
@@ -183,7 +168,6 @@ export class FlightReservationComponent implements OnInit {
   onExitReservation(value: any) {
     if (value) {
       this.index--;
-      // OTKAZATI REZERVACIJU IZ BAZE
       this.reservation.seats.forEach(seat => {
         seat.seats = [];
       });

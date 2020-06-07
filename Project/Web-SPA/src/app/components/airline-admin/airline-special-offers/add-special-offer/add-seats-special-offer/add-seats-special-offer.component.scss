@@ -1,5 +1,5 @@
-@import '../../../../scss/layout/footer';
-@import '../../../../scss/layout/header';
+@import '../../../../../scss/layout/footer';
+@import '../../../../../scss/layout/header';
 
 * {
     box-sizing: border-box;
@@ -144,6 +144,10 @@ main {
 
                     .reserved {
                         background-color: lightgray;
+                    }
+
+                    .special {
+                        border: 3px solid $pink;
                     }
 
                     .not-reserved-f {

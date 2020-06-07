@@ -13,18 +13,18 @@ export class Car {
     automatic: true; // false ako je manual gearbox
     image: string;
 
-    constructor(id: number, idOfService: number, idOfAffiliate: number, brand: string, model: string, year: number, type: string,
-                numberOfSeats: number, averageRate: number, pricePerDay: number, image: string) {
-        this.id = id;
-        this.idOfService = idOfService;
-        this.idOfAffiliate = idOfAffiliate;
-        this.brand = brand;
-        this.model = model;
-        this.year = year;
-        this.type = type;
-        this.numberOfSeats = numberOfSeats;
-        this.averageRate = averageRate;
-        this.pricePerDay = pricePerDay;
-        this.image = image;
+    constructor(id?: number, idOfService?: number, idOfAffiliate?: number, brand?: string, model?: string, year?: number, type?: string,
+                numberOfSeats?: number, averageRate?: number, pricePerDay?: number, image?: string) {
+        this.id = id || null;
+        this.idOfService = idOfService || null;
+        this.idOfAffiliate = idOfAffiliate || null;
+        this.brand = brand || null;
+        this.model = model || null;
+        this.year = year || null;
+        this.type = type || null;
+        this.numberOfSeats = numberOfSeats || null;
+        this.averageRate = averageRate || null;
+        this.pricePerDay = pricePerDay || null;
+        this.image = image || null;
     }
 }

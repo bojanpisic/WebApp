@@ -67,26 +67,6 @@ main {
                 width: 16px;
             }
         }
-
-        .camera {
-            position: absolute;
-            top: calc(50% - 22px); left: calc(50% - 22px);
-
-            img {
-                height: 44px;
-                width: 44px;
-            }
-        }
-
-        .error-image {
-            position: absolute;
-            text-align: center;
-            width: 60%;
-            top: calc(50% + 27px); left: 20%;
-            color: $error;
-            font-size: 14px;
-            line-height: 18px;
-        }
     }
 
     .numberOfSeats, .pricePerDay, .carType {
@@ -126,11 +106,6 @@ main {
                 @extend %focus;
             }
 
-            .error-input {
-                @extend %error-input;
-                border: 2px solid $error;
-            }
-
             .dollar {
                 position: absolute;
                 top: 8px;
@@ -142,14 +117,7 @@ main {
             }
         }
 
-        .error {
-            @extend %error-text;
-            margin-bottom: 0px;
-            font-size: 14px;
-        }
-
-        #numberOfSeats, input {
-            grid-area: input;
+        input {
             text-align: center;
             width: 60px;
             height: 32px;
@@ -215,20 +183,8 @@ main {
             margin-top: 3px;
         }
 
-        
         :focus {
             @extend %focus;
-        }
-
-        .error-input {
-            @extend %error-input;
-            border: 2px solid $error;
-        }
-
-        .error {
-            @extend %error-text;
-            margin-bottom: 0px;
-            font-size: 14px;
         }
     }
 
@@ -276,7 +232,7 @@ main {
         color: white;
     }
 
-    .button {
+    .buttons {
         position: fixed;
         top: calc(100vh - 64px);
         padding: 10px 24px;
@@ -285,6 +241,8 @@ main {
         height: 64px;
         background-color: white;
         text-align: center;
+        display: grid;
+        grid-template-columns: auto auto;
     
         button {
             height: 100%;
@@ -300,6 +258,18 @@ main {
         :focus {
             border: none;
             outline: none;
+        }
+    
+        #delete {
+            justify-self: start;
+            width: auto;
+            background-color: transparent;
+            color: rgb(34, 34, 34);
+            text-decoration: underline;
+        }
+    
+        #confirm {
+            justify-self: end;
         }
     }
 }

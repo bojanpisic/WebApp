@@ -2,10 +2,10 @@
     <div (click)="goBack()" class="back">
         <svg viewBox="0 0 16 16" role="presentation" aria-hidden="true" focusable="false" style="height: 1em; width: 1em; display: block;"><path d="m10.8 16c-.4 0-.7-.1-.9-.4l-6.8-6.7c-.5-.5-.5-1.3 0-1.8l6.8-6.7c.5-.5 1.2-.5 1.7 0s .5 1.2 0 1.7l-5.8 5.9 5.8 5.9c.5.5.5 1.2 0 1.7-.2.3-.5.4-.8.4"></path></svg>
     </div>
-    <span>Add Car</span>
+    <span>Edit Car</span>
 </header>
 <main>
-    <div class="image" [ngStyle]="{'background': imagePicked ? 'url(' + car.image + ') no-repeat center / cover' : 'rgb(200,200,200)'}">
+    <div class="image" [ngStyle]="{'background': 'url(' + car.image + ') no-repeat center / cover'}">
         <input
         style="display: none"
         type="file" (change)="onFileChanged($event)"
@@ -13,35 +13,19 @@
         <div class="editButton" (click)="fileInput.click()">
             <img src="../../../../../assets/edit_white.svg" alt="">
         </div>
-        <div class="camera" *ngIf="!imagePicked">
-            <img src="../../../../../assets/camera-100.png">
-        </div>
-        <p *ngIf="errorImage" class="error-image">Image is mandatory! Please choose image for your car.</p>
     </div>
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="brand">
             <p>Brand:</p>
-            <input [ngClass]="{'error-input': (form.controls.brand.touched || errorBrand) && form.controls.brand.invalid}"
-            formControlName="brand" type="text">
-            <div class="error" *ngIf="(form.controls.brand.touched || errorBrand) && form.controls.brand.invalid">
-                Brand name is required!
-            </div>
+            <input formControlName="brand" type="text">
         </div>
         <div class="model">
             <p>Model:</p>
-            <input [ngClass]="{'error-input': (form.controls.model.touched || errorModel) && form.controls.model.invalid}"
-            formControlName="model" type="text">
-            <div class="error" *ngIf="(form.controls.model.touched || errorModel) && form.controls.model.invalid">
-                Car model is required!
-            </div>
+            <input formControlName="model" type="text">
         </div>
         <div class="year">
             <p>Year:</p>
-            <input [ngClass]="{'error-input': (form.controls.year.touched || errorYear) && form.controls.year.invalid}"
-            formControlName="year" type="text">
-            <div class="error" *ngIf="(form.controls.year.touched || errorYear) && form.controls.year.invalid">
-                Year of manufacture is required!
-            </div>
+            <input formControlName="year" type="text">
         </div>
         <div class="numberOfSeats">
             <p>Number of seats</p>
@@ -49,7 +33,7 @@
             <button [ngClass]="{'disabled': minusDisabled}" class="minusBtn" [disabled]="minusDisabled" (click)="onMinus()">
                 <svg [ngStyle]="{'fill': minusDisabled ? 'rgb(234, 234, 234)' : 'rgb(113, 113, 113)'}" viewBox="0 0 24 24" role="presentation" aria-hidden="true" focusable="false" style="height: 22px; width: 22px; display: block;"><rect height="2" rx="1" width="12" x="6" y="11"></rect></svg>
             </button>
-            <p id="numberOfSeats">{{numberOfSeats}}</p>
+            <input type="number" min="1" [value]="seatsNumber">
             <button class="plusBtn" (click)="onPlus()">
                 <svg viewBox="0 0 24 24" role="presentation" aria-hidden="true" focusable="false" style="height: 22px; width: 22px; display: block; fill: rgb(113, 113, 113);"><rect height="2" rx="1" width="12" x="6" y="11"></rect><rect height="12" rx="1" width="2" x="11" y="6"></rect></svg>
             </button>
@@ -58,8 +42,7 @@
             <p>Price per day</p>
             <span>Maximum price</span>
             <div class="input-box">
-                <input [ngClass]="{'error-input': (form.controls.price.touched || errorPrice) && form.controls.price.invalid}"
-                type="number" min="1" formControlName="price">
+                <input type="number" min="1" [value]="pricePerDay">
                 <span class="dollar">$</span>
             </div>
         </div>
@@ -74,8 +57,9 @@
             <p [ngClass]="{pickedCarType: pickedCarType === 'Convertable'}" (click)="setCarType('Convertable')">Convertable</p>
             <p [ngClass]="{pickedCarType: pickedCarType === 'Minivan'}" (click)="setCarType('Minivan')">Minivan</p>
         </div>
-        <div class="button">
-            <button type="submit">ADD CAR</button>
+        <div class="buttons">
+            <button id="delete" (click)="onDelete()">Delete car</button>
+            <button type="submit" id="confirm" (click)="onConfirm()">Confirm</button>
         </div>
     </form>
 </main>

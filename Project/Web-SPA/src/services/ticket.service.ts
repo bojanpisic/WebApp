@@ -29,31 +29,31 @@ export class TicketService {
 
 
   mockedTickets() {
-    const f1 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '5h 53min', 12,
-    [new ChangeOver('11:20', '10:30', new Destination('', 'Paris', 'France', 'PAR'))], 300.00, '234T',
-    new Destination('', 'Madrid', 'Spain', 'MAD'), new Destination('', 'Belgrade', 'Serbia', 'BG'), '06:20', '12:13',
-    [new Seat(0, '33R')]);
+    // const f1 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '5h 53min', 12,
+    // [new ChangeOver('11:20', '10:30', new Destination('', 'Paris', 'France', 'PAR'))], 300.00, '234T',
+    // new Destination('', 'Madrid', 'Spain', 'MAD'), new Destination('', 'Belgrade', 'Serbia', 'BG'), '06:20', '12:13',
+    // [new Seat(0, '33R')]);
 
-    const f2 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '8h 10min', 12,
-    [], 200.00, '234T',
-    new Destination('', 'New York', 'USA', 'NY'), new Destination('', 'Novi Sad', 'Serbia', 'NS'), '15:15', '22:15',
-    [new Seat(0, '33R')]);
+    // const f2 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '8h 10min', 12,
+    // [], 200.00, '234T',
+    // new Destination('', 'New York', 'USA', 'NY'), new Destination('', 'Novi Sad', 'Serbia', 'NS'), '15:15', '22:15',
+    // [new Seat(0, '33R')]);
 
-    const f3 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '10h 0min', 12,
-    [new ChangeOver('10:00', '09:00', new Destination('', 'Paris', 'France', 'PAR')),
-    new ChangeOver('12:10', '11:20', new Destination('', 'London', 'England', 'LON'))], 700.00, '234T',
-    new Destination('', 'Novi Sad', 'Serbia', 'NS'), new Destination('', 'New York', 'USA', 'NY'), '06:00', '16:00',
-    [new Seat(0, '33R')]);
+    // const f3 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '10h 0min', 12,
+    // [new ChangeOver('10:00', '09:00', new Destination('', 'Paris', 'France', 'PAR')),
+    // new ChangeOver('12:10', '11:20', new Destination('', 'London', 'England', 'LON'))], 700.00, '234T',
+    // new Destination('', 'Novi Sad', 'Serbia', 'NS'), new Destination('', 'New York', 'USA', 'NY'), '06:00', '16:00',
+    // [new Seat(0, '33R')]);
 
-    const f4 = new Flight( 1, new Date(Date.now()), new Date(Date.now()), '1h 10min', 12,
-    [], 220.00, '234T',
-    new Destination('', 'Vienna', 'Austria', 'VIE'), new Destination('', 'Belgrade', 'Serbia', 'BG'), '14:10', '15:20',
-    [new Seat(0, '33R')]);
+    // const f4 = new Flight( 1, new Date(Date.now()), new Date(Date.now()), '1h 10min', 12,
+    // [], 220.00, '234T',
+    // new Destination('', 'Vienna', 'Austria', 'VIE'), new Destination('', 'Belgrade', 'Serbia', 'BG'), '14:10', '15:20',
+    // [new Seat(0, '33R')]);
 
-    const f5 = new Flight( 1, new Date(Date.now()), new Date(Date.now()), '0h 50min', 12,
-    [], 200.00, '234T',
-    new Destination('', 'Sofia', 'Bulgaria', 'BUG'), new Destination('', 'Belgrade', 'Serbia', 'BG'), '12:15', '13:05',
-    [new Seat(0, '33R')]);
+    // const f5 = new Flight( 1, new Date(Date.now()), new Date(Date.now()), '0h 50min', 12,
+    // [], 200.00, '234T',
+    // new Destination('', 'Sofia', 'Bulgaria', 'BUG'), new Destination('', 'Belgrade', 'Serbia', 'BG'), '12:15', '13:05',
+    // [new Seat(0, '33R')]);
 
     // AKO JE ROUND TRIP MORA IMATI DVA LETA, NE JEDAN
     // const t1 = new Ticket([f1.flightNumber], [new Seat(0, '33R')], 'oneWay', 300, 0);

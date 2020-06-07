@@ -1,16 +1,13 @@
 import { Seat } from './seat';
 import { Flight } from './flight';
-import { Trip } from './trip';
 
 export class Ticket {
-    trip: Trip;
-    seats: Array<Seat>;
-    price: number;
+    flight: Flight;
+    seat: Seat;
 
-    constructor(trip: Trip, seats: Array<Seat>, price: number) {
-        this.trip = trip;
-        this.seats = seats;
-        this.price = price;
+    constructor(flight: Flight, seat: Seat) {
+        this.flight = flight;
+        this.seat = seat;
     }
 
 }

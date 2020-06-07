@@ -19,15 +19,18 @@
                 <input [ngClass]="{'error-input': form.controls.price.invalid}" formControlName="price" type="number" min="1" [value]="seat.price">
                 <span class="dollar">$</span>
             </div>
-            <div class="error" *ngIf="form.controls.price.invalid">
+            <div class="error" *ngIf="form.controls.price.errors?.required">
                 Seat price is required!
+            </div>
+            <div class="error" *ngIf="form.controls.price.errors?.max">
+                Seat price has to be to less than original (${{seat.price}})!
             </div>
             <button class="submit" type="submit" [ngClass]="{'firstButton': seat.class === 'F', 'businessButton' : seat.class === 'B', 'economyButton' : seat.class === 'E', 'basicEconomyButton' : seat.class === 'BE'}">
                 Confirm
             </button>
         </form>
     </div>
-    <div class="footer">
+    <div *ngIf="!special" class="footer">
         <button (click)='deleteSeat()'>Delete seat</button>
     </div>
 </div>
