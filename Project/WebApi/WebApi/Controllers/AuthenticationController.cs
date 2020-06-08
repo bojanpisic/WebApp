@@ -14,7 +14,6 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace WebApi.Controllers
 {
@@ -49,6 +48,10 @@ namespace WebApi.Controllers
 
             try
             {
+                if (!_authenticationRepository.CheckPasswordMatch(userDto.Password, userDto.ConfirmPassword))
+                {
+                    return BadRequest("Passwords dont match");
+                }
                 var createUser = new User()
                 {
                     Email = userDto.Email,
@@ -150,21 +153,24 @@ namespace WebApi.Controllers
 
         }
 
-        public async Task<IActionResult> Login([FromBody] LoginDto loginUser)
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login([FromBody]LoginDto loginUser)
         {
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (String.IsNullOrEmpty(loginUser.Email) && String.IsNullOrEmpty(loginUser.Username))
-            {
-                return BadRequest("Enter username or email.");
-            }
+            //if (String.IsNullOrEmpty(loginUser.Email) && String.IsNullOrEmpty(loginUser.Username))
+            //{
+            //    return BadRequest();
+            //}
 
             try
             {
-                var user = await this._authenticationRepository.GetPerson(String.IsNullOrEmpty(loginUser.Email) ? loginUser.Username : loginUser.Email,
+                var user = await this._authenticationRepository.GetPerson(loginUser.UserNameOrEmail/*String.IsNullOrEmpty(loginUser.Email) ? loginUser.Username : loginUser.Email*/,
                     loginUser.Password, this._userManager);
 
                 if (user == null)
@@ -265,8 +271,8 @@ namespace WebApi.Controllers
 
             LoginDto logindto = new LoginDto
             {
-                ReturnUrl = returnUrl,
-                ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList()
+                //ReturnUrl = returnUrl,
+                //ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList()
             };
 
             if (remoteError != null)
@@ -316,28 +322,28 @@ namespace WebApi.Controllers
             }
         }
 
-        //[AllowAnonymous]
-        //[HttpPost]
-        //[Route("SocialLogin")]
-        //public async Task<IActionResult> SocialLogin([FromBody]LoginDto loginModel, string provider)
-        //{
-        //    if (_authenticationRepository.VerifyToken(loginModel.IdToken))
-        //    {
-        //        var tokenDescriptor = new SecurityTokenDescriptor
-        //        {
-        //            Expires = DateTime.UtcNow.AddMinutes(5),
-        //            //Key min: 16 characters
-        //            SigningCredentials = new SigningCredentials(
-        //                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetSection("AppSettings:Token").Value)),
-        //                SecurityAlgorithms.HmacSha256Signature)
-        //        };
-        //        var tokenHandler = new JwtSecurityTokenHandler();
-        //        var securityToken = tokenHandler.CreateToken(tokenDescriptor);
-        //        var token = tokenHandler.WriteToken(securityToken);
-        //        return Ok(new { token });
-        //    }
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("SocialLogin")]
+        public async Task<IActionResult> SocialLogin([FromBody] LoginDto loginModel, string provider)
+        {
+            if (_authenticationRepository.VerifyToken(loginModel.IdToken))
+            {
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Expires = DateTime.UtcNow.AddMinutes(5),
+                    //Key min: 16 characters
+                    SigningCredentials = new SigningCredentials(
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetSection("AppSettings:Token").Value)),
+                        SecurityAlgorithms.HmacSha256Signature)
+                };
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+                var token = tokenHandler.WriteToken(securityToken);
+                return Ok(new { token });
+            }
 
-        //    return Ok();
-        //}
+            return Ok();
+        }
     }
 }

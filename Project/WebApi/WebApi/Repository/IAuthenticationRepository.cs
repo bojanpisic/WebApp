@@ -27,5 +27,6 @@ namespace WebApi.Repository
         Task<IList<string>> GetRoles(Person user, UserManager<Person> userManager);
 
         bool VerifyToken(string providerToken);
+        bool CheckPasswordMatch(string password, string confirmPassword);
     }
 }

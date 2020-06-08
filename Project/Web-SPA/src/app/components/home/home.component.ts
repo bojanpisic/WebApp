@@ -14,7 +14,7 @@ export class HomeComponent implements OnInit {
   fly = true;
   drive = false;
   option = 'fly';
-  userId: number;
+  userId: string;
   user: User;
 
   data: Airline;
@@ -26,9 +26,9 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.userId !== undefined) {
-      this.user = this.userService.getUser(this.userId);
-    }
+    // if (this.userId !== undefined) {
+    //   // this.user = this.userService.getUser(this.userId);
+    // }
   }
 
   onFly() {

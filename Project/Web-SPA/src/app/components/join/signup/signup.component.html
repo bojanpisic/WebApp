@@ -3,7 +3,7 @@
 </nav>
 <main>
   <h1>Sign up</h1>
-  <form action="">
+  <form [formGroup]="userService.formModel">
     <div class="progress">
       <div class="progress-track"></div>
       <div id="step1" class="progress-step" (click)="next('step1')" [ngClass]="{ 'is-active': step === 'step1', 'is-complete': step === 'step2' || step === 'finish'}">
@@ -11,15 +11,18 @@
       <div id="step2" class="progress-step" (click)="next('step2')" [ngClass]="{ 'is-active': step === 'step2', 'is-complete': step === 'finish'}">
       </div>
     </div>
-    <input id="first-name" type="text" placeholder="First Name" *ngIf="step === 'step1'">
-    <input id="last-name" type="text" placeholder="Last Name" *ngIf="step === 'step1'">
-    <input id="address" type="text" placeholder="Address" *ngIf="step === 'step1'">
-    <input type="tel" id="phone" name="phone" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" placeholder="Phone number" *ngIf="step === 'step1'">
-    <input id="email" type="email" placeholder="Email Address" *ngIf="step === 'step2'">
-    <input id="password" type="password" placeholder="Password" *ngIf="step === 'step2'">
-    <input id="confirm-password" type="password" placeholder="Confirm Password" *ngIf="step === 'step2'">
+    <input id="first-name" type="text" placeholder="First Name" *ngIf="step === 'step1'" formControlName="FirstName">
+    <input id="last-name" type="text" placeholder="Last Name" *ngIf="step === 'step1'" formControlName="LastName">
+    <input id="address" type="text" placeholder="City" *ngIf="step === 'step1'" formControlName="City">
+    <input type="tel" id="phone" name="phone" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" placeholder="Phone number" *ngIf="step === 'step1'" formControlName="Phone">\
+    <input id="username" type="text" placeholder="Username" *ngIf="step === 'step2'" formControlName="UserName">
+    <input id="email" type="email" placeholder="Email Address" *ngIf="step === 'step2'" formControlName="Email">
+    <input id="password" type="password" placeholder="Password" *ngIf="step === 'step2'" formControlName="Password">
+    <input id="confirm-password" type="password" placeholder="Confirm Password" *ngIf="step === 'step2'" formControlName="ConfirmPassword">
     
-    <input id="submit" type="submit" (click)="next(step==='step2' ? 'finish' : 'step2')" [value]="step === 'step2' ? 'FINISH' : 'NEXT'">
+    <input id="submit" type="button" (click)="next(step==='step1' ? 'step2' : 'step1')" value= 'NEXT' *ngIf="step !== 'step2'">
+    <input id="submit" type="submit" (click)="Register()" value='FINISH' *ngIf="step === 'step2'">
+
   </form>
   <app-social-network></app-social-network>
   <div class="login-div">

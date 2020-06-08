@@ -25,10 +25,10 @@ export class TripsComponent implements OnInit {
    }
 
   ngOnInit(): void {
-    if (this.userId !== undefined) {
-      this.user = this.userService.getUser(this.userId);
-    }
-    this.trips = this.tripService.getAllTrips();
+    // if (this.userId !== undefined) {
+    //   this.user = this.userService.getUser(this.userId);
+    // }
+    // this.trips = this.tripService.getAllTrips();
   }
 
   goBack() {

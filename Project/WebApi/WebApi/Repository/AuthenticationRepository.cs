@@ -37,6 +37,12 @@ namespace WebApi.Repository
             return await userManager.CheckPasswordAsync(user, password);
         }
 
+        public bool CheckPasswordMatch(string password, string confirmPassword)
+        {
+            return password.Equals(confirmPassword);
+        }
+
+
         public async Task<bool> IsEmailConfirmed(Person user, UserManager<Person> userManager)
         {
             return await userManager.IsEmailConfirmedAsync(user);
@@ -119,12 +125,12 @@ namespace WebApi.Repository
 
                 await userManager.AddToRoleAsync(admin, "Admin");
 
-                //var sended = await this.SendConfirmationMail(admin, userManager, "admin");
+                var sended = await this.SendConfirmationMail(admin, userManager, "admin");
 
-                //if (!sended)
-                //{
-                //    return IdentityResult.Failed();
-                //}
+                if (!sended)
+                {
+                    return IdentityResult.Failed();
+                }
 
                 return IdentityResult.Success;
             }

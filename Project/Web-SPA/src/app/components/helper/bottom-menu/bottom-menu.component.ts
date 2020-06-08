@@ -9,7 +9,7 @@ export class BottomMenuComponent implements OnInit {
 
   scrolled =  false;
   lastPosition: number = window.innerHeight;
-  @Input() user;
+  @Input() userId;
 
   constructor() { }
 

@@ -33,6 +33,7 @@ namespace WebApi
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DataContext>(x =>
@@ -53,11 +54,21 @@ namespace WebApi
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
-                options.Password.RequiredLength = 4;
+                options.Password.RequiredLength = 8;
             }
             );
 
-            services.AddCors();
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  builder =>
+                                  {
+                                      //builder.WithOrigins("http://localhost:4200");
+                                      builder.AllowAnyMethod();
+                                      builder.AllowAnyOrigin();
+                                      builder.AllowAnyHeader();
+                                  });
+            });
 
             //Jwt Authentication
 
@@ -98,6 +109,12 @@ namespace WebApi
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            //app.Use((context, next) => {
+            //    context.Response.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
+            //    return next.Invoke();
+            //});
+            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseHttpsRedirection();
 

@@ -31,34 +31,34 @@ namespace WebApi.Controllers
 
         }
 
-        [HttpPut]
-        [Route("ChangeProfile")]
+        //[HttpPut]
+        //[Route("ChangeProfile")]
 
-        public async Task<IActionResult> ChangeProfile([FromBody]ChangeProfileDto profile) 
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
+        //public async Task<IActionResult> ChangeProfile([FromBody]ChangeProfileDto profile) 
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            try
-            {
-                var result = await _profileRepository.ChangeProfile(profile, _userManager);
+        //    try
+        //    {
+        //        var result = await _profileRepository.ChangeProfile(profile, _userManager);
 
-                if (result.Succeeded)
-                {
-                    return Ok();
-                }
+        //        if (result.Succeeded)
+        //        {
+        //            return Ok();
+        //        }
 
-                return BadRequest();
-            }
-            catch (Exception)
-            {
+        //        return BadRequest();
+        //    }
+        //    catch (Exception)
+        //    {
 
-                return StatusCode(500, "Internal server error.");
+        //        return StatusCode(500, "Internal server error.");
 
-            }
-        }
+        //    }
+        //}
 
     }
 }

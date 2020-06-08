@@ -1,6 +1,6 @@
 <div [ngStyle]="{'visibility': scrolled ? 'visible' : 'hidden',
                 'opacity': scrolled ? '1' : '0',
-                'grid-template-columns': user !== undefined? '25% 25% 25% 25%' : 'none'}"
+                'grid-template-columns': userId !== undefined? '25% 25% 25% 25%' : 'none'}"
                  class="bottom-menu-div">
     <!-- <div *ngIf='user !== undefined'>
         <a id="linkToHome" href="#" routerLink='/{{user.id}}/flights'>
@@ -38,26 +38,26 @@
             <p>Profile</p>
         </a>
     </div> -->
-    <div *ngIf='user !== undefined'>
-        <a href="#" routerLink='/{{user.id}}/profile'>
+    <div *ngIf='userId !== undefined'>
+        <a href="#" routerLink='/{{userId}}/profile'>
             <img src="../../../../assets/bottom-menu/explore.svg" alt="" >
             <p>Explore</p>
         </a>
     </div>
-    <div *ngIf='user !== undefined'>
-        <a href="#" routerLink='/{{user.id}}/profile'>
+    <div *ngIf='userId !== undefined'>
+        <a href="#" routerLink='/{{userId}}/profile'>
             <img src="../../../../assets/bottom-menu/building.svg" alt="" >
             <p>Home</p>
         </a>
     </div>
-    <div *ngIf='user !== undefined'>
-        <a href="#" routerLink='/{{user.id}}/messages'>
+    <div *ngIf='userId !== undefined'>
+        <a href="#" routerLink='/{{userId}}/messages'>
             <img src="../../../../assets/bottom-menu/message.svg" alt="" >
             <p>Messages</p>
         </a>
     </div>
-    <div *ngIf='user !== undefined'>
-        <a href="#" routerLink='/{{user.id}}/profile'>
+    <div *ngIf='userId !== undefined'>
+        <a href="#" routerLink='/{{userId}}/profile'>
             <div class="image"></div>
             <p>Profile</p>
         </a>

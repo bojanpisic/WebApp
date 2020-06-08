@@ -9,16 +9,17 @@ namespace WebApi.DTOs
 {
     public class LoginDto
     {
-        public string Username { get; set; }
-        [DataType(DataType.EmailAddress)]
-        [EmailAddress]
-        public string Email { get; set; }
+        [Required]
+        public string UserNameOrEmail { get; set; }
+        //[DataType(DataType.EmailAddress)]
+        //[EmailAddress]
+        //public string Email { get; set; }
         [Required]
         [StringLength(8, MinimumLength = 4, ErrorMessage = "You must specify password between 4 and 8 characters")]
         public string Password { get; set; }
         public string IdToken { get; set; }
-        public string ReturnUrl { get; set; }
-        public IList<AuthenticationScheme> ExternalLogins { get; set; }
+        //public string ReturnUrl { get; set; }
+        //public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
     }
 }

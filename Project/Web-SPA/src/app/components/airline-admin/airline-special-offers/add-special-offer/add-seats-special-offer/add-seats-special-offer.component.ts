@@ -36,16 +36,16 @@ export class AddSeatsSpecialOfferComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    this.firstClassSeats = [];
-    this.businessSeats = [];
-    this.economySeats = [];
-    this.basicEconomySeats = [];
-    this.setFirstClassSeats();
-    this.setBusinessSeats();
-    this.setEconomySeats();
-    this.setBasicEconomySeats();
-  }
+  // ngOnChanges(changes: SimpleChanges) {
+  //   this.firstClassSeats = [];
+  //   this.businessSeats = [];
+  //   this.economySeats = [];
+  //   this.basicEconomySeats = [];
+  //   this.setFirstClassSeats();
+  //   this.setBusinessSeats();
+  //   this.setEconomySeats();
+  //   this.setBasicEconomySeats();
+  // }
 
   onSeat(seat: Seat) {
   }

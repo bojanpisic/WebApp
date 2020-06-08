@@ -2,6 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 // import { HttpParams } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -90,6 +92,30 @@ import { EditCarComponent } from './components/rac-admin/rac-cars/edit-car/edit-
 import { AirlineSpecialOffersComponent } from './components/airline-admin/airline-special-offers/airline-special-offers.component';
 import { AddSpecialOfferComponent } from './components/airline-admin/airline-special-offers/add-special-offer/add-special-offer.component';
 import { AddSeatsSpecialOfferComponent } from './components/airline-admin/airline-special-offers/add-special-offer/add-seats-special-offer/add-seats-special-offer.component';
+import { UserService } from 'src/services/user.service';
+
+import { CookieService } from 'ngx-cookie-service';
+
+import { AuthInterceptor } from './auth/auth.interceptor';
+import { SocialLoginModule, AuthServiceConfig, GoogleLoginProvider, FacebookLoginProvider, AuthService } from 'angular-6-social-login';
+
+import { TokenInterceptor } from './auth/TokenInterceptor';
+
+export function socialConfigs() {
+  const config = new AuthServiceConfig(
+    [
+      {
+        id: FacebookLoginProvider.PROVIDER_ID,
+        provider: new FacebookLoginProvider('176053310509690')
+      },
+      {
+        id: GoogleLoginProvider.PROVIDER_ID,  
+        provider: new GoogleLoginProvider('962258612347-6kbnosm4gnu8glcm4l0ke9tlepv7a1e0.apps.googleusercontent.com')
+      }
+    ]
+  );
+  return config;
+}
 
 @NgModule({
    declarations: [
@@ -177,13 +203,33 @@ import { AddSeatsSpecialOfferComponent } from './components/airline-admin/airlin
       BrowserModule,
       AppRoutingModule,
       FormsModule,
+      HttpClientModule,
       ReactiveFormsModule,
       AgmCoreModule.forRoot({
          apiKey: 'AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE',
          libraries: ['places']
       }),
    ],
-   providers: [],
+   providers: [
+      CookieService,
+      UserService,
+      {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+      },
+      {
+        provide: HTTP_INTERCEPTORS,
+        useClass: TokenInterceptor,
+        multi: true,
+      },
+      AuthService,
+      {
+        provide: AuthServiceConfig,
+        useFactory: socialConfigs
+      },
+
+   ],
    bootstrap: [
       AppComponent
    ]

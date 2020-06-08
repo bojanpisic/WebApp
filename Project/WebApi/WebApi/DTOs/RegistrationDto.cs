@@ -17,12 +17,14 @@ namespace WebApi.DTOs
         [Required]
         [StringLength(20, MinimumLength = 6, ErrorMessage = "You must specify password between 6 and 20 characters")]
         public string Password { get; set; }
+        [Required]
+        public string ConfirmPassword { get; set; }
         public string ImageUrl { get; set; }
         [Required]
         public string FirstName { get; set; }
         [Required]
         public string LastName { get; set; }
-        [RegularExpression("^(?!0+$)(\\+\\d{1,3}[- ]?)?(?!0+$)\\d{10,15}$", ErrorMessage = "Please enter valid phone no.")]
+        [RegularExpression("^[(][+][0-9]{3}[)][0-9]{2}[/][0-9]{3}[-][0-9]{3,4}", ErrorMessage = "Please enter valid phone no.")]
         public string Phone { get; set; }
         [Required]
         public string City { get; set; }

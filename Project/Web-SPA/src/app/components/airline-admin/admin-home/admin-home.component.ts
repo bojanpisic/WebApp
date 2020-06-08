@@ -15,7 +15,7 @@ export class AdminHomeComponent implements OnInit {
 
   airline: Airline;
   admin: AirlineAdmin;
-  adminId: number;
+  adminId: string;
   home = true;
 
   constructor(private airlineService: AirlineService, private userService: UserService, private routes: ActivatedRoute) {
@@ -25,9 +25,9 @@ export class AdminHomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.airline = this.airlineService.getAirline(0);
-    this.admin = this.userService.getAirlineAdmin(this.airline.adminid);
-    document.getElementById('ul').scrollLeft = document.getElementById('li-flights').offsetLeft;
+    // this.airline = this.airlineService.getAirline(0);
+    // this.admin = this.userService.getAirlineAdmin(this.airline.adminid);
+    // document.getElementById('ul').scrollLeft = document.getElementById('li-flights').offsetLeft;
   }
 
 }

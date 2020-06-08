@@ -6363,11 +6363,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Bojan\\Desktop\\New folder\\WebApi\\WebApi\\WebApi.csproj",
+      "projectUniqueName": "C:\\Users\\Bojan\\Desktop\\Project\\web2_projekat\\Project\\WebApi\\WebApi\\WebApi.csproj",
       "projectName": "WebApi",
-      "projectPath": "C:\\Users\\Bojan\\Desktop\\New folder\\WebApi\\WebApi\\WebApi.csproj",
+      "projectPath": "C:\\Users\\Bojan\\Desktop\\Project\\web2_projekat\\Project\\WebApi\\WebApi\\WebApi.csproj",
       "packagesPath": "C:\\Users\\Bojan\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Bojan\\Desktop\\New folder\\WebApi\\WebApi\\obj\\",
+      "outputPath": "C:\\Users\\Bojan\\Desktop\\Project\\web2_projekat\\Project\\WebApi\\WebApi\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

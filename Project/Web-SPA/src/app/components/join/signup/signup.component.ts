@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from 'src/services/user.service';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-signup',
@@ -10,21 +11,53 @@ import { UserService } from 'src/services/user.service';
 export class SignupComponent implements OnInit {
 
   step = 'step1';
-
-  constructor(private router: Router, private userService: UserService) { }
+  registrationType: any; // ovde ce da bude sta se registruje..da li airline admin itd..
+  adminId: any; //
+  constructor(private route: ActivatedRoute, private router: Router, public userService: UserService) {
+    route.params.subscribe(params => {
+      this.registrationType = params.registrationType;
+      this.adminId = params.id;
+    });
+   }
 
   ngOnInit(): void {
+    this.userService.formModel.reset();
   }
 
   next(nextStep: string) {
     this.step = nextStep;
 
-    if (this.step === 'finish') {
-
-      setTimeout( () => {
-        this.router.navigate(['/']);
-        }, 300);
-    }
+    // if (this.step === 'finish') {
+    //   alert("finisg");
+    //   setTimeout( () => {
+    //     this.router.navigate(['/']);
+    //     }, 300);
+    // }
   }
 
+  Register() {
+    this.userService.userRegistration().subscribe(
+      (res: any) => {
+        if (res.status === 201) {
+          alert('uspeo');
+          this.userService.formModel.reset();
+        } else {
+          alert('nije');
+
+          res.errors.array.forEach(element => {
+            switch (element.code)
+            {
+              case 'DuplicateUserName':
+                // this.toastr.error('Username is already taken','Registration failed.');
+                break;
+
+              default:
+              // this.toastr.error(element.description,'Registration failed.');
+                break;
+            }
+          });
+        }
+      }
+    );
+  }
 }
