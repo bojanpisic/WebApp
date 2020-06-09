@@ -94,6 +94,8 @@ import { EditCarComponent } from './components/rac-admin/rac-cars/edit-car/edit-
 import { AirlineSpecialOffersComponent } from './components/airline-admin/airline-special-offers/airline-special-offers.component';
 import { AddSpecialOfferComponent } from './components/airline-admin/airline-special-offers/add-special-offer/add-special-offer.component';
 import { AddSeatsSpecialOfferComponent } from './components/airline-admin/airline-special-offers/add-special-offer/add-seats-special-offer/add-seats-special-offer.component';
+import { AddCompanyComponent } from './components/admin/system-admin/add-company/add-company.component';
+import { SystemAdminComponent } from './components/admin/system-admin/system-admin.component';
 
 import { CookieService } from 'ngx-cookie-service';
 
@@ -198,7 +200,9 @@ export function socialConfigs() {
       EditCarComponent,
       AirlineSpecialOffersComponent,
       AddSpecialOfferComponent,
-      AddSeatsSpecialOfferComponent
+      AddSeatsSpecialOfferComponent,
+      AddCompanyComponent,
+      SystemAdminComponent
    ],
    imports: [
       BrowserModule,
@@ -225,7 +229,6 @@ export function socialConfigs() {
         useClass: TokenInterceptor,
         multi: true,
       },
-      AuthService,
       {
         provide: AuthServiceConfig,
         useFactory: socialConfigs

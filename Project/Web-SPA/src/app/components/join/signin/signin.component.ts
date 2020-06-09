@@ -25,8 +25,8 @@ export class SigninComponent implements OnInit {
   ngOnInit(): void {
     if (localStorage.getItem('token') != null) {
 
-      var token = localStorage.getItem('token');
-      var decoded = this.getDecodedAccessToken(token);
+      const token = localStorage.getItem('token');
+      const decoded = this.getDecodedAccessToken(token);
 
       if (token == null || decoded.exp >= Date.now()) {
           alert('Not registered');
@@ -41,14 +41,14 @@ export class SigninComponent implements OnInit {
     this.userService.logIn().subscribe(
       (res: any) => {
         localStorage.setItem('token', res.token);
-        var decoded = this.getDecodedAccessToken(res.token);
+        const decoded = this.getDecodedAccessToken(res.token);
 
         if (res.token == null || decoded.exp >= Date.now()) {
             alert('Not registered');
             return ;
         }
-
-        switch (decoded.Role) {
+        console.log('BOJANE DUDLAS MI KURAC' + decoded);
+        switch (decoded.role) {
           case 'RegularUser':
             this.router.navigateByUrl(decoded.UserID + '/home');
             break;
@@ -59,7 +59,7 @@ export class SigninComponent implements OnInit {
             this.router.navigateByUrl('/rac-admin/' + decoded.UserID);
             break;
           case 'Admin':
-            this.router.navigateByUrl(decoded.UserID + '/home');
+            this.router.navigateByUrl('/system-admin/' + decoded.UserID);
             break;
         }
 

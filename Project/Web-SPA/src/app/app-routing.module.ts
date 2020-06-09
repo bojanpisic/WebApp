@@ -35,8 +35,15 @@ import { AddCarComponent } from './components/rac-admin/rac-cars/add-car/add-car
 import { EditCarComponent } from './components/rac-admin/rac-cars/edit-car/edit-car.component';
 import { AirlineSpecialOffersComponent } from './components/airline-admin/airline-special-offers/airline-special-offers.component';
 import { AddSpecialOfferComponent } from './components/airline-admin/airline-special-offers/add-special-offer/add-special-offer.component';
+import { SystemAdminComponent } from './components/admin/system-admin/system-admin.component';
+import { AddCompanyComponent } from './components/admin/system-admin/add-company/add-company.component';
 
 const routes: Routes = [
+  {path: 'system-admin/:id',
+  children: [
+    {path: '', component: SystemAdminComponent},
+    {path: ':type', component: AddCompanyComponent},
+  ]},
   {path: 'admin/:id',
   children: [
     {path: '', component: AdminHomeComponent},

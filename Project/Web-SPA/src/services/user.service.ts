@@ -19,7 +19,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class UserService {
 
-  readonly BaseURI = 'http://localhost:5001/api';
+  readonly BaseURI = 'http://192.168.0.13:5001/api';
 
   constructor(private tripService: TripService, private fb: FormBuilder, private http: HttpClient) {
 
@@ -131,7 +131,7 @@ export class UserService {
       Password: this.formModelLogin.value.Password,
     };
     console.log(body);
-    return this.http.post(this.BaseURI + '/authentication/Login', body);
+    return this.http.post(this.BaseURI + '/authentication/login', body);
   }
 
   externalLogin(formData) {
