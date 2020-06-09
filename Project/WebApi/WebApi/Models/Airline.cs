@@ -18,6 +18,7 @@ namespace WebApi.Models
             Rates = new HashSet<AirlineRate>();
         }
         public int AirlineId { get; set; }
+        public string AdminId { get; set; }
         public AirlineAdmin Admin { get; set; }
 
         public string Name { get; set; }

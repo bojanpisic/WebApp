@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace WebApi.DTOs
 {
-    public class ChangeFirstNameDto
+    public class ChangeAirlineLogoDto
     {
         [Required]
-        public string FirstName { get; set; }
+        public string ImgUrl { get; set; }
     }
 }

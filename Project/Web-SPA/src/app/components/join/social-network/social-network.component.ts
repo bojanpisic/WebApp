@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService, GoogleLoginProvider, FacebookLoginProvider } from 'angular-6-social-login';
+// import { AuthService, GoogleLoginProvider, FacebookLoginProvider } from 'angular-6-social-login';
 import { UserService } from 'src/services/user.service';
 import { Router } from '@angular/router';
 
@@ -10,43 +10,43 @@ import { Router } from '@angular/router';
 })
 export class SocialNetworkComponent implements OnInit {
 
-  constructor(public OAuth: AuthService, public userService: UserService, private router: Router) { }
+  constructor( public userService: UserService, private router: Router) { } // public OAuth: AuthService,
 
   ngOnInit(): void {
   }
 
   LoginWithGoogle() {
-    let socialPlatformProvider;
-    socialPlatformProvider = GoogleLoginProvider.PROVIDER_ID;
+    // let socialPlatformProvider;
+    // socialPlatformProvider = GoogleLoginProvider.PROVIDER_ID;
 
-    this.OAuth.signIn(socialPlatformProvider).then(socialusers => {
-      console.log(socialusers);
-      this.userService.externalLogin(socialusers).subscribe(
-        (res: any) => {
-        localStorage.setItem('token', res.token);
-        this.router.navigateByUrl('/home');
-      });
+    // this.OAuth.signIn(socialPlatformProvider).then(socialusers => {
+    //   console.log(socialusers);
+    //   this.userService.externalLogin(socialusers).subscribe(
+    //     (res: any) => {
+    //     localStorage.setItem('token', res.token);
+    //     this.router.navigateByUrl('/home');
+    //   });
 
-      console.log(socialusers);
-    });
+    //   console.log(socialusers);
+    // });
 
   }
 
   LoginWithFacebook() {
-    let socialPlatformProvider;
-    socialPlatformProvider = FacebookLoginProvider.PROVIDER_ID;
+    // let socialPlatformProvider;
+    // socialPlatformProvider = FacebookLoginProvider.PROVIDER_ID;
 
-    this.OAuth.signIn(socialPlatformProvider).then(socialusers => {
-      console.log(socialusers);
+    // this.OAuth.signIn(socialPlatformProvider).then(socialusers => {
+    //   console.log(socialusers);
 
-      this.userService.externalLogin(socialusers).subscribe(
-        (res: any) => {
-        localStorage.setItem('token', res.token);
-        this.router.navigateByUrl('/home');
-      });
+    //   this.userService.externalLogin(socialusers).subscribe(
+    //     (res: any) => {
+    //     localStorage.setItem('token', res.token);
+    //     this.router.navigateByUrl('/home');
+    //   });
 
-      console.log(socialusers);
-    });
+    //   console.log(socialusers);
+    // });
 
   }
 }

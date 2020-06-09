@@ -14,6 +14,8 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using System.Net.Http;
+using WebApi.Data;
 
 namespace WebApi.Controllers
 {
@@ -26,11 +28,13 @@ namespace WebApi.Controllers
         private readonly UserManager<Person> _userManager;
         private readonly SignInManager<Person> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly DataContext _context;
 
-        public AuthenticationController(IAuthenticationRepository repository, UserManager<Person> userManager,
-            SignInManager<Person> signInManager, RoleManager<IdentityRole> roleManager, IConfiguration config)
+        public AuthenticationController(UserManager<Person> userManager,
+            SignInManager<Person> signInManager, RoleManager<IdentityRole> roleManager, IConfiguration config, DataContext context)
         {
-            this._authenticationRepository = repository;
+            this._context = context;
+            this._authenticationRepository = new AuthenticationRepository(context, userManager, roleManager);
             this._roleManager = roleManager;
             this._signInManager = signInManager;
             this._userManager = userManager;
@@ -38,7 +42,7 @@ namespace WebApi.Controllers
         }
 
 
-        [HttpPost("RegisterUser")]
+        [HttpPost("register-user")]
         public async Task<IActionResult> Register([FromBody]RegistrationDto userDto)
         {
             if (!ModelState.IsValid)
@@ -50,8 +54,9 @@ namespace WebApi.Controllers
             {
                 if (!_authenticationRepository.CheckPasswordMatch(userDto.Password, userDto.ConfirmPassword))
                 {
-                    return BadRequest("Passwords dont match");
+                    return BadRequest(new IdentityError() { Code = "Passwords dont match"});
                 }
+
                 var createUser = new User()
                 {
                     Email = userDto.Email,
@@ -64,22 +69,33 @@ namespace WebApi.Controllers
                     EmailConfirmed = false,
                 };
 
-                var result = await this._authenticationRepository.RegisterUser(createUser, userDto.Password, this._userManager, this._roleManager);
+                var result = await this._authenticationRepository.RegisterUser(createUser, userDto.Password);
 
-                if (result.Succeeded)
+                if (!result.Succeeded)
                 {
-                    return Ok();
+                    var err = result.Errors.ToList();
+                    return BadRequest(new { message = err[0].Description});
+                    //return BadRequest(result);
                 }
-                return BadRequest("");
+
+                var addToRoleResult = await _authenticationRepository.AddToRole(createUser, "RegularUser");
+
+                if (!addToRoleResult.Succeeded)
+                {
+                    return BadRequest(result);
+                }
+
+                var emailSent = await _authenticationRepository.SendConfirmationMail(createUser, "user");
+
+                return Ok(result);
             }
             catch (Exception)
             {
-
                 return StatusCode(500, "Internal server error.");
             }
         }
 
-        [HttpPost("RegisterSystemAdmin")]
+        [HttpPost("register-systemadmin")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RegisterSystemAdmin([FromBody] RegistrationDto userDto)
         {
@@ -90,6 +106,10 @@ namespace WebApi.Controllers
 
             try
             {
+                if (!_authenticationRepository.CheckPasswordMatch(userDto.Password, userDto.ConfirmPassword))
+                {
+                    return BadRequest(new IdentityError() { Code = "Passwords dont match" });
+                }
                 var createUser = new Person()
                 {
                     Email = userDto.Email,
@@ -101,13 +121,24 @@ namespace WebApi.Controllers
                     City = userDto.City,
                 };
 
-                var result = await this._authenticationRepository.RegisterSystemAdmin(createUser, userDto.Password, this._userManager, this._roleManager);
 
-                if (result.Succeeded)
+                var result = await this._authenticationRepository.RegisterSystemAdmin(createUser, userDto.Password);
+
+                if (!result.Succeeded)
                 {
-                    return Ok();
+                    return BadRequest(result);
                 }
-                return BadRequest("Username already exist!");
+
+                var addToRoleResult = await _authenticationRepository.AddToRole(createUser, "Admin");
+
+                if (!addToRoleResult.Succeeded)
+                {
+                    return BadRequest(result);
+                }
+
+                var emailSent = await _authenticationRepository.SendConfirmationMail(createUser, "admin");
+
+                return Ok(result);
             }
             catch (Exception)
             {
@@ -116,48 +147,23 @@ namespace WebApi.Controllers
             }
         }
 
-        [HttpPost("RegisterAirlineAdmin")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> RegisterAirlineAdmin([FromBody] RegistrationDto userDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //[HttpPost("register-airlineadmin")]
+        ////[Authorize(Roles = "Admin")]
+        //public async Task<IActionResult> RegisterAirlineAdmin([FromBody] RegistrationDto userDto)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            try
-            {
-                var createUser = new AirlineAdmin()
-                {
-                    Email = userDto.Email,
-                    FirstName = userDto.FirstName,
-                    LastName = userDto.LastName,
-                    ImageUrl = userDto.ImageUrl,
-                    PhoneNumber = userDto.Phone,
-                    City = userDto.City,
-                    EmailConfirmed = false,
-                };
+         
 
-                var result = await this._authenticationRepository.RegisterAirlineAdmin(createUser, userDto.Password, this._userManager, this._roleManager);
-
-                if (result.Succeeded)
-                {
-                    return Ok();
-                }
-                return BadRequest("");
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, "Internal server error.");
-            }
-
-        }
+        //}
 
         [HttpPost]
-        [Route("Login")]
+        [Route("login")]
         public async Task<IActionResult> Login([FromBody]LoginDto loginUser)
         {
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -170,15 +176,16 @@ namespace WebApi.Controllers
 
             try
             {
-                var user = await this._authenticationRepository.GetPerson(loginUser.UserNameOrEmail/*String.IsNullOrEmpty(loginUser.Email) ? loginUser.Username : loginUser.Email*/,
-                    loginUser.Password, this._userManager);
+                var user = await this._authenticationRepository.GetPerson(loginUser.UserNameOrEmail
+                    /*String.IsNullOrEmpty(loginUser.Email) ? loginUser.Username : loginUser.Email*/,
+                    loginUser.Password);
 
                 if (user == null)
                 {
                     return NotFound();
                 }
 
-                var isPasswordCorrect = await this._authenticationRepository.CheckPassword(user, loginUser.Password, this._userManager);
+                var isPasswordCorrect = await this._authenticationRepository.CheckPassword(user, loginUser.Password);
 
                 if (!isPasswordCorrect)
                 {
@@ -186,22 +193,17 @@ namespace WebApi.Controllers
                     return Unauthorized();
                 }
 
-                var role = (await _authenticationRepository.GetRoles(user, _userManager)).First();
+                var role = (await _authenticationRepository.GetRoles(user)).First();
 
                 if (role == "RegularUser")
                 {
-                    var isEmailConfirmed = await this._authenticationRepository.IsEmailConfirmed(user, _userManager);
+                    var isEmailConfirmed = await this._authenticationRepository.IsEmailConfirmed(user);
 
                     if (!isEmailConfirmed)
                     {
-                        return BadRequest("Email is not confirmed.");
+                        return BadRequest(new IdentityError() { Code = "Email not confirmed"});
                     }
                 }
-                else if (role == "AirlineAdmin" || role == "RentCarServiceAdmin") 
-                {
-                    
-                }
-
 
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
@@ -229,33 +231,36 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        [Route("ConfirmEmail")]
+        [Route("confirm-email")]
         public async Task<IActionResult> ConfirmEmail(string userId, string token)
         {
             try
             {
-                var user = await _userManager.FindByIdAsync(userId);
-                var result = await _userManager.
-                            ConfirmEmailAsync(user, token);
+                var user = await _authenticationRepository.GetUserById(userId);
+                if (user == null)
+                {
+                    return BadRequest(new IdentityError() { Code = "User dont exist"});
+                }
+
+                var result = await _authenticationRepository.ConfirmEmail(user, token);
 
                 if (result.Succeeded)
                 {
-                    return Ok();
+                    return Ok(result);
                 }
                 else
                 {
-                    return BadRequest();
+                    return BadRequest(result.Errors);
                 }
             }
             catch (Exception)
             {
-
                 return StatusCode(500, "Internal server error.");
             }
         }
 
         [HttpPost]
-        [Route("externallogin")]
+        [Route("external-login")]
         public async Task<IActionResult> ExternalLogin(string provider, string returnUrl)
         {
             var redirectionUrl = Url.Action("ExternalLoginCallback", "Authentication", new { ReturnUrl = returnUrl });
@@ -324,7 +329,7 @@ namespace WebApi.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        [Route("SocialLogin")]
+        [Route("social-login")]
         public async Task<IActionResult> SocialLogin([FromBody] LoginDto loginModel, string provider)
         {
             if (_authenticationRepository.VerifyToken(loginModel.IdToken))

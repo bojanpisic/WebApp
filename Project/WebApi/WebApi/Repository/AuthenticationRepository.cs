@@ -15,12 +15,28 @@ using Microsoft.Extensions.Configuration;
 using System.Net.Http;
 using Newtonsoft.Json;
 using System.Web;
+using WebApi.Data;
 
 namespace WebApi.Repository
 {
     public class AuthenticationRepository : IAuthenticationRepository
     {
-        public async Task<Person> GetPerson(string email, string password, UserManager<Person> userManager)
+        private readonly DataContext context;
+        private readonly UserManager<Person> userManager;
+        private readonly RoleManager<IdentityRole> roleManager;
+
+        public AuthenticationRepository(DataContext _context, UserManager<Person> _userManager, RoleManager<IdentityRole> _roleManager)
+        {
+            context = _context;
+            userManager = _userManager;
+            roleManager = _roleManager;
+        }
+
+        public async Task<Person> GetUserById(string id) 
+        {
+            return await userManager.FindByIdAsync(id);
+        }
+        public async Task<Person> GetPerson(string email, string password)
         {
             var user = await userManager.FindByEmailAsync(email);
 
@@ -32,7 +48,7 @@ namespace WebApi.Repository
             return user;
         }
 
-        public async Task<bool> CheckPassword(Person user, string password, UserManager<Person> userManager)
+        public async Task<bool> CheckPassword(Person user, string password)
         {
             return await userManager.CheckPasswordAsync(user, password);
         }
@@ -42,8 +58,7 @@ namespace WebApi.Repository
             return password.Equals(confirmPassword);
         }
 
-
-        public async Task<bool> IsEmailConfirmed(Person user, UserManager<Person> userManager)
+        public async Task<bool> IsEmailConfirmed(Person user)
         {
             return await userManager.IsEmailConfirmedAsync(user);
         }
@@ -77,104 +92,27 @@ namespace WebApi.Repository
             return true;
         }
 
-        public async Task<IList<string>> GetRoles(Person user, UserManager<Person> userManager)
+        public async Task<IList<string>> GetRoles(Person user)
         {
             return await userManager.GetRolesAsync(user);
         }
 
-        public async Task<IdentityResult> RegisterAirlineAdmin(AirlineAdmin admin, string password, UserManager<Person> userManager,
-            RoleManager<IdentityRole> roleManager)
+        public async Task<IdentityResult> RegisterAirlineAdmin(AirlineAdmin admin, string password)
         {
-            var result = await userManager.CreateAsync(admin, password);
-
-            if (result.Succeeded)
-            {
-                if (!await roleManager.RoleExistsAsync("AirlineAdmin"))
-                {
-                    var res = await roleManager.CreateAsync(new IdentityRole("AirlineAdmin"));
-                }
-
-                await userManager.AddToRoleAsync(admin, "AirlineAdmin");
-
-                var sended = await this.SendConfirmationMail(admin, userManager, "admin", password);
-
-                if (!sended)
-                {
-                    return IdentityResult.Failed();
-                }
-
-                return IdentityResult.Success;
-            }
-            else
-            {
-                return IdentityResult.Failed();
-            }
+            return await userManager.CreateAsync(admin, password);
         }
 
-        public async Task<IdentityResult> RegisterSystemAdmin(Person admin, string password, UserManager<Person> userManager,
-           RoleManager<IdentityRole> roleManager)
+        public async Task<IdentityResult> RegisterSystemAdmin(Person admin, string password)
         {
-            var result = await userManager.CreateAsync(admin, password);
-
-            if (result.Succeeded)
-            {
-                if (!await roleManager.RoleExistsAsync("Admin"))
-                {
-                    var res = await roleManager.CreateAsync(new IdentityRole("Admin"));
-                }
-
-                await userManager.AddToRoleAsync(admin, "Admin");
-
-                var sended = await this.SendConfirmationMail(admin, userManager, "admin");
-
-                if (!sended)
-                {
-                    return IdentityResult.Failed();
-                }
-
-                return IdentityResult.Success;
-            }
-            else
-            {
-                return IdentityResult.Failed();
-            }
-
+             return await userManager.CreateAsync(admin, password);
         }
 
-        public async Task<IdentityResult> RegisterUser(User user, string password, UserManager<Person> userManager,
-            RoleManager<IdentityRole> roleManager)
+        public async Task<IdentityResult> RegisterUser(User user, string password)
         {
-
-            var result = await userManager.CreateAsync(user, password);
-
-            if (result.Succeeded)
-            {
-                if (!await roleManager.RoleExistsAsync("RegularUser"))
-                {
-                    var res = await roleManager.CreateAsync(new IdentityRole("RegularUser"));
-
-
-                }
-
-                await userManager.AddToRoleAsync(user, "RegularUser");
-
-                var sent = await this.SendConfirmationMail(user, userManager, "user");
-
-                if (!sent)
-                {
-                    return IdentityResult.Failed();
-                }
-
-                return IdentityResult.Success;
-            }
-            else
-            {
-                return IdentityResult.Failed();
-            }
-
+            return await userManager.CreateAsync(user, password);
         }
 
-        private async Task<bool> SendConfirmationMail(Person user, UserManager<Person> userManager, string usertype, string password = "")
+        public async Task<IdentityResult> SendConfirmationMail(Person user, string usertype, string password = "")
         {
             var fromMail = new MailAddress("bojanpisic@gmail.com");
             var frontEmailPassowrd = "bojan.pisic.123";
@@ -225,7 +163,30 @@ namespace WebApi.Repository
             })
                 smtp.Send(message);
 
-            return true;
+            return IdentityResult.Success;
+        }
+
+        public async Task<IdentityResult> AddToRole(Person user, string roleName)
+        {
+            IdentityResult createRoleRes = IdentityResult.Success;
+            if (!await roleManager.RoleExistsAsync(roleName))
+            {
+                createRoleRes = await roleManager.CreateAsync(new IdentityRole("RegularUser"));
+            }
+
+            if (!createRoleRes.Succeeded)
+            {
+                return IdentityResult.Failed(new IdentityError() { Code = "Cant create role"});
+            }
+
+            await userManager.AddToRoleAsync(user, roleName);
+
+            return IdentityResult.Success;
+        }
+
+        public async Task<IdentityResult> ConfirmEmail(Person user, string token)
+        {
+            return await userManager.ConfirmEmailAsync(user, token);
         }
     }
 }

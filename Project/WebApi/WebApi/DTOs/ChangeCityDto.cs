@@ -9,8 +9,6 @@ namespace WebApi.DTOs
     public class ChangeCityDto
     {
         [Required]
-        public int UserId { get; set; }
-        [Required]
         public string City { get; set; }
     }
 }

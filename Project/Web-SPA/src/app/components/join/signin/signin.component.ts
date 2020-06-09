@@ -85,12 +85,6 @@ export class SigninComponent implements OnInit {
       }
     }
 
-   
-
-    checkLoginState() {
-      
-    }
-
     // let loggedUser = this.userService.logIn((document.getElementById('email') as HTMLInputElement).value,
     // (document.getElementById('password') as HTMLInputElement).value);
     // if (loggedUser) {

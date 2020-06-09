@@ -6,9 +6,13 @@ using System.Threading.Tasks;
 
 namespace WebApi.DTOs
 {
-    public class ChangeFirstNameDto
+    public class DestinationDto
     {
         [Required]
-        public string FirstName { get; set; }
+        public int AirlineId { get; set; }
+        [Required]
+        public string City { get; set; }
+        [Required]
+        public string State { get; set; }
     }
 }

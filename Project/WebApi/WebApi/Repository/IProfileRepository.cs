@@ -10,13 +10,14 @@ namespace WebApi.Repository
 {
     public interface IProfileRepository
     {
-        Task<IdentityResult> ChangeEmail(ChangeEmailDto profile, UserManager<Person> userManager);
-        Task<IdentityResult> ChangePassword(ChangePasswordDto profile, UserManager<Person> userManager);
-        Task<IdentityResult> ChangeUserName(ChangeUserNameDto profile, UserManager<Person> userManager);
-        Task<IdentityResult> ChangeLastName(ChangeLastNameDto profile, UserManager<Person> userManager);
-        Task<IdentityResult> ChangeFirstName(ChangeFirstNameDto profile, UserManager<Person> userManager);
-        Task<IdentityResult> ChangePhone(ChangePhoneDto profile, UserManager<Person> userManager);
-        Task<IdentityResult> ChangeCity(ChangeCityDto profile, UserManager<Person> userManager);
-        Task<IdentityResult> ChangeImgUrl(ChangeImgUrlDto profile, UserManager<Person> userManager);
+        Task<IdentityResult> Logout();
+        Task<IdentityResult> ChangeEmail(int id, ChangeEmailDto profile);
+        Task<IdentityResult> ChangePassword(int id, ChangePasswordDto profile);
+        Task<IdentityResult> ChangeUserName(int id, ChangeUserNameDto profile);
+        Task<IdentityResult> ChangeLastName(int id, ChangeLastNameDto profile);
+        Task<IdentityResult> ChangeFirstName(int id, ChangeFirstNameDto profile);
+        Task<IdentityResult> ChangePhone(int id, ChangePhoneDto profile);
+        Task<IdentityResult> ChangeCity(int id, ChangeCityDto profile);
+        Task<IdentityResult> ChangeImgUrl(int id, ChangeImgUrlDto profile);
     }
 }

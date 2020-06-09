@@ -9,8 +9,6 @@ namespace WebApi.DTOs
     public class ChangeEmailDto
     {
         [Required]
-        public int UserId { get; set; }
-        [Required]
         [EmailAddress]
         [DataType(DataType.EmailAddress)]
 

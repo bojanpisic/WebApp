@@ -21,15 +21,10 @@ namespace WebApi.Data
                 .WithOne(b => b.Airline)
                 .HasForeignKey<Address>(b => b.AddressId);
             //airline-admin
-            modelBuilder.Entity<Airline>()
-                .HasOne(a => a.Admin)
-                .WithOne(b => b.Airline)
-                .HasForeignKey<AirlineAdmin>(b => b.AirlineId);
-            //destination-address
-            modelBuilder.Entity<CityStateAddress>()
-                .HasOne(a => a.Destination)
-                .WithOne(b => b.Address)
-                .HasForeignKey<Destination>(b => b.AddressId);
+            modelBuilder.Entity<AirlineAdmin>()
+                .HasOne(a => a.Airline)
+                .WithOne(b => b.Admin)
+                .HasForeignKey<Airline>(b => b.AdminId);
             //ticket-seat
             modelBuilder.Entity<Seat>()
                 .HasOne(a => a.Ticket)
@@ -48,11 +43,11 @@ namespace WebApi.Data
               .HasMany(c => c.Rates)
               .WithOne(e => e.Airline);
             //flight-from-address
-            modelBuilder.Entity<CityStateAddress>()
+            modelBuilder.Entity<Destination>()
                .HasMany(c => c.From)
                .WithOne(e => e.From);
             //flight-from-address
-            modelBuilder.Entity<CityStateAddress>()
+            modelBuilder.Entity<Destination>()
                .HasMany(c => c.To)
                .WithOne(e => e.To);
             //flight-seats
@@ -67,16 +62,16 @@ namespace WebApi.Data
 
             //many to many
             //flight-address
-            modelBuilder.Entity<FlightAddress>()
-                .HasKey(bc => new { bc.CityStateAddressId, bc.FlightId });
-            modelBuilder.Entity<FlightAddress>()
+            modelBuilder.Entity<FlightDestination>()
+                .HasKey(bc => new { bc.DestinationId, bc.FlightId });
+            modelBuilder.Entity<FlightDestination>()
                 .HasOne(bc => bc.Flight)
-                .WithMany(b => b.ChangeOvers)
+                .WithMany(b => b.Stops)
                 .HasForeignKey(bc => bc.FlightId);
-            modelBuilder.Entity<FlightAddress>()
-                .HasOne(bc => bc.CityStateAddress)
+            modelBuilder.Entity<FlightDestination>()
+                .HasOne(bc => bc.Destination)
                 .WithMany(c => c.Flights)
-                .HasForeignKey(bc => bc.CityStateAddressId);
+                .HasForeignKey(bc => bc.DestinationId);
             //airline-destinations
             modelBuilder.Entity<AirlineDestionation>()
                .HasKey(bc => new { bc.AirlineId, bc.DestinationId });
@@ -96,10 +91,9 @@ namespace WebApi.Data
         public DbSet<Person> Persons { get; set; }
         public DbSet<Airline> Airlines { get; set; }
         public DbSet<Address> Addresses { get; set; }
-        public DbSet<CityStateAddress> CityStateAddresses { get; set; }
         public DbSet<Destination> Destinations { get; set; }
         public DbSet<Flight> Flights { get; set; }
-        public DbSet<FlightAddress> FlightsAddresses { get; set; }
+        public DbSet<FlightDestination> FlightsAddresses { get; set; }
         public DbSet<Seat> Seats { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
     }

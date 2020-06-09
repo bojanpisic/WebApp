@@ -11,7 +11,7 @@ namespace WebApi.Repository
 {
     public interface ISystemAdminRepository
     {
-        Task<IdentityResult> CreateAirlineForAdmin(int adminId, Airline airline, DataContext context);
+        Task<IdentityResult> CreateAirlineForAdmin(Airline airline);
 
         //Task<IdentityResult> CreateRentServiceForAdmin(string adminUserName, RentServiceDto rentService);
 

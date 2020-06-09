@@ -13,21 +13,21 @@ namespace WebApi.Repository
 {
     public class SystemAdminRepository : ISystemAdminRepository
     {
-        public async Task<IdentityResult> CreateAirlineForAdmin(int adminId, Airline airline, DataContext context)
+        private readonly DataContext context;
+        public SystemAdminRepository(DataContext _context)
         {
-            var admin = await context.Persons.FindAsync(adminId);
-
-            if (admin == null)
-            {
-                return IdentityResult.Failed();
-            }
-
-            airline.Admin = admin as AirlineAdmin;
-
+            context = _context;
+        }
+        public async Task<IdentityResult> CreateAirlineForAdmin(Airline airline)
+        {
             context.Airlines.Add(airline);
-            await context.SaveChangesAsync();
+            var res = await context.SaveChangesAsync();
 
-            return IdentityResult.Success;
+            if (res > 0)
+            {
+                return IdentityResult.Success;
+            }
+            return IdentityResult.Failed(new IdentityError() { Code = "Add error"});
         }
     }
 }

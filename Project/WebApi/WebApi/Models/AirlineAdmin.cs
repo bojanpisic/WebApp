@@ -8,7 +8,6 @@ namespace WebApi.Models
 {
     public class AirlineAdmin: Person
     {
-        public int AirlineId { get; set; }
         public Airline Airline { get; set; }
     }
 }

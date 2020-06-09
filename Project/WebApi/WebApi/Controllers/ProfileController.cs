@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Query.Internal;
@@ -18,17 +19,30 @@ namespace WebApi.Controllers
     public class ProfileController : Controller
     {
         private readonly UserManager<Person> _userManager;
-        public IAuthenticationRepository _authRepository { get; }
-        public IProfileRepository _profileRepository { get; }
+        private readonly IAuthenticationRepository _authRepository;
+        private readonly IProfileRepository _profileRepository;
+        private readonly SignInManager<Person> _signInManager;
 
-        public DataContext _context { get; }
-        public ProfileController(UserManager<Person> userManager, DataContext context, IProfileRepository profileRepo)
+
+        private readonly DataContext _context;
+        public ProfileController(UserManager<Person> userManager, DataContext context, SignInManager<Person> signInManager)
         {
+            _signInManager = signInManager;
             _userManager = userManager;
             _context = context;
-            _profileRepository = profileRepo;
+            _profileRepository = new ProfileRepository(context, userManager, signInManager);
 
 
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("logout")]
+        public async Task<IActionResult> Logout() 
+        {
+            await _profileRepository.Logout();
+
+            return Ok();
         }
 
         //[HttpPut]

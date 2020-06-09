@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace WebApi.Models
 {
-    public class FlightAddress
+    public class FlightDestination
     {
         public int FlightId { get; set; }
         public Flight Flight { get; set; }
-        public int CityStateAddressId { get; set; }
-        public CityStateAddress CityStateAddress { get; set; }
+        public int DestinationId { get; set; }
+        public Destination Destination { get; set; }
     }
 }

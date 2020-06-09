@@ -81,6 +81,8 @@ import { FlightComponent } from './components/al-components/flight/flight.compon
 import { FindFlightPipe } from './pipes/find-flight.pipe';
 import { ConfigureSeatsComponent } from './components/airline-admin/airline-flights/configure-seats/configure-seats.component';
 // tslint:disable-next-line:max-line-length
+import { UserService } from 'src/services/user.service';
+
 import { ConfigureSeatsModalComponent } from './components/airline-admin/airline-flights/configure-seats/configure-seats-modal/configure-seats-modal.component';
 import { PlaceSeatsPipe } from './pipes/place-seats.pipe';
 import { RacAdminHomeComponent } from './components/rac-admin/rac-admin-home/rac-admin-home.component';
@@ -92,7 +94,6 @@ import { EditCarComponent } from './components/rac-admin/rac-cars/edit-car/edit-
 import { AirlineSpecialOffersComponent } from './components/airline-admin/airline-special-offers/airline-special-offers.component';
 import { AddSpecialOfferComponent } from './components/airline-admin/airline-special-offers/add-special-offer/add-special-offer.component';
 import { AddSeatsSpecialOfferComponent } from './components/airline-admin/airline-special-offers/add-special-offer/add-seats-special-offer/add-seats-special-offer.component';
-import { UserService } from 'src/services/user.service';
 
 import { CookieService } from 'ngx-cookie-service';
 
@@ -213,6 +214,7 @@ export function socialConfigs() {
    providers: [
       CookieService,
       UserService,
+      
       {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
@@ -227,7 +229,7 @@ export function socialConfigs() {
       {
         provide: AuthServiceConfig,
         useFactory: socialConfigs
-      },
+      }
 
    ],
    bootstrap: [

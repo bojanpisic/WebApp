@@ -11,15 +11,15 @@ namespace WebApi.Models
         public int AirlineId { get; set; }
         public Airline Airline { get; set; }
         public string FlightNumber { get; set; }
-        public System.DateTime TakeOffDate { get; set; }
-        public System.DateTime LandingDate { get; set; }
+        public System.DateTime TakeOffDateTime { get; set; }
+        public System.DateTime LandingDateTime { get; set; }
         public string TripTime { get; set; }
         public float tripLength { get; set; }
-        public string TakeOffTime { get; set; }
-        public string LandingTime { get; set; }
-        public ICollection<FlightAddress> ChangeOvers { get; set; }
-        public CityStateAddress From { get; set; }
-        public CityStateAddress To { get; set; }
+        //public string TakeOffTime { get; set; }
+        //public string LandingTime { get; set; }
+        public ICollection<FlightDestination> Stops { get; set; }
+        public Destination From { get; set; }
+        public Destination To { get; set; }
         public ICollection<Seat> Seats { get; set; }
     }
 }

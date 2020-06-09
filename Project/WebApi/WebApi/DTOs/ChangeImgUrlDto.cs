@@ -9,8 +9,6 @@ namespace WebApi.DTOs
     public class ChangeImgUrlDto
     {
         [Required]
-        public int UserId { get; set; }
-        [Required]
         public string ImgUrl { get; set; }
     }
 }

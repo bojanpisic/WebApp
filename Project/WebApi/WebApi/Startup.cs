@@ -20,6 +20,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Identity;
+using WebApi.Controllers;
 
 namespace WebApi
 {
@@ -41,6 +42,10 @@ namespace WebApi
             services.AddControllers();
 
             services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
+            services.AddScoped<IAirlineRepository, AirlineRepository>();
+            services.AddScoped<IProfileRepository, ProfileRepository>();
+            services.AddScoped<ISystemAdminRepository, SystemAdminRepository>();
+
 
             services.AddDefaultIdentity<Person>()
                   .AddRoles<IdentityRole>()

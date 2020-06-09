@@ -14,9 +14,9 @@ export class Flight {
     landingDate: Date;
     tripTime: string;
     tripLength: number;
-    changeOverLocations: Array<ChangeOver>;
+    changeOverLocations: Array<ChangeOver>; //obtisi
     stops: Array<Address>;
-    ticketPrice: number;
+    ticketPrice: number; // obrisi
     from: Address;
     to: Address;
     takeOffTime: string;

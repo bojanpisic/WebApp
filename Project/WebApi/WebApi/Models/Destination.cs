@@ -12,8 +12,18 @@ namespace WebApi.Models
         [Key]
         public int DestinationId { get; set; }
         public string ImageUrl { get; set; }
-        public int AddressId { get; set; }
-        public CityStateAddress Address { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public virtual ICollection<Flight> From { get; set; }
+        public virtual ICollection<Flight> To { get; set; }
+        public virtual ICollection<FlightDestination> Flights { get; set; }
         public virtual ICollection<AirlineDestionation> Airlines { get; set; }
+
+        public Destination()
+        {
+            From = new HashSet<Flight>();
+            To = new HashSet<Flight>();
+            Flights = new HashSet<FlightDestination>();
+        }
     }
 }

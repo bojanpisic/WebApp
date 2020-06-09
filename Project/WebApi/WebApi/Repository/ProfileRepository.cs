@@ -11,28 +11,43 @@ namespace WebApi.Repository
 {
     public class ProfileRepository : IProfileRepository
     {
-        public async Task<IdentityResult> ChangeCity(ChangeCityDto profile, UserManager<Person> userManager)
+        private readonly DataContext context;
+        private readonly UserManager<Person> userManager;
+        private readonly SignInManager<Person> _signInManager;
+
+        public ProfileRepository(DataContext _context, UserManager<Person> _userManager, SignInManager<Person> signInManager)
         {
-            var user = await userManager.FindByIdAsync(profile.UserId.ToString());
+            _signInManager = signInManager;
+            context = _context;
+            userManager = _userManager;
+        }
+        public async Task<IdentityResult> ChangeCity(int id)
+        {
+            var user = await userManager.FindByIdAsync(id.ToString());
 
             if (user == null)
             {
                 return IdentityResult.Failed();
             }
 
-            if (!profile.City.Equals(user.City))
-            {
-                user.City = profile.City;
-                return await userManager.UpdateAsync(user);
-            }
+            //if (!profile.City.Equals(user.City))
+            //{
+            //    user.City = profile.City;
+            //    return await userManager.UpdateAsync(user);
+            //}
 
             return IdentityResult.Success;
 
         }
 
-        public async Task<IdentityResult> ChangeEmail(ChangeEmailDto profile, UserManager<Person> userManager)
+        public Task<IdentityResult> ChangeCity(int id, ChangeCityDto profile)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<IdentityResult> ChangeEmail(int id, ChangeEmailDto profile)
         { 
-            var user = await userManager.FindByIdAsync(profile.UserId.ToString());
+            var user = await userManager.FindByIdAsync(id.ToString());
 
             if (user == null)
             {
@@ -54,9 +69,9 @@ namespace WebApi.Repository
 
         }
 
-        public async Task<IdentityResult> ChangeFirstName(ChangeFirstNameDto profile, UserManager<Person> userManager)
+        public async Task<IdentityResult> ChangeFirstName(int id, ChangeFirstNameDto profile)
         {
-            var user = await userManager.FindByIdAsync(profile.UserId.ToString());
+            var user = await userManager.FindByIdAsync(id.ToString());
 
             if (user == null)
             {
@@ -73,9 +88,9 @@ namespace WebApi.Repository
             return IdentityResult.Success;
         }
 
-        public async Task<IdentityResult> ChangeImgUrl(ChangeImgUrlDto profile, UserManager<Person> userManager)
+        public async Task<IdentityResult> ChangeImgUrl(int id, ChangeImgUrlDto profile)
         {
-            var user = await userManager.FindByIdAsync(profile.UserId.ToString());
+            var user = await userManager.FindByIdAsync(id.ToString());
 
             if (user == null)
             {
@@ -92,9 +107,9 @@ namespace WebApi.Repository
             return IdentityResult.Success;
         }
 
-        public async Task<IdentityResult> ChangeLastName(ChangeLastNameDto profile, UserManager<Person> userManager)
+        public async Task<IdentityResult> ChangeLastName(int id, ChangeLastNameDto profile)
         {
-            var user = await userManager.FindByIdAsync(profile.UserId.ToString());
+            var user = await userManager.FindByIdAsync(id.ToString());
 
             if (user == null)
             {
@@ -111,9 +126,9 @@ namespace WebApi.Repository
             return IdentityResult.Success;
         }
 
-        public async Task<IdentityResult> ChangePassword(ChangePasswordDto profile, UserManager<Person> userManager)
+        public async Task<IdentityResult> ChangePassword(int id, ChangePasswordDto profile)
         {
-            var user = await userManager.FindByIdAsync(profile.UserId.ToString());
+            var user = await userManager.FindByIdAsync(id.ToString());
 
             if (user == null)
             {
@@ -137,9 +152,9 @@ namespace WebApi.Repository
             return IdentityResult.Success;
         }
 
-        public async Task<IdentityResult> ChangePhone(ChangePhoneDto profile, UserManager<Person> userManager)
+        public async Task<IdentityResult> ChangePhone(int id, ChangePhoneDto profile)
         {
-            var user = await userManager.FindByIdAsync(profile.UserId.ToString());
+            var user = await userManager.FindByIdAsync(id.ToString());
 
             if (user == null)
             {
@@ -159,9 +174,9 @@ namespace WebApi.Repository
 
         }
 
-        public async Task<IdentityResult> ChangeUserName(ChangeUserNameDto profile, UserManager<Person> userManager)
+        public async Task<IdentityResult> ChangeUserName(int id, ChangeUserNameDto profile)
         {
-            var user = await userManager.FindByIdAsync(profile.UserId.ToString());
+            var user = await userManager.FindByIdAsync(id.ToString());
 
             if (user == null)
             {
@@ -178,6 +193,12 @@ namespace WebApi.Repository
                 }
             }
 
+            return IdentityResult.Success;
+        }
+
+        public async Task<IdentityResult> Logout()
+        {
+             await _signInManager.SignOutAsync();
             return IdentityResult.Success;
         }
 

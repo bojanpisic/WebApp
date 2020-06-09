@@ -9,8 +9,6 @@ namespace WebApi.DTOs
     public class ChangeLastNameDto
     {
         [Required]
-        public int UserId { get; set; }
-        [Required]
         public string LastName { get; set; }
     }
 }

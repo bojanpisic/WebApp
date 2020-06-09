@@ -7,14 +7,13 @@ using WebApi.Models;
 
 namespace WebApi.DTOs
 {
-    public class AirlineDto
+    public class ChangeAirlineInfoDto
     {
         [Required]
-        public int adminId { get; set; }
+        public string Name { get; set; }
         [Required]
-        public string  Name{ get; set; }
         public Address Address { get; set; }
+        [Required]
         public string PromoDescription { get; set; }
-        public string LogoUrl { get; set; }
     }
 }
