@@ -1,0 +1,36 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace WebApi.Models
+{
+    public class Car
+    {
+        public int CarId { get; set; }
+        public string Brand { get; set; }
+        public string Model { get; set; }
+        public int Year { get; set; }
+        public string Type { get; set; }
+        public int SeatsNumber { get; set; }
+        public float PricePerDay { get; set; }
+        public byte[] ImageUrl { get; set; }
+
+
+        public int? RentACarServiceId { get; set; }
+        public RentACarService RentACarService { get; set; }
+
+        public int? BranchId { get; set; }
+        public Branch Branch { get; set; }
+
+        public ICollection<CarSpecialOffer> SpecialOffers { get; set; }
+
+        public Car()
+        {
+            Branch = null;
+            RentACarService = null;
+            SpecialOffers = new HashSet<CarSpecialOffer>();
+        }
+
+    }
+}

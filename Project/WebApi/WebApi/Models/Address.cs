@@ -18,6 +18,7 @@ namespace WebApi.Models
         public string State { get; set; }
         public double Lat { get; set; }
         public double Lon { get; set; }
+        public int AirlineId { get; set; }
         public virtual Airline Airline { get; set; }
 
     }

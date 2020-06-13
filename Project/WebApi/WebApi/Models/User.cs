@@ -10,8 +10,19 @@ namespace WebApi.Models
         public User()
         {
             FlightReservations = new HashSet<Ticket>();
+            RateAirline = new HashSet<AirlineRate>();
+            RateRACService = new HashSet<RentCarServiceRates>();
+            FriendshipRequests = new HashSet<Friendship>();
+            FriendshipInvitations = new HashSet<Friendship>();
+            Friends = new HashSet<User>();
         }
         public ICollection<Ticket> FlightReservations { get; set; }
-        //public string ActivationCode { get; set; }
+        public ICollection<AirlineRate> RateAirline { get; set; }
+        public ICollection<RentCarServiceRates> RateRACService { get; set; }
+        public virtual ICollection<User> Friends { get; set; }
+        public virtual ICollection<Friendship> FriendshipRequests { get; set; }
+        public virtual ICollection<Friendship> FriendshipInvitations { get; set; }
+
+        //public virtual ICollection<User> Friends { get; set; }
     }
 }

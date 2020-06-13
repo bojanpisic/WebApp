@@ -9,17 +9,17 @@ namespace WebApi.DTOs
 {
     public class FlightDto
     {
-        [Required]
-        public int AdminId { get; set; }
-        [Required]
-        public int ArilineId { get; set; }
+        //[Required]
+        //public int AdminId { get; set; }
+        //[Required]
+        //public int ArilineId { get; set; }
         [Required]
         public string FlightNumber  { get; set; }
         [Required]
-        public DateTime TakeOffDateTime { get; set; }
+        public string TakeOffDateTime { get; set; }
 
         [Required]
-        public DateTime LandingDateTime { get; set; }
+        public string LandingDateTime { get; set; }
 
         public IList<int> StopIds{ get; set; }
 
@@ -29,7 +29,10 @@ namespace WebApi.DTOs
         public int ToId { get; set; }
 
         [Required]
-        public List<Seat> Seats { get; set; }
+        public List<SeatDto> Seats { get; set; }
+
+        [Required]
+        public float TripLength { get; set; }
 
     }
 }

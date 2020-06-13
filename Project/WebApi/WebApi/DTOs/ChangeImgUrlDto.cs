@@ -9,6 +9,6 @@ namespace WebApi.DTOs
     public class ChangeImgUrlDto
     {
         [Required]
-        public string ImgUrl { get; set; }
+        public byte[] ImgUrl { get; set; }
     }
 }

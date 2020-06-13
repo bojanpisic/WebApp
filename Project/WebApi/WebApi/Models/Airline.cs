@@ -16,6 +16,7 @@ namespace WebApi.Models
             Destinations = new HashSet<AirlineDestionation>();
             Flights = new HashSet<Flight>();
             Rates = new HashSet<AirlineRate>();
+            SpecialOffers = new HashSet<SpecialOffer>();
         }
         public int AirlineId { get; set; }
         public string AdminId { get; set; }
@@ -23,8 +24,7 @@ namespace WebApi.Models
 
         public string Name { get; set; }
         public string PromoDescription { get; set; }
-        public string LogoUrl { get; set; }
-        public int AddressId { get; set; }
+        public byte[] LogoUrl { get; set; }
         public virtual Address Address { get; set; }
 
         public virtual ICollection<AirlineDestionation> Destinations { get; set; }
@@ -32,5 +32,7 @@ namespace WebApi.Models
         public virtual ICollection<Flight> Flights { get; set; }
 
         public virtual ICollection<AirlineRate> Rates { get; set; }
+
+        public ICollection<SpecialOffer> SpecialOffers { get; set; }
     }
 }

@@ -11,13 +11,10 @@ namespace WebApi.Repository
     public interface IProfileRepository
     {
         Task<IdentityResult> Logout();
-        Task<IdentityResult> ChangeEmail(int id, ChangeEmailDto profile);
-        Task<IdentityResult> ChangePassword(int id, ChangePasswordDto profile);
-        Task<IdentityResult> ChangeUserName(int id, ChangeUserNameDto profile);
-        Task<IdentityResult> ChangeLastName(int id, ChangeLastNameDto profile);
-        Task<IdentityResult> ChangeFirstName(int id, ChangeFirstNameDto profile);
-        Task<IdentityResult> ChangePhone(int id, ChangePhoneDto profile);
-        Task<IdentityResult> ChangeCity(int id, ChangeCityDto profile);
-        Task<IdentityResult> ChangeImgUrl(int id, ChangeImgUrlDto profile);
+        Task<IdentityResult> ChangeEmail(Person user, string emai);
+        Task<IdentityResult> ChangePassword(Person user, string newPasword);
+        Task<IdentityResult> ChangeUserName(Person user, string username);
+        Task<IdentityResult> ChangeProfile(Person user);
+        Task<IdentityResult> ChangePhone(Person user, string phone);
     }
 }

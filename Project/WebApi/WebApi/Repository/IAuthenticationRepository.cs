@@ -15,6 +15,7 @@ namespace WebApi.Repository
         Task<IdentityResult> RegisterUser(User user, string password);
         Task<IdentityResult> RegisterAirlineAdmin(AirlineAdmin admin, string password);
         Task<IdentityResult> RegisterSystemAdmin(Person admin, string password);
+        Task<IdentityResult> RegisterRACSAdmin(Person admin, string password);
         Task<Person> GetPerson(string email, string password);
         //Task<Person> GetPersonById(int id, UserManager<Person> userManager);
         Task<bool> CheckPassword(Person user, string password);
@@ -26,5 +27,6 @@ namespace WebApi.Repository
         Task<IdentityResult> SendConfirmationMail(Person user, string usertype, string password = "");
         Task<IdentityResult> ConfirmEmail(Person user, string token);
         Task<Person> GetUserById(string id);
+        Task<Person> GetPersonBy(string usrNameOrEmail);
     }
 }

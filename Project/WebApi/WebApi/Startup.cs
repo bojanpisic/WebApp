@@ -39,12 +39,15 @@ namespace WebApi
         {
             services.AddDbContext<DataContext>(x =>
                                 x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options =>
+            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
             services.AddScoped<IAirlineRepository, AirlineRepository>();
             services.AddScoped<IProfileRepository, ProfileRepository>();
             services.AddScoped<ISystemAdminRepository, SystemAdminRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+
 
 
             services.AddDefaultIdentity<Person>()

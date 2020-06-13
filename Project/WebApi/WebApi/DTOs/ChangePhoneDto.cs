@@ -9,7 +9,7 @@ namespace WebApi.DTOs
     public class ChangePhoneDto
     {
         [Required]
-        [RegularExpression("^(?!0+$)(\\+\\d{1,3}[- ]?)?(?!0+$)\\d{10,15}$", ErrorMessage = "Please enter valid phone no.")]
+        [RegularExpression("^[(][+][0-9]{3}[)][0-9]{2}[/][0-9]{3}[-][0-9]{3,4}", ErrorMessage = "Please enter valid phone no.")]
         public string Phone { get; set; }
     }
 }

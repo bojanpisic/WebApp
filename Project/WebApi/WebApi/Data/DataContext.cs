@@ -19,7 +19,12 @@ namespace WebApi.Data
             modelBuilder.Entity<Airline>()
                 .HasOne(a => a.Address)
                 .WithOne(b => b.Airline)
-                .HasForeignKey<Address>(b => b.AddressId);
+                .HasForeignKey<Address>(b => b.AirlineId);
+            // racs - address
+            modelBuilder.Entity<RentACarService>()
+               .HasOne(a => a.Address)
+               .WithOne(b => b.RentACarService)
+               .HasForeignKey<Address2>(b => b.RentACarServiceId);
             //airline-admin
             modelBuilder.Entity<AirlineAdmin>()
                 .HasOne(a => a.Airline)
@@ -31,17 +36,22 @@ namespace WebApi.Data
                 .WithOne(b => b.Seat)
                 .HasForeignKey<Ticket>(b => b.SeatId);
 
-
-
             //one to many
+            modelBuilder.Entity<Airline>()
+               .HasMany(c => c.SpecialOffers)
+               .WithOne(e => e.Airline);
+            //specoff-seat
+            modelBuilder.Entity<SpecialOffer>()
+               .HasMany(c => c.Seats)
+               .WithOne(e => e.SpecialOffer);
             //airline-flights
             modelBuilder.Entity<Airline>()
                .HasMany(c => c.Flights)
                .WithOne(e => e.Airline);
-            //airline-rate
-            modelBuilder.Entity<Airline>()
-              .HasMany(c => c.Rates)
-              .WithOne(e => e.Airline);
+            ////airline-rate
+            //modelBuilder.Entity<Airline>()
+            //  .HasMany(c => c.Rates)
+            //  .WithOne(e => e.Airline);
             //flight-from-address
             modelBuilder.Entity<Destination>()
                .HasMany(c => c.From)
@@ -58,6 +68,22 @@ namespace WebApi.Data
             modelBuilder.Entity<User>()
                .HasMany(c => c.FlightReservations)
                .WithOne(e => e.User);
+            //racservice-branch
+            modelBuilder.Entity<RentACarService>()
+               .HasMany(c => c.Branches)
+               .WithOne(e => e.RentACarService);
+            //racservice-car
+            modelBuilder.Entity<RentACarService>()
+               .HasMany(c => c.Cars)
+               .WithOne(e => e.RentACarService);
+            //branch-car
+            modelBuilder.Entity<Branch>()
+               .HasMany(c => c.Cars)
+               .WithOne(e => e.Branch);
+            //car - specoff
+            modelBuilder.Entity<Car>()
+               .HasMany(c => c.SpecialOffers)
+               .WithOne(e => e.Car);
 
 
             //many to many
@@ -72,6 +98,20 @@ namespace WebApi.Data
                 .HasOne(bc => bc.Destination)
                 .WithMany(c => c.Flights)
                 .HasForeignKey(bc => bc.DestinationId);
+            ////friends
+            modelBuilder.Entity<Friendship>()
+                .HasKey(bc => new { bc.User1Id, bc.User2Id });
+            modelBuilder.Entity<Friendship>()
+                .HasOne(bc => bc.User1)
+                .WithMany(b => b.FriendshipInvitations)
+                .HasForeignKey(c => c.User1Id)
+                .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Friendship>()
+                .HasOne(bc => bc.User2)
+                .WithMany(c => c.FriendshipRequests)
+                .HasForeignKey(bc => bc.User2Id)
+                .OnDelete(DeleteBehavior.NoAction);
+            
             //airline-destinations
             modelBuilder.Entity<AirlineDestionation>()
                .HasKey(bc => new { bc.AirlineId, bc.DestinationId });
@@ -83,12 +123,35 @@ namespace WebApi.Data
                 .HasOne(bc => bc.Destination)
                 .WithMany(c => c.Airlines)
                 .HasForeignKey(bc => bc.DestinationId);
+            //airline-rate-user
+            modelBuilder.Entity<AirlineRate>()
+                .HasKey(bc => new { bc.UserId, bc.AirlineId });
+            modelBuilder.Entity<AirlineRate>()
+                .HasOne(bc => bc.User)
+                .WithMany(b => b.RateAirline)
+                .HasForeignKey(bc => bc.UserId);
+            modelBuilder.Entity<AirlineRate>()
+                .HasOne(bc => bc.Airline)
+                .WithMany(c => c.Rates)
+                .HasForeignKey(bc => bc.AirlineId);
+            //racservice-rate-user
+            modelBuilder.Entity<RentCarServiceRates>()
+                .HasKey(bc => new { bc.RentACarServiceId, bc.UserId });
+            modelBuilder.Entity<RentCarServiceRates>()
+                .HasOne(bc => bc.User)
+                .WithMany(b => b.RateRACService)
+                .HasForeignKey(bc => bc.UserId);
+            modelBuilder.Entity<RentCarServiceRates>()
+                .HasOne(bc => bc.RentACarService)
+                .WithMany(c => c.Rates)
+                .HasForeignKey(bc => bc.RentACarServiceId);
 
 
             base.OnModelCreating(modelBuilder);
         }
 
         public DbSet<Person> Persons { get; set; }
+        public DbSet<AirlineAdmin> AirlineAdmins{ get; set; }
         public DbSet<Airline> Airlines { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Destination> Destinations { get; set; }
@@ -96,5 +159,17 @@ namespace WebApi.Data
         public DbSet<FlightDestination> FlightsAddresses { get; set; }
         public DbSet<Seat> Seats { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<RentACarService> RentACarServices { get; set; }
+        public DbSet<Car> Cars { get; set; }
+        public DbSet<Branch> Branches { get; set; }
+        public DbSet<AirlineRate> AirlineRates { get; set; }
+        public DbSet<AirlineDestionation> AirlineDestination { get; set; }
+
+        public DbSet<RentCarServiceRates> RentCarServiceRates { get; set; }
+        public DbSet<SpecialOffer> SpecialOffers { get; set; }
+        public DbSet<CarSpecialOffer> CarSpecialOffers { get; set; }
+
+        public DbSet<Friendship> Friendships { get; set; }
+
     }
 }

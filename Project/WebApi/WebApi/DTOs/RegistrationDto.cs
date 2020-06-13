@@ -15,11 +15,11 @@ namespace WebApi.DTOs
         [EmailAddress]
         public string Email { get; set; }
         [Required]
-        [StringLength(20, MinimumLength = 6, ErrorMessage = "You must specify password between 6 and 20 characters")]
+        [StringLength(20, MinimumLength = 8, ErrorMessage = "You must specify password between 8 and 20 characters")]
         public string Password { get; set; }
         [Required]
         public string ConfirmPassword { get; set; }
-        public string ImageUrl { get; set; }
+        public byte[] ImageUrl { get; set; }
         [Required]
         public string FirstName { get; set; }
         [Required]

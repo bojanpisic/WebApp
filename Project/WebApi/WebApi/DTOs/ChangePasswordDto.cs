@@ -9,9 +9,11 @@ namespace WebApi.DTOs
     public class ChangePasswordDto
     {
         [Required]
-        [StringLength(20, MinimumLength = 6, ErrorMessage = "You must specify password between 6 and 20 characters")]
+        [StringLength(20, MinimumLength = 6, ErrorMessage = "You must specify password between 8 and 20 characters")]
         public string Password { get; set; }
         [Required]
         public string PasswordConfirm { get; set; }
+        [Required]
+        public string OldPassword { get; set; }
     }
 }

@@ -10,7 +10,7 @@ using WebApi.Data;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200602181931_mig")]
+    [Migration("20200612015441_mig")]
     partial class mig
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -230,10 +230,14 @@ namespace WebApi.Migrations
             modelBuilder.Entity("WebApi.Models.Address", b =>
                 {
                     b.Property<int>("AddressId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AirlineId")
                         .HasColumnType("int");
 
                     b.Property<string>("City")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Lat")
@@ -243,12 +247,44 @@ namespace WebApi.Migrations
                         .HasColumnType("float");
 
                     b.Property<string>("State")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("AddressId");
 
+                    b.HasIndex("AirlineId")
+                        .IsUnique();
+
                     b.ToTable("Addresses");
+                });
+
+            modelBuilder.Entity("WebApi.Models.Address2", b =>
+                {
+                    b.Property<int>("Address2Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Lat")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Lon")
+                        .HasColumnType("float");
+
+                    b.Property<int>("RentACarServiceId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Address2Id");
+
+                    b.HasIndex("RentACarServiceId")
+                        .IsUnique();
+
+                    b.ToTable("Address2");
                 });
 
             modelBuilder.Entity("WebApi.Models.Airline", b =>
@@ -258,20 +294,23 @@ namespace WebApi.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AddressId")
-                        .HasColumnType("int");
+                    b.Property<string>("AdminId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("LogoUrl")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("LogoUrl")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PromoDescription")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("AirlineId");
+
+                    b.HasIndex("AdminId")
+                        .IsUnique()
+                        .HasFilter("[AdminId] IS NOT NULL");
 
                     b.ToTable("Airlines");
                 });
@@ -288,27 +327,91 @@ namespace WebApi.Migrations
 
                     b.HasIndex("DestinationId");
 
-                    b.ToTable("AirlineDestionation");
+                    b.ToTable("AirlineDestination");
                 });
 
             modelBuilder.Entity("WebApi.Models.AirlineRate", b =>
                 {
-                    b.Property<int>("AirlineRateId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("AirlineId")
+                    b.Property<int>("AirlineId")
                         .HasColumnType("int");
 
                     b.Property<float>("Rate")
                         .HasColumnType("real");
 
-                    b.HasKey("AirlineRateId");
+                    b.HasKey("UserId", "AirlineId");
 
                     b.HasIndex("AirlineId");
 
-                    b.ToTable("AirlineRate");
+                    b.ToTable("AirlineRates");
+                });
+
+            modelBuilder.Entity("WebApi.Models.Branch", b =>
+                {
+                    b.Property<int>("BranchId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RentACarServiceId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("BranchId");
+
+                    b.HasIndex("RentACarServiceId");
+
+                    b.ToTable("Branches");
+                });
+
+            modelBuilder.Entity("WebApi.Models.Car", b =>
+                {
+                    b.Property<int>("CarId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Brand")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("ImageUrl")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("Model")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("PricePerDay")
+                        .HasColumnType("real");
+
+                    b.Property<int?>("RentACarServiceId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SeatsNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("CarId");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("RentACarServiceId");
+
+                    b.ToTable("Cars");
                 });
 
             modelBuilder.Entity("WebApi.Models.Destination", b =>
@@ -318,16 +421,16 @@ namespace WebApi.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AddressId")
-                        .HasColumnType("int");
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<byte[]>("ImageUrl")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("DestinationId");
-
-                    b.HasIndex("AddressId")
-                        .IsUnique();
 
                     b.ToTable("Destinations");
                 });
@@ -345,22 +448,16 @@ namespace WebApi.Migrations
                     b.Property<string>("FlightNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("FromAddressId")
+                    b.Property<int?>("FromDestinationId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("LandingDate")
+                    b.Property<DateTime>("LandingDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("LandingTime")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("TakeOffDate")
+                    b.Property<DateTime>("TakeOffDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("TakeOffTime")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ToAddressId")
+                    b.Property<int?>("ToDestinationId")
                         .HasColumnType("int");
 
                     b.Property<string>("TripTime")
@@ -373,26 +470,72 @@ namespace WebApi.Migrations
 
                     b.HasIndex("AirlineId");
 
-                    b.HasIndex("FromAddressId");
+                    b.HasIndex("FromDestinationId");
 
-                    b.HasIndex("ToAddressId");
+                    b.HasIndex("ToDestinationId");
 
                     b.ToTable("Flights");
                 });
 
-            modelBuilder.Entity("WebApi.Models.FlightAddress", b =>
+            modelBuilder.Entity("WebApi.Models.FlightDestination", b =>
                 {
-                    b.Property<int>("AddressId")
+                    b.Property<int>("DestinationId")
                         .HasColumnType("int");
 
                     b.Property<int>("FlightId")
                         .HasColumnType("int");
 
-                    b.HasKey("AddressId", "FlightId");
+                    b.HasKey("DestinationId", "FlightId");
 
                     b.HasIndex("FlightId");
 
                     b.ToTable("FlightsAddresses");
+                });
+
+            modelBuilder.Entity("WebApi.Models.RentACarService", b =>
+                {
+                    b.Property<int>("RentACarServiceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("About")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AdminId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<byte[]>("LogoUrl")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("RentACarServiceId");
+
+                    b.HasIndex("AdminId")
+                        .IsUnique()
+                        .HasFilter("[AdminId] IS NOT NULL");
+
+                    b.ToTable("RentACarServices");
+                });
+
+            modelBuilder.Entity("WebApi.Models.RentCarServiceRates", b =>
+                {
+                    b.Property<int>("RentACarServiceId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<float>("Rate")
+                        .HasColumnType("real");
+
+                    b.HasKey("RentACarServiceId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RentCarServiceRates");
                 });
 
             modelBuilder.Entity("WebApi.Models.Seat", b =>
@@ -423,11 +566,39 @@ namespace WebApi.Migrations
                     b.Property<string>("Row")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("SpecialOfferId")
+                        .HasColumnType("int");
+
                     b.HasKey("SeatId");
 
                     b.HasIndex("FlightId");
 
+                    b.HasIndex("SpecialOfferId");
+
                     b.ToTable("Seats");
+                });
+
+            modelBuilder.Entity("WebApi.Models.SpecialOffer", b =>
+                {
+                    b.Property<int>("SpecialOfferId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("AirlineId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("NewPrice")
+                        .HasColumnType("real");
+
+                    b.Property<float>("OldPrice")
+                        .HasColumnType("real");
+
+                    b.HasKey("SpecialOfferId");
+
+                    b.HasIndex("AirlineId");
+
+                    b.ToTable("SpecialOffers");
                 });
 
             modelBuilder.Entity("WebApi.Models.Ticket", b =>
@@ -470,22 +641,20 @@ namespace WebApi.Migrations
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
-                    b.Property<int?>("AddressId")
-                        .HasColumnType("int");
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("ImageUrl")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("PasswordSalt")
-                        .HasColumnType("varbinary(max)");
-
-                    b.HasIndex("AddressId");
+                    b.Property<bool>("PasswordChanged")
+                        .HasColumnType("bit");
 
                     b.HasDiscriminator().HasValue("Person");
                 });
@@ -494,14 +663,14 @@ namespace WebApi.Migrations
                 {
                     b.HasBaseType("WebApi.Models.Person");
 
-                    b.Property<int>("AirlineId")
-                        .HasColumnType("int");
-
-                    b.HasIndex("AirlineId")
-                        .IsUnique()
-                        .HasFilter("[AirlineId] IS NOT NULL");
-
                     b.HasDiscriminator().HasValue("AirlineAdmin");
+                });
+
+            modelBuilder.Entity("WebApi.Models.RentACarServiceAdmin", b =>
+                {
+                    b.HasBaseType("WebApi.Models.Person");
+
+                    b.HasDiscriminator().HasValue("RentACarServiceAdmin");
                 });
 
             modelBuilder.Entity("WebApi.Models.User", b =>
@@ -566,9 +735,25 @@ namespace WebApi.Migrations
                 {
                     b.HasOne("WebApi.Models.Airline", "Airline")
                         .WithOne("Address")
-                        .HasForeignKey("WebApi.Models.Address", "AddressId")
+                        .HasForeignKey("WebApi.Models.Address", "AirlineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("WebApi.Models.Address2", b =>
+                {
+                    b.HasOne("WebApi.Models.RentACarService", "RentACarService")
+                        .WithOne("Address")
+                        .HasForeignKey("WebApi.Models.Address2", "RentACarServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WebApi.Models.Airline", b =>
+                {
+                    b.HasOne("WebApi.Models.AirlineAdmin", "Admin")
+                        .WithOne("Airline")
+                        .HasForeignKey("WebApi.Models.Airline", "AdminId");
                 });
 
             modelBuilder.Entity("WebApi.Models.AirlineDestionation", b =>
@@ -590,16 +775,35 @@ namespace WebApi.Migrations
                 {
                     b.HasOne("WebApi.Models.Airline", "Airline")
                         .WithMany("Rates")
-                        .HasForeignKey("AirlineId");
-                });
-
-            modelBuilder.Entity("WebApi.Models.Destination", b =>
-                {
-                    b.HasOne("WebApi.Models.Address", "Address")
-                        .WithOne("Destination")
-                        .HasForeignKey("WebApi.Models.Destination", "AddressId")
+                        .HasForeignKey("AirlineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("WebApi.Models.User", "User")
+                        .WithMany("RateAirline")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WebApi.Models.Branch", b =>
+                {
+                    b.HasOne("WebApi.Models.RentACarService", "RentACarService")
+                        .WithMany("Branches")
+                        .HasForeignKey("RentACarServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WebApi.Models.Car", b =>
+                {
+                    b.HasOne("WebApi.Models.Branch", "Branch")
+                        .WithMany("Cars")
+                        .HasForeignKey("BranchId");
+
+                    b.HasOne("WebApi.Models.RentACarService", "RentACarService")
+                        .WithMany("Cars")
+                        .HasForeignKey("RentACarServiceId");
                 });
 
             modelBuilder.Entity("WebApi.Models.Flight", b =>
@@ -610,26 +814,48 @@ namespace WebApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebApi.Models.Address", "From")
+                    b.HasOne("WebApi.Models.Destination", "From")
                         .WithMany("From")
-                        .HasForeignKey("FromAddressId");
+                        .HasForeignKey("FromDestinationId");
 
-                    b.HasOne("WebApi.Models.Address", "To")
+                    b.HasOne("WebApi.Models.Destination", "To")
                         .WithMany("To")
-                        .HasForeignKey("ToAddressId");
+                        .HasForeignKey("ToDestinationId");
                 });
 
-            modelBuilder.Entity("WebApi.Models.FlightAddress", b =>
+            modelBuilder.Entity("WebApi.Models.FlightDestination", b =>
                 {
-                    b.HasOne("WebApi.Models.Address", "Address")
+                    b.HasOne("WebApi.Models.Destination", "Destination")
                         .WithMany("Flights")
-                        .HasForeignKey("AddressId")
+                        .HasForeignKey("DestinationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("WebApi.Models.Flight", "Flight")
-                        .WithMany("ChangeOvers")
+                        .WithMany("Stops")
                         .HasForeignKey("FlightId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WebApi.Models.RentACarService", b =>
+                {
+                    b.HasOne("WebApi.Models.RentACarServiceAdmin", "Admin")
+                        .WithOne("RentACarService")
+                        .HasForeignKey("WebApi.Models.RentACarService", "AdminId");
+                });
+
+            modelBuilder.Entity("WebApi.Models.RentCarServiceRates", b =>
+                {
+                    b.HasOne("WebApi.Models.RentACarService", "RentACarService")
+                        .WithMany("Rates")
+                        .HasForeignKey("RentACarServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApi.Models.User", "User")
+                        .WithMany("RateRACService")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -639,6 +865,17 @@ namespace WebApi.Migrations
                     b.HasOne("WebApi.Models.Flight", "Flight")
                         .WithMany("Seats")
                         .HasForeignKey("FlightId");
+
+                    b.HasOne("WebApi.Models.SpecialOffer", "SpecialOffer")
+                        .WithMany("Seats")
+                        .HasForeignKey("SpecialOfferId");
+                });
+
+            modelBuilder.Entity("WebApi.Models.SpecialOffer", b =>
+                {
+                    b.HasOne("WebApi.Models.Airline", "Airline")
+                        .WithMany("SpecialOffers")
+                        .HasForeignKey("AirlineId");
                 });
 
             modelBuilder.Entity("WebApi.Models.Ticket", b =>
@@ -652,22 +889,6 @@ namespace WebApi.Migrations
                     b.HasOne("WebApi.Models.User", "User")
                         .WithMany("FlightReservations")
                         .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("WebApi.Models.Person", b =>
-                {
-                    b.HasOne("WebApi.Models.Address", "Address")
-                        .WithMany("Person")
-                        .HasForeignKey("AddressId");
-                });
-
-            modelBuilder.Entity("WebApi.Models.AirlineAdmin", b =>
-                {
-                    b.HasOne("WebApi.Models.Airline", "Airline")
-                        .WithOne("Admin")
-                        .HasForeignKey("WebApi.Models.AirlineAdmin", "AirlineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

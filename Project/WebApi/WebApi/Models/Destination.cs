@@ -11,7 +11,7 @@ namespace WebApi.Models
     {
         [Key]
         public int DestinationId { get; set; }
-        public string ImageUrl { get; set; }
+        public byte[] ImageUrl { get; set; }
         public string City { get; set; }
         public string State { get; set; }
         public virtual ICollection<Flight> From { get; set; }

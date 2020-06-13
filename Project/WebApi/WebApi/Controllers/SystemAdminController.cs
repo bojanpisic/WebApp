@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -31,9 +33,10 @@ namespace WebApi.Controllers
         }
 
 
-        //[Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("register-airline")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
         public async Task<IActionResult> RegisterAirlineAdmin([FromBody]RegisterAirlineAdminDto registerDto)
         {
             if (!ModelState.IsValid)
@@ -43,62 +46,70 @@ namespace WebApi.Controllers
 
             try
             {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("Admin"))
+                {
+                    return Unauthorized();
+                }
+
                 if (!_authenticationRepository.CheckPasswordMatch(registerDto.Password, registerDto.ConfirmPassword))
                 {
-                    return BadRequest(new IdentityError() { Code = "Passwords dont match" });
+                    return BadRequest(new IdentityError() { Description = "Passwords dont match" });
                 }
                 var admin = new AirlineAdmin()
                 {
                     Email = registerDto.Email,
                     UserName = registerDto.UserName,
-                    //FirstName = registerDto.FirstName,
-                    //LastName = registerDto.LastName,
-                    //ImageUrl = registerDto.ImageUrl,
-                    //PhoneNumber = registerDto.Phone,
-                    //City = registerDto.City,
-                    //EmailConfirmed = false,
-                    //Airline = null,
                 };
-
+                //var address = new Address() { 
+                //    City = registerDto.Address.City,
+                //    State = registerDto.Address.State,
+                //    Lat = registerDto.Address.Lat,
+                //    Lon = registerDto.Address.Lon
+                //};
                 var airline = new Airline()
                 {
                     Name = registerDto.Name,
-                    Address = registerDto.Address,
+                    Address = new Address() { City = registerDto.Address.City, State = registerDto.Address.State,
+                        Lat = registerDto.Address.Lat, Lon = registerDto .Address.Lon},
                     Admin = (AirlineAdmin)admin
                 };
 
                 admin.Airline = airline;
 
-                var result = await this._authenticationRepository.RegisterAirlineAdmin(admin, registerDto.Password);
-
-                if (!result.Succeeded)
+                using (var transaction = _context.Database.BeginTransactionAsync())
                 {
-                    var err = result.Errors.ToList()[0];
-                    return BadRequest(new { message = err.Description });
+                    try
+                    {
+                        var result = await this._authenticationRepository.RegisterAirlineAdmin(admin, registerDto.Password);
+
+                        if (!result.Succeeded)
+                        {
+                            return BadRequest(new IdentityError() { Description = "Failed to register admin" });
+
+                        }
+
+                        var addToRoleResult = await _authenticationRepository.AddToRole(admin, "AirlineAdmin");
+
+                        if (!addToRoleResult.Succeeded)
+                        {
+                            return BadRequest(result);
+                        }
+                        await transaction.Result.CommitAsync();
+
+                    }
+                    catch (Exception)
+                    {
+                        await transaction.Result.RollbackAsync();
+                        return StatusCode(500, "Internal server error");
+                    }
                 }
 
-                var addToRoleResult = await _authenticationRepository.AddToRole(admin, "AirlineAdmin");
+                var emailSent = await _authenticationRepository.SendConfirmationMail(admin, "admin", registerDto.Password);
 
-                if (!addToRoleResult.Succeeded)
-                {
-                    return BadRequest(result);
-                }
-
-                var emailSent = await _authenticationRepository.SendConfirmationMail(admin, "admin");
-
-                return Ok(result);
-
-                //var result = await _repository.CreateAirlineForAdmin(airline);
-
-                //if (result.Succeeded)
-                //{
-                //    return Ok(result);
-                //}
-                //else 
-                //{
-                //    return BadRequest(result.Errors);
-                //}
-
+                return Ok();
             }
             catch (Exception)
             {
@@ -106,6 +117,87 @@ namespace WebApi.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("register-racservice")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
+        public async Task<IActionResult> RegisterRACSAdmin([FromBody] RegisterRACSAdminDto registerDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Model is invalid.");
+            }
+
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("Admin"))
+                {
+                    return Unauthorized();
+                }
+
+                if (!_authenticationRepository.CheckPasswordMatch(registerDto.Password, registerDto.ConfirmPassword))
+                {
+                    return BadRequest(new IdentityError() { Description = "Passwords dont match" });
+                }
+                var admin = new RentACarServiceAdmin()
+                {
+                    Email = registerDto.Email,
+                    UserName = registerDto.UserName,
+                };
+                var racs = new RentACarService()
+                {
+                    Name = registerDto.Name,
+                    Address = new Address2()
+                    {
+                        City = registerDto.Address.City,
+                        State = registerDto.Address.State,
+                        Lat = registerDto.Address.Lat,
+                        Lon = registerDto.Address.Lon,
+                    },
+                    Admin = (RentACarServiceAdmin)admin
+                };
+
+                admin.RentACarService = racs;
+                using (var transaction = _context.Database.BeginTransactionAsync())
+                {
+
+                    try
+                    {
+                        var result = await this._authenticationRepository.RegisterRACSAdmin(admin, registerDto.Password);
+
+                        if (!result.Succeeded)
+                        {
+                            return BadRequest(new IdentityError() { Description = "Failed to register admin" });
+                        }
+
+                        var addToRoleResult = await _authenticationRepository.AddToRole(admin, "RentACarServiceAdmin");
+
+                        if (!addToRoleResult.Succeeded)
+                        {
+                            return BadRequest(result);
+                        }
+
+                        await transaction.Result.CommitAsync();
+
+                    }
+                    catch (Exception)
+                    {
+                        await transaction.Result.RollbackAsync();
+                        return StatusCode(500, "Internal server error");
+                    }
+                }
+
+                var emailSent = await _authenticationRepository.SendConfirmationMail(admin, "admin", registerDto.Password);
+
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Internal server error.");
+            }
+        }
     }
 }

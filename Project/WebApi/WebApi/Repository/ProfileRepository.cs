@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using WebApi.Data;
 using WebApi.DTOs;
@@ -21,179 +23,54 @@ namespace WebApi.Repository
             context = _context;
             userManager = _userManager;
         }
-        public async Task<IdentityResult> ChangeCity(int id)
+        public async Task<IdentityResult> ChangeProfile(Person user)
         {
-            var user = await userManager.FindByIdAsync(id.ToString());
-
-            if (user == null)
-            {
-                return IdentityResult.Failed();
-            }
-
-            //if (!profile.City.Equals(user.City))
-            //{
-            //    user.City = profile.City;
-            //    return await userManager.UpdateAsync(user);
-            //}
-
-            return IdentityResult.Success;
-
+            return await userManager.UpdateAsync(user);
         }
 
-        public Task<IdentityResult> ChangeCity(int id, ChangeCityDto profile)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<IdentityResult> ChangeEmail(int id, ChangeEmailDto profile)
+        public async Task<IdentityResult> ChangeEmail(Person user, string email)
         { 
-            var user = await userManager.FindByIdAsync(id.ToString());
-
-            if (user == null)
+            var emailChangeToken = await userManager.GenerateChangeEmailTokenAsync(user,email);
+            return await userManager.ChangeEmailAsync(user,email, emailChangeToken);
+        }
+        public async Task<IdentityResult> ChangePassword(Person user, string newPassword)
+        {
+            using (var transaction = context.Database.BeginTransactionAsync())
             {
-                return IdentityResult.Failed();
-            }
-
-            if (!profile.Email.Equals(user.Email))
-            {
-                var emailChangeToken = await userManager.GenerateChangeEmailTokenAsync(user, profile.Email);
-                var result = await userManager.ChangeEmailAsync(user, profile.Email, emailChangeToken);
-
-                if (!result.Succeeded)
+                try
                 {
-                    return IdentityResult.Failed();
+                    user.PasswordChanged = true;
+                    user.PasswordHash = userManager.PasswordHasher.HashPassword(user, newPassword);
+                    var result = await userManager.UpdateAsync(user);
+
+                    if (!result.Succeeded)
+                    {
+                        return IdentityResult.Failed(result.Errors.First());
+                    }
+
+                    //var res = await userManager.ChangePasswordAsync(user, user.PasswordHash, newPassword);
+                    await transaction.Result.CommitAsync();
+
+                    return IdentityResult.Success;
                 }
-            }
-
-            return IdentityResult.Success;
-
-        }
-
-        public async Task<IdentityResult> ChangeFirstName(int id, ChangeFirstNameDto profile)
-        {
-            var user = await userManager.FindByIdAsync(id.ToString());
-
-            if (user == null)
-            {
-                return IdentityResult.Failed();
-            }
-
-            if (!profile.FirstName.Equals(user.FirstName))
-            {
-                user.FirstName = profile.FirstName;
-                return await userManager.UpdateAsync(user);
-
-            }
-
-            return IdentityResult.Success;
-        }
-
-        public async Task<IdentityResult> ChangeImgUrl(int id, ChangeImgUrlDto profile)
-        {
-            var user = await userManager.FindByIdAsync(id.ToString());
-
-            if (user == null)
-            {
-                return IdentityResult.Failed();
-            }
-
-            if (!profile.ImgUrl.Equals(user.ImageUrl))
-            {
-                user.ImageUrl = profile.ImgUrl;
-                return await userManager.UpdateAsync(user);
-
-            }
-
-            return IdentityResult.Success;
-        }
-
-        public async Task<IdentityResult> ChangeLastName(int id, ChangeLastNameDto profile)
-        {
-            var user = await userManager.FindByIdAsync(id.ToString());
-
-            if (user == null)
-            {
-                return IdentityResult.Failed();
-            }
-
-            if (!profile.LastName.Equals(user.LastName))
-            {
-                user.LastName = profile.LastName;
-                return await userManager.UpdateAsync(user);
-
-            }
-
-            return IdentityResult.Success;
-        }
-
-        public async Task<IdentityResult> ChangePassword(int id, ChangePasswordDto profile)
-        {
-            var user = await userManager.FindByIdAsync(id.ToString());
-
-            if (user == null)
-            {
-                return IdentityResult.Failed();
-            }
-
-            if (!String.IsNullOrEmpty(profile.Password))
-            {
-                if (!PasswordMatch(profile.Password, profile.PasswordConfirm))
+                catch (Exception)
                 {
+                    await transaction.Result.RollbackAsync();
                     return IdentityResult.Failed();
                 }
 
-                var result = await userManager.ChangePasswordAsync(user, user.PasswordHash, profile.Password);
-                if (!result.Succeeded)
-                {
-                    return IdentityResult.Failed();
-                }
             }
-
-            return IdentityResult.Success;
         }
 
-        public async Task<IdentityResult> ChangePhone(int id, ChangePhoneDto profile)
+        public async Task<IdentityResult> ChangePhone(Person user, string phone)
         {
-            var user = await userManager.FindByIdAsync(id.ToString());
-
-            if (user == null)
-            {
-                return IdentityResult.Failed();
-            }
-            if (!profile.Phone.Equals(user.PhoneNumber))
-            {
-                var phoneToken = await userManager.GenerateChangePhoneNumberTokenAsync(user, profile.Phone);
-                var result = await userManager.ChangePhoneNumberAsync(user, profile.Phone, phoneToken);
-
-                if (!result.Succeeded)
-                {
-                    return IdentityResult.Failed();
-                }
-            }
-            return IdentityResult.Success;
-
+            var phoneToken = await userManager.GenerateChangePhoneNumberTokenAsync(user, phone);
+            return await userManager.ChangePhoneNumberAsync(user, phone, phoneToken);
         }
 
-        public async Task<IdentityResult> ChangeUserName(int id, ChangeUserNameDto profile)
+        public async Task<IdentityResult> ChangeUserName(Person user, string username)
         {
-            var user = await userManager.FindByIdAsync(id.ToString());
-
-            if (user == null)
-            {
-                return IdentityResult.Failed();
-            }
-
-           
-            if (!profile.UserName.Equals(user.UserName))
-            {
-                var result = await userManager.SetUserNameAsync(user, profile.UserName);
-                if (!result.Succeeded)
-                {
-                    return IdentityResult.Failed();
-                }
-            }
-
-            return IdentityResult.Success;
+                return await userManager.SetUserNameAsync(user, username);
         }
 
         public async Task<IdentityResult> Logout()
@@ -202,7 +79,7 @@ namespace WebApi.Repository
             return IdentityResult.Success;
         }
 
-        private bool PasswordMatch(string newPassword, string passwConfirm)
+        public bool PasswordMatch(string newPassword, string passwConfirm)
         {
             return newPassword.Equals(passwConfirm);
         }

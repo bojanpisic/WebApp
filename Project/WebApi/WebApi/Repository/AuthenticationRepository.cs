@@ -25,7 +25,7 @@ namespace WebApi.Repository
         private readonly UserManager<Person> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
 
-        public AuthenticationRepository(DataContext _context, UserManager<Person> _userManager, RoleManager<IdentityRole> _roleManager)
+        public AuthenticationRepository(DataContext _context, UserManager<Person> _userManager, RoleManager<IdentityRole> _roleManager = null)
         {
             context = _context;
             userManager = _userManager;
@@ -127,7 +127,7 @@ namespace WebApi.Repository
                 string confirmationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
                 string confirmationTokenHtmlVersion = HttpUtility.UrlEncode(confirmationToken);
 
-                var varifyUrl = "https://localhost:5001/api/authentication/ConfirmEmail?userId=" + user.Id + "&token=" +
+                var varifyUrl = "http://localhost:8887/signin/" + user.Id + "/" +
                     confirmationTokenHtmlVersion;
 
                 subject = "Your account is successfull created. Please confirm your email.";
@@ -137,7 +137,7 @@ namespace WebApi.Repository
             }
             else
             {
-                var loginurl = "https://localhost:5001/api/authentication/Login";
+                var loginurl = "http://localhost:8887/signin";
 
                 subject = "Your account is successfull created.";
                 body = "<br/>Your username is: " + user.UserName + "<br/>Password for your account is" + password + "<br/>" +
@@ -169,9 +169,10 @@ namespace WebApi.Repository
         public async Task<IdentityResult> AddToRole(Person user, string roleName)
         {
             IdentityResult createRoleRes = IdentityResult.Success;
+
             if (!await roleManager.RoleExistsAsync(roleName))
             {
-                createRoleRes = await roleManager.CreateAsync(new IdentityRole("RegularUser"));
+                createRoleRes = await roleManager.CreateAsync(new IdentityRole(roleName));
             }
 
             if (!createRoleRes.Succeeded)
@@ -187,6 +188,23 @@ namespace WebApi.Repository
         public async Task<IdentityResult> ConfirmEmail(Person user, string token)
         {
             return await userManager.ConfirmEmailAsync(user, token);
+        }
+
+        public async Task<IdentityResult> RegisterRACSAdmin(Person admin, string password)
+        {
+            return await userManager.CreateAsync(admin, password);
+        }
+
+        public async Task<Person> GetPersonBy(string usrNameOrEmail)
+        {
+            var user = await userManager.FindByEmailAsync(usrNameOrEmail);
+
+            if (user == null)
+            {
+                return await userManager.FindByNameAsync(usrNameOrEmail);
+            }
+
+            return user;
         }
     }
 }
