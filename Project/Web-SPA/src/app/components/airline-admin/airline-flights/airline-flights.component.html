@@ -12,9 +12,9 @@
         </button>
    </div>
     <ul>
-        <li *ngFor="let flight of (flights | findFlight:searchText)">
+        <li *ngFor="let flight of (flights | findFlight:searchText); let i = index">
             <app-flight [flight]="flight" [markFlightName]="true"></app-flight>
-            <button routerLink='/admin/{{adminId}}/flights/{{flight.id}}/configure-seats'>Configure seats<img style="filter: opacity(.8);" src="../../../../assets/bold_arrow_pink.svg"></button>
+            <button routerLink='/admin/{{adminId}}/flights/{{flights[i].flightId}}/configure-seats'>Configure seats<img style="filter: opacity(.8);" src="../../../../assets/bold_arrow_pink.svg"></button>
         </li>
     </ul>
 </main>

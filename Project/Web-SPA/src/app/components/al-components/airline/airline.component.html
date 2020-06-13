@@ -1,4 +1,4 @@
-<a href="#" routerLink="/airlines/{{data.id}}/airline-info">
+<a href="#" routerLink="/airlines/{{data.airlineId}}/airline-info">
     <div class="name">
         <span>{{data.name}}</span>
         <div class="grade">
@@ -8,16 +8,16 @@
     </div>
     <div class="location">
         <img src="../../../assets/location_mark.png" alt="">
-        <span id="city">{{data.address.city}}</span><span aria-hidden="true"> · </span> <span>{{data.address.state}}</span>
+        <span id="city">{{data.city}}</span><span aria-hidden="true"> · </span> <span>{{data.state}}</span>
     </div>
     <div class="about">
-        <p>{{data.promoDescription}}</p>
+        <p>{{data.about}}</p>
     </div>
     <div class="destinations">
         <span>Destinations: </span>
         <div class="cities">
-            <p *ngFor = 'let destination of data.flightDestionations; let ind = index'
-             style="background-color: {{ colorsOfArilineDest[ind % colorsOfArilineDest.length] }};">{{destination.address.city}}</p>
+            <p *ngFor = 'let destination of data.destinations; let ind = index'
+             style="background-color: {{ colorsOfArilineDest[ind % colorsOfArilineDest.length] }};">{{destination.city}}</p>
         </div>
     </div>               
 </a>

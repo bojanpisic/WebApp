@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-person-num-search',
@@ -8,9 +8,9 @@ import { Component, OnInit } from '@angular/core';
 export class PersonNumSearchComponent implements OnInit {
 
   rotateArrow = false;
-  numOfChildren = 0;
   numOfAdults = 1;
-  buttonContent = '1 adult';
+  buttonContent = '1 person';
+  @Output() updateTravellers = new EventEmitter<number>();
 
   constructor() { }
 
@@ -32,8 +32,6 @@ export class PersonNumSearchComponent implements OnInit {
   minus(type: string) {
     if (type === 'adults' && this.numOfAdults > 1) {
       this.numOfAdults = this.numOfAdults - 1;
-    } else if (type === 'children' && this.numOfChildren  >= 1) {
-      this.numOfChildren = this.numOfChildren - 1;
     }
 
     this.changeContentOfBtn();
@@ -42,19 +40,14 @@ export class PersonNumSearchComponent implements OnInit {
   plus(type: string) {
     if (type === 'adults') {
       this.numOfAdults = this.numOfAdults + 1;
-    } else {
-      this.numOfChildren = this.numOfChildren + 1;
     }
 
     this.changeContentOfBtn();
   }
 
   changeContentOfBtn() {
-    if (this.numOfChildren === 0) {
-      this.buttonContent = this.numOfAdults.toString() + ' adults';
-    } else {
-      this.buttonContent = this.numOfAdults.toString() + ' adults, ' + this.numOfChildren.toString() + ' children';
-    }
+    this.buttonContent = this.numOfAdults.toString() + ' people';
+    this.updateTravellers.emit(this.numOfAdults);
   }
 
 }

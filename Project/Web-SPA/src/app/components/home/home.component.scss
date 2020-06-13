@@ -79,3 +79,80 @@ img {
     height: 45px;
     width: 45px;
 }
+
+.all-special-offers {
+    border-bottom: 1px solid rgb(234, 234, 234);
+    padding-bottom: 2em;
+
+    .purple {
+        padding: 10px 10px 10px 15%;
+        background-color: lighten($purple, 20%);
+        .orange {
+            padding: 10px 10px 10px 15%;
+            background-color: $orange;
+            box-shadow: $smallest-shadow;
+            .blue {
+                background-color: $light-blue;
+                box-shadow: $smallest-shadow;
+                img {
+                    display: block;
+                    margin: 0 20px 0 auto;
+                    height: 100px;
+                    width: 100px;
+                }
+            }
+        }
+    }
+}
+
+.profile, .message {
+    display: grid;
+    position: absolute;
+    a{
+        height: 44px;
+        width: 44px;
+        margin: auto;
+        text-decoration: none;
+        img {
+            margin: 3px auto 5px auto;
+            display: block;
+            height: 24px;
+            width: 24px;
+            filter: opacity(0.7);
+        }
+        p {
+            text-align: center;
+            margin: 0;
+            color: rgb(34, 34, 34);
+            line-height: 12px;
+            font-size: 10px;
+            font-family: 'Roboto';
+        }
+
+        .image {
+            margin: 1px auto 3px auto;
+            height: 28px;
+            width: 28px;
+            background-image: url('../../../assets/friend1.jpeg');
+            background-size: cover;
+            background-position: 50% 10%;
+            border-radius: 50%;
+        }
+    }
+}
+
+.profile {
+    top: 15px; right: 30px;
+    background-color: $light-blue;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: $lightest-shadow;
+}
+
+.message {
+    top: 15px; right: 94px;
+    background-color: white;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: $lightest-shadow;
+}

@@ -1,0 +1,13 @@
+<br>
+<br>
+<br>
+<br>
+<br>
+<kendo-datepicker [(ngModel)]="valueFrom" [disabledDates]="disabledDates">
+</kendo-datepicker>
+<kendo-datepicker [(ngModel)]="valueTo" [disabledDates]="disabledDates">
+</kendo-datepicker>
+<form (ngSubmit)="onSubmit()" [formGroup]="form">
+    <input type="text" formControlName="newPrice">
+    <button type="submit">Add offer</button>
+</form>

@@ -10,13 +10,13 @@ nav {
     width: 100%;
     background: white;
     opacity: 1;
-    padding:20px 30px;
+    padding:22px 30px;
     border-bottom: 1px solid gainsboro;
-    grid-template-columns: 60px auto 60px;
+    grid-template-columns: auto auto;
     position: fixed;
     z-index: 2;
 
-    img {
+    svg {
         height: 16px;
         width: 16px;
         margin: auto 0;
@@ -24,9 +24,10 @@ nav {
 
     span {
         font-size: 16px;
+        line-height: 20px;
         text-align: center;
-        font-weight: 600;
-        color: rgb(60,60,60);
+        font-weight: bold;
+        color: rgb(34,34,34);
     }
 
     #show {
@@ -37,11 +38,12 @@ nav {
         text-align: right;
         position: relative;
 
-        img {
+        svg {
             vertical-align: middle;
             height: 14px;
-            width: 14px;
+            width: 12px;
             transition: transform 0.5s;
+            margin: 0 0 2px 3px;
         }
     }
 }

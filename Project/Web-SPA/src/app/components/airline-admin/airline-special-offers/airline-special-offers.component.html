@@ -4,22 +4,18 @@
     </div>
     <span>Special offers</span>
 </header>
-<main>
+<main *ngIf="itsOk">
     <ul>
-        <!-- <li *ngFor="let specialOffer of (specialOffers | findFlight:searchText)">
-            <app-flight [flight]="flight" [markFlightName]="true"></app-flight>
-            <button routerLink='/admin/{{adminId}}/flights/{{flight.id}}/configure-seats'>Configure seats<img style="filter: opacity(.8);" src="../../../../assets/bold_arrow_pink.svg"></button>
-        </li> -->
         <li *ngFor="let specialOffer of specialOffers">
             <div class="specialOffer">
                 <div class="price">
-                    <span>Old price: $1000</span>
-                    <p id="price">$899</p>
+                    <span>Old price: ${{specialOffer.oldPrice}}</span>
+                    <p id="price">${{specialOffer.newPrice}}</p>
                 </div>
                 <p>Special offer</p>
             </div>
             <div *ngFor="let flight of specialOffer.flights; let i = index"  [ngStyle]="{'border-bottom': '.5px solid gainsboro'}">
-                <app-flight [flight]="flight" [markFlightName]="false"></app-flight>
+                <app-flight [flight]="flight" [seat]="true" [seatName]="flight.seatNum"></app-flight>
             </div>
         </li>
     </ul>

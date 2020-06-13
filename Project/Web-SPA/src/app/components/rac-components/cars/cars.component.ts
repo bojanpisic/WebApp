@@ -17,8 +17,14 @@ export class CarsComponent implements OnInit {
   user: RegisteredUser;
   cars: Array<Car>;
 
+  urlParams = [];
+
   constructor(private userService: UserService, private carService: CarService,
               private routes: ActivatedRoute, private location: Location) {
+    const array = routes.snapshot.queryParamMap.get('array');
+    this.urlParams = JSON.parse(array);
+    console.log(this.urlParams);
+
     routes.params.subscribe(param => {
       this.userId = param.id;
     });

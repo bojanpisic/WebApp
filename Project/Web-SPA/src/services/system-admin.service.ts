@@ -12,39 +12,39 @@ export class SystemAdminService {
 
   constructor(private http: HttpClient) { }
 
+  registerSystemAdmin(data: any) {
+    const body = {
+      UserName: data.username,
+      Email: data.email,
+      ConfirmPassword: data.confirmPassword,
+      Password: data.password,
+    };
+    return this.http.post(this.BaseURI + '/systemadmin/register-systemadmin', body);
+  }
+
   registerAirline(data: any) {
     const body = {
-      UserName: data.userName,
+      UserName: data.username,
       Email: data.email,
       ConfirmPassword: data.confirmPassword,
       Password: data.password,
       Name: data.companyName,
-      Address: {city: 'Paris', state: 'France', lat: 0.05, lon: 3}
+      Address: { City: data.city, State: data.state, Lat: data.lat, Lon: data.lon }
     };
     return this.http.post(this.BaseURI + '/systemadmin/register-airline', body);
   }
 
   registerRACService(data: any): Observable<any> {
+    console.log(data);
     const body = {
-      UserName: data.userName,
+      UserName: data.username,
       Email: data.email,
-      FirstName: data.firstName,
-      LastName: data.lastName,
-      Phone: data.phone,
-      City: data.city,
       ConfirmPassword: data.confirmPassword,
       Password: data.password,
-      AirlineName: data.airlineName,
-      AirlineAddress: data.airlineAddress
+      Name: data.companyName,
+      Address: { City: data.city, State: data.state, Lat: data.lat, Lon: data.lon }
     };
-    return this.http.post(this.BaseURI + '/authentication/register-rac-service', body)
-      .pipe(
-        catchError(this.handleError)
-      );
-  }
-
-  get(): Observable<any> {
-    return this.http.get<any>(this.BaseURI + '/test');
+    return this.http.post(this.BaseURI + '/systemadmin/register-racservice', body);
   }
 
   private handleError(error: HttpErrorResponse) {

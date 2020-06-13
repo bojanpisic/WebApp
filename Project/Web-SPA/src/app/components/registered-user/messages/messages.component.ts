@@ -24,7 +24,14 @@ export class MessagesComponent implements OnInit {
    }
 
   ngOnInit(): void {
-    this.user = this.userService.getUser(this.userId);
+    const air1 = this.userService.getUser(this.userId);
+    // const airline = this.airlineService.getAdminsAirline(this.adminId);
+    // this.companyFields = {
+    //   name: airline.name,
+    //   location: airline.address,
+    //   about: airline.about
+    // };
+    console.log(air1);
   }
 
   toggleButton(value: string) {

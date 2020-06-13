@@ -12,33 +12,41 @@ import * as jwt_decode from 'jwt-decode';
 
 export class SigninComponent implements OnInit {
 
-  username: string;
-  option: string;
+  userId: number;
+  token: any;
 
   loggedIn = false;
 
   constructor(private route: ActivatedRoute, private router: Router, public userService: UserService) {
     route.params.subscribe(params => {
-      this.username = params.username; this.option = params.option; }); //dobija se username onoga ko je kliknuo become a host
+      this.userId = params.id;
+      this.token = params.token;
+    }); //dobija se username onoga ko je kliknuo become a host
   }
 
   ngOnInit(): void {
-    if (localStorage.getItem('token') != null) {
+    if (this.userId === undefined && this.token === undefined) {
+      if (localStorage.getItem('token') != null) {
 
-      const token = localStorage.getItem('token');
-      const decoded = this.getDecodedAccessToken(token);
+        const token = localStorage.getItem('token');
+        const decoded = this.getDecodedAccessToken(token);
 
-      if (token == null || decoded.exp >= Date.now()) {
-          alert('Not registered');
-          return ;
+        if (token == null || decoded.exp >= Date.now()) {
+            alert('Not registered');
+            return ;
+        }
+        console.log(decoded);
+        // this.router.navigateByUrl(decoded + '/home');
       }
-      console.log(decoded);
-      // this.router.navigateByUrl(decoded + '/home');
     }
   }
 
   signInClick() {
-    this.userService.logIn().subscribe(
+    const data = {
+      userId: this.userId,
+      token: this.token
+    };
+    this.userService.logIn(data).subscribe(
       (res: any) => {
         localStorage.setItem('token', res.token);
         const decoded = this.getDecodedAccessToken(res.token);
@@ -47,16 +55,26 @@ export class SigninComponent implements OnInit {
             alert('Not registered');
             return ;
         }
-        console.log('BOJANE DUDLAS MI KURAC' + decoded);
-        switch (decoded.role) {
+        console.log(res);
+        switch (decoded.Roles) {
           case 'RegularUser':
             this.router.navigateByUrl(decoded.UserID + '/home');
             break;
-          case 'ArilineAdmin':
-            this.router.navigateByUrl('/admin/' + decoded.UserID);
+          case 'AirlineAdmin':
+            console.log(decoded.PasswordChanged);
+            if (decoded.PasswordChanged === 'True') {
+              this.router.navigateByUrl('/admin/' + decoded.UserID);
+            } else {
+              this.router.navigateByUrl('/admin/' + decoded.UserID + '/profile/edit-profile');
+            }
             break;
-          case 'RentCarAdmin':
-            this.router.navigateByUrl('/rac-admin/' + decoded.UserID);
+          case 'RentACarServiceAdmin':
+            console.log(decoded.PasswordChanged);
+            if (decoded.PasswordChanged === 'True') {
+              this.router.navigateByUrl('/rac-admin/' + decoded.UserID);
+            } else {
+              this.router.navigateByUrl('/rac-admin/' + decoded.UserID + '/profile/edit-profile');
+            }
             break;
           case 'Admin':
             this.router.navigateByUrl('/system-admin/' + decoded.UserID);
@@ -66,6 +84,7 @@ export class SigninComponent implements OnInit {
       },
       err => {
         // tslint:disable-next-line: triple-equals
+        alert(err.error.description);
         if (err.status == 400) {
           console.log(err);
           // this.toastr.error('Incorrect username or password.', 'Authentication failed.');

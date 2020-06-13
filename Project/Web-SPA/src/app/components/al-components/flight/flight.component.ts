@@ -8,12 +8,27 @@ import { Flight } from 'src/app/entities/flight';
 })
 export class FlightComponent implements OnInit {
 
-  @Input() flight: Flight;
+  @Input() flight: {flightId: number,
+    flightNumber: string,
+    airlineLogo: any,
+    airlineName: string,
+    from: string,
+    takeOffDate: Date,
+    takeOffTime: string,
+    to: string,
+    landingDate: Date,
+    landingTime: string,
+    flightLength: string,
+    flightTime: string,
+    stops: Array<any>};
   @Input() markFlightName = false;
+  @Input() seat = false;
+  @Input() seatName: any;
 
   constructor() { }
 
   ngOnInit(): void {
+    console.log(this.flight);
   }
 
 }

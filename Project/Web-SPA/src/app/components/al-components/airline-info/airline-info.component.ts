@@ -4,6 +4,7 @@ import { Airline } from '../../../entities/airline';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Destination } from 'src/app/entities/destination';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-airline-info',
@@ -13,36 +14,45 @@ import { Destination } from 'src/app/entities/destination';
 export class AirlineInfoComponent implements OnInit {
 
   id: number;
-  allAirlines: Array<Airline>;
-  choosenAirline: Airline;
-  destinations: Array<Destination>;
-  rotateArrow = false;
-  buttonContent = 'Paris';
+  airline: any;
 
-  constructor(private route: ActivatedRoute, private airlineService: AirlineService, private location: Location) {
+  isOk = false;
+
+  // tslint:disable-next-line:max-line-length
+  constructor(private route: ActivatedRoute, private san: DomSanitizer, private airlineService: AirlineService, private location: Location) {
     route.params.subscribe(params => { this.id = params.id; });
-    this.allAirlines = new Array<Airline>();
-    this.destinations = new Array<Destination>();
   }
 
   ngOnInit(): void {
     window.scroll(0, 0);
-    this.allAirlines = this.airlineService.loadAllAirlines();
-    this.choosenAirline = this.allAirlines[this.id];
-    this.destinations = this.choosenAirline.flightDestionations;
-    console.log('radi bez problema');
-  }
-
-  destinationsClick() {
-    this.rotateArrow = this.rotateArrow === true ? false : true;
-
-    if (this.rotateArrow) {
-      document.getElementById('destinations').classList.remove('hide-destinations');
-      document.getElementById('destinations').classList.add('show-destinations');
-    } else {
-      document.getElementById('destinations').classList.add('hide-destinations');
-      document.getElementById('destinations').classList.remove('show-destinations');
-    }
+    const a = this.airlineService.getAirlineProfile(this.id).subscribe(
+      (res: any) => {
+        console.log(res);
+        const destina = [];
+        res.destinations.forEach(element => {
+          const des = {
+            imageUrl: this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.imageUrl}`),
+            city: element.city,
+            state: element.state
+          };
+          destina.push(des);
+        });
+        this.airline = {
+          city: res.city,
+          state: res.state,
+          lat: res.lat,
+          lon: res.lon,
+          name: res.name,
+          logo: (res.logo === null) ? null : this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${res.logo}`),
+          about: res.about,
+          destinations: destina
+        };
+        this.isOk = true;
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   goBack() {

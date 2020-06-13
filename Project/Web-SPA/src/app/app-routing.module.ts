@@ -37,32 +37,62 @@ import { AirlineSpecialOffersComponent } from './components/airline-admin/airlin
 import { AddSpecialOfferComponent } from './components/airline-admin/airline-special-offers/add-special-offer/add-special-offer.component';
 import { SystemAdminComponent } from './components/admin/system-admin/system-admin.component';
 import { AddCompanyComponent } from './components/admin/system-admin/add-company/add-company.component';
+import { SystemAdminGuard } from './auth/system-admin.guard';
+import { AuthGuard } from './auth/auth.guard';
+import { AddSystemAdminComponent } from './components/admin/system-admin/add-system-admin/add-system-admin.component';
+import { ProfileGuard } from './auth/profile.guard';
+import { RacSpecialOffersComponent } from './components/rac-admin/rac-special-offers/rac-special-offers.component';
+import { AddCarSpecialOfferComponent } from './components/rac-admin/add-car-special-offer/add-car-special-offer.component';
+import { AllFlightSpecialOffersComponent } from './components/all-flight-special-offers/all-flight-special-offers.component';
+import { AllCarSpecialOffersComponent } from './components/all-car-special-offers/all-car-special-offers.component';
+import { MyCarsComponent } from './components/registered-user/my-cars/my-cars.component';
+import { MyFlightsComponent } from './components/registered-user/my-flights/my-flights.component';
 
 const routes: Routes = [
+
+
+
+
   {path: 'system-admin/:id',
   children: [
     {path: '', component: SystemAdminComponent},
-    {path: ':type', component: AddCompanyComponent},
+    {path: 'add-system-admin', component: AddSystemAdminComponent, canActivate: [AuthGuard], data: {permittedRoles: ['Admin']}},
+    {path: ':type', component: AddCompanyComponent, canActivate: [AuthGuard], data: {permittedRoles: ['Admin']}},
+    {
+      path: 'profile',
+      children: [
+        {path: 'edit-profile', component: EditProfileComponent, canActivate: [AuthGuard], data: {permittedRoles: ['Admin']}},
+      ]
+    },
   ]},
+
+
   {path: 'admin/:id',
   children: [
-    {path: '', component: AdminHomeComponent},
-    {path: 'destinations', component: AirlineDestinationsComponent},
+    {path: 'profile/edit-profile', component: EditProfileComponent, canActivate: [ProfileGuard], data: {permittedRoles: ['AirlineAdmin']}},
+    {path: '', component: AdminHomeComponent, canActivate: [AuthGuard], data: {permittedRoles: ['AirlineAdmin']}},
+    {path: 'destinations', component: AirlineDestinationsComponent, canActivate: [AuthGuard], data: {permittedRoles: ['AirlineAdmin']}},
     {path: 'flights',
     children : [
-      {path: '', component: AirlineFlightsComponent},
-      {path: 'add-flight', component: AddFlightComponent},
-      {path: ':flight/configure-seats', component: ConfigureSeatsComponent},
+      {path: '', component: AirlineFlightsComponent, canActivate: [AuthGuard], data: {permittedRoles: ['AirlineAdmin']}},
+      {path: 'add-flight', component: AddFlightComponent, canActivate: [AuthGuard], data: {permittedRoles: ['AirlineAdmin']}},
+      {path: ':flight/configure-seats', component: ConfigureSeatsComponent,
+       canActivate: [AuthGuard], data: {permittedRoles: ['AirlineAdmin']}},
     ]},
     {path: 'special-offers',
     children : [
-      {path: '',  component: AirlineSpecialOffersComponent},
-      {path: 'add-special-offer', component: AddSpecialOfferComponent},
+      {path: '',  component: AirlineSpecialOffersComponent, canActivate: [AuthGuard], data: {permittedRoles: ['AirlineAdmin']}},
+      {path: 'add-special-offer', component: AddSpecialOfferComponent, canActivate: [AuthGuard], data: {permittedRoles: ['AirlineAdmin']}},
     ]},
-    {path: ':type', component: CompanyProfileComponent},
+    {path: ':type', component: CompanyProfileComponent, canActivate: [AuthGuard], data: {permittedRoles: ['AirlineAdmin']}},
   ]},
+
+
+
   {path: 'rac-admin/:id',
   children: [
+    // tslint:disable-next-line:max-line-length
+    {path: 'profile/edit-profile', component: EditProfileComponent, canActivate: [ProfileGuard], data: {permittedRoles: ['RentACarServiceAdmin']}},
     {path: '', component: RacAdminHomeComponent},
     {path: 'branches', component: RacBranchesComponent},
     {path: 'cars',
@@ -70,10 +100,73 @@ const routes: Routes = [
       {path: '', component: RacCarsComponent},
       {path: 'add-car', component: AddCarComponent},
       {path: ':car/edit-car', component: EditCarComponent},
+      {path: ':branch', component: RacCarsComponent},
     ]},
-    {path: ':type', component: CompanyProfileComponent},
+    {path: 'special-car-offers',
+    children : [
+      {path: '',  component: RacSpecialOffersComponent, canActivate: [AuthGuard], data: {permittedRoles: ['RentACarServiceAdmin']}},
+      // tslint:disable-next-line:max-line-length
+      {path: 'add-car-special-offer', component: AddCarSpecialOfferComponent, canActivate: [AuthGuard], data: {permittedRoles: ['RentACarServiceAdmin']}},
+    ]},
+    {path: ':type', component: CompanyProfileComponent, canActivate: [AuthGuard], data: {permittedRoles: ['RentACarServiceAdmin']}},
   ]},
+
+
+
   {path: '', component: HomeComponent},
+  {path: 'signup', component: SignupComponent},
+  {path: 'signin', component: SigninComponent},
+  {path: 'signin/:id/:token', component: SigninComponent},
+  {path: ':username/signin', component: SigninComponent},
+  {
+    path: 'airlines',
+    children: [
+      {path: '', component: AirlinesComponent},
+      {
+        path: ':id/airline-info',
+        children: [
+          {path: '', component: AirlineInfoComponent},
+          {path: 'flight-special-offers', component: SpecialOffersComponent}
+        ]
+      },
+    ]
+  },
+  {
+    path: 'rent-a-car-services',
+    children: [
+      {path: '', component: RentACarServicesComponent},
+      {
+        path: ':id/rent-a-car-service-info',
+        children: [
+          {path: '', component: RentACarServiceInfoComponent},
+          {path: 'car-special-offers', component: AllCarSpecialOffersComponent}
+        ]
+      }
+    ]
+  },
+  {
+    path: 'trips',
+    children: [
+      {path: '', component: TripsComponent},
+      {path: 'filter', component: FilterComponent}
+    ]
+  },
+  {
+    path: 'cars',
+    children: [
+      {path: '', component: CarsComponent},
+      {path: 'filter', component: FilterComponent}
+    ]
+  },
+  {path: 'flight-special-offers', component: SpecialOffersComponent},
+  {path: 'car-special-offers', component: AllCarSpecialOffersComponent},
+
+
+
+
+
+
+
   {path: ':id/home', component: HomeComponent},
   {path: ':id/cars', component: CarsComponent},
   {
@@ -89,57 +182,21 @@ const routes: Routes = [
       }
     ]
   },
-  {path: 'signup', component: SignupComponent},
-  {path: 'signin', component: SigninComponent},
-  {path: ':username/signin', component: SigninComponent},
-  {path: ':username/:option/register-company', component: RegisterCompanyComponent},
-  {
-    path: 'trips',
-    children: [
-      {path: '', component: TripsComponent},
-      {path: 'filter', component: FilterComponent}
-    ]
-  },
-  {
-    path: 'cars',
-    children: [
-      {path: '', component: CarsComponent},
-      {path: 'filter', component: FilterComponent}
-    ]
-  },
-  {path: 'airlines-header', component: AirlinesHeaderComponent},
   {
     path: ':id/profile',
     children: [
       {path: '', component: ProfileComponent},
       {path: 'edit-profile', component: EditProfileComponent},
-      {path: 'friends', component: FriendsComponent}
+      {path: 'friends', component: FriendsComponent},
+      {path: 'cars', component: MyCarsComponent},
+      {path: 'flights', component: MyFlightsComponent},
     ]
   },
   {path: ':id/flights', component: ShowFlightsComponent},
   {path: ':id/messages', component: MessagesComponent},
-  {
-    path: 'airlines',
-    children: [
-      {path: '', component: AirlinesComponent},
-      {
-        path: ':id/airline-info',
-        children: [
-          {path: '', component: AirlineInfoComponent},
-          {path: 'special-offers', component: SpecialOffersComponent}
-        ]
-      },
-      {path: ':id/flight-add', component: AddFlightComponent},
-    ]
-  },
 
-  {
-    path: 'rent-a-car-services',
-    children: [
-      {path: ':id/rent-a-car-service-info', component: RentACarServiceInfoComponent},
-      {path: '', component: RentACarServicesComponent}
-    ]
-  }
+
+  { path: '**', component:  HomeComponent}
 
 ];
 

@@ -36,7 +36,7 @@ export class PlacesPickerComponent implements OnInit {
     this.jsonObj = JSON.parse($event);
     this.choosenChangeOvers.push(
       new Destination(this.jsonObj.photoUrl,
-         new Address(this.jsonObj.city, this.jsonObj.state, this.jsonObj.short_name, this.jsonObj.longitude, this.jsonObj.latitude)));
+         new Address(this.jsonObj.city, this.jsonObj.state, this.jsonObj.longitude, this.jsonObj.latitude)));
     this.createDivChild();
   }
 

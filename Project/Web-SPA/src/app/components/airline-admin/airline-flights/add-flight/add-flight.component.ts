@@ -11,6 +11,7 @@ import { FlightStopComponent } from './flight-stop/flight-stop.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Seat } from 'src/app/entities/seat';
 import { Location } from '@angular/common';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-add-flight',
@@ -39,12 +40,11 @@ export class AddFlightComponent implements OnInit {
   lastLocationString: string;
   errorFromLocation = false;
   departureDateInvalid = false;
+  flightNumberInvalid = false;
   departureTimeInvalid = false;
 
-  stops: Array<Address>;
-  currentStop: Address;
+  currentStop: any;
   isCurrentStopValid: boolean;
-  sameLocationPicked = false;
 
   formTo: FormGroup;
   toLocation: Address;
@@ -67,6 +67,19 @@ export class AddFlightComponent implements OnInit {
   minusEconomyDisabled = false;
   minusBasicEconomyDisabled = false;
 
+  destinations: Array<{destinationId: number, city: string, state: string}>;
+  pickedDestinations: Array<{destinationId: number, city: string, state: string}>;
+  availableDestinations: Array<{destinationId: number, city: string, state: string}>;
+  stops: Array<{destinationId: number, city: string, state: string}>;
+  dropdown = false;
+
+  pickedFromDestination: any;
+  pickedToDestination: any;
+  pickedTakeOffDateTime: string;
+  pickedLandingDateTime: string;
+  pickedFlightLength: number;
+  pickedSeats: Array<{Column: string, Row: string, Class: string, Price: number}>;
+
   componentsReferences = [];
   @ViewChild('viewContainerRef', { read: ViewContainerRef }) VCR: ViewContainerRef;
   @ViewChild('viewContainerRef1', { read: ViewContainerRef }) VCR1: ViewContainerRef;
@@ -74,118 +87,163 @@ export class AddFlightComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private router: Router,
               private userService: UserService, private airlineService: AirlineService,
-              private CFR: ComponentFactoryResolver, private location: Location) {
+              private CFR: ComponentFactoryResolver, private location: Location, private san: DomSanitizer) {
     route.params.subscribe(params => {
       this.adminId = params.id;
     });
-    this.stops = new Array<Address>();
+    this.stops = [];
     this.flight = new Flight();
+    this.destinations = [];
+    this.pickedDestinations = [];
+    this.pickedSeats = [];
+    this.availableDestinations = [];
    }
 
   ngOnInit(): void {
+    this.airlineService.getAdminsDestinations().subscribe(
+      (res: any[]) => {
+        if (res.length) {
+          console.log(res);
+          res.forEach(element => {
+            const new1 = {
+              destinationId: element.destinationId,
+              city: element.city,
+              state: element.state
+            };
+            this.destinations.push(new1);
+            this.availableDestinations.push(new1);
+            this.pickedFromDestination = this.destinations[0];
+          });
+        }
+        // this.destinations = res;
+        // console.log(res);
+      },
+      err => {
+        console.log('dada' + err.status);
+        // tslint:disable-next-line: triple-equals
+        if (err.status == 400) {
+          console.log('400' + err);
+          // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
+        } else if (err.status === 401) {
+          console.log(err);
+        } else {
+          console.log(err);
+        }
+      }
+    );
     this.flight.airlineId = this.airlineService.getAirlineId(this.adminId);
     this.initFormFrom();
     this.initFormTo();
   }
 
-  initFormFrom() {
-    this.formFrom = new FormGroup({
-      date: new FormControl('', Validators.required),
-      time: new FormControl('', Validators.required),
-   });
-  }
-
-  initFormTo() {
-    this.formTo = new FormGroup({
-      time: new FormControl('', Validators.required),
-      date: new FormControl('', Validators.required),
-      flightLength: new FormControl('', Validators.required),
-   });
+  getStopsIds() {
+    const retVal = [];
+    this.stops.forEach(element => {
+      retVal.push(element.destinationId);
+    });
+    return retVal;
   }
 
   addFlight() {
+    const stopsids = this.getStopsIds();
     this.flight.flightNumber = 'TA872';
     this.flight.tripTime = '10';
     this.flight.ticketPrice = Math.min(this.firstClassSeatPrice, this.businessSeatPrice, this.economySeatPrice, this.basicEconomySeatPrice);
-    this.exit();
+    console.log('saljem:');
+    console.log(this.pickedTakeOffDateTime, this.pickedLandingDateTime, stopsids,
+      this.pickedFromDestination.destinationId, this.pickedToDestination.destinationId, this.pickedSeats, this.pickedFlightLength);
+    const data = {
+      FlightNumber: this.formFrom.controls.flightNumber.value,
+      TakeOffDateTime: this.pickedTakeOffDateTime,
+      LandingDateTime: this.pickedLandingDateTime,
+      StopIds: stopsids, // lista ideja destinacija
+      FromId: this.pickedFromDestination.destinationId,
+      ToId: this.pickedToDestination.destinationId,
+      Seats: this.pickedSeats, // Column, Row, Class, Price
+      TripLength: this.pickedFlightLength
+    };
+    this.airlineService.addFlight(data).subscribe(
+      (res: any) => {
+        // res.forEach(element => {
+        //   if (!this.destinations.find(x => x.city === element.city)) {
+        //     console.log(element);
+        //     const new1 = {
+        //       destinationId: element.destinationId,
+        //       imageUrl: this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.imageUrl}`),
+        //       city: element.city,
+        //       state: element.state
+        //     };
+        //     this.destinations.push(new1);
+        //   }
+        // });
+        setTimeout(() => {
+          this.exit();
+        }, 100);
+        console.log('okkkkky');
+      },
+      err => {
+        console.log('dada' + err.status);
+        // tslint:disable-next-line: triple-equals
+        if (err.status == 400) {
+          console.log(err);
+        // tslint:disable-next-line: triple-equals
+        } else if (err.status == 401) {
+          console.log(err);
+        } else {
+          console.log(err);
+        }
+      }
+    );
   }
 
-  goBack() {
-    this.router.navigate(['/admin/' + this.adminId + '/flights']);
+  setFromDestination(value: any) {
+    this.pickedFromDestination = value;
   }
 
-  // FROM
-
-  onFrom(value: any) {
-    const obj = JSON.parse(value);
-    this.fromLocation = new Address(obj.city, obj.state, obj.short_name, obj.longitude, obj.latitude);
-    this.lastGoodLocationString = this.lastLocationString;
+  setToDestination(value: any) {
+    this.pickedToDestination = value;
   }
 
-  onFromInputChange(value: any) {
-    this.lastLocationString = value;
+  toggleDropDown() {
+    this.dropdown = !this.dropdown;
   }
 
   onSubmitFrom() {
     if (this.validateFromForm()) {
-      this.flight.from = this.fromLocation;
-      this.flight.takeOffDate = this.formFrom.controls.date.value;
-      this.flight.takeOffTime = this.formFrom.controls.time.value;
+      this.pickedTakeOffDateTime = this.formFrom.controls.dateTime.value;
+      const index = this.availableDestinations.indexOf(this.pickedFromDestination);
+      this.availableDestinations.splice(index, 1);
+      this.nextStep();
+    }
+  }
+
+  onSubmitTo() {
+    if (this.validateToForm()) {
+      this.pickedLandingDateTime = this.formTo.controls.dateTime.value;
+      this.pickedFlightLength = this.formTo.controls.flightLength.value;
+      const index = this.availableDestinations.indexOf(this.pickedToDestination);
+      this.availableDestinations.splice(index, 1);
       this.nextStep();
     }
   }
 
   validateFromForm() {
     let retVal = true;
-    if (this.fromLocation === undefined || this.lastGoodLocationString !== this.lastLocationString) {
-      this.errorFromLocation = true;
-      retVal = false;
-    }
-    if (this.formFrom.controls.date.value === '') {
+    if (this.formFrom.controls.dateTime.value === '') {
       this.departureDateInvalid = true;
       retVal = false;
     }
-    if (this.formFrom.controls.time.value === '') {
-      this.departureTimeInvalid = true;
+    if (this.formFrom.controls.flightNumber.value === '') {
+      this.flightNumberInvalid = true;
       retVal = false;
     }
     return retVal;
   }
 
-  // TO
-
-  onTo(value: any) {
-    const obj = JSON.parse(value);
-    this.toLocation = new Address(obj.city, obj.state, obj.short_name, obj.longitude, obj.latitude);
-    this.lastGoodLocationString = this.lastLocationString;
-  }
-
-  onToInputChange(value: any) {
-    this.lastLocationString = value;
-  }
-
-  onSubmitTo() {
-    if (this.validateToForm()) {
-      this.flight.to = this.toLocation;
-      this.flight.landingDate = this.formTo.controls.date.value;
-      this.flight.landingTime = this.formTo.controls.time.value;
-      this.flight.tripLength = this.formTo.controls.flightLength.value;
-      this.nextStep();
-    }
-  }
-
   validateToForm() {
     let retVal = true;
-    if (this.toLocation === undefined || this.lastGoodLocationString !== this.lastLocationString) {
-      this.errorFromLocation = true;
-      retVal = false;
-    }
-    if (this.formTo.controls.date.value === '') {
+    if (this.formTo.controls.dateTime.value === '') {
       this.arrivalDateInvalid = true;
-      retVal = false;
-    }
-    if (this.formTo.controls.time.value === '') {
-      this.arrivalTimeInvalid = true;
       retVal = false;
     }
     if (this.formTo.controls.flightLength.value === '') {
@@ -194,6 +252,27 @@ export class AddFlightComponent implements OnInit {
     }
     return retVal;
   }
+
+  initFormFrom() {
+    this.formFrom = new FormGroup({
+      dateTime: new FormControl('', Validators.required),
+      flightNumber: new FormControl('', Validators.required),
+   });
+  }
+
+  initFormTo() {
+    this.formTo = new FormGroup({
+      dateTime: new FormControl('', Validators.required),
+      flightLength: new FormControl('', Validators.required),
+   });
+  }
+
+
+
+  // FROM
+
+  // TO
+
 
   // STOPS
 
@@ -208,13 +287,16 @@ export class AddFlightComponent implements OnInit {
     }
   }
 
-  addToTheView(value: Address) {
+  addToTheView(value: any, counter: number) {
     if (this.VCR1 !== undefined) {
-      this.VCR1.createEmbeddedView(this.tpl, {city: value.city, state: value.state, number: this.stops.length});
+      this.VCR1.createEmbeddedView(this.tpl, {city: value.city, state: value.state, number: counter});
     }
   }
 
   clearView() {
+    this.stops.forEach(element => {
+      this.availableDestinations.push(element);
+    });
     this.stops = [];
     this.VCR1.clear();
   }
@@ -229,69 +311,41 @@ export class AddFlightComponent implements OnInit {
     componentRef.instance.stop.subscribe($event => {
       this.addStop($event);
     });
-    componentRef.instance.valid.subscribe($event => {
-      this.isValidStop($event);
-    });
+    componentRef.instance.destinations = this.availableDestinations;
   }
 
-  isValidStop(value: boolean) {
-    this.isCurrentStopValid = value;
-  }
-
-  addStop(value: Address) {
+  addStop(value: any) {
     this.currentStop = value;
   }
 
   onAddStop() {
-    if (this.validateStop()) {
-      let push = true;
-      this.stops.forEach(stop => {
-        if (stop.city === this.currentStop.city && stop.state === this.currentStop.state) {
-          this.sameLocationPicked = true;
-          push = false;
-        }
-      });
-      if (push) {
-        this.sameLocationPicked = false;
-        // tslint:disable-next-line:max-line-length
-        this.stops.push(new Address(this.currentStop.city, this.currentStop.state, this.currentStop.shortName, this.currentStop.lon, this.currentStop.lat));
-        this.addToTheView(this.currentStop);
-        this.currentStop = undefined;
-        this.isCurrentStopValid = false;
-        this.createComponent();
-      }
-    }
+    // tslint:disable-next-line:max-line-length
+    this.stops.push(this.currentStop);
+    this.addToTheView(this.currentStop, this.stops.length);
+    const index = this.availableDestinations.indexOf(this.currentStop);
+    this.availableDestinations.splice(index, 1);
+    this.createComponent();
   }
 
   onRemoveStop() {
-
     if (this.VCR1.length < 1) {
             return;
     }
-
-    this.stops.pop();
-
+    const stop = this.stops.pop();
+    this.availableDestinations.push(stop);
     this.VCR1.remove(this.VCR1.length - 1);
   }
 
-  validateStop() {
-    let retVal = true;
-    if (this.currentStop === undefined) {
-      retVal = false;
-    }
-    if (!this.isCurrentStopValid) {
-      retVal = false;
-    }
-    return retVal;
-  }
 
   loadPickedStops() {
     setTimeout(() => {
       if (this.stops.length === 0) {
         this.clearView();
       } else {
+        let counter = 1;
         this.stops.forEach(stop => {
-          this.addToTheView(stop);
+          this.addToTheView(stop, counter);
+          counter++;
         });
       }
       this.createComponent();
@@ -402,7 +456,7 @@ export class AddFlightComponent implements OnInit {
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < 6; c++) {
         const column = (c === 0) ? 'A' : (c === 1) ? 'B' : (c === 2) ? 'C' : (c === 3) ? 'D' : (c === 4) ? 'E' : 'F';
-        this.flight.seats.push(new Seat('F', column, r + 1, this.firstClassSeatPrice));
+        this.pickedSeats.push({Column: column, Row: (r + 1).toString(), Class: 'F', Price: this.firstClassSeatPrice});
         this.firstClassSeatsNumber--;
         if (this.firstClassSeatsNumber === 0) {
           return;
@@ -417,7 +471,7 @@ export class AddFlightComponent implements OnInit {
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < 6; c++) {
         const column = (c === 0) ? 'A' : (c === 1) ? 'B' : (c === 2) ? 'C' : (c === 3) ? 'D' : (c === 4) ? 'E' : 'F';
-        this.flight.seats.push(new Seat('B', column, r + 1, this.businessSeatPrice));
+        this.pickedSeats.push({Column: column, Row: (r + 1).toString(), Class: 'B', Price: this.businessSeatPrice});
         this.businessSeatsNumber--;
         if (this.businessSeatsNumber === 0) {
           return;
@@ -432,7 +486,7 @@ export class AddFlightComponent implements OnInit {
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < 6; c++) {
         const column = (c === 0) ? 'A' : (c === 1) ? 'B' : (c === 2) ? 'C' : (c === 3) ? 'D' : (c === 4) ? 'E' : 'F';
-        this.flight.seats.push(new Seat('E', column, r + 1, this.economySeatPrice));
+        this.pickedSeats.push({Column: column, Row: (r + 1).toString(), Class: 'E', Price: this.economySeatPrice});
         this.economySeatsNumber--;
         if (this.economySeatsNumber === 0) {
           return;
@@ -447,7 +501,7 @@ export class AddFlightComponent implements OnInit {
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < 6; c++) {
         const column = (c === 0) ? 'A' : (c === 1) ? 'B' : (c === 2) ? 'C' : (c === 3) ? 'D' : (c === 4) ? 'E' : 'F';
-        this.flight.seats.push(new Seat('BE', column, r + 1, this.basicEconomySeatPrice));
+        this.pickedSeats.push({Column: column, Row: (r + 1).toString(), Class: 'BE', Price: this.basicEconomySeatPrice});
         this.basicEconomySeatsNumber--;
         if (this.basicEconomySeatsNumber === 0) {
           return;
@@ -482,7 +536,9 @@ export class AddFlightComponent implements OnInit {
       this.loadPickedStops();
     }
     if (this.step === 3) {
-      this.flight.stops = this.stops;
+      if (this.pickedToDestination === undefined) {
+        this.pickedToDestination = this.availableDestinations[0];
+      }
     }
     if (this.step === 4) {
       // setTimeout( () => {
@@ -491,8 +547,30 @@ export class AddFlightComponent implements OnInit {
     }
   }
 
-  removeErrorClass() {
-    this.errorFromLocation = false;
+  onFrom(value: any) {
+    const obj = JSON.parse(value);
+    this.fromLocation = new Address(obj.city, obj.state, obj.longitude, obj.latitude);
+    this.lastGoodLocationString = this.lastLocationString;
+  }
+
+  onFromInputChange(value: any) {
+    this.lastLocationString = value;
+  }
+
+  onTo(value: any) {
+    const obj = JSON.parse(value);
+    this.toLocation = new Address(obj.city, obj.state, obj.longitude, obj.latitude);
+    this.lastGoodLocationString = this.lastLocationString;
+  }
+
+  onToInputChange(value: any) {
+    this.lastLocationString = value;
+  }
+
+
+
+  goBack() {
+    this.router.navigate(['/admin/' + this.adminId + '/flights']);
   }
 
 }

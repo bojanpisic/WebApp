@@ -1,6 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Airline } from '../../entities/airline';
-import { RouterLinkActive, ActivatedRoute } from '@angular/router';
+import { RouterLinkActive, ActivatedRoute, Router } from '@angular/router';
 import { User } from 'src/app/entities/user';
 import { UserService } from 'src/services/user.service';
 
@@ -19,7 +19,7 @@ export class HomeComponent implements OnInit {
 
   data: Airline;
 
-  constructor(private route: ActivatedRoute, private userService: UserService) {
+  constructor(private route: ActivatedRoute, private userService: UserService, private router: Router) {
     route.params.subscribe(params => {
       this.userId = params.id;
     });
@@ -44,6 +44,17 @@ export class HomeComponent implements OnInit {
       this.fly = false;
       this.drive = true;
       this.option = 'drive';
+    }
+  }
+
+  onSpecialOffers() {
+    console.log('usa ba1');
+    if (this.option === 'fly') {
+      console.log('usa ba');
+      this.router.navigate(['/flight-special-offers']);
+    } else {
+      console.log('usa ba2');
+      this.router.navigate(['/all-car-special-offers']);
     }
   }
 

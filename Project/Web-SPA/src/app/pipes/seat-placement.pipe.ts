@@ -6,7 +6,7 @@ import { Seat } from '../entities/seat';
 })
 export class SeatPlacementPipe implements PipeTransform {
 
-  transform(seats: Array<any>, side?: string, classParam?: string): Array<Seat> {
+  transform(seats: Array<any>, side?: string, classParam?: string): Array<any> {
     const retVal = new Array<Seat>();
     if (side === 'left') {
       seats.forEach(seat => {

@@ -1,4 +1,5 @@
 @import './../../../../app.component.scss';
+@import './../../../../scss/elements/buttons';
 
 * {
   box-sizing: border-box;
@@ -154,4 +155,14 @@ main {
       background-color: transparent;
     }
   }
+}
+
+#logout {
+  @extend %wide-button;
+  border: 2px solid rgb(34, 34, 34);
+  color:rgb(34, 34, 34);
+  background-color: white;
+  margin: 50px 24px;
+  width: calc(100% - 48px);
+
 }

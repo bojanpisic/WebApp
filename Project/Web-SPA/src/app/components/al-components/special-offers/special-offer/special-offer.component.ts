@@ -24,7 +24,7 @@ export class SpecialOfferComponent implements OnInit {
     this.showInfo.push(false);
   }
   getAirlineName(flightId: number) {
-    this.airline = this.airlineService.getAirline(flightId);
+    // this.airline = this.airlineService.getAirline(flightId);
     return this.airline.name;
   }
 

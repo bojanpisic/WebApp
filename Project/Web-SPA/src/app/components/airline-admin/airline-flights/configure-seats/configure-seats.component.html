@@ -4,12 +4,11 @@
     </div>
     <span>Configure seats</span>
 </header>
-<main [ngClass]="{'blur': blur}">
+<main [ngClass]="{'blur': blur}" *ngIf="itsOk">
     <div class="cabin">
 
     </div>
     <div class="class">
-        <span>${{firstClassPriceRange.minPrice}} - ${{firstClassPriceRange.maxPrice}}</span>
         <h3>First class</h3>
         <div class="container">
             <ul class="left">
@@ -45,7 +44,6 @@
         </div>
     </div>
     <div class="class">
-        <span>${{businessPriceRange.minPrice}} - ${{businessPriceRange.maxPrice}}</span>
         <h3>Business</h3>
         <div class="container">
             <ul class="left">
@@ -81,7 +79,6 @@
         </div>
     </div>
     <div class="class">
-        <span>${{economyPriceRange.minPrice}} - ${{economyPriceRange.maxPrice}}</span>
         <h3>Economy</h3>
         <div class="container">
             <ul class="left">
@@ -117,7 +114,6 @@
         </div>
     </div>
     <div class="class">
-        <span>${{basicEconomyPriceRange.minPrice}} - ${{basicEconomyPriceRange.maxPrice}}</span>
         <h3>Basic Economy</h3>
         <div class="container">
             <ul class="left">

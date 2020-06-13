@@ -5,6 +5,14 @@ import { AirlineService } from 'src/services/airline.service';
 import { ActivatedRoute } from '@angular/router';
 import { Address } from 'src/app/entities/address';
 import { CarRentService } from 'src/services/car-rent.service';
+import { DomSanitizer } from '@angular/platform-browser';
+
+class ImageSnippet {
+  pending = false;
+  status = 'init';
+
+  constructor(public src: string, public file: File) {}
+}
 
 @Component({
   selector: 'app-company-profile',
@@ -16,6 +24,8 @@ export class CompanyProfileComponent implements OnInit {
   companyType: string;
 
   adminId: number;
+  airlineId: number;
+  racId: number;
 
   companyFields: {name: string, location: Address, about: string};
 
@@ -25,53 +35,183 @@ export class CompanyProfileComponent implements OnInit {
   lastLocationString: string;
   lastGoodLocationString: string;
 
+  errorName = false;
+  errorAbout = false;
   errorLocation = false;
 
-  constructor(private route: ActivatedRoute, private airlineService: AirlineService, private racService: CarRentService) {
+  formOk = false;
+
+  selectedFile: ImageSnippet;
+
+  imageToShow: any;
+
+  img;
+
+  // tslint:disable-next-line:max-line-length
+  constructor(private route: ActivatedRoute, private airlineService: AirlineService, private racService: CarRentService, private san: DomSanitizer) {
     route.params.subscribe(params => {
       this.adminId = params.id;
       this.companyType = params.type;
     });
   }
 
+  private onSuccess() {
+    this.selectedFile.pending = false;
+    this.selectedFile.status = 'ok';
+  }
+
+  private onError() {
+    this.selectedFile.pending = false;
+    this.selectedFile.status = 'fail';
+    this.selectedFile.src = '';
+  }
+
   ngOnInit(): void {
-    if (this.companyType === 'airline-profile') {
-      const airline = this.airlineService.getAdminsAirline(this.adminId);
-      this.companyFields = {
-        name: airline.name,
-        location: airline.address,
-        about: airline.about
-      };
-    } else if (this.companyType === 'rac-profile') {
-      const rac = this.racService.getAdminsRac(this.adminId);
-      console.log(rac);
-      this.companyFields = {
-        name: rac.name,
-        location: rac.address,
-        about: rac.about
-      };
-    }
+    this.companyFields = {
+      name: '',
+      location: new Address(),
+      about: ''
+    };
     this.initForm();
+    if (this.companyType === 'airline-profile') {
+      const air1 = this.airlineService.getAirline(this.adminId).subscribe(
+        (data: any) => {
+          this.airlineId = data.airlineId;
+          this.companyFields = {
+            name: data.name,
+            location: new Address(data.address.city, data.address.state, data.address.lon, data.address.lat),
+            about: data.promoDescription
+          };
+          this.img = this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${data.logoUrl}`);
+          console.log(this.selectedFile);
+          this.form.patchValue({
+            name: data.name,
+            about: data.promoDescription
+          });
+          this.formOk = true;
+        }
+      );
+    } else if (this.companyType === 'rac-profile') {
+      const air1 = this.racService.getRAC().subscribe(
+        (data: any) => {
+          this.racId = data.racId;
+          this.companyFields = {
+            name: data.name,
+            location: new Address(data.address.city, data.address.state, data.address.lon, data.address.lat),
+            about: data.about
+          };
+          this.img = this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${data.logoUrl}`);
+          this.form.patchValue({
+            name: data.name,
+            about: data.about
+          });
+          this.formOk = true;
+        }
+      );
+    }
+  }
+
+  onFileChanged(imageInput: any) {
+    const file: File = imageInput.files[0];
+    const reader = new FileReader();
+
+    reader.addEventListener('load', (event: any) => {
+
+      this.selectedFile = new ImageSnippet(event.target.result, file);
+
+      this.selectedFile.pending = true;
+      if (this.companyType === 'airline-profile') {
+        const body = {
+          image: this.selectedFile.file,
+        };
+        this.airlineService.changePhoto(body).subscribe(
+          (res) => {
+            this.onSuccess();
+          },
+          (err) => {
+            this.onError();
+          });
+      } else if (this.companyType === 'rac-profile') {
+        const body = {
+          image: this.selectedFile.file,
+        };
+        this.racService.changeLogo(body).subscribe(
+          (res) => {
+            this.onSuccess();
+          },
+          (err) => {
+            this.onError();
+          });
+      }
+    });
+
+    reader.readAsDataURL(file);
   }
 
   initForm() {
     this.form = new FormGroup({
-      name: new FormControl(this.companyFields.name, Validators.required),
-      about: new FormControl(this.companyFields.about, Validators.required),
+      name: new FormControl('', Validators.required),
+      about: new FormControl('', Validators.required),
     });
   }
 
-  goBack() {
-
-  }
-
   onSubmit() {
-    if (this.validateForm()) {
-      console.log(this.companyFields.about);
+    if (this.form.valid && this.validateAddress()) {
+      if (this.companyType === 'airline-profile') {
+        const data = {
+          id: this.airlineId,
+          name: this.form.controls.name.value,
+          address: (this.location === undefined) ? this.companyFields.location : this.location,
+          promoDescription: this.form.controls.about.value,
+        };
+        // OVDE
+        this.airlineService.editAirline(data).subscribe(
+          (res: any) => {
+
+          },
+          err => {
+            console.log('dada' + err.status);
+            // tslint:disable-next-line: triple-equals
+            if (err.status == 400) {
+              console.log(err);
+            // tslint:disable-next-line: triple-equals
+            } else if (err.status == 401) {
+              console.log(err);
+            } else {
+              console.log(err);
+            }
+          }
+        );
+      } else if (this.companyType === 'rac-profile') {
+        const data = {
+          id: this.racId,
+          name: this.form.controls.name.value,
+          address: (this.location === undefined) ? this.companyFields.location : this.location,
+          promoDescription: this.form.controls.about.value,
+        };
+        // OVDE
+        this.racService.editRAC(data).subscribe(
+          (res: any) => {
+
+          },
+          err => {
+            console.log('dada' + err.status);
+            // tslint:disable-next-line: triple-equals
+            if (err.status == 400) {
+              console.log(err);
+            // tslint:disable-next-line: triple-equals
+            } else if (err.status == 401) {
+              console.log(err);
+            } else {
+              console.log(err);
+            }
+          }
+        );
+      }
     }
   }
 
-  validateForm() {
+  validateAddress() {
     let retVal = true;
     if (this.location === undefined && this.lastLocationString === undefined) {
       return retVal;
@@ -89,7 +229,7 @@ export class CompanyProfileComponent implements OnInit {
 
   onLocation(value: any) {
     const obj = JSON.parse(value);
-    this.location = new Address(obj.city, obj.state, obj.short_name, obj.longitude, obj.latitude);
+    this.location = new Address(obj.city, obj.state, obj.longitude, obj.latitude);
     this.lastGoodLocationString = this.lastLocationString;
   }
 

@@ -8,24 +8,37 @@
     <span>Add flight</span>
     <span>{{step}}/4</span>
 </header>
-<main>
-    <div *ngIf="step === 1" class="main">
+<main *ngIf="this.destinations.length > 1">
+    <div *ngIf="step === 1 && this.destinations.length > 1" class="main">
         <form [formGroup]="formFrom" (ngSubmit)="onSubmitFrom()">
             <h3>Departure</h3>
-            <p>From:</p>
-            <app-places-search (focused)="removeErrorClass()" [error]="errorFromLocation" (inputValue)="onFromInputChange($event)" [addFlight]="true" [ngStyle]="{'padding-left': '0px'}" (cityName)='onFrom($event)'></app-places-search>
-            <p>Departure date:</p>
-            <input [ngClass]="{'error-input': (formFrom.controls.date.touched || departureDateInvalid) && formFrom.controls.date.invalid}" type="date" id='takeoff-date' formControlName="date">
-            <div class="error" *ngIf="(formFrom.controls.date.touched || departureDateInvalid) && formFrom.controls.date.invalid">
-                Departure date is required!
+            <p>Flight number:</p>
+            <input [ngClass]="{'error-input': (formFrom.controls.flightNumber.touched || flightNumberInvalid) && formFrom.controls.flightNumber.invalid}" type="text" formControlName="flightNumber">
+            <div class="error" *ngIf="(formFrom.controls.flightNumber.touched || flightNumberInvalid) && formFrom.controls.flightNumber.invalid">
+                Flight number is required!
             </div>
-            <p>Departure time:</p>
-            <input [ngClass]="{'error-input': (formFrom.controls.time.touched || departureTimeInvalid) && formFrom.controls.time.invalid}" type="time" id='takeoff-time' formControlName="time">
-            <div class="error" *ngIf="(formFrom.controls.time.touched || departureTimeInvalid) && formFrom.controls.time.invalid">
-                Departure time is required!
+            <p>From:</p>
+            <div *ngIf="pickedFromDestination" [ngClass]="{droppedDown: dropdown}" (click)="toggleDropDown()" class="carType">
+                <p>{{pickedFromDestination.city}}, {{pickedFromDestination.state}}<svg [ngStyle]="{'transform': !dropdown ? 'rotateZ(-90deg)' : 'rotateZ(90deg)'}" viewBox="0 0 16 16" role="presentation" aria-hidden="true" focusable="false" style="height: 16px; width: 16px; display: inline-block;"><path d="m10.8 16c-.4 0-.7-.1-.9-.4l-6.8-6.7c-.5-.5-.5-1.3 0-1.8l6.8-6.7c.5-.5 1.2-.5 1.7 0s .5 1.2 0 1.7l-5.8 5.9 5.8 5.9c.5.5.5 1.2 0 1.7-.2.3-.5.4-.8.4"></path></svg></p>
+            </div>
+            <div *ngIf="dropdown" class="dropdown">
+                <ul>
+                    <li *ngFor="let destination of destinations">
+                        <p (click)="setFromDestination(destination)">{{destination.city}}, {{destination.state}}</p>
+                    </li>
+                </ul>
+            </div>
+            <p>Departure date:</p>
+            <input [ngClass]="{'error-input': (formFrom.controls.dateTime.touched || departureDateInvalid) && formFrom.controls.dateTime.invalid}" type="datetime-local" id='takeoff-date' formControlName="dateTime">
+            <div class="error" *ngIf="(formFrom.controls.dateTime.touched || departureDateInvalid) && formFrom.controls.dateTime.invalid">
+                Departure date is required!
             </div>
             <button class="next" type="submit">Next</button>
         </form>
+    </div>
+    <div *ngIf="step === 1 && this.destinations.length <= 1" class="main">
+        You don't travel to at least 2 destinations.
+        <a href="#" routerLink="/admin/{{adminId}}/destinations">Add destinations</a> so you can add flight!
     </div>
     <div *ngIf="step === 2" class="main">
         <div class="radio-group">
@@ -40,7 +53,7 @@
                 <span></span>
             </label>
         </div>
-        <div *ngIf="flightType === 'with stops'" class="with-stops">
+        <div *ngIf="flightType === 'with stops' && this.destinations.length > 2" class="with-stops">
             <ul>
                 <li>
                     <ng-container #viewContainerRef1>
@@ -53,12 +66,12 @@
                     <ng-template #viewContainerRef></ng-template>
                 </li>
             </ul>
-            <div class="error" *ngIf="sameLocationPicked">
-                You've already picked this location!
-            </div>
             <div class="buttons">
                 <button id="remove" (click)="onRemoveStop()">Undo</button><button (click)="onAddStop()" id="add">ADD</button>
             </div>
+        </div>
+        <div *ngIf="flightType === 'with stops' && this.destinations.length === 2">
+            You travel to 2 destinations only. That's why this has to be direct flight!
         </div>
         <button class="next" (click)="nextStep()">Next</button>
     </div>
@@ -66,16 +79,20 @@
         <form [formGroup]="formTo" (ngSubmit)="onSubmitTo()">
             <h3>Arrival</h3>
             <p>To:</p>
-            <app-places-search (focused)="removeErrorClass()" [error]="errorFromLocation" (inputValue)="onToInputChange($event)" [addFlight]="true" [ngStyle]="{'padding-left': '0px'}" (cityName)='onTo($event)'></app-places-search>
-            <p>Arrival date:</p>
-            <input [ngClass]="{'error-input': (formTo.controls.date.touched || arrivalDateInvalid) && formTo.controls.date.invalid}" type="date" id='arrival-date' formControlName="date">
-            <div class="error" *ngIf="(formTo.controls.date.touched || arrivalDateInvalid) && formTo.controls.date.invalid">
-                Arrival date is required!
+            <div *ngIf="pickedToDestination" [ngClass]="{droppedDown: dropdown}" (click)="toggleDropDown()" class="carType">
+                <p>{{pickedToDestination.city}}, {{pickedToDestination.state}}<svg [ngStyle]="{'transform': !dropdown ? 'rotateZ(-90deg)' : 'rotateZ(90deg)'}" viewBox="0 0 16 16" role="presentation" aria-hidden="true" focusable="false" style="height: 16px; width: 16px; display: inline-block;"><path d="m10.8 16c-.4 0-.7-.1-.9-.4l-6.8-6.7c-.5-.5-.5-1.3 0-1.8l6.8-6.7c.5-.5 1.2-.5 1.7 0s .5 1.2 0 1.7l-5.8 5.9 5.8 5.9c.5.5.5 1.2 0 1.7-.2.3-.5.4-.8.4"></path></svg></p>
             </div>
-            <p>Arrival time:</p>
-            <input [ngClass]="{'error-input': (formTo.controls.time.touched || arrivalTimeInvalid) && formTo.controls.time.invalid}" type="time" id='arrival-time' formControlName="time">
-            <div class="error" *ngIf="(formTo.controls.time.touched || arrivalTimeInvalid) && formTo.controls.time.invalid">
-                Arrival time is required!
+            <div *ngIf="dropdown" class="dropdown">
+                <ul>
+                    <li *ngFor="let destination of availableDestinations">
+                        <p (click)="setToDestination(destination)">{{destination.city}}, {{destination.state}}</p>
+                    </li>
+                </ul>
+            </div>
+            <p>Arrival date:</p>
+            <input [ngClass]="{'error-input': (formTo.controls.dateTime.touched || arrivalDateInvalid) && formTo.controls.dateTime.invalid}" type="datetime-local" id='arrival-date' formControlName="dateTime">
+            <div class="error" *ngIf="(formTo.controls.dateTime.touched || arrivalDateInvalid) && formTo.controls.dateTime.invalid">
+                Arrival date is required!
             </div>
             <p>Total length in kilometers:</p>
             <input [ngClass]="{'error-input': (formTo.controls.flightLength.touched || flightLengthInvalid) && formTo.controls.flightLength.invalid}" type="text" formControlName="flightLength">

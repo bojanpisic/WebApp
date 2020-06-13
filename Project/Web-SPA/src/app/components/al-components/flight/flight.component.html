@@ -3,28 +3,30 @@
     <span id="spandate">Date:</span>
     <p id="date">{{flight.takeOffDate | date: 'dd-MM-yyyy'}}</p><!--ako prelazi u novi dan ond mora ovako: May 24/25,2020 da bi stalo-->
     <span id="spanairlines">Airline:</span>
-    <p id="airlines"><img src="../../../../assets/turkish_airlines_logo.png">{{flight.airline.name}}</p>
+    <p id="airlines"><img [src]="flight.airlineLogo">{{flight.airlineName}}</p>
     <span id="spanfrom">From:</span>
-    <p id="from">{{flight.from.city}}</p>
+    <p id="from">{{flight.from}}</p>
     <span id="spanto">To:</span>
-    <p id="to">{{flight.to.city}}</p>
+    <p id="to">{{flight.to}}</p>
     <span id="spandeparture" [ngStyle]="{'grid-area': 'spandeparture', 'text-align': 'left'}">Departure:</span>
     <p id="departure" [ngStyle]="{'grid-area': 'departure', 'text-align': 'left'}">{{flight.takeOffTime}}</p>
-    <span id="time"><img src="../../../../assets/icons8-clock.svg">{{flight.tripTime}}</span><!--pazi ako traje samo 50min ili cist sat tipa 3h-->
+    <span id="time"><img src="../../../../assets/icons8-clock.svg">{{flight.flightTime}}</span><!--pazi ako traje samo 50min ili cist sat tipa 3h-->
     <span id="spanarrival" [ngStyle]="{'grid-area': 'spanarrival', 'text-align': 'right'}">Arrival:</span> 
     <p id="arrival" [ngStyle]="{'grid-area': 'arrival', 'text-align': 'right'}">{{flight.landingTime}}</p>
     <span id="spanflight">Flight:</span>
     <p id="flight" [ngStyle]="{'color': markFlightName ? '#1C4CB2' : 'rgb(34, 34, 34)'}">{{flight.flightNumber}}</p>
-    <span id="spandistance">Distance:</span>
-    <p id="distance">{{flight.tripLength}}km</p>
+    <span id="spandistance" *ngIf="!seat">Distance:</span>
+    <p id="distance" *ngIf="!seat">{{flight.flightLength}}km</p>
+    <span id="spandistance" *ngIf="seat">Seat:</span>
+    <p id="distance" [ngStyle]="{'color': seat ? '#1C4CB2' : 'rgb(34, 34, 34)'}" *ngIf="seat">{{seatName.class}}{{seatName.column}}{{seatName.row}}</p>
     <div id="stops">
-        <span *ngIf="flight.changeOverLocations.length > 0">{{flight.changeOverLocations.length}} {{(flight.stops.length === 1) ? 'stop' : 'stops'}}</span>
-        <ul *ngIf="flight.changeOverLocations.length > 0">
-            <li *ngFor="let stop of flight.changeOverLocations; let i = index">
-                <p *ngIf="i === flight.changeOverLocations.length -1">{{stop.newDestination.city}}</p>
-                <p *ngIf="i !== flight.changeOverLocations.length -1">{{stop.newDestination.city}}, </p>
+        <span *ngIf="flight.stops.length > 0">{{flight.stops.length}} {{(flight.stops.length === 1) ? 'stop' : 'stops'}}</span>
+        <ul *ngIf="flight.stops.length > 0">
+            <li *ngFor="let stop of flight.stops; let i = index">
+                <p *ngIf="i === flight.stops.length -1">{{stop.city}}</p>
+                <p *ngIf="i !== flight.stops.length -1">{{stop.city}}, </p>
             </li>
         </ul>
-        <span *ngIf="flight.changeOverLocations.length === 0" style="color: rgb(34, 34, 34); font-weight: bold; font-family: Montserrat, sans-serif;">direct</span>
+        <span *ngIf="flight.stops.length === 0" style="color: rgb(34, 34, 34); font-weight: bold; font-family: Montserrat, sans-serif;">direct</span>
     </div>
 </div>

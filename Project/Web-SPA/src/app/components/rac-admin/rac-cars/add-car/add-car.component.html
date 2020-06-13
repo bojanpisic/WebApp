@@ -5,11 +5,8 @@
     <span>Add Car</span>
 </header>
 <main>
-    <div class="image" [ngStyle]="{'background': imagePicked ? 'url(' + car.image + ') no-repeat center / cover' : 'rgb(200,200,200)'}">
-        <input
-        style="display: none"
-        type="file" (change)="onFileChanged($event)"
-        #fileInput>
+    <div class="image" [ngStyle]="{'background': selectedFile !== undefined ? 'url(' + selectedFile.src + ') no-repeat center / cover' : 'rgb(200,200,200)'}">
+        <input style="display: none" type="file" accept="image/*" (change)="onFileChanged(fileInput)" #fileInput>
         <div class="editButton" (click)="fileInput.click()">
             <img src="../../../../../assets/edit_white.svg" alt="">
         </div>
@@ -18,7 +15,26 @@
         </div>
         <p *ngIf="errorImage" class="error-image">Image is mandatory! Please choose image for your car.</p>
     </div>
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="formOk">
+        <div [ngClass]="{droppedDown: dropdownBranch}" (click)="toggleDropDownBranch()" class="carType">
+            <p>{{carLocation.city}}, {{carLocation.state}}<svg [ngStyle]="{'transform': !dropdownBranch ? 'rotateZ(-90deg)' : 'rotateZ(90deg)'}" viewBox="0 0 16 16" role="presentation" aria-hidden="true" focusable="false" style="height: 16px; width: 16px; display: inline-block;"><path d="m10.8 16c-.4 0-.7-.1-.9-.4l-6.8-6.7c-.5-.5-.5-1.3 0-1.8l6.8-6.7c.5-.5 1.2-.5 1.7 0s .5 1.2 0 1.7l-5.8 5.9 5.8 5.9c.5.5.5 1.2 0 1.7-.2.3-.5.4-.8.4"></path></svg></p>
+        </div>
+        <div *ngIf="dropdownBranch" class="dropdown">
+            <ul>
+                <li>
+                    <p (click)="setCarLocation(serviceLocation)">{{serviceLocation.city}}, {{serviceLocation.state}}</p>
+                </li>
+                <li *ngFor="let branch of branches">
+                    <p (click)="setCarLocation(branch)">{{branch.city}}, {{branch.state}}</p>
+                </li>
+            </ul>
+            <p [ngClass]="{pickedCarType: pickedCarType === 'Mini'}" (click)="setCarType('Mini')">Mini</p>
+            <p [ngClass]="{pickedCarType: pickedCarType === 'SUV'}" (click)="setCarType('SUV')">SUV</p>
+            <p [ngClass]="{pickedCarType: pickedCarType === 'Luxury'}" (click)="setCarType('Luxury')">Luxury</p>
+            <p [ngClass]="{pickedCarType: pickedCarType === 'Standard'}" (click)="setCarType('Standard')">Standard</p>
+            <p [ngClass]="{pickedCarType: pickedCarType === 'Convertable'}" (click)="setCarType('Convertable')">Convertable</p>
+            <p [ngClass]="{pickedCarType: pickedCarType === 'Minivan'}" (click)="setCarType('Minivan')">Minivan</p>
+        </div>
         <div class="brand">
             <p>Brand:</p>
             <input [ngClass]="{'error-input': (form.controls.brand.touched || errorBrand) && form.controls.brand.invalid}"
@@ -46,11 +62,11 @@
         <div class="numberOfSeats">
             <p>Number of seats</p>
             <span>This is mandatory</span>
-            <button [ngClass]="{'disabled': minusDisabled}" class="minusBtn" [disabled]="minusDisabled" (click)="onMinus()">
+            <button type="button" [ngClass]="{'disabled': minusDisabled}" class="minusBtn" [disabled]="minusDisabled" (click)="onMinus()">
                 <svg [ngStyle]="{'fill': minusDisabled ? 'rgb(234, 234, 234)' : 'rgb(113, 113, 113)'}" viewBox="0 0 24 24" role="presentation" aria-hidden="true" focusable="false" style="height: 22px; width: 22px; display: block;"><rect height="2" rx="1" width="12" x="6" y="11"></rect></svg>
             </button>
             <p id="numberOfSeats">{{numberOfSeats}}</p>
-            <button class="plusBtn" (click)="onPlus()">
+            <button type="button" class="plusBtn" (click)="onPlus()">
                 <svg viewBox="0 0 24 24" role="presentation" aria-hidden="true" focusable="false" style="height: 22px; width: 22px; display: block; fill: rgb(113, 113, 113);"><rect height="2" rx="1" width="12" x="6" y="11"></rect><rect height="12" rx="1" width="2" x="11" y="6"></rect></svg>
             </button>
         </div>

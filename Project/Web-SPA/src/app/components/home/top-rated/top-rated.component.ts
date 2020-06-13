@@ -22,8 +22,10 @@ export class TopRatedComponent implements OnInit {
    }
 
   ngOnInit(): void {
-    this.loadRentACarServices();
-    this.loadAirlines();
+    // this.loadRentACarServices();
+    // this.loadAirlines();
+    this.allAirlines = [];
+    this.allRentACarServices = [];
   }
 
   loadAirlines() {
@@ -31,7 +33,48 @@ export class TopRatedComponent implements OnInit {
   }
 
   loadRentACarServices() {
-    this.allRentACarServices = this.rentService.loadAllRentServices();
+    const air1 = this.airlineService.getTopRatedAirlines().subscribe(
+      (res: any[]) => {
+        if (res.length) {
+          res.forEach(element => {
+            const new1 = {
+              // flightId: element.flightId,
+              // flightNumber: element.flightNumber,
+              // // tslint:disable-next-line:max-line-length
+              // tslint:disable-next-line:max-line-length
+              // airlineLogo: (element.airlineLogo === null) ? null : this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.airlineLogo}`),
+              // airlineName: element.airlineName,
+              // from: element.from,
+              // takeOffDate: element.takeOffDate,
+              // takeOffTime: element.takeOffTime,
+              // to: element.to,
+              // landingDate: element.landingDate,
+              // landingTime: element.landingTime,
+              // flightLength: element.flightLength,
+              // flightTime: element.flightTime,
+              // stops: element.stops
+            };
+            // this.flights.push(new1);
+          });
+          console.log(res);
+        }
+        console.log('ok');
+        // this.airlineId = res[0].airlineId;
+        // this.flights = res[0].flights;
+      },
+      err => {
+        console.log('dada' + err.status);
+        // tslint:disable-next-line: triple-equals
+        if (err.status == 400) {
+          console.log(err);
+        // tslint:disable-next-line: triple-equals
+        } else if (err.status == 401) {
+          console.log(err);
+        } else {
+          console.log(err);
+        }
+      }
+    );
   }
 
 }

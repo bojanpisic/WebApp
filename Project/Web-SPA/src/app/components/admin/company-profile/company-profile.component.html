@@ -10,12 +10,19 @@
 </header>
 <main>
     <section class="image">
-        <div class="logo">
-            <img id="logo" src="../../../../assets/turkish_airlines_logo.png">
+        <!-- <div *ngIf="selectedFile" class="logo">
+            <img id="logo" src="{{selectedFile.src}}">
+        </div> -->
+        <div *ngIf="img && selectedFile === undefined" class="logo">
+            <img id="logo" [src]="img">
         </div>
-        <button><img src="../../../../assets/camera-100.png">Change logo</button>
+        <div *ngIf="selectedFile !== undefined" class="logo">
+            <img id="logo" src="{{selectedFile.src}}">
+        </div>
+        <input style="display: none" type="file" accept="image/*" (change)="onFileChanged(fileInput)" #fileInput>
+        <button (click)="fileInput.click()"><img src="../../../../assets/camera-100.png">Change logo</button>
     </section>
-    <form (ngSubmit)="onSubmit()" [formGroup]="form">
+    <form *ngIf="formOk" (ngSubmit)="onSubmit()" [formGroup]="form">
         <p *ngIf="companyType === 'airline-profile'">Airline name:</p>
         <p *ngIf="companyType === 'rac-profile'">Rent a car service name:</p>
         <input [ngClass]="{'error-input': form.controls.name.invalid}" type="text" formControlName="name" [value]="companyFields.name">

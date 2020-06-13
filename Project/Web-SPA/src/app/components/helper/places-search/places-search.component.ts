@@ -24,6 +24,8 @@ export class PlacesSearchComponent implements OnInit {
   @Input() searchDestination = false;
   @Input() addFlight = false;
   @Input() pickAirlineLocation = false;
+  @Input() addAirlineAddress = false;
+  @Input() airlineAddress: string;
   @Input() myLocation: Address;
   @Input() error = false;
   @Output() focused = new EventEmitter<boolean>();
@@ -85,6 +87,15 @@ export class PlacesSearchComponent implements OnInit {
           if (this.addFlight) {
             this.inputValue.emit((<HTMLInputElement> document.getElementById('addFlight')).value);
           }
+          if (this.addAirlineAddress) {
+            this.inputValue.emit((<HTMLInputElement> document.getElementById('addAirlineAddress')).value);
+          }
+          if (this.pickUpLocation) {
+            this.inputValue.emit((<HTMLInputElement> document.getElementById('pickUpLocation')).value);
+          }
+          if (!this.pickUpLocation && !this.searchDestination && !this.addFlight && !this.pickAirlineLocation && !this.addAirlineAddress) {
+            this.inputValue.emit((<HTMLInputElement> document.getElementById('dropOffLocation')).value);
+          }
           this.cityName.emit(JSON.stringify(sendData));
         });
       });
@@ -135,9 +146,23 @@ export class PlacesSearchComponent implements OnInit {
     this.inputValue.emit(value);
   }
 
+  onChangePickUpLocation() {
+    const value = (<HTMLInputElement> document.getElementById('pickUpLocation')).value;
+    this.inputValue.emit(value);
+  }
+
+  onChangeDropOffLocation() {
+    const value = (<HTMLInputElement> document.getElementById('dropOffLocation')).value;
+    this.inputValue.emit(value);
+  }
+
   onChangeLocation() {
     const value = (<HTMLInputElement> document.getElementById('pickAirlineLocation')).value;
     this.inputValueLocation.emit(value);
   }
 
+  onChangeAddAirline() {
+    const value = (<HTMLInputElement> document.getElementById('addAirlineAddress')).value;
+    this.inputValue.emit(value);
+  }
 }

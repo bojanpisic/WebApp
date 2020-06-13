@@ -106,6 +106,50 @@ main {
 
         form {
 
+            .carType {
+                display: block;
+                margin: 0;
+                padding: 9px 8px;
+                border: 1px solid rgb(234, 234, 234);
+                border-radius: 5px;
+        
+                p {
+                    line-height: 20px;
+                    font-size: 16px;
+                    margin: 5px 0 5px 5px;
+        
+                    svg {
+                        float: right;
+                        transform: rotate(-90deg);
+                        vertical-align: top;
+                        margin-top: 2px;
+                        transition: transform 0.5s;
+                    }
+                }
+            }
+
+            .droppedDown {
+                border-bottom-left-radius: 0px;
+                border-bottom-right-radius: 0px;
+            }
+        
+            .dropdown {
+                margin: 0;
+                padding: 8px 0px;
+                border: 1px solid rgb(234, 234, 234);
+                border-bottom-left-radius: 5px;
+                border-bottom-right-radius: 5px;
+                border-top: none;
+
+                ul {
+                    margin: 0;
+                }
+        
+                p {
+                    padding: 3px 8px;
+                }
+            }
+
             input {
                 @extend %input2;
                 background-color: white;

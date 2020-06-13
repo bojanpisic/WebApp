@@ -38,25 +38,28 @@ export class SignupComponent implements OnInit {
   Register() {
     this.userService.userRegistration().subscribe(
       (res: any) => {
-        if (res.status === 201) {
-          alert('uspeo');
-          this.userService.formModel.reset();
-        } else {
-          alert('nije');
+        // if (res.status === 201) {
+        //   alert('uspeo');
+        //   this.userService.formModel.reset();
+        // } else {
+        //   alert('nije');
 
-          res.errors.array.forEach(element => {
-            switch (element.code)
-            {
-              case 'DuplicateUserName':
-                // this.toastr.error('Username is already taken','Registration failed.');
-                break;
+        //   res.errors.array.forEach(element => {
+        //     switch (element.code)
+        //     {
+        //       case 'DuplicateUserName':
+        //         // this.toastr.error('Username is already taken','Registration failed.');
+        //         break;
 
-              default:
-              // this.toastr.error(element.description,'Registration failed.');
-                break;
-            }
-          });
-        }
+        //       default:
+        //       // this.toastr.error(element.description,'Registration failed.');
+        //         break;
+        //     }
+        //   });
+        // }
+      },
+      err => {
+        alert(err.error.description);
       }
     );
   }

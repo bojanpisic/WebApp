@@ -3,6 +3,7 @@ import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router';
 import { SystemAdminService } from 'src/services/system-admin.service';
 import { CustomValidationService } from 'src/services/custom-validation.service';
+import { Address } from 'src/app/entities/address';
 
 @Component({
   selector: 'app-company',
@@ -19,15 +20,30 @@ export class AddCompanyComponent implements OnInit {
 
   step = 1;
 
-  errorFirstName = false;
-  errorLastName = false;
   errorEmail = false;
   errorUsername = false;
   errorPassword = false;
   errorConfirmPassword = false;
-  errorCity = false;
-  errorPhone = false;
+  errorConfirmPasswordMatch = false;
+  errorName = false;
+  fullAddress: Address;
+  address: string;
+  lastAddress: string;
+  lastGoodAddress: string;
+  errorAddress = false;
   errorMsg = '';
+
+  data: {
+    email: string,
+    username: string,
+    password: string,
+    confirmPassword: string,
+    companyName: string,
+    lat: number,
+    lon: number,
+    city: string,
+    state: string,
+  };
 
   constructor(private route: ActivatedRoute, private router: Router,
               public adminService: SystemAdminService, private formBuilder: FormBuilder,
@@ -45,15 +61,37 @@ export class AddCompanyComponent implements OnInit {
 
 
   onRegister() {
-    const data = {
-      email: this.formUser.controls.email.value,
-      userName: this.formUser.controls.username.value,
-      password: this.formUser.controls.password.value,
-      confirmPassword: this.formUser.controls.confirmPassword.value,
-      companyName: this.formCompany.controls.name.value,
-      companyAddress: this.formCompany.controls.address.value
-    };
-    this.adminService.registerAirline(data).subscribe();
+    if (this.companyType === 'register-airline') {
+      this.adminService.registerAirline(this.data).subscribe(
+        (res: any) => {
+        },
+        err => {
+          alert(err.error.description);
+          // tslint:disable-next-line: triple-equals
+          if (err.status == 400) {
+            console.log(err);
+            // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
+          } else {
+            console.log(err);
+          }
+        }
+      );
+    } else {
+      this.adminService.registerRACService(this.data).subscribe(
+        (res: any) => {
+        },
+        err => {
+          alert(err.error.description);
+          // tslint:disable-next-line: triple-equals
+          if (err.status == 400) {
+            console.log(err);
+            // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
+          } else {
+            console.log(err);
+          }
+        }
+      );
+    }
   }
 
   onSubmitUser() {
@@ -63,10 +101,25 @@ export class AddCompanyComponent implements OnInit {
   }
 
   onSubmitCompany() {
-    if (this.formCompany.valid) {
-      // this.adminService.get().subscribe();
+    if (this.validateCompanyForm()) {
+      this.data = {
+        email: this.formUser.controls.email.value,
+        username: this.formUser.controls.username.value,
+        password: this.formUser.controls.password.value,
+        confirmPassword: this.formUser.controls.confirmPassword.value,
+        companyName: this.formCompany.controls.name.value,
+        lat: this.fullAddress.lat,
+        lon: this.fullAddress.lon,
+        city: this.fullAddress.city,
+        state: this.fullAddress.state,
+      };
+      console.log(this.fullAddress.lon, this.fullAddress.lat);
       this.step = 3;
     }
+  }
+
+  onConfirmPassword() {
+    this.errorConfirmPasswordMatch = false;
   }
 
   onExit() {
@@ -83,22 +136,17 @@ export class AddCompanyComponent implements OnInit {
       username: ['', Validators.required],
       password: ['', [Validators.required, this.customValidator.patternValidator()]],
       confirmPassword: ['', Validators.required],
-   }, {
-     validators: this.passwords.bind(this)
    });
   }
 
-  passwords(formGroup: FormGroup) {
-    const { value: password} = formGroup.get('password');
-    const { value: confirmPassword} = formGroup.get('confirmPassword');
-    return password === confirmPassword ? null : { passwordNotMatch: true };
+  validateConfirmPassword() {
+    return this.formUser.controls.password.value === this.formUser.controls.confirmPassword.value ? true : false;
   }
 
 
   initFormCompany() {
     this.formCompany = new FormGroup({
       name: new FormControl('', Validators.required),
-      address: new FormControl('', Validators.required),
    });
   }
 
@@ -120,8 +168,45 @@ export class AddCompanyComponent implements OnInit {
       this.errorConfirmPassword = true;
       retVal = false;
     }
+    if (!this.validateConfirmPassword()) {
+      this.errorConfirmPasswordMatch = true;
+      retVal = false;
+    }
     console.log('retval' + retVal);
     return retVal;
+  }
+
+  validateCompanyForm() {
+    let retVal = true;
+    if (this.formCompany.controls.name.invalid) {
+      this.errorName = true;
+      retVal = false;
+    }
+    if (this.address === undefined || this.lastGoodAddress !== this.lastAddress) {
+      if (this.address !== undefined) {
+        this.address = undefined;
+      }
+      this.errorAddress = true;
+      retVal = false;
+    }
+    return retVal;
+  }
+
+  onInputChange(value: any) {
+    this.lastAddress = value;
+  }
+
+  onInput(value: any) {
+    const obj = JSON.parse(value);
+    this.address = obj.city;
+    console.log(obj.latitude);
+    console.log(obj.longitude);
+    this.fullAddress = new Address(obj.city, obj.state, obj.longitude, obj.latitude);
+    this.lastGoodAddress = this.lastAddress;
+  }
+
+  removeErrorClass() {
+    this.errorAddress = false;
   }
 
 }

@@ -8,17 +8,106 @@ import { Car } from 'src/app/entities/car';
 })
 export class CarComponent implements OnInit {
 
-  @Input() car: Car;
+  @Input() car: any;
+  @Input() spec: boolean;
   @Input() customerView: boolean;
+  @Input() adminView: boolean;
+  @Input() quitReservation: boolean;
+  @Input() carRate: boolean;
   @Output() editButtonClicked = new EventEmitter<number>();
+  @Output() emitRateService = new EventEmitter<number>();
+  @Output() emitRateCar = new EventEmitter<number>();
+
+  rateExperience = false;
+
+  minusRateServiceDisabled = true;
+  plusRateServiceDisabled = false;
+  rateService = 1;
+  minusRateCarDisabled = true;
+  plusRateCarDisabled = false;
+  rateCar = 1;
+
+  showRateService = false;
+  showRateCar = false;
 
   constructor() { }
 
   ngOnInit(): void {
+    console.log(this.car);
   }
 
   onEdit() {
-    this.editButtonClicked.emit(this.car.id);
+    this.editButtonClicked.emit(this.car.carId);
+  }
+
+  onBook() {
+
+  }
+
+  onQuit() {
+
+  }
+
+  onConfirmServiceRate() {
+    if (this.rateService > 0 && this.rateService < 6) {
+      this.emitRateService.emit(this.rateService);
+    }
+  }
+
+  onConfirmCarRate() {
+    if (this.rateCar > 0 && this.rateCar < 6) {
+      this.emitRateCar.emit(this.rateCar);
+    }
+  }
+
+  onRate() {
+    this.rateExperience = !this.rateExperience;
+  }
+
+  onRateService() {
+    this.showRateService = !this.showRateService;
+  }
+
+  onRateCar() {
+    this.showRateCar = !this.showRateCar;
+  }
+
+  onPlusRateService() {
+    if (this.rateService === 4) {
+      this.plusRateServiceDisabled = true;
+    } else {
+      this.rateService++;
+      this.minusRateServiceDisabled = false;
+    }
+  }
+
+  onMinusRateService() {
+    if (this.rateService > 1) {
+      this.rateService--;
+      this.plusRateServiceDisabled = false;
+    }
+    if (this.rateService === 1) {
+      this.minusRateServiceDisabled = true;
+    }
+  }
+
+  onPlusRateCar() {
+    if (this.rateCar > 4) {
+      this.plusRateCarDisabled = true;
+    } else {
+      this.rateCar++;
+      this.minusRateCarDisabled = false;
+    }
+  }
+
+  onMinusRateCar() {
+    if (this.rateCar > 1) {
+      this.rateCar--;
+      this.plusRateCarDisabled = false;
+    }
+    if (this.rateCar === 1) {
+      this.minusRateCarDisabled = true;
+    }
   }
 
 }

@@ -6,7 +6,7 @@ import { Flight } from '../entities/flight';
 })
 export class FindFlightPipe implements PipeTransform {
 
-  transform(flights: Array<Flight>, inputString?: string): Array<Flight> {
+  transform(flights: Array<any>, inputString?: string): Array<Flight> {
     if (inputString === '') {
       return flights;
     }

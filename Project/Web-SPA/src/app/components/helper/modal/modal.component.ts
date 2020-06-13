@@ -11,7 +11,7 @@ export class ModalComponent implements OnInit {
 
   @Output() remove = new EventEmitter<boolean>();
   @Input() props: {friend: RegisteredUser, show: boolean};
-  @Input() destination: Address;
+  @Input() destination: {city: string, state: string};
   @Input() type: string;
   closeIt = 0;
 

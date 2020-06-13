@@ -13,6 +13,7 @@ import { AirlineAdmin } from 'src/app/entities/airlineAdmin';
 import { RacAdmin } from 'src/app/entities/racAdmin';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -43,6 +44,77 @@ export class UserService {
   });
 
 
+  getUser(data: any): Observable<any> {
+    return this.http.get<any>(this.BaseURI + '/profile/get-profile');
+    // return this.http.get<any>(this.BaseURI + '/systemadmin/register-systemadmin', body);
+  }
+
+  changePhoto(data: any) {
+    const formData = new FormData();
+    formData.append('img', data.image);
+
+    const url = `${this.BaseURI + '/profile/change-img'}/${data.id}`;
+    return this.http.put(url, formData);
+  }
+
+  changeFirstName(data: any) {
+    const body = {
+      FirstName: data.FirstName
+    };
+    const url = `${this.BaseURI + '/profile/change-firstname'}/${data.id}`;
+    return this.http.put(url, body);
+  }
+
+  changeLastName(data: any) {
+    const body = {
+      LastName: data.LastName
+    };
+    const url = `${this.BaseURI + '/profile/change-lastname'}/${data.id}`;
+    return this.http.put(url, body);
+  }
+
+  changeEmail(data: any) {
+    const body = {
+      Email: data.Email
+    };
+    const url = `${this.BaseURI + '/profile/change-email'}/${data.id}`;
+    return this.http.put(url, body);
+  }
+
+  changeUsername(data: any) {
+    const body = {
+      UserName: data.UserName
+    };
+    const url = `${this.BaseURI + '/profile/change-username'}/${data.id}`;
+    return this.http.put(url, body);
+  }
+
+  changePhone(data: any) {
+    const body = {
+      Phone: data.Phone
+    };
+    const url = `${this.BaseURI + '/profile/change-phone'}/${data.id}`;
+    return this.http.put(url, body);
+  }
+
+  changeAddress(data: any) {
+    const body = {
+      City: data.City
+    };
+    const url = `${this.BaseURI + '/profile/change-city'}/${data.id}`;
+    return this.http.put(url, body);
+  }
+
+  changePassword(data: any) {
+    console.log(data);
+    const body = {
+      OldPassword: data.OldPassword,
+      Password: data.Password,
+      PasswordConfirm: data.PasswordConfirm,
+    };
+    const url = `${this.BaseURI + '/profile/change-passw'}/${data.id}`;
+    return this.http.put(url, body);
+  }
 
   comparePasswords(fb: FormGroup) {
     const confirmPswrdCtrl = fb.get('ConfirmPassword');
@@ -87,7 +159,7 @@ export class UserService {
       Password: this.formModel.value.Password,
     };
     console.log(body);
-    return this.http.post(this.BaseURI + '/authentication/RegisterUser', body);
+    return this.http.post(this.BaseURI + '/authentication/register-user', body);
   }
 
   RentCarAdminRegistration() {
@@ -125,10 +197,12 @@ export class UserService {
     // this.allUsers[index] = user;
   }
 
-  logIn() {
+  logIn(data: any) {
     const body = {
       UserNameOrEmail: this.formModelLogin.value.UserNameOrEmail,
       Password: this.formModelLogin.value.Password,
+      UserId: data.userId,
+      Token: data.token
     };
     console.log(body);
     return this.http.post(this.BaseURI + '/authentication/login', body);
@@ -180,11 +254,11 @@ export class UserService {
 
   }
 
-  getUser(id: number) {
-    // return this.allUsers.find(x => x.id == id);
-    return null;
+  // getUser(id: number) {
+  //   // return this.allUsers.find(x => x.id == id);
+  //   return null;
 
-  }
+  // }
 
   getAirlineAdmin(id: number) {
     // return this.airlineAdmins.find(x => x.id == id);
@@ -196,6 +270,30 @@ export class UserService {
     // return this.racAdmins.find(x => x.id == id);
     return null;
 
+  }
+
+  roleMatch(allowedRoles): boolean {
+    console.log(allowedRoles);
+    let isMatch = false;
+    const payLoad = JSON.parse(window.atob(localStorage.getItem('token').split('.')[1]));
+    const userRole = payLoad.Roles;
+    console.log(userRole);
+    allowedRoles.forEach(element => {
+      if (userRole == element) {
+        isMatch = true;
+      }
+    });
+    return isMatch;
+  }
+
+  hasChangedPassword(): boolean {
+    const payLoad = JSON.parse(window.atob(localStorage.getItem('token').split('.')[1]));
+    console.log(payLoad);
+    const passwordChanged = payLoad.PasswordChanged;
+    if (passwordChanged === "False") {
+      return false;
+    }
+    return true;
   }
 
 }

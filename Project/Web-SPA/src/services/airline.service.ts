@@ -5,17 +5,191 @@ import { Flight } from 'src/app/entities/flight';
 import { TripId } from 'src/app/entities/trip-id';
 import { Address } from 'src/app/entities/address';
 import { FlightService } from './flight.service';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AirlineService {
 
+  readonly BaseURI = 'http://192.168.0.13:5001/api';
+
   airlines: Array<Airline>;
-  constructor(private flightService: FlightService) {
+  constructor(private flightService: FlightService, private http: HttpClient) {
     this.airlines = new Array<Airline>();
     this.allMockedAirlines();
    }
+
+   test(data: any): Observable<any> {
+    const param = {
+      type: data.type,
+      from: data.from,
+      to: data.to,
+      dep: data.dep,
+      ret: data.ret,
+      minPrice: data.minPrice,
+      maxPrice: data.maxPrice,
+      class: data.class,
+      air: data.air,
+      mind: data.mind,
+      maxd: data.maxd
+    };
+    const url = this.BaseURI + '/airlineadmin/flights';
+    return this.http.get<any>(url, {params: param});
+  }
+
+  getAirline(data: any): Observable<any> {
+    const url = this.BaseURI + '/airlineadmin/get-airline';
+    console.log(url);
+    return this.http.get<any>(url);
+  }
+
+  getAirlines(): Observable<any> {
+    const url = this.BaseURI + '/airlineadmin/all-airlines';
+    return this.http.get<any>(url);
+  }
+
+  getAirlineProfile(data: any) {
+    const url = `${this.BaseURI + '/airlineadmin/airline'}/${data}`;
+    return this.http.get(url);
+  }
+
+  getTopRatedAirlines(): Observable<any> {
+    const url = this.BaseURI + '/airlineadmin/get-toprated-airlines';
+    console.log(url);
+    return this.http.get<any>(url);
+  }
+
+  editAirline(data: any) {
+    const body = {
+      Name: data.name,
+      Address: data.address,
+      PromoDescription: data.promoDescription,
+    };
+    const url = this.BaseURI + '/airlineadmin/change-airline-info';
+    return this.http.put(url, body);
+  }
+
+
+  getAirlinePhoto(data: any): Observable<any> {
+    const url = `${this.BaseURI + '/airlineadmin/get-airline-logo'}/${data}`;
+    console.log(url);
+    return this.http.get(url);
+  }s
+
+  changePhoto(data: any) {
+    const formData = new FormData();
+    formData.append('img', data.image);
+
+    const url = this.BaseURI + '/airlineadmin/change-airline-logo';
+    return this.http.put(url, formData);
+  }
+
+
+  getAdminsFlights(): Observable<any> {
+    const url = this.BaseURI + '/airlineadmin/get-flights';
+    console.log(url);
+    return this.http.get<any>(url);
+  }
+
+  getFlightsSeats(data: any): Observable<any> {
+    const url = `${this.BaseURI + '/airlineadmin/get-seats'}/${data}`;
+    return this.http.get<any>(url);
+  }
+
+  addFlight(data: any) {
+    console.log(data);
+    const body = {
+      FlightNumber: data.FlightNumber,
+      TakeOffDateTime: data.TakeOffDateTime,
+      LandingDateTime: data.LandingDateTime,
+      StopIds: data.StopIds, // lista ideja destinacija
+      FromId: data.FromId,
+      ToId: data.ToId,
+      Seats: data.Seats, // Column, Row, Class, Price
+      TripLength: data.TripLength
+    };
+    const url = this.BaseURI + '/airlineadmin/add-flight';
+    return this.http.post(url, body);
+  }
+
+
+  getAdminsDestinations(): Observable<any> {
+    const url = this.BaseURI + '/airlineadmin/get-airline-destinations';
+    console.log(url);
+    return this.http.get<any>(url);
+  }
+
+  addDestination(data: any) {
+    console.log(data);
+    const body = {
+      State: data.state,
+      City: data.city,
+      ImgUrl: data.imgUrl,
+    };
+    const url = this.BaseURI + '/airlineadmin/add-destination';
+    return this.http.post(url, body);
+  }
+
+  deleteDestination(data: any) {
+    const url = this.BaseURI + '/airlineadmin/delete-destination/' + data.id;
+    return this.http.delete(url);
+  }
+
+  addSeat(data: any) {
+    const body = {
+      Class: data.class,
+      Column: data.column,
+      Row: data.row,
+      Price: data.price,
+      FlightId: data.flightId
+    };
+    const url = this.BaseURI + '/airlineadmin/add-seat';
+    return this.http.post(url, body);
+  }
+
+  deleteSeat(data: any) {
+    const url = this.BaseURI + '/airlineadmin/delete-seat/' + data;
+    return this.http.delete(url);
+  }
+
+  changeSeat(data: any) {
+    const url = `${this.BaseURI + '/airlineadmin/change-seat'}/${data.id}`;
+    const body = {
+      Price: data.price,
+    };
+    return this.http.put(url, body);
+  }
+
+  getAdminsSpecialOffers(): Observable<any> {
+    const url = this.BaseURI + '/airlineadmin/get-specialoffer';
+    console.log(url);
+    return this.http.get<any>(url);
+  }
+
+  getAirlineSpecialOffers(data): Observable<any> {
+    const url = `${this.BaseURI + '/airlineadmin/airline-special-offers'}/${data}`;
+    console.log(url);
+    return this.http.get<any>(url);
+  }
+
+  getAllSpecialOffers(): Observable<any> {
+    const url = this.BaseURI + '/airlineadmin/all-airlines-specialoffers';
+    console.log(url);
+    return this.http.get<any>(url);
+  }
+
+  addSpecialOffer(data: any) {
+    console.log(data);
+    const body = {
+      NewPrice: data.NewPrice,
+      SeatsIds: data.SeatsIds
+    };
+    const url = this.BaseURI + '/airlineadmin/add-specialoffer';
+    return this.http.post(url, body);
+  }
 
   loadAllAirlines() {
     const retValue = new Array<Airline>();
@@ -23,16 +197,6 @@ export class AirlineService {
       retValue.push(item);
     }
     return retValue;
-  }
-
-  getAirline(id: number) {
-    let a;
-    this.airlines.forEach(airline => {
-      if (airline.id === id) {
-        a = airline;
-      }
-    });
-    return a;
   }
 
   getAdminsAirlineId(adminId: number) {
@@ -69,16 +233,6 @@ export class AirlineService {
     return f;
   }
 
-  getDestinations(airlineId: number) {
-    let d;
-    this.airlines.forEach(airline => {
-      if (airline.id === airlineId) {
-        d = airline.flightDestionations;
-      }
-    });
-    return d;
-  }
-
   getFlights(airlineId: number) {
     let f;
     this.airlines.forEach(airline => {
@@ -100,98 +254,5 @@ export class AirlineService {
   }
 
   allMockedAirlines() {
-
-    const allFlights = this.flightService.getAllFlights();
-
-    const a1 = new Airline('TurkishAirlines', new Address('Istanbul', 'Turkey', 'IST', 32.974662768,  40.1077995688));
-    a1.id = 0;
-    a1.logoUrl = '../../../../assets/turkish_airlines_logo.png';
-    a1.adminid = 22;
-    a1.averageRating = 4.7;
-    a1.about = 'Turkish airlines’ history as pioneer of the sky began in the year 1933.\
-    We started out as a small team and with perseverance and growing passion we branched out and\
-    become one huge family.It is with great pride and joy that we were the first to fly the sky for our country.\
-    \n\nKeeping up to date with technology is an essential component of our innovation aims and in maintaining that\
-    we have the youngest and most modern fleet in Europe. Our fleet had flourished thanks to our high-tech,\
-    fuel-efficient and environmentally conscious aircraft purchases that provide a high level of comfort.';
-    a1.promoDescription.push('Turkish airlines’ history as pioneer of the sky began in the year 1933.\
-    We started out as a small team and with perseverance and growing passion we branched out and\
-    become one huge family.It is with great pride and joy that we were the first to fly the sky for our country.');
-    a1.promoDescription.push('Keeping up to date with technology is an essential component of our innovation aims and in maintaining that\
-    we have the youngest and most modern fleet in Europe. Our fleet had flourished thanks to our high-tech,\
-    fuel-efficient and environmentally conscious aircraft purchases that provide a high level of comfort. ');
-    // tslint:disable-next-line:max-line-length
-    a1.flightDestionations.push(new Destination('https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAANrZ0RokHLnFBCXpktNOn7tHV7DFJu8W71TSSmVxilyXczl4Q7lQeI8Ho_9h0kQQ3fkasuGLi9x6bUbbP59VkLR7qcxRuuETaRpAVZoctDTJJVRQk9-2HYoMslWeOPU0KEhBWObed7DCtHeoeMJ2bR8q3GhQKngWJ9c2k8kiKwp5ZN4pAWMbdDw&3u165&4u112&5m1&2e1&callback=none&key=AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE&token=42577',
-      new Address('Belgrade', 'Serbia', 'BG', 0, 0)));
-    // tslint:disable-next-line:max-line-length
-    a1.flightDestionations.push(new Destination('https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAA5lfOUh29fXPXOppkClh_zzT9DdVg3nobFIh6mPUYLAB1mpQNS1SdR4Mb8fG0fHuZfb9niTcMPeKQOLvgAyRWNkSvLGx3hR0po9NwG6s9YBi5UjCELIlfYrrN10YigzJVEhBWz-pc26INInazmrx4bUeqGhROU7BSle7lJDMT9wjjRBA2p-9ncA&3u165&4u112&5m1&2e1&callback=none&key=AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE&token=72629',
-    new Address('Instanbul', 'Turkey', 'IST', 0, 0)));
-    // tslint:disable-next-line:max-line-length
-    a1.flightDestionations.push(new Destination('https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAA2P3mLvl5uzffhueijdHj3omyLUfN-qf0YG-mO4WeDwrnX4QrkUIFvEQEPw7It8fAhSwpdxIQltnVpBeDbLahszSj6WwAKVoqHaWbVsb-LzYaWmZIt3ulCkgcyiuiBDQGEhBBhP_nH7ecCA-Nq6f0hgpsGhTR3VE2LWER4--5bCjMvwMLTjEmbw&3u165&4u112&5m1&2e1&callback=none&key=AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE&token=54919',
-    new Address('Berlin', 'Germany', 'BER', 0, 0)));
-    // tslint:disable-next-line:max-line-length
-    a1.flightDestionations.push(new Destination('https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAADRGe0kwEohIRG9H_k87IbRabfMZ1OIBDsXznqMcRKASkpoDrffk_296wya4YsOHZYDmQfCHM_sosAYrgVKA1oYXLlYMrjJSx7hMwguj2MCpk5HQXgllqZEqox1_oo4CAEhBideOSt0ST72C6_8MLSId3GhQxbjakpYbP-aEkGRme0sgkpzcgxA&3u165&4u112&5m1&2e1&callback=none&key=AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE&token=128963',
-    new Address('London', 'UK', 'LON', 0, 0)));
-    // tslint:disable-next-line:max-line-length
-    a1.flightDestionations.push(new Destination('https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAA5lfOUh29fXPXOppkClh_zzT9DdVg3nobFIh6mPUYLAB1mpQNS1SdR4Mb8fG0fHuZfb9niTcMPeKQOLvgAyRWNkSvLGx3hR0po9NwG6s9YBi5UjCELIlfYrrN10YigzJVEhBWz-pc26INInazmrx4bUeqGhROU7BSle7lJDMT9wjjRBA2p-9ncA&3u165&4u112&5m1&2e1&callback=none&key=AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE&token=72629',
-    new Address('Instanbul', 'Turkey', 'IST', 0, 0)));
-    // tslint:disable-next-line:max-line-length
-    a1.flightDestionations.push(new Destination('https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAA2P3mLvl5uzffhueijdHj3omyLUfN-qf0YG-mO4WeDwrnX4QrkUIFvEQEPw7It8fAhSwpdxIQltnVpBeDbLahszSj6WwAKVoqHaWbVsb-LzYaWmZIt3ulCkgcyiuiBDQGEhBBhP_nH7ecCA-Nq6f0hgpsGhTR3VE2LWER4--5bCjMvwMLTjEmbw&3u165&4u112&5m1&2e1&callback=none&key=AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE&token=54919',
-    new Address('Berlin', 'Germany', 'BER', 0, 0)));
-    // tslint:disable-next-line:max-line-length
-    a1.flightDestionations.push(new Destination('https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAADRGe0kwEohIRG9H_k87IbRabfMZ1OIBDsXznqMcRKASkpoDrffk_296wya4YsOHZYDmQfCHM_sosAYrgVKA1oYXLlYMrjJSx7hMwguj2MCpk5HQXgllqZEqox1_oo4CAEhBideOSt0ST72C6_8MLSId3GhQxbjakpYbP-aEkGRme0sgkpzcgxA&3u165&4u112&5m1&2e1&callback=none&key=AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE&token=128963',
-    new Address('London', 'UK', 'LON', 0, 0)));
-
-    const a2 = new Airline('QatarAirways', new Address('Doha', 'Qatar', 'DO', 51.52245, 25.27932 ));
-    a2.id = 1;
-    a2.adminid = -1;
-    // tslint:disable-next-line:max-line-length
-    a2.flightDestionations.push(new Destination('https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAANrZ0RokHLnFBCXpktNOn7tHV7DFJu8W71TSSmVxilyXczl4Q7lQeI8Ho_9h0kQQ3fkasuGLi9x6bUbbP59VkLR7qcxRuuETaRpAVZoctDTJJVRQk9-2HYoMslWeOPU0KEhBWObed7DCtHeoeMJ2bR8q3GhQKngWJ9c2k8kiKwp5ZN4pAWMbdDw&3u165&4u112&5m1&2e1&callback=none&key=AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE&token=42577',
-      new Address('Belgrade', 'Serbia', 'BG', 0, 0)));
-    // tslint:disable-next-line:max-line-length
-    a2.flightDestionations.push(new Destination('https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAA5lfOUh29fXPXOppkClh_zzT9DdVg3nobFIh6mPUYLAB1mpQNS1SdR4Mb8fG0fHuZfb9niTcMPeKQOLvgAyRWNkSvLGx3hR0po9NwG6s9YBi5UjCELIlfYrrN10YigzJVEhBWz-pc26INInazmrx4bUeqGhROU7BSle7lJDMT9wjjRBA2p-9ncA&3u165&4u112&5m1&2e1&callback=none&key=AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE&token=72629',
-    new Address('Instanbul', 'Turkey', 'IST', 0, 0)));
-    // tslint:disable-next-line:max-line-length
-    a2.flightDestionations.push(new Destination('https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAA2P3mLvl5uzffhueijdHj3omyLUfN-qf0YG-mO4WeDwrnX4QrkUIFvEQEPw7It8fAhSwpdxIQltnVpBeDbLahszSj6WwAKVoqHaWbVsb-LzYaWmZIt3ulCkgcyiuiBDQGEhBBhP_nH7ecCA-Nq6f0hgpsGhTR3VE2LWER4--5bCjMvwMLTjEmbw&3u165&4u112&5m1&2e1&callback=none&key=AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE&token=54919',
-    new Address('Berlin', 'Germany', 'BER', 0, 0)));
-    // tslint:disable-next-line:max-line-length
-    a2.flightDestionations.push(new Destination('https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAADRGe0kwEohIRG9H_k87IbRabfMZ1OIBDsXznqMcRKASkpoDrffk_296wya4YsOHZYDmQfCHM_sosAYrgVKA1oYXLlYMrjJSx7hMwguj2MCpk5HQXgllqZEqox1_oo4CAEhBideOSt0ST72C6_8MLSId3GhQxbjakpYbP-aEkGRme0sgkpzcgxA&3u165&4u112&5m1&2e1&callback=none&key=AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE&token=128963',
-    new Address('London', 'UK', 'LON', 0, 0)));
-    a2.averageRating = 5.0;
-
-    const a3 = new Airline('AirSerbia', new Address('Beograd', 'Srbija', 'BG', 20.30416545, 44.81833006));
-    a3.id = 2;
-    a3.adminid = 0;
-    a3.averageRating = 4.3;
-    // tslint:disable-next-line:max-line-length
-    a3.flightDestionations.push(new Destination('https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAANrZ0RokHLnFBCXpktNOn7tHV7DFJu8W71TSSmVxilyXczl4Q7lQeI8Ho_9h0kQQ3fkasuGLi9x6bUbbP59VkLR7qcxRuuETaRpAVZoctDTJJVRQk9-2HYoMslWeOPU0KEhBWObed7DCtHeoeMJ2bR8q3GhQKngWJ9c2k8kiKwp5ZN4pAWMbdDw&3u165&4u112&5m1&2e1&callback=none&key=AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE&token=42577',
-      new Address('Belgrade', 'Serbia', 'BG', 0, 0)));
-    // tslint:disable-next-line:max-line-length
-    a3.flightDestionations.push(new Destination('https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAA5lfOUh29fXPXOppkClh_zzT9DdVg3nobFIh6mPUYLAB1mpQNS1SdR4Mb8fG0fHuZfb9niTcMPeKQOLvgAyRWNkSvLGx3hR0po9NwG6s9YBi5UjCELIlfYrrN10YigzJVEhBWz-pc26INInazmrx4bUeqGhROU7BSle7lJDMT9wjjRBA2p-9ncA&3u165&4u112&5m1&2e1&callback=none&key=AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE&token=72629',
-    new Address('Instanbul', 'Turkey', 'IST', 0, 0)));
-    // tslint:disable-next-line:max-line-length
-    a3.flightDestionations.push(new Destination('https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAA2P3mLvl5uzffhueijdHj3omyLUfN-qf0YG-mO4WeDwrnX4QrkUIFvEQEPw7It8fAhSwpdxIQltnVpBeDbLahszSj6WwAKVoqHaWbVsb-LzYaWmZIt3ulCkgcyiuiBDQGEhBBhP_nH7ecCA-Nq6f0hgpsGhTR3VE2LWER4--5bCjMvwMLTjEmbw&3u165&4u112&5m1&2e1&callback=none&key=AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE&token=54919',
-    new Address('Berlin', 'Germany', 'BER', 0, 0)));
-    // tslint:disable-next-line:max-line-length
-    a3.flightDestionations.push(new Destination('https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAADRGe0kwEohIRG9H_k87IbRabfMZ1OIBDsXznqMcRKASkpoDrffk_296wya4YsOHZYDmQfCHM_sosAYrgVKA1oYXLlYMrjJSx7hMwguj2MCpk5HQXgllqZEqox1_oo4CAEhBideOSt0ST72C6_8MLSId3GhQxbjakpYbP-aEkGRme0sgkpzcgxA&3u165&4u112&5m1&2e1&callback=none&key=AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE&token=128963',
-    new Address('London', 'UK', 'LON', 0, 0)));
-    // tslint:disable-next-line: max-line-length
-    a3.promoDescription.push('Founded in 1927. We offer a new concept of in-flight comfort across our growing network of lines.Maximum comfort while traveling, regardless of the class.');
-
-    allFlights.forEach(flight => {
-      if (flight.airlineId === 0) {
-        a1.flights.push(flight);
-      }
-      if (flight.airlineId === 1) {
-        a2.flights.push(flight);
-      }
-      if (flight.airlineId === 2) {
-        a3.flights.push(flight);
-      }
-    });
-
-    this.airlines.push(a1);
-    this.airlines.push(a2);
-    this.airlines.push(a3);
   }
 }

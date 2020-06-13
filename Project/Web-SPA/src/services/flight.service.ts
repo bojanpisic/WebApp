@@ -52,54 +52,54 @@ export class FlightService {
 
   mockedFlights() {
 
-    const seats1 = this.makeSeats();
-    const seats2 = this.makeSeats();
-    const seats3 = this.makeSeats();
-    const seats4 = this.makeSeats();
-    const seats5 = this.makeSeats();
-    const seats6 = this.makeSeats();
+    // const seats1 = this.makeSeats();
+    // const seats2 = this.makeSeats();
+    // const seats3 = this.makeSeats();
+    // const seats4 = this.makeSeats();
+    // const seats5 = this.makeSeats();
+    // const seats6 = this.makeSeats();
 
-    const f1 = new Flight(0, new Date(2020, 4, 28), new Date(Date.now()), '03h 40min', 12,
-    [new ChangeOver('08:40', '08:10', new Address('Paris', 'France', 'PAR', 0, 0))], 300.00, '234A',
-    new Address('Madrid', 'Spain', 'MAD', 0, 0), new Address('Belgrade', 'Serbia', 'BEG', 0, 0), '06:20', '10:00',
-    seats1, [new Address('Paris', 'France', 'PAR', 0, 0)], new Airline('Turkish Airlines', new Address('Istanbul', 'Turkey', 'IST', 0, 0))
-    , 0);
+    // const f1 = new Flight(0, new Date(2020, 4, 28), new Date(Date.now()), '03h 40min', 12,
+    // [new ChangeOver('08:40', '08:10', new Address('Paris', 'France', 'PAR', 0, 0))], 300.00, '234A',
+    // new Address('Madrid', 'Spain', 0, 0), new Address('Belgrade', 'Serbia', 'BEG', 0, 0), '06:20', '10:00',
+    // seats1, [new Address('Paris', 'France', 'PAR', 0, 0)], new Airline('Turkish Airlines', new Address('Istanbul', 'Turkey', 'IST', 0, 0))
+    // , 0);
 
-    const f2 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '03h 10min', 12,
-    [], 200.00, '234B',
-    new Address('Belgrade', 'Serbia', 'BEG', 0, 0), new Address( 'Barcelona', 'Spain', 'BAR', 0, 0), '04:00', '07:10',
-    seats2, [], new Airline('Turkish Airlines', new Address('Istanbul', 'Turkey', 'IST', 0, 0)), 1);
+    // const f2 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '03h 10min', 12,
+    // [], 200.00, '234B',
+    // new Address('Belgrade', 'Serbia', 'BEG', 0, 0), new Address( 'Barcelona', 'Spain', 'BAR', 0, 0), '04:00', '07:10',
+    // seats2, [], new Airline('Turkish Airlines', new Address('Istanbul', 'Turkey', 'IST', 0, 0)), 1);
 
-    const f3 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '10h 0min', 12,
-    [new ChangeOver('10:00', '09:00', new Address('Paris', 'France', 'PAR', 0, 0)),
-    new ChangeOver('12:10', '11:20', new Address('London', 'England', 'LON', 0, 0))], 700.00, '234C',
-    new Address('Novi Sad', 'Serbia', 'NS', 0, 0), new Address('New York', 'USA', 'NY', 0, 0), '06:00', '16:00',
-    seats3, [new Address('Paris', 'France', 'PAR', 0, 0), new Address('London', 'England', 'LON', 0, 0)],
-    new Airline('Turkish Airlines', new Address('Istanbul', 'Turkey', 'IST', 0, 0)), 2);
+    // const f3 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '10h 0min', 12,
+    // [new ChangeOver('10:00', '09:00', new Address('Paris', 'France', 'PAR', 0, 0)),
+    // new ChangeOver('12:10', '11:20', new Address('London', 'England', 'LON', 0, 0))], 700.00, '234C',
+    // new Address('Novi Sad', 'Serbia', 'NS', 0, 0), new Address('New York', 'USA', 'NY', 0, 0), '06:00', '16:00',
+    // seats3, [new Address('Paris', 'France', 'PAR', 0, 0), new Address('London', 'England', 'LON', 0, 0)],
+    // new Airline('Turkish Airlines', new Address('Istanbul', 'Turkey', 'IST', 0, 0)), 2);
 
-    const f4 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '8h 10min', 12,
-    [], 700.00, '234D',
-    new Address('New York', 'USA', 'NY', 0, 0), new Address('Novi Sad', 'Serbia', 'NS', 0, 0), '08:00', '16:10',
-    seats4, [], new Airline('Turkish Airlines', new Address('Istanbul', 'Turkey', 'IST', 0, 0)), 3);
+    // const f4 = new Flight( 0, new Date(Date.now()), new Date(Date.now()), '8h 10min', 12,
+    // [], 700.00, '234D',
+    // new Address('New York', 'USA', 'NY', 0, 0), new Address('Novi Sad', 'Serbia', 'NS', 0, 0), '08:00', '16:10',
+    // seats4, [], new Airline('Turkish Airlines', new Address('Istanbul', 'Turkey', 'IST', 0, 0)), 3);
 
-    const f5 = new Flight( 1, new Date(Date.now()), new Date(Date.now()), '1h 10min', 12,
-    [], 220.00, 'V11T',
-    new Address('Vienna', 'Austria', 'VIE', 0, 0), new Address('Belgrade', 'Serbia', 'BG', 0, 0), '14:10', '15:20',
-    seats5, [], new Airline('Qatar Airlines', new Address('Doha', 'Qatar', 'IST', 0, 0)), 4);
+    // const f5 = new Flight( 1, new Date(Date.now()), new Date(Date.now()), '1h 10min', 12,
+    // [], 220.00, 'V11T',
+    // new Address('Vienna', 'Austria', 'VIE', 0, 0), new Address('Belgrade', 'Serbia', 'BG', 0, 0), '14:10', '15:20',
+    // seats5, [], new Airline('Qatar Airlines', new Address('Doha', 'Qatar', 'IST', 0, 0)), 4);
 
-    const f6 = new Flight( 1, new Date(Date.now()), new Date(Date.now()), '0h 50min', 12,
-    [], 200.00, 'V11R',
-    new Address('Sofia', 'Bulgaria', 'BUG', 0, 0), new Address('Belgrade', 'Serbia', 'BG', 0, 0), '12:15', '13:05',
-    seats6, [], new Airline('Qatar Airlines', new Address('Doha', 'Qatar', 'IST', 0, 0)), 5);
+    // const f6 = new Flight( 1, new Date(Date.now()), new Date(Date.now()), '0h 50min', 12,
+    // [], 200.00, 'V11R',
+    // new Address('Sofia', 'Bulgaria', 'BUG', 0, 0), new Address('Belgrade', 'Serbia', 'BG', 0, 0), '12:15', '13:05',
+    // seats6, [], new Airline('Qatar Airlines', new Address('Doha', 'Qatar', 'IST', 0, 0)), 5);
 
-    this.flights.push(f1);
-    this.flights.push(f2);
-    this.flights.push(f3);
-    this.flights.push(f4);
-    this.flights.push(f5);
-    this.flights.push(f6);
+    // this.flights.push(f1);
+    // this.flights.push(f2);
+    // this.flights.push(f3);
+    // this.flights.push(f4);
+    // this.flights.push(f5);
+    // this.flights.push(f6);
 
-    console.log(this.flights);
+    // console.log(this.flights);
   }
 
   makeSeats() {

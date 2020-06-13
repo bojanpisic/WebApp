@@ -31,7 +31,14 @@ export class FriendsComponent implements OnInit {
    }
 
   ngOnInit(): void {
-    this.user = this.userService.getUser(this.userId);
+    const air1 = this.userService.getUser(this.userId);
+    // const airline = this.airlineService.getAdminsAirline(this.adminId);
+    // this.companyFields = {
+    //   name: airline.name,
+    //   location: airline.address,
+    //   about: airline.about
+    // };
+    console.log(air1);
     this.friends = this.user.friends;
     this.nonFriends = this.userService.getNonFriends(this.userId, this.user.friends);
   }
@@ -46,7 +53,14 @@ export class FriendsComponent implements OnInit {
 
   addFriend(id: number) {
     this.userService.addFriend(this.userId, id);
-    this.user = this.userService.getUser(this.userId);
+    const air1 = this.userService.getUser(this.userId);
+    // const airline = this.airlineService.getAdminsAirline(this.adminId);
+    // this.companyFields = {
+    //   name: airline.name,
+    //   location: airline.address,
+    //   about: airline.about
+    // };
+    console.log(air1);
     this.nonFriends = this.userService.getNonFriends(this.userId, this.user.friends);
     this.friends = this.user.friends;
   }
@@ -55,7 +69,14 @@ export class FriendsComponent implements OnInit {
     this.myProps.show = !this.myProps.show;
     if (remove) {
       this.userService.removeFriend(this.userId, this.myProps.friend.id);
-      this.user = this.userService.getUser(this.userId);
+      const air1 = this.userService.getUser(this.userId);
+      // const airline = this.airlineService.getAdminsAirline(this.adminId);
+      // this.companyFields = {
+      //   name: airline.name,
+      //   location: airline.address,
+      //   about: airline.about
+      // };
+      console.log(air1);
       this.nonFriends = this.userService.getNonFriends(this.userId, this.user.friends);
       this.friends = this.user.friends;
     }

@@ -4,6 +4,7 @@ import { Flight } from 'src/app/entities/flight';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Seat } from 'src/app/entities/seat';
+import { AirlineService } from 'src/services/airline.service';
 
 @Component({
   selector: 'app-configure-seats',
@@ -12,10 +13,16 @@ import { Seat } from 'src/app/entities/seat';
 })
 export class ConfigureSeatsComponent implements OnInit {
 
-  flight: Flight;
+  seats: Array<{column: string, row: string, class: string, price: number, seatId: number}>;
   flightId: number;
 
-  pickedSeat: Seat;
+  pickedSeat: {
+    column: string,
+    row: string,
+    class: string,
+    price: number,
+    seatId: number
+  };
   showModify = false;
   blur = false;
 
@@ -29,10 +36,15 @@ export class ConfigureSeatsComponent implements OnInit {
   economyPriceRange: {minPrice: number, maxPrice: number};
   basicEconomyPriceRange: {minPrice: number, maxPrice: number};
 
-  constructor(private flightService: FlightService, private route: ActivatedRoute, private location: Location) {
+  start = false;
+  itsOk = false;
+
+  constructor(private airlineService: AirlineService, private route: ActivatedRoute, private location: Location) {
     route.params.subscribe(param => {
       this.flightId = param.flight;
     });
+
+    this.seats = [];
 
     this.firstClassSeats = new Array<any>();
     this.businessSeats = new Array<any>();
@@ -42,16 +54,42 @@ export class ConfigureSeatsComponent implements OnInit {
 
   ngOnInit(): void {
     window.scroll(0, 0);
-    this.flight = this.flightService.getFlight(this.flightId);
-
-    this.setPriceRange();
-
-    this.setFirstClassSeats();
-    this.setBusinessSeats();
-    this.setEconomySeats();
-    this.setBasicEconomySeats();
-
-    console.log(this.businessSeats);
+    console.log(this.flightId);
+    const air1 = this.airlineService.getFlightsSeats(this.flightId).subscribe(
+      (res: any[]) => {
+        console.log(res);
+        if (res.length) {
+          console.log('alo1111');
+          res.forEach(element => {
+            const new1 = {
+              column: element.column,
+              row: element.row,
+              class: element.class,
+              price: element.price,
+              seatId: element.seatId
+            };
+            this.seats.push(new1);
+          });
+          this.setEconomySeats();
+          this.setFirstClassSeats();
+          this.setBusinessSeats();
+          this.setBasicEconomySeats();
+          this.itsOk = true;
+        }
+      },
+      err => {
+        console.log('dada' + err.status);
+        // tslint:disable-next-line: triple-equals
+        if (err.status == 400) {
+          console.log(err);
+        // tslint:disable-next-line: triple-equals
+        } else if (err.status == 401) {
+          console.log(err);
+        } else {
+          console.log(err);
+        }
+      }
+    );
   }
 
   addSeat(index?: number, side?: string, classParam?: string) {
@@ -64,27 +102,73 @@ export class ConfigureSeatsComponent implements OnInit {
       // this.seats.push(new Seat('F', column, row, 400));
     }
     const previousSeat = this.findPreviosSeat(row, column, classParam);
-    const insertIndex = this.flight.seats.indexOf(previousSeat);
-    console.log(index, side, classParam);
-    console.log(previousSeat);
-    if (previousSeat !== null) {
-      this.flight.seats.splice(insertIndex + 1, 0, new Seat(classParam, column, row, this.setPrice(classParam)));
-    } else {
-      this.flight.seats.splice(insertIndex + 1, 0, new Seat(classParam, column, row, this.setPrice(classParam)));
-    }
-    if (classParam === 'F') {
-      this.firstClassSeats = [];
-      this.setFirstClassSeats();
-    } else if (classParam === 'B') {
-      this.businessSeats = [];
-      this.setBusinessSeats();
-    } else if (classParam === 'E') {
-      this.economySeats = [];
-      this.setEconomySeats();
-    } else {
-      this.basicEconomySeats = [];
-      this.setBasicEconomySeats();
-    }
+    // const insertIndex = this.seats.indexOf(previousSeat);
+    // console.log(index, side, classParam);
+    // console.log(previousSeat);
+    // if (previousSeat !== null) {
+    //   this.seats.splice(insertIndex + 1, 0, new Seat(classParam, column, row, this.setPrice(classParam)));
+    // } else {
+    //   this.seats.splice(insertIndex + 1, 0, new Seat(classParam, column, row, this.setPrice(classParam)));
+    // }
+    const data = {
+      // tslint:disable-next-line:object-literal-shorthand
+      column: column,
+      // tslint:disable-next-line:object-literal-shorthand
+      row: row,
+      class: classParam,
+      price: previousSeat.price,
+      flightId: this.flightId
+    };
+    this.airlineService.addSeat(data).subscribe(
+      (res: any) => {
+        if (res.length) {
+          res.forEach(element => {
+            const new1 = {
+              column: element.column,
+              row: element.row,
+              class: element.class,
+              price: element.price,
+              seatId: element.seatId
+            };
+            this.seats.push(new1);
+          });
+          this.firstClassSeats = [];
+          this.businessSeats = [];
+          this.economySeats = [];
+          this.basicEconomySeats = [];
+          this.setEconomySeats();
+          this.setFirstClassSeats();
+          this.setBusinessSeats();
+          this.setBasicEconomySeats();
+          this.itsOk = true;
+        }
+      },
+      err => {
+        console.log('dada' + err.status);
+        // tslint:disable-next-line: triple-equals
+        if (err.status == 400) {
+          console.log(err);
+        // tslint:disable-next-line: triple-equals
+        } else if (err.status == 401) {
+          console.log(err);
+        } else {
+          console.log(err);
+        }
+      }
+    );
+    // if (classParam === 'F') {
+    //   this.firstClassSeats = [];
+    //   this.setFirstClassSeats();
+    // } else if (classParam === 'B') {
+    //   this.businessSeats = [];
+    //   this.setBusinessSeats();
+    // } else if (classParam === 'E') {
+    //   this.economySeats = [];
+    //   this.setEconomySeats();
+    // } else {
+    //   this.basicEconomySeats = [];
+    //   this.setBasicEconomySeats();
+    // }
   }
 
   findPreviosSeat(row: number, column: string, classParam: string) {
@@ -102,8 +186,14 @@ export class ConfigureSeatsComponent implements OnInit {
     return null;
   }
 
-  configure(seat: Seat) {
-    this.pickedSeat = seat;
+  configure(seat: any) {
+    this.pickedSeat = {
+      column: seat.column,
+      row: seat.row,
+      class: seat.class,
+      price: seat.price,
+      seatId: seat.seatId
+    };
     this.blur = true;
     this.showModify = true;
   }
@@ -112,38 +202,123 @@ export class ConfigureSeatsComponent implements OnInit {
     this.blur = false;
     this.showModify = false;
     if (value) {
-      const indexOfSeat = this.flight.seats.indexOf(this.pickedSeat);
-      this.flight.seats.splice(indexOfSeat, 1);
-      if (this.pickedSeat.class === 'F') {
-        this.firstClassSeats = [];
-        this.setFirstClassSeats();
-      } else if (this.pickedSeat.class === 'B') {
-        this.businessSeats = [];
-        this.setBusinessSeats();
-      } else if (this.pickedSeat.class === 'E') {
-        this.economySeats = [];
-        this.setEconomySeats();
-      } else {
-        this.basicEconomySeats = [];
-        this.setBasicEconomySeats();
-      }
+      this.airlineService.deleteSeat(this.pickedSeat.seatId).subscribe(
+        (res: any) => {
+          console.log('obrisao1');
+          if (res.length) {
+            console.log('obrisao2');
+            this.seats = [];
+            res.forEach(element => {
+              const new1 = {
+                column: element.column,
+                row: element.row,
+                class: element.class,
+                price: element.price,
+                seatId: element.seatId
+              };
+              this.seats.push(new1);
+              console.log('obrisao3');
+            });
+            this.firstClassSeats = [];
+            this.businessSeats = [];
+            this.economySeats = [];
+            this.basicEconomySeats = [];
+            this.setEconomySeats();
+            this.setFirstClassSeats();
+            this.setBusinessSeats();
+            this.setBasicEconomySeats();
+            this.itsOk = true;
+          }
+        },
+        err => {
+          console.log('dada' + err.status);
+          // tslint:disable-next-line: triple-equals
+          if (err.status == 400) {
+            console.log(err);
+          // tslint:disable-next-line: triple-equals
+          } else if (err.status == 401) {
+            console.log(err);
+          } else {
+            console.log(err);
+          }
+        }
+      );
+      // this.seats.splice(indexOfSeat, 1);
+      // if (this.pickedSeat.class === 'F') {
+      //   this.firstClassSeats = [];
+      //   this.setFirstClassSeats();
+      // } else if (this.pickedSeat.class === 'B') {
+      //   this.businessSeats = [];
+      //   this.setBusinessSeats();
+      // } else if (this.pickedSeat.class === 'E') {
+      //   this.economySeats = [];
+      //   this.setEconomySeats();
+      // } else {
+      //   this.basicEconomySeats = [];
+      //   this.setBasicEconomySeats();
+      // }
     }
   }
 
   onChangePrice(value: number) {
     this.blur = false;
     this.showModify = false;
-    const index = this.flight.seats.indexOf(this.pickedSeat);
-    this.flight.seats[index].price = value;
-    if (this.pickedSeat.class === 'F') {
-      this.updateFirstClassPriceRange(value);
-    } else if (this.pickedSeat.class === 'B') {
-      this.updateBusinessPriceRange(value);
-    } else if (this.pickedSeat.class === 'E') {
-      this.updateEconomyPriceRange(value);
-    } else {
-      this.updateBasicEconomyPriceRange(value);
-    }
+    // const index = this.seats.indexOf(this.pickedSeat);
+    // this.seats[index].price = value;
+    const data = {
+      id: this.pickedSeat.seatId,
+      price: value,
+    };
+    this.airlineService.changeSeat(data).subscribe(
+      (res: any) => {
+        console.log('obrisao1');
+        if (res.length) {
+          console.log('obrisao2');
+          this.seats = [];
+          res.forEach(element => {
+            const new1 = {
+              column: element.column,
+              row: element.row,
+              class: element.class,
+              price: element.price,
+              seatId: element.seatId
+            };
+            this.seats.push(new1);
+            console.log('obrisao');
+          });
+          this.firstClassSeats = [];
+          this.businessSeats = [];
+          this.economySeats = [];
+          this.basicEconomySeats = [];
+          this.setEconomySeats();
+          this.setFirstClassSeats();
+          this.setBusinessSeats();
+          this.setBasicEconomySeats();
+          this.itsOk = true;
+        }
+      },
+      err => {
+        console.log('dada' + err.status);
+        // tslint:disable-next-line: triple-equals
+        if (err.status == 400) {
+          console.log(err);
+        // tslint:disable-next-line: triple-equals
+        } else if (err.status == 401) {
+          console.log(err);
+        } else {
+          console.log(err);
+        }
+      }
+    );
+    // if (this.pickedSeat.class === 'F') {
+    //   this.updateFirstClassPriceRange(value);
+    // } else if (this.pickedSeat.class === 'B') {
+    //   this.updateBusinessPriceRange(value);
+    // } else if (this.pickedSeat.class === 'E') {
+    //   this.updateEconomyPriceRange(value);
+    // } else {
+    //   this.updateBasicEconomyPriceRange(value);
+    // }
   }
 
   exit() {
@@ -151,15 +326,23 @@ export class ConfigureSeatsComponent implements OnInit {
   }
 
   setFirstClassSeats() {
-    const numberOfSeats = this.flight.seats.length;
-    if (this.flight.seats.filter(x => x.class === 'F').length > 0) {
-      const rows = this.flight.seats.filter(x => x.class === 'F')[this.flight.seats.filter(x => x.class === 'F').length - 1].row;
+    console.log('usa');
+    const numberOfSeats = this.seats.length;
+    if (this.seats.filter(x => x.class === 'F').length > 0) {
+      let row1 = this.seats.find(x => x.class === 'F');
+      this.seats.filter(x => x.class === 'F').forEach(element => {
+        if (+element.row > +row1.row) {
+          row1 = element;
+        }
+      });
+      const rows = row1.row;
       let column;
-      for (let r = 1; r < rows + 1; r++) {
+      console.log(rows);
+      for (let r = 1; r < (+rows + 1); r++) {
         for (let c = 0; c < 6; c++) {
           column = (c === 0) ? 'A' : (c === 1) ? 'B' : (c === 2) ? 'C' : (c === 3) ? 'D' : (c === 4) ? 'E' : 'F';
-          if (this.flight.seats.some(seat => seat.row === r && seat.column === column && seat.class === 'F')) {
-            this.firstClassSeats.push(this.flight.seats.find(seat => seat.class === 'F' && seat.column === column && seat.row === r));
+          if (this.seats.some(seat => seat.row === r.toString() && seat.column === column && seat.class === 'F')) {
+            this.firstClassSeats.push(this.seats.find(seat => seat.class === 'F' && seat.column === column && seat.row === r.toString()));
           } else {
             this.firstClassSeats.push((column === 'A' || column === 'B' || column === 'C') ? 'left' : 'right');
           }
@@ -178,15 +361,21 @@ export class ConfigureSeatsComponent implements OnInit {
   }
 
   setBusinessSeats() {
-    const numberOfSeats = this.flight.seats.length;
-    if (this.flight.seats.filter(x => x.class === 'B').length > 0) {
-      const rows = this.flight.seats.filter(x => x.class === 'B')[this.flight.seats.filter(x => x.class === 'B').length - 1].row;
+    const numberOfSeats = this.seats.length;
+    if (this.seats.filter(x => x.class === 'B').length > 0) {
+      let row1 = this.seats.find(x => x.class === 'B');
+      this.seats.filter(x => x.class === 'B').forEach(element => {
+        if (+element.row > +row1.row) {
+          row1 = element;
+        }
+      });
+      const rows = row1.row;
       let column;
-      for (let r = 1; r < rows + 1; r++) {
+      for (let r = 1; r < (+rows + 1); r++) {
         for (let c = 0; c < 6; c++) {
           column = (c === 0) ? 'A' : (c === 1) ? 'B' : (c === 2) ? 'C' : (c === 3) ? 'D' : (c === 4) ? 'E' : 'F';
-          if (this.flight.seats.some(seat => seat.row === r && seat.column === column && seat.class === 'B')) {
-            this.businessSeats.push(this.flight.seats.find(seat => seat.class === 'B' && seat.column === column && seat.row === r));
+          if (this.seats.some(seat => seat.row === r.toString() && seat.column === column && seat.class === 'B')) {
+            this.businessSeats.push(this.seats.find(seat => seat.class === 'B' && seat.column === column && seat.row === r.toString()));
           } else {
             this.businessSeats.push((column === 'A' || column === 'B' || column === 'C') ? 'left' : 'right');
           }
@@ -205,15 +394,23 @@ export class ConfigureSeatsComponent implements OnInit {
   }
 
   setEconomySeats() {
-    const numberOfSeats = this.flight.seats.length;
-    if (this.flight.seats.filter(x => x.class === 'E').length > 0) {
-      const rows = this.flight.seats.filter(x => x.class === 'E')[this.flight.seats.filter(x => x.class === 'E').length - 1].row;
+    const numberOfSeats = this.seats.length;
+    console.log('BROJ + ' + this.seats.filter(x => x.class === 'E').length);
+    if (this.seats.filter(x => x.class === 'E').length > 0) {
+      let row1 = this.seats.find(x => x.class === 'E');
+      this.seats.filter(x => x.class === 'E').forEach(element => {
+        if (+element.row > +row1.row) {
+          row1 = element;
+        }
+      });
+      const rows = row1.row;
       let column;
-      for (let r = 1; r < rows + 1; r++) {
+      for (let r = 1; r < (+rows + 1); r++) {
         for (let c = 0; c < 6; c++) {
           column = (c === 0) ? 'A' : (c === 1) ? 'B' : (c === 2) ? 'C' : (c === 3) ? 'D' : (c === 4) ? 'E' : 'F';
-          if (this.flight.seats.some(seat => seat.row === r && seat.column === column && seat.class === 'E')) {
-            this.economySeats.push(this.flight.seats.find(seat => seat.class === 'E' && seat.column === column && seat.row === r));
+          if (this.seats.some(seat => seat.row === r.toString() && seat.column === column && seat.class === 'E')) {
+            console.log('ajmoppppp');
+            this.economySeats.push(this.seats.find(seat => seat.class === 'E' && seat.column === column && seat.row === r.toString()));
           } else {
             this.economySeats.push((column === 'A' || column === 'B' || column === 'C') ? 'left' : 'right');
           }
@@ -228,19 +425,27 @@ export class ConfigureSeatsComponent implements OnInit {
         value = this.economySeats[this.economySeats.length - 1];
       }
       this.economySeats.push(lastValue);
+      console.log('ECONOMY' + this.economySeats);
     }
   }
 
   setBasicEconomySeats() {
-    const numberOfSeats = this.flight.seats.length;
-    if (this.flight.seats.filter(x => x.class === 'BE').length > 0) {
-      const rows = this.flight.seats.filter(x => x.class === 'BE')[this.flight.seats.filter(x => x.class === 'BE').length - 1].row;
+    const numberOfSeats = this.seats.length;
+    if (this.seats.filter(x => x.class === 'BE').length > 0) {
+      let row1 = this.seats.find(x => x.class === 'BE');
+      this.seats.filter(x => x.class === 'BE').forEach(element => {
+        if (+element.row > +row1.row) {
+          row1 = element;
+        }
+      });
+      const rows = row1.row;
       let column;
-      for (let r = 1; r < rows + 1; r++) {
+      for (let r = 1; r < (+rows + 1); r++) {
         for (let c = 0; c < 6; c++) {
           column = (c === 0) ? 'A' : (c === 1) ? 'B' : (c === 2) ? 'C' : (c === 3) ? 'D' : (c === 4) ? 'E' : 'F';
-          if (this.flight.seats.some(seat => seat.row === r && seat.column === column && seat.class === 'BE')) {
-            this.basicEconomySeats.push(this.flight.seats.find(seat => seat.class === 'BE' && seat.column === column && seat.row === r));
+          if (this.seats.some(seat => seat.row === r.toString() && seat.column === column && seat.class === 'BE')) {
+            // tslint:disable-next-line:max-line-length
+            this.basicEconomySeats.push(this.seats.find(seat => seat.class === 'BE' && seat.column === column && seat.row === r.toString()));
           } else {
             this.basicEconomySeats.push((column === 'A' || column === 'B' || column === 'C') ? 'left' : 'right');
           }
@@ -255,118 +460,6 @@ export class ConfigureSeatsComponent implements OnInit {
         value = this.basicEconomySeats[this.basicEconomySeats.length - 1];
       }
       this.basicEconomySeats.push(lastValue);
-    }
-  }
-
-  setPrice(classParam) {
-    let retVal;
-    if (classParam === 'F') {
-      retVal = this.firstClassPriceRange.minPrice;
-    } else if (classParam === 'B') {
-      retVal = this.businessPriceRange.minPrice;
-    } else if (classParam === 'E') {
-      retVal = this.economyPriceRange.minPrice;
-    } else {
-      retVal = this.basicEconomyPriceRange.minPrice;
-    }
-    return retVal;
-  }
-
-  setPriceRange() {
-    this.firstClassPriceRange = {
-      minPrice: this.flight.seats.find(x => x.class === 'F').price,
-      maxPrice: this.flight.seats.find(x => x.class === 'F').price
-    };
-    this.flight.seats.forEach(seat => {
-      if (seat.class === 'F') {
-        if (seat.price < this.firstClassPriceRange.minPrice) {
-          this.firstClassPriceRange.minPrice = seat.price;
-        }
-        if (seat.price > this.firstClassPriceRange.maxPrice) {
-          this.firstClassPriceRange.maxPrice = seat.price;
-        }
-      }
-    });
-
-    this.businessPriceRange = {
-      minPrice: this.flight.seats.find(x => x.class === 'B').price,
-      maxPrice: this.flight.seats.find(x => x.class === 'B').price
-    };
-    this.flight.seats.forEach(seat => {
-      if (seat.class === 'B') {
-        if (seat.price < this.businessPriceRange.minPrice) {
-          this.businessPriceRange.minPrice = seat.price;
-        }
-        if (seat.price > this.businessPriceRange.maxPrice) {
-          this.businessPriceRange.maxPrice = seat.price;
-        }
-      }
-    });
-
-    this.economyPriceRange = {
-      minPrice: this.flight.seats.find(x => x.class === 'E').price,
-      maxPrice: this.flight.seats.find(x => x.class === 'E').price
-    };
-    this.flight.seats.forEach(seat => {
-      if (seat.class === 'E') {
-        if (seat.price < this.economyPriceRange.minPrice) {
-          this.economyPriceRange.minPrice = seat.price;
-        }
-        if (seat.price > this.economyPriceRange.maxPrice) {
-          this.economyPriceRange.maxPrice = seat.price;
-        }
-      }
-    });
-
-    this.basicEconomyPriceRange = {
-      minPrice: this.flight.seats.find(x => x.class === 'BE').price,
-      maxPrice: this.flight.seats.find(x => x.class === 'BE').price
-    };
-    this.flight.seats.forEach(seat => {
-      if (seat.class === 'BE') {
-        if (seat.price < this.basicEconomyPriceRange.minPrice) {
-          this.basicEconomyPriceRange.minPrice = seat.price;
-        }
-        if (seat.price > this.basicEconomyPriceRange.maxPrice) {
-          this.basicEconomyPriceRange.maxPrice = seat.price;
-        }
-      }
-    });
-  }
-
-  updateFirstClassPriceRange(value: number) {
-    if (this.firstClassPriceRange.minPrice > value) {
-      this.firstClassPriceRange.minPrice = value;
-    }
-    if (this.firstClassPriceRange.maxPrice < value) {
-      this.firstClassPriceRange.maxPrice = value;
-    }
-  }
-
-  updateBusinessPriceRange(value: number) {
-    if (this.businessPriceRange.minPrice > value) {
-      this.businessPriceRange.minPrice = value;
-    }
-    if (this.businessPriceRange.maxPrice < value) {
-      this.businessPriceRange.maxPrice = value;
-    }
-  }
-
-  updateEconomyPriceRange(value: number) {
-    if (this.economyPriceRange.minPrice > value) {
-      this.economyPriceRange.minPrice = value;
-    }
-    if (this.economyPriceRange.maxPrice < value) {
-      this.economyPriceRange.maxPrice = value;
-    }
-  }
-
-  updateBasicEconomyPriceRange(value: number) {
-    if (this.basicEconomyPriceRange.minPrice > value) {
-      this.basicEconomyPriceRange.minPrice = value;
-    }
-    if (this.basicEconomyPriceRange.maxPrice < value) {
-      this.basicEconomyPriceRange.maxPrice = value;
     }
   }
 

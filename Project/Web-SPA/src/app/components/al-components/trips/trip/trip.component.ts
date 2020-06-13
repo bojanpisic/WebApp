@@ -35,8 +35,8 @@ export class TripComponent implements OnInit {
     });
   }
   getAirlineName(airlineId: number) {
-    const airline = this.airlineService.getAirline(airlineId);
-    return airline.name;
+    // const airline = this.airlineService.getAirline(airlineId);
+    // return airline.name;
   }
 
 

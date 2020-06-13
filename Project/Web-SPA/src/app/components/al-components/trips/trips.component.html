@@ -1,10 +1,11 @@
-<nav>
+<nav *ngIf="!filter">
     <img (click)='goBack()' src="../../../../assets/back.png">
-    <a href="#" routerLink='/trips/filter' id="filter"><img src="../../../../assets/icons8-slider-100.png">Filters</a>
+    <a (click)="toggleFilter()" id="filter"><img src="../../../../assets/icons8-slider-100.png">Filters</a>
 </nav>
-<ul>
+<ul *ngIf="!filter">
     <!--ovde izlistavamo sve nase specijalne karte, svaka od njih moze biti oneway, roundtrip ili multicity-->
     <li *ngFor="let trip of trips; let i = index">
         <app-trip [trip]="trip" [userId]="userId" [indexOfTrip]="i"></app-trip>
     </li>
 </ul>
+<app-filter *ngIf="filter" (appliedFilters)="onApplyFilter()" (closeFilter)="toggleFilter()"></app-filter>

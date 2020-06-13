@@ -1,128 +1,193 @@
 import { Injectable } from '@angular/core';
 import { RentACarService } from 'src/app/entities/rent-a-car-service';
 import { Address } from 'src/app/entities/address';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CarRentService {
+  readonly BaseURI = 'http://192.168.0.13:5001/api';
 
-  rentACarServices: Array<RentACarService>;
+  constructor(private http: HttpClient) {}
 
-  constructor() { 
-    this.rentACarServices = new Array<RentACarService>();
-    this.allMockedRentServices();
+  editRAC(data: any) {
+    const body = {
+      Name: data.name,
+      Address: data.address,
+      PromoDescription: data.promoDescription,
+    };
+    const url = this.BaseURI + '/rentcarservice/change-racs-info';
+    return this.http.put(url, body);
   }
 
-  loadAllRentServices() {
-    return this.allMockedRentServices();
+  changeLogo(data: any) {
+    const formData = new FormData();
+    formData.append('img', data.image);
+
+    const url = this.BaseURI + '/rentcarservice/change-racs-logo';
+    return this.http.put(url, formData);
   }
 
-  getAdminsRac(adminId: number) {
-    console.log(this.rentACarServices);
-    return this.rentACarServices[0];
+  getRAC(): Observable<any> {
+    const url = this.BaseURI + '/rentcarservice/get-racs';
+    console.log(url);
+    return this.http.get<any>(url);
   }
 
-  getAdminsRACId(adminId: number) {
-    let retVal;
-    this.rentACarServices.forEach(rac => {
-      if (rac.adminId == adminId) {
-        retVal = rac.id;
-      }
-    });
-    return retVal;
+  getRACCityState(): Observable<any> {
+    const url = this.BaseURI + '/rentcarservice/get-racs-address';
+    console.log(url);
+    return this.http.get<any>(url);
   }
 
-  allMockedRentServices() {
-
-    const branch1 = new RentACarService('RentACarService01', new Address('Beograd', 'Srbija', 'BG', 20.30416545, 44.81833006));
-    const branch2 = new RentACarService('RentACarService02', new Address('Beograd', 'Srbija', 'BG', 20.30416545, 44.81833006));
-    const branch3 = new RentACarService('RentACarService03', new Address('Beograd', 'Srbija', 'BG', 20.30416545, 44.81833006));
-    const branch4 = new RentACarService('RentACarService04', new Address('Beograd', 'Srbija', 'BG', 20.30416545, 44.81833006));
-    const branch5 = new RentACarService('RentACarService05', new Address('Beograd', 'Srbija', 'BG', 20.30416545, 44.81833006));
-    const branch6 = new RentACarService('RentACarService06', new Address('Beograd', 'Srbija', 'BG', 20.30416545, 44.81833006));
-
-
-    const a1 = new RentACarService('Instanbul Rent Service', new Address('Istanbul', 'Turkey', 'IST', 32.974662768,  40.1077995688));
-    a1.id = 0;
-    a1.adminId = 33;
-    a1.branches.push(branch1);
-    a1.branches.push(branch2);
-    a1.branches.push(branch3);
-    a1.branches.push(branch4);
-    a1.branches.push(branch5);
-
-    a1.averageRating = 4.7;
-    a1.about = 'Lorem ipsum dolor sit amet consectetur adipisicing elit. \
-    Quidem, praesentium? Sunt ipsum deserunt similique unde quo beatae. \
-    Expedita nemo veniam alias eum fuga ut quibusdam consequuntur labore, \
-    dolorum odit aut blanditiis saepe sequi impedit error beatae quos natus \
-    officia aliquam, aspernatur quod harum fugit molestias amet? Doloribus \
-    tempore temporibus earum?';
-    a1.promoDescription.push('Lorem ipsum, dolor sit amet consectetur adipisicing elit.\
-                              Voluptas omnis accusamus, odio in blanditiis animi accusantium velit tempore,\
-                              nam laborum quibusdam fugit aspernatur ullam nihil ipsam illo similique minima magni?');
-    a1.promoDescription.push('Nihil iste aliquid officiis excepturi! Molestiae id commodi vero accusantium reiciendis a,\
-                              magnam labore repellat impedit aliquid voluptatem molestias maxime quam autem, mollitia quas\
-                              repellendus excepturi aut eveniet eum perspiciatis nihil dicta officia illo. Ducimus aliquid\
-                              enim asperiores consequatur reprehenderit velit alias distinctio quia vitae, natus voluptatum\
-                              libero at doloremque possimus unde consectetur, corporis nostrum voluptate in tempore quod ullam\
-                              aliquam nulla? Nostrum impedit consequatur magni nulla quisquam temporibus laboriosam?');
-
-
-    const a2 = new RentACarService('Doha Car Service', new Address('Doha', 'Qatar', 'DO',51.52245,25.27932 ));
-    a2.id = 1;
-    a2.branches.push(branch1);
-    a2.branches.push(branch2);
-    a2.branches.push(branch3);
-    a2.branches.push(branch4);
-    a2.branches.push(branch5);
-
-    a2.averageRating = 4.7;
-    a2.about = 'Lorem ipsum dolor sit amet consectetur adipisicing elit. \
-    Quidem, praesentium? Sunt ipsum deserunt similique unde quo beatae. \
-    Expedita nemo veniam alias eum fuga ut quibusdam consequuntur labore, \
-    dolorum odit aut blanditiis saepe sequi impedit error beatae quos natus \
-    officia aliquam, aspernatur quod harum fugit molestias amet? Doloribus \
-    tempore temporibus earum?';
-    a2.promoDescription.push('Lorem ipsum, dolor sit amet consectetur adipisicing elit.\
-                              Voluptas omnis accusamus, odio in blanditiis animi accusantium velit tempore,\
-                              nam laborum quibusdam fugit aspernatur ullam nihil ipsam illo similique minima magni?');
-    a2.promoDescription.push('Nihil iste aliquid officiis excepturi! Molestiae id commodi vero accusantium reiciendis a,\
-                              magnam labore repellat impedit aliquid voluptatem molestias maxime quam autem, mollitia quas\
-                              repellendus excepturi aut eveniet eum perspiciatis nihil dicta officia illo. Ducimus aliquid\
-                              enim asperiores consequatur reprehenderit velit alias distinctio quia vitae, natus voluptatum\
-                              libero at doloremque possimus unde consectetur, corporis nostrum voluptate in tempore quod ullam\
-                              aliquam nulla? Nostrum impedit consequatur magni nulla quisquam temporibus laboriosam?');
-
-    const a3 = new RentACarService('Belgrade Rent Service', new Address('Beograd', 'Srbija', 'BG', 20.30416545, 44.81833006));
-    a3.id = 2;
-    a3.branches.push(branch1);
-    a3.branches.push(branch2);
-    a3.branches.push(branch3);
-    a3.branches.push(branch4);
-    a3.branches.push(branch5);
-
-    a3.averageRating = 4.7;
-    a3.about = 'Lorem ipsum dolor sit amet consectetur adipisicing elit. \
-    Quidem, praesentium? Sunt ipsum deserunt similique unde quo beatae. \
-    Expedita nemo veniam alias eum fuga ut quibusdam consequuntur labore, \
-    dolorum odit aut blanditiis saepe sequi impedit error beatae quos natus \
-    officia aliquam, aspernatur quod harum fugit molestias amet? Doloribus \
-    tempore temporibus earum?';
-    a3.promoDescription.push('Lorem ipsum, dolor sit amet consectetur adipisicing elit.\
-                              Voluptas omnis accusamus, odio in blanditiis animi accusantium velit tempore,\
-                              nam laborum quibusdam fugit aspernatur ullam nihil ipsam illo similique minima magni?');
-    a3.promoDescription.push('Nihil iste aliquid officiis excepturi! Molestiae id commodi vero accusantium reiciendis a,\
-                              magnam labore repellat impedit aliquid voluptatem molestias maxime quam autem, mollitia quas\
-                              repellendus excepturi aut eveniet eum perspiciatis nihil dicta officia illo. Ducimus aliquid\
-                              enim asperiores consequatur reprehenderit velit alias distinctio quia vitae, natus voluptatum\
-                              libero at doloremque possimus unde consectetur, corporis nostrum voluptate in tempore quod ullam\
-                              aliquam nulla? Nostrum impedit consequatur magni nulla quisquam temporibus laboriosam?');
-    this.rentACarServices.push(a1);
-    this.rentACarServices.push(a2);
-    this.rentACarServices.push(a3);
-
-    return this.rentACarServices;
+  getRACs(): Observable<any> {
+    const url = this.BaseURI + '/rentcarservice/rent-car-services';
+    return this.http.get<any>(url);
   }
+
+  getRACProfile(data: any) {
+    const url = `${this.BaseURI + '/rentcarservice/rent-car-service'}/${data}`;
+    return this.http.get(url);
+  }
+
+  // *************************************************************************************************************
+
+  addBranch(data: any) {
+    console.log(data);
+    const body = {
+      State: data.State,
+      City: data.City,
+    };
+    const url = this.BaseURI + '/rentcarservice/add-branch';
+    return this.http.post(url, body);
+  }
+
+  deleteBranch(data: any) {
+    const url = this.BaseURI + '/rentcarservice/delete-branch/' + data.id;
+    return this.http.delete(url);
+  }
+
+  getAdminsBranches(): Observable<any> {
+    const url = this.BaseURI + '/rentcarservice/get-racs-branches';
+    console.log(url);
+    return this.http.get<any>(url);
+  }
+
+  // addCarsPhoto(data: any) {
+  //   const formData = new FormData();
+  //   formData.append('img', data.image);
+
+  //   const url = this.BaseURI + '/rentcarservice/add-car-img';
+  //   return this.http.put(url, formData);
+
+  // }
+
+  // *************************************************************************************************************
+
+  addCar(data: any) {
+    const body = {
+      Brand: data.Brand,
+      Model: data.Model,
+      Year: data.Year,
+      Type: data.Type,
+      SeatsNumber: data.SeatsNumber,
+      PricePerDay: data.PricePerDay,
+    };
+    const url = this.BaseURI + '/rentcarservice/add-car';
+    return this.http.post(url, body);
+  }
+
+  editCar(data: any) {
+    const body = {
+      Brand: data.Brand,
+      Model: data.Model,
+      Year: data.Year,
+      Type: data.Type,
+      SeatsNumber: data.SeatsNumber,
+      PricePerDay: data.PricePerDay,
+    };
+    const url = `${this.BaseURI + '/rentcarservice/change-car-info'}/${data.id}`;
+    return this.http.put(url, body);
+  }
+
+  addCarToBranch(data: any) {
+    const body = {
+      BranchId: data.BranchId,
+      Brand: data.Brand,
+      Model: data.Model,
+      Year: data.Year,
+      Type: data.Type,
+      SeatsNumber: data.SeatsNumber,
+      PricePerDay: data.PricePerDay,
+    };
+    const url = this.BaseURI + '/rentcarservice/add-car-to-branch';
+    return this.http.post(url, body);
+  }
+
+  deleteCar(data: any) {
+    const url = this.BaseURI + '/rentcarservice/delete-car/' + data.id;
+    return this.http.delete(url);
+  }
+
+  getCar(data: any) {
+    const url = `${this.BaseURI + '/rentcarservice/get-car'}/${data}`;
+    return this.http.get(url);
+  }
+
+  getAdminsCars(): Observable<any> {
+    const url = this.BaseURI + '/rentcarservice/get-racs-cars';
+    return this.http.get<any>(url);
+  }
+
+  getBranchesCars(data: any): Observable<any> {
+    const url = `${this.BaseURI + '/rentcarservice/get-branch-cars'}/${data}`;
+    return this.http.get<any>(url);
+  }
+
+  // *************************************************************************************************************
+
+  addSpecialOffer(data: any) {
+    console.log(data);
+    const body = {
+      FromDate: data.FromDate,
+      ToDate: data.ToDate,
+      NewPrice: data.NewPrice,
+    };
+    const url = `${this.BaseURI + '/rentcarservice/add-car-specialoffer'}/${data.id}`;
+    return this.http.post(url, body);
+  }
+
+  getAdminsSpecialOffers(): Observable<any> {
+    const url = this.BaseURI + '/rentcarservice/get-cars-specialoffers';
+    return this.http.get<any>(url);
+  }
+
+  getRACSpecialOffers(data): Observable<any> {
+    const url = `${this.BaseURI + '/rentcarservice/racs-specialoffers'}/${data}`;
+    console.log(url);
+    return this.http.get<any>(url);
+  }
+
+  getAllSpecialOffers(): Observable<any> {
+    // let params = {
+    //   param1: param1Value,
+    //   param2: param2Value
+    // };
+    // this.router.navigate('/segment1/segment2', { queryParams: params });
+    const url = this.BaseURI + '/airlineadmin/racs-specialoffers';
+    console.log(url);
+    return this.http.get<any>(url);
+  }
+
+  test(data: any): Observable<any> {
+    const params1 = {
+      param: data,
+    };
+    const url = this.BaseURI + '/airlineadmin/flights';
+    return this.http.get<any>(url, {params: params1});
+  }
+
+  allMockedRentServices() {}
 }

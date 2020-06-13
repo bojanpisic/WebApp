@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RentACarService } from 'src/app/entities/rent-a-car-service';
 import { CarRentService } from 'src/services/car-rent.service';
 import { Location } from '@angular/common';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-rent-a-car-services',
@@ -10,7 +11,18 @@ import { Location } from '@angular/common';
 })
 export class RentACarServicesComponent implements OnInit {
 
-  allRentServices: Array<RentACarService>;
+  allRentServices: Array<{
+    racId: number,
+    city: string,
+    state: string,
+    name: string,
+    logo: any,
+    about: string,
+    branches: Array<{
+      city: string,
+      state: string
+    }>
+  }>;
   colorsOfBranches: Array<string>;
   rotateArrow = false;
 
@@ -18,15 +30,42 @@ export class RentACarServicesComponent implements OnInit {
   namedown = false;
   cityup = false;
   citydown = false;
+  scrolledY: number;
 
-  constructor(private service: CarRentService, private location: Location) {
-    this.allRentServices = new Array<RentACarService>();
+  constructor(private service: CarRentService, private san: DomSanitizer, private location: Location) {
+    this.allRentServices = [];
     this.colorsOfBranches = new Array<string>();
    }
 
   ngOnInit(): void {
-    this.allRentServices = this.service.loadAllRentServices();
+    this.loadRACs();
+    this.addColors();
   }
+
+  loadRACs() {
+    const a = this.service.getRACs().subscribe(
+      (res: any[]) => {
+        if (res.length > 0) {
+          res.forEach(element => {
+            const rac = {
+              racId: element.id,
+              city: element.city,
+              state: element.state,
+              name: element.name,
+              logo: (element.logo === null) ? null : this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.logo}`),
+              about: element.about,
+              branches: element.branches
+            };
+            this.allRentServices.push(rac);
+          });
+        }
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
 
   goBack() {
     this.location.back();
@@ -40,63 +79,34 @@ export class RentACarServicesComponent implements OnInit {
     this.colorsOfBranches.push('#88BBE4');
   }
 
-  sortClick() {
-    this.rotateArrow = this.rotateArrow === true ? false : true;
-  }
 
-  // list.sort((a, b) => (a.color > b.color) ? 1 : (a.color === b.color) ? ((a.size > b.size) ? 1 : -1) : -1 )
+  applySort(sortList: Array<boolean>) {
+    this.namedown = sortList[0];
+    this.nameup = sortList[1];
+    this.citydown = sortList[2];
+    this.cityup = sortList[3];
+    this.sortBy();
+  }
 
   sortBy() {
-    // if (this.namedown) {
-    //   if (!this.cityup && !this.citydown) {
-    //     this.allAirlines.sort((a, b) => (a.name > b.name) ? 1 : -1);
-    //   } else if (this.citydown) {
-    //     this.allAirlines.sort((a, b) => (a.name > b.name) ? 1 : (a.name === b.name) ? ((a.address > b.address) ? 1 : -1) : -1);
-    //   } else {
-    //     this.allAirlines.sort((a, b) => (a.name > b.name) ? 1 : (a.name === b.name) ? ((a.address < b.address) ? 1 : -1) : -1);
-    //   }
-    // } else {
-    //   if (this.nameup) {
-    //     if (!this.cityup && !this.citydown) {
-    //       this.allAirlines.sort((a, b) => (a.name < b.name) ? 1 : -1);
-    //     } else if (this.cityup) {
-    //       this.allAirlines.sort((a, b) => (a.name < b.name) ? 1 : (a.name === b.name) ? ((a.address < b.address) ? 1 : -1) : -1);
-    //     } else {
-    //       this.allAirlines.sort((a, b) => (a.name < b.name) ? 1 : (a.name === b.name) ? ((a.address > b.address) ? 1 : -1) : -1);
-    //     }
-    //   }
-    // }
-  }
-
-  namedownClicked() {
-    if (this.nameup === true) {
-      this.nameup = false;
+    if (this.namedown) {
+      if (!this.cityup && !this.citydown) {
+        this.allRentServices.sort((a, b) => (a.name > b.name) ? 1 : -1);
+      } else if (this.citydown) {
+        this.allRentServices.sort((a, b) => (a.name > b.name) ? 1 : (a.name === b.name) ? ((a.city > b.city) ? 1 : -1) : -1);
+      } else {
+        this.allRentServices.sort((a, b) => (a.name > b.name) ? 1 : (a.name === b.name) ? ((a.city < b.city) ? 1 : -1) : -1);
+      }
+    } else {
+      if (this.nameup) {
+        if (!this.cityup && !this.citydown) {
+          this.allRentServices.sort((a, b) => (a.name < b.name) ? 1 : -1);
+        } else if (this.cityup) {
+          this.allRentServices.sort((a, b) => (a.name < b.name) ? 1 : (a.name === b.name) ? ((a.city < b.city) ? 1 : -1) : -1);
+        } else {
+          this.allRentServices.sort((a, b) => (a.name < b.name) ? 1 : (a.name === b.name) ? ((a.city > b.city) ? 1 : -1) : -1);
+        }
+      }
     }
-    this.namedown = !this.namedown;
-    this.sortBy();
-  }
-
-  nameupClicked() {
-    if (this.namedown === true) {
-      this.namedown = false;
-    }
-    this.nameup = !this.nameup;
-    this.sortBy();
-  }
-
-  citydownClicked() {
-    if (this.cityup === true) {
-      this.cityup = false;
-    }
-    this.citydown = !this.citydown;
-    this.sortBy();
-  }
-
-  cityupClicked() {
-    if (this.citydown === true) {
-      this.citydown = false;
-    }
-    this.cityup = !this.cityup;
-    this.sortBy();
   }
 }

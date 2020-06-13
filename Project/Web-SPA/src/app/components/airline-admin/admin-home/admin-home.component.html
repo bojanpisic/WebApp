@@ -6,7 +6,7 @@
                     <div style="background-color: white;" class="header">
                         <p style="color: rgb(34, 34, 34);">Airline</p>
                     </div>
-                    <div class="container">
+                    <!-- <div class="container">
                         <app-map [home]="home" [latitude] = 'airline.address.lat' [longitude] = 'airline.address.lon'></app-map>
                         <div class="info">
                             <p id="location" style="color: rgb(34, 34, 34);">{{airline.address.state}} · {{airline.address.city}}</p>
@@ -17,7 +17,7 @@
                                 </li>
                             </ul>
                         </div>
-                    </div>
+                    </div> -->
                     <div style="background-color: white;" class="footer">
                         <a style="color: rgb(34, 34, 34);" routerLink='/admin/{{adminId}}/airline-profile'>Edit<img style="filter: opacity(.8);" src="../../../../assets/bold_arrow.svg"></a>
                     </div>
@@ -48,13 +48,13 @@
                     <div style="background-color: #fab387;" class="header">
                         <p>Destinations</p>
                     </div>
-                    <div class="container">
+                    <!-- <div class="container">
                         <ul>
                             <li *ngFor="let destination of airline.flightDestionations | slice:0:6">
                                 <app-airline-destination [destination]="destination" [editable]="false"></app-airline-destination>
                             </li>
                         </ul>
-                    </div>
+                    </div> -->
                     <div style="background-color: #fab387;" class="footer">
                         <a href="#" routerLink="/admin/{{adminId}}/destinations">Check all<img src="../../../../assets/bold_arrow_Lobe.svg"></a>
                     </div>

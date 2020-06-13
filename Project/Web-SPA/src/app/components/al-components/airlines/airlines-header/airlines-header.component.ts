@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { LiteralArrayExpr } from '@angular/compiler';
 
 @Component({
@@ -13,6 +13,7 @@ export class AirlinesHeaderComponent implements OnInit {
   namedown = false;
   cityup = false;
   citydown = false;
+  @Input() rac = false;
   @Output() sort = new EventEmitter<Array<boolean>>();
 
   constructor() { }

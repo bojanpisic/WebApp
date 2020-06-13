@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 // import { HttpParams } from '@angular/common/http';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -103,6 +104,14 @@ import { AuthInterceptor } from './auth/auth.interceptor';
 import { SocialLoginModule, AuthServiceConfig, GoogleLoginProvider, FacebookLoginProvider, AuthService } from 'angular-6-social-login';
 
 import { TokenInterceptor } from './auth/TokenInterceptor';
+import { AddSystemAdminComponent } from './components/admin/system-admin/add-system-admin/add-system-admin.component';
+import { RacSpecialOffersComponent } from './components/rac-admin/rac-special-offers/rac-special-offers.component';
+import { AddCarSpecialOfferComponent } from './components/rac-admin/add-car-special-offer/add-car-special-offer.component';
+import { PickDatesSpecialOfferComponent } from './components/rac-admin/add-car-special-offer/pick-dates-special-offer/pick-dates-special-offer.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AllFlightSpecialOffersComponent } from './components/all-flight-special-offers/all-flight-special-offers.component';
+import { AllCarSpecialOffersComponent } from './components/all-car-special-offers/all-car-special-offers.component';
+
 
 export function socialConfigs() {
   const config = new AuthServiceConfig(
@@ -202,7 +211,13 @@ export function socialConfigs() {
       AddSpecialOfferComponent,
       AddSeatsSpecialOfferComponent,
       AddCompanyComponent,
-      SystemAdminComponent
+      SystemAdminComponent,
+      AddSystemAdminComponent,
+      RacSpecialOffersComponent,
+      AddCarSpecialOfferComponent,
+      PickDatesSpecialOfferComponent,
+      AllFlightSpecialOffersComponent,
+      AllCarSpecialOffersComponent
    ],
    imports: [
       BrowserModule,
@@ -210,10 +225,12 @@ export function socialConfigs() {
       FormsModule,
       HttpClientModule,
       ReactiveFormsModule,
+      DateInputsModule,
       AgmCoreModule.forRoot({
          apiKey: 'AIzaSyC0UzE_hJZ7OZahdEBDwBk0u4agqCQOsXE',
          libraries: ['places']
       }),
+      BrowserAnimationsModule,
    ],
    providers: [
       CookieService,

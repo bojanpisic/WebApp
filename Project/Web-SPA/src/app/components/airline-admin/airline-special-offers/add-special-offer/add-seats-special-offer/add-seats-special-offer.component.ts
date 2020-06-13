@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Flight } from 'src/app/entities/flight';
 import { Seat } from 'src/app/entities/seat';
+import { AirlineService } from 'src/services/airline.service';
 
 @Component({
   selector: 'app-add-seats-special-offer',
@@ -9,10 +10,13 @@ import { Seat } from 'src/app/entities/seat';
 })
 export class AddSeatsSpecialOfferComponent implements OnInit {
 
-  @Input() flight: Flight;
-  @Output() addSeat = new EventEmitter<Seat>();
+  @Input() flightId: number;
+  @Input() takenSeats: Array<any>;
+  @Output() addSeat = new EventEmitter<any>();
 
-  pickedSeat: Seat;
+  seats: Array<{column: string, row: string, class: string, price: number, seatId: number}>;
+
+  pickedSeat: any;
   showModal = false;
   blur: boolean;
 
@@ -21,12 +25,13 @@ export class AddSeatsSpecialOfferComponent implements OnInit {
   economySeats: Array<any>;
   basicEconomySeats: Array<any>;
 
-  firstClassPriceRange: {minPrice: number, maxPrice: number};
-  businessPriceRange: {minPrice: number, maxPrice: number};
-  economyPriceRange: {minPrice: number, maxPrice: number};
-  basicEconomyPriceRange: {minPrice: number, maxPrice: number};
+  itsOk = false;
 
-  constructor() {
+  constructor(private airlineService: AirlineService) {
+
+    this.seats = [];
+    this.takenSeats = [];
+
     this.firstClassSeats = new Array<any>();
     this.businessSeats = new Array<any>();
     this.economySeats = new Array<any>();
@@ -34,18 +39,54 @@ export class AddSeatsSpecialOfferComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // tslint:disable-next-line:curly
+    if (this.flightId !== undefined) {
+      const air1 = this.airlineService.getFlightsSeats(this.flightId).subscribe(
+        (res: any[]) => {
+          console.log(res);
+          if (res.length) {
+            console.log('alo1111');
+            res.forEach(element => {
+              const new1 = {
+                column: element.column,
+                row: element.row,
+                class: element.class,
+                price: element.price,
+                seatId: element.seatId
+              };
+              this.seats.push(new1);
+            });
+            this.setEconomySeats();
+            this.setFirstClassSeats();
+            this.setBusinessSeats();
+            this.setBasicEconomySeats();
+            this.itsOk = true;
+          }
+        },
+        err => {
+          console.log('dada' + err.status);
+          // tslint:disable-next-line: triple-equals
+          if (err.status == 400) {
+            console.log(err);
+          // tslint:disable-next-line: triple-equals
+          } else if (err.status == 401) {
+            console.log(err);
+          } else {
+            console.log(err);
+          }
+        }
+      );
+    }
   }
 
-  // ngOnChanges(changes: SimpleChanges) {
-  //   this.firstClassSeats = [];
-  //   this.businessSeats = [];
-  //   this.economySeats = [];
-  //   this.basicEconomySeats = [];
-  //   this.setFirstClassSeats();
-  //   this.setBusinessSeats();
-  //   this.setEconomySeats();
-  //   this.setBasicEconomySeats();
-  // }
+  reload() {
+    console.log('AAAAAAA');
+    console.log(this.takenSeats);
+    this.setEconomySeats();
+    this.setFirstClassSeats();
+    this.setBusinessSeats();
+    this.setBasicEconomySeats();
+  }
 
   onSeat(seat: Seat) {
   }
@@ -56,22 +97,18 @@ export class AddSeatsSpecialOfferComponent implements OnInit {
     this.showModal = true;
   }
 
-  isSpecialSeat(seat: Seat) {
-    if (seat.column === 'B') {
-      return true;
-    }
-    return false;
-  }
-
   onFinish(value: number) {
-    this.pickedSeat.price = value;
     this.blur = false;
     this.showModal = false;
-    this.emitValue();
-  }
-
-  emitValue() {
-    this.addSeat.emit(this.pickedSeat);
+    const data = {
+      column: this.pickedSeat.column,
+      row: this.pickedSeat.row,
+      class: this.pickedSeat.class,
+      price: value,
+      seatId: this.pickedSeat.seatId,
+      oldPrice: this.pickedSeat.price
+    };
+    this.addSeat.emit(data);
   }
 
   onCloseModal(value: any) {
@@ -80,41 +117,52 @@ export class AddSeatsSpecialOfferComponent implements OnInit {
   }
 
   setFirstClassSeats() {
-    const numberOfSeats = this.flight.seats.length;
-    const rows = this.flight.seats.filter(x => x.class === 'F')[this.flight.seats.filter(x => x.class === 'F').length - 1].row;
-    let column;
-    for (let r = 1; r < rows + 1; r++) {
-      for (let c = 0; c < 6; c++) {
-        column = (c === 0) ? 'A' : (c === 1) ? 'B' : (c === 2) ? 'C' : (c === 3) ? 'D' : (c === 4) ? 'E' : 'F';
-        if (this.flight.seats.some(seat => seat.row === r && seat.column === column && seat.class === 'F')) {
-          this.firstClassSeats.push(this.flight.seats.find(seat => seat.class === 'F' && seat.column === column && seat.row === r));
-        } else {
-          this.firstClassSeats.push((column === 'A' || column === 'B' || column === 'C') ? 'left' : 'right');
+    if (this.seats.filter(x => x.class === 'F').length > 0) {
+      let row1 = this.seats.find(x => x.class === 'F');
+      this.seats.filter(x => x.class === 'F').forEach(element => {
+        if (+element.row > +row1.row) {
+          row1 = element;
+        }
+      });
+      const rows = row1.row;
+      let column;
+      for (let r = 1; r < +rows + 1; r++) {
+        for (let c = 0; c < 6; c++) {
+          column = (c === 0) ? 'A' : (c === 1) ? 'B' : (c === 2) ? 'C' : (c === 3) ? 'D' : (c === 4) ? 'E' : 'F';
+          if (this.seats.some(seat => seat.row === r.toString() && seat.column === column && seat.class === 'F')) {
+            this.firstClassSeats.push(this.seats.find(seat => seat.class === 'F' && seat.column === column && seat.row === r.toString()));
+          } else {
+            this.firstClassSeats.push((column === 'A' || column === 'B' || column === 'C') ? 'left' : 'right');
+          }
         }
       }
+      let value = this.firstClassSeats[this.firstClassSeats.length - 1];
+      let lastValue = (value === 'left' || value === 'right') ? value :
+                      (value.column === 'F' || value.column === 'A' || value.column === 'B') ? 'left' : 'right';
+      while (value === 'left' || value === 'right') {
+        lastValue = value;
+        this.firstClassSeats.splice(this.firstClassSeats.length - 1, 1);
+        value = this.firstClassSeats[this.firstClassSeats.length - 1];
+      }
+      this.firstClassSeats.push(lastValue);
     }
-    let value = this.firstClassSeats[this.firstClassSeats.length - 1];
-    let lastValue = (value === 'left' || value === 'right') ? value :
-                    (value.column === 'F' || value.column === 'A' || value.column === 'B') ? 'left' : 'right';
-    while (value === 'left' || value === 'right') {
-      lastValue = value;
-      this.firstClassSeats.splice(this.firstClassSeats.length - 1, 1);
-      value = this.firstClassSeats[this.firstClassSeats.length - 1];
-    }
-    this.firstClassSeats.push(lastValue);
-    console.log('izasao' + this.flight.from.city);
   }
 
   setBusinessSeats() {
-    const numberOfSeats = this.flight.seats.length;
-    if (this.flight.seats.filter(x => x.class === 'B').length > 0) {
-      const rows = this.flight.seats.filter(x => x.class === 'B')[this.flight.seats.filter(x => x.class === 'B').length - 1].row;
+    if (this.seats.filter(x => x.class === 'B').length > 0) {
+      let row1 = this.seats.find(x => x.class === 'B');
+      this.seats.filter(x => x.class === 'B').forEach(element => {
+        if (+element.row > +row1.row) {
+          row1 = element;
+        }
+      });
+      const rows = row1.row;
       let column;
-      for (let r = 1; r < rows + 1; r++) {
+      for (let r = 1; r < +rows + 1; r++) {
         for (let c = 0; c < 6; c++) {
           column = (c === 0) ? 'A' : (c === 1) ? 'B' : (c === 2) ? 'C' : (c === 3) ? 'D' : (c === 4) ? 'E' : 'F';
-          if (this.flight.seats.some(seat => seat.row === r && seat.column === column && seat.class === 'B')) {
-            this.businessSeats.push(this.flight.seats.find(seat => seat.class === 'B' && seat.column === column && seat.row === r));
+          if (this.seats.some(seat => seat.row === r.toString() && seat.column === column && seat.class === 'B')) {
+            this.businessSeats.push(this.seats.find(seat => seat.class === 'B' && seat.column === column && seat.row === r.toString()));
           } else {
             this.businessSeats.push((column === 'A' || column === 'B' || column === 'C') ? 'left' : 'right');
           }
@@ -133,15 +181,20 @@ export class AddSeatsSpecialOfferComponent implements OnInit {
   }
 
   setEconomySeats() {
-    const numberOfSeats = this.flight.seats.length;
-    if (this.flight.seats.filter(x => x.class === 'E').length > 0) {
-      const rows = this.flight.seats.filter(x => x.class === 'E')[this.flight.seats.filter(x => x.class === 'E').length - 1].row;
+    if (this.seats.filter(x => x.class === 'E').length > 0) {
+      let row1 = this.seats.find(x => x.class === 'E');
+      this.seats.filter(x => x.class === 'E').forEach(element => {
+        if (+element.row > +row1.row) {
+          row1 = element;
+        }
+      });
+      const rows = row1.row;
       let column;
-      for (let r = 1; r < rows + 1; r++) {
+      for (let r = 1; r < +rows + 1; r++) {
         for (let c = 0; c < 6; c++) {
           column = (c === 0) ? 'A' : (c === 1) ? 'B' : (c === 2) ? 'C' : (c === 3) ? 'D' : (c === 4) ? 'E' : 'F';
-          if (this.flight.seats.some(seat => seat.row === r && seat.column === column && seat.class === 'E')) {
-            this.economySeats.push(this.flight.seats.find(seat => seat.class === 'E' && seat.column === column && seat.row === r));
+          if (this.seats.some(seat => seat.row === r.toString() && seat.column === column && seat.class === 'E')) {
+            this.economySeats.push(this.seats.find(seat => seat.class === 'E' && seat.column === column && seat.row === r.toString()));
           } else {
             this.economySeats.push((column === 'A' || column === 'B' || column === 'C') ? 'left' : 'right');
           }
@@ -160,15 +213,22 @@ export class AddSeatsSpecialOfferComponent implements OnInit {
   }
 
   setBasicEconomySeats() {
-    const numberOfSeats = this.flight.seats.length;
-    if (this.flight.seats.filter(x => x.class === 'BE').length > 0) {
-      const rows = this.flight.seats.filter(x => x.class === 'BE')[this.flight.seats.filter(x => x.class === 'BE').length - 1].row;
+    const numberOfSeats = this.seats.length;
+    if (this.seats.filter(x => x.class === 'BE').length > 0) {
+      let row1 = this.seats.find(x => x.class === 'BE');
+      this.seats.filter(x => x.class === 'BE').forEach(element => {
+        if (+element.row > +row1.row) {
+          row1 = element;
+        }
+      });
+      const rows = row1.row;
       let column;
-      for (let r = 1; r < rows + 1; r++) {
+      for (let r = 1; r < +rows + 1; r++) {
         for (let c = 0; c < 6; c++) {
           column = (c === 0) ? 'A' : (c === 1) ? 'B' : (c === 2) ? 'C' : (c === 3) ? 'D' : (c === 4) ? 'E' : 'F';
-          if (this.flight.seats.some(seat => seat.row === r && seat.column === column && seat.class === 'BE')) {
-            this.basicEconomySeats.push(this.flight.seats.find(seat => seat.class === 'BE' && seat.column === column && seat.row === r));
+          if (this.seats.some(seat => seat.row === r.toString() && seat.column === column && seat.class === 'BE')) {
+            // tslint:disable-next-line:max-line-length
+            this.basicEconomySeats.push(this.seats.find(seat => seat.class === 'BE' && seat.column === column && seat.row === r.toString()));
           } else {
             this.basicEconomySeats.push((column === 'A' || column === 'B' || column === 'C') ? 'left' : 'right');
           }

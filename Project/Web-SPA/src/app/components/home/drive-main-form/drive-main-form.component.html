@@ -10,22 +10,22 @@
         <span></span>
     </label>
 </div>
-<form action="">
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
     <p [ngStyle]="{'grid-column': sameLocationChoosed ? '1/ span 2' : '1'}">PICK-UP LOCATION</p>
     <p [ngStyle]="{'display': sameLocationChoosed ? 'none' : 'block'}">DROP-OFF LOCATION</p>
-    <app-places-search [ngStyle]="{'grid-column': '1/ span 2'}" *ngIf="sameLocationChoosed" [pickUpLocation] = "true"></app-places-search>
-    <app-places-search *ngIf="!sameLocationChoosed" [left] = "true"></app-places-search>
-    <app-places-search *ngIf="!sameLocationChoosed" [right] = "true"></app-places-search>
+    <app-places-search [ngStyle]="{'grid-column': '1/ span 2'}" (focused)="removeErrorClassPickUp()" [error]="errorPickUpLocation" (inputValue)="onPickUpLocationInputChange($event)" *ngIf="sameLocationChoosed" [pickUpLocation] = "true" (cityName)='onPickUpLocation($event)'></app-places-search>
+    <app-places-search [left] = "true" (focused)="removeErrorClassPickUp()" [error]="errorPickUpLocation" (inputValue)="onPickUpLocationInputChange($event)" *ngIf="!sameLocationChoosed" [pickUpLocation] = "true" (cityName)='onPickUpLocation($event)'></app-places-search>
+    <app-places-search [right] = "true" (focused)="removeErrorClassDropOff()" [error]="errorDropOffLocation" (inputValue)="onDropOffLocationInputChange($event)" *ngIf="!sameLocationChoosed" [pickUpLocation] = "false" (cityName)='onDropOffLocation($event)'></app-places-search>
     <p id="checkin">PICK-UP DATE</p>
     <p id="checkout">DROP-OFF DATE</p>
-    <input [ngStyle]="{'grid-column': '1/ 1',
+    <input formControlName="pickupDate" [ngStyle]="{'grid-column': '1/ 1',
                        'border-top-right-radius': '0px',
                        'border-bottom-right-radius': '0px'}"
-                        class="left-input" type="text" placeholder="mm/dd/yyyy">
-    <input style="border-left: 0px;" class="right-input" type="text" placeholder="mm/dd/yyyy">
+                        class="left-input" type="date">
+    <input formControlName="dropoffDate" style="border-left: 0px;" class="right-input" type="date">
     <p id = "travellers">TRAVELLERS</p>
     <app-person-num-search id = "travellers-div"></app-person-num-search>
-    <input (click)="onSubmit()" id="submit" type="submit" value="SEARCH">
+    <input id="submit" type="submit" value="SEARCH">
 </form>
 <div class="separator-div">
     <hr class="separator">

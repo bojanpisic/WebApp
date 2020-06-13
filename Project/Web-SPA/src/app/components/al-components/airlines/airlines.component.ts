@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Airline } from 'src/app/entities/airline';
 import { AirlineService } from 'src/services/airline.service';
 import { Location } from '@angular/common';
+import { DomSanitizer } from '@angular/platform-browser';
 
 
 @Component({
@@ -10,7 +11,18 @@ import { Location } from '@angular/common';
   styleUrls: ['./airlines.component.scss']
 })
 export class AirlinesComponent implements OnInit {
-  allAirlines: Array<Airline>;
+  allAirlines: Array<{
+    airlineId: number,
+    city: string,
+    state: string,
+    name: string,
+    logo: any,
+    about: string,
+    destinations: Array<{
+      city: string,
+      state: string
+    }>
+  }>;
   colorsOfArilineDest: Array<string>;
   rotateArrow = false;
   nameup = false;
@@ -19,17 +31,9 @@ export class AirlinesComponent implements OnInit {
   citydown = false;
   scrolledY: number;
 
-  constructor(private airlineService: AirlineService, private location: Location) {
-    this.allAirlines = new Array<Airline>();
+  constructor(private airlineService: AirlineService, private location: Location, private san: DomSanitizer) {
+    this.allAirlines = [];
     this.colorsOfArilineDest = new Array<string>();
-  }
-
-  applySort(sortList: Array<boolean>) {
-    this.namedown = sortList[0];
-    this.nameup = sortList[1];
-    this.citydown = sortList[2];
-    this.cityup = sortList[3];
-    this.sortBy();
   }
 
   ngOnInit(): void {
@@ -42,7 +46,28 @@ export class AirlinesComponent implements OnInit {
   }
 
   loadAirlines() {
-    this.allAirlines = this.airlineService.loadAllAirlines();
+    const a = this.airlineService.getAirlines().subscribe(
+      (res: any[]) => {
+        if (res.length > 0) {
+          res.forEach(element => {
+            const airline = {
+              airlineId: element.airlineId,
+              city: element.city,
+              state: element.state,
+              name: element.name,
+              logo: (element.logo === null) ? null : this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.logo}`),
+              about: element.about,
+              destinations: element.destinations
+            };
+            this.allAirlines.push(airline);
+            console.log(airline);
+          });
+        }
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   addColors() {
@@ -53,64 +78,37 @@ export class AirlinesComponent implements OnInit {
     this.colorsOfArilineDest.push('#88BBE4');
   }
 
-  sortClick() {
-    this.rotateArrow = this.rotateArrow === true ? false : true;
-    this.scrolledY = window.scrollY;
+  applySort(sortList: Array<boolean>) {
+    this.namedown = sortList[0];
+    this.nameup = sortList[1];
+    this.citydown = sortList[2];
+    this.cityup = sortList[3];
+    this.sortBy();
   }
 
-  // list.sort((a, b) => (a.color > b.color) ? 1 : (a.color === b.color) ? ((a.size > b.size) ? 1 : -1) : -1 )
-
   sortBy() {
+    console.log(this.namedown);
+    console.log(this.nameup);
+    console.log(this.citydown);
+    console.log(this.cityup);
     if (this.namedown) {
       if (!this.cityup && !this.citydown) {
         this.allAirlines.sort((a, b) => (a.name > b.name) ? 1 : -1);
       } else if (this.citydown) {
-        this.allAirlines.sort((a, b) => (a.name > b.name) ? 1 : (a.name === b.name) ? ((a.address > b.address) ? 1 : -1) : -1);
+        this.allAirlines.sort((a, b) => (a.name > b.name) ? 1 : (a.name === b.name) ? ((a.city > b.city) ? 1 : -1) : -1);
       } else {
-        this.allAirlines.sort((a, b) => (a.name > b.name) ? 1 : (a.name === b.name) ? ((a.address < b.address) ? 1 : -1) : -1);
+        this.allAirlines.sort((a, b) => (a.name > b.name) ? 1 : (a.name === b.name) ? ((a.city < b.city) ? 1 : -1) : -1);
       }
     } else {
       if (this.nameup) {
         if (!this.cityup && !this.citydown) {
           this.allAirlines.sort((a, b) => (a.name < b.name) ? 1 : -1);
         } else if (this.cityup) {
-          this.allAirlines.sort((a, b) => (a.name < b.name) ? 1 : (a.name === b.name) ? ((a.address < b.address) ? 1 : -1) : -1);
+          this.allAirlines.sort((a, b) => (a.name < b.name) ? 1 : (a.name === b.name) ? ((a.city < b.city) ? 1 : -1) : -1);
         } else {
-          this.allAirlines.sort((a, b) => (a.name < b.name) ? 1 : (a.name === b.name) ? ((a.address > b.address) ? 1 : -1) : -1);
+          this.allAirlines.sort((a, b) => (a.name < b.name) ? 1 : (a.name === b.name) ? ((a.city > b.city) ? 1 : -1) : -1);
         }
       }
     }
-  }
-
-  namedownClicked() {
-    if (this.nameup === true) {
-      this.nameup = false;
-    }
-    this.namedown = !this.namedown;
-    this.sortBy();
-  }
-
-  nameupClicked() {
-    if (this.namedown === true) {
-      this.namedown = false;
-    }
-    this.nameup = !this.nameup;
-    this.sortBy();
-  }
-
-  citydownClicked() {
-    if (this.cityup === true) {
-      this.cityup = false;
-    }
-    this.citydown = !this.citydown;
-    this.sortBy();
-  }
-
-  cityupClicked() {
-    if (this.citydown === true) {
-      this.citydown = false;
-    }
-    this.cityup = !this.cityup;
-    this.sortBy();
   }
 }

@@ -23,7 +23,7 @@ export class RacAdminHomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.admin = this.userService.getRACAdmin(this.rac.adminId);
+    // this.admin = this.userService.getRACAdmin(this.rac.adminId);
   }
 
 }

@@ -12,13 +12,13 @@
     <div *ngIf="specialOffer.flights.length > 0" class="addedFlights">
         <div class="specialOffer">
             <div class="price">
-                <span>Old price: $1000</span>
-                <p id="price">$899</p>
+                <span>Old price: ${{specialOffer.oldPrice}}</span>
+                <p id="price">${{specialOffer.newPrice}}</p>
             </div>
             <!-- <a>Edit</a> -->
         </div>
         <div *ngFor="let flight of specialOffer.flights; let i = index"  [ngStyle]="{'border-bottom': '.5px solid gainsboro'}">
-            <app-flight [flight]="flight" [markFlightName]="false"></app-flight>
+            <app-flight [flight]="flight" [seat]="true" [seatName]="selectedSeats[i]"></app-flight>
         </div>
     </div>
     <div *ngIf="specialOffer.flights.length > 0" class="addMore">
@@ -32,7 +32,7 @@
     </ul>
 </main>
 <div *ngIf="chooseSeat">
-    <app-add-seats-special-offer [flight]="choosenFlight" (addSeat)="onAddSeat($event)"></app-add-seats-special-offer>
+    <app-add-seats-special-offer [takenSeats]="specialOffer.seats" [flightId]="choosenFlight.flightId" (addSeat)="onAddSeat($event)"></app-add-seats-special-offer>
 </div>
 <footer *ngIf="!chooseSeat">
     <a (click)="onFinish()">FINISH</a>
