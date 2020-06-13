@@ -9,7 +9,7 @@ import { Message } from 'src/app/entities/message';
 export class MessageInfoComponent implements OnInit {
 
   @Output() response = new EventEmitter<string>();
-  @Input() props: {message: Message, show: boolean};
+  @Input() props: {message: any, show: boolean};
   closeIt = 0;
 
   constructor(private eRef: ElementRef) { }

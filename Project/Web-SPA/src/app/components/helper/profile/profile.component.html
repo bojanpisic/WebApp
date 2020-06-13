@@ -19,13 +19,15 @@
         <div *ngIf="selectedFile !== undefined" id="image">
             <img id="logo" src="{{selectedFile.src}}">
         </div>
+        <input style="display: none" type="file" accept="image/*" (change)="onFileChanged(fileInput)" #fileInput>
+        <button id="changePhoto" (click)="fileInput.click()"><img src="../../../../assets/camera-100.png">Change photo</button>
         <span id="spanfirstname">First name</span>
         <p id="firstname">{{user.firstName}}</p>
         <span id="spanlastname">Last name</span>
         <p id="lastname"> {{user.lastName}}</p>
         <span id="spanphone">E-mail</span>
         <p id="phone">{{user.email}}</p>
-        <a href="#" id="edit" routerLink='/{{user.id}}/profile/edit-profile'><img src="../../../../assets/create-white-18dp.svg">Edit profile</a>
+        <a id="edit" routerLink='/{{userId}}/profile/edit-profile'><img src="../../../../assets/create-white-18dp.svg">Edit profile</a>
     </div>
     <div class="separator-div" style="margin: 0 30px;">
         <hr class="separator">

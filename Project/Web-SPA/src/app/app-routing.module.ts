@@ -47,6 +47,7 @@ import { AllFlightSpecialOffersComponent } from './components/all-flight-special
 import { AllCarSpecialOffersComponent } from './components/all-car-special-offers/all-car-special-offers.component';
 import { MyCarsComponent } from './components/registered-user/my-cars/my-cars.component';
 import { MyFlightsComponent } from './components/registered-user/my-flights/my-flights.component';
+import { CarFilterComponent } from './components/helper/car-filter/car-filter.component';
 
 const routes: Routes = [
 
@@ -155,7 +156,7 @@ const routes: Routes = [
     path: 'cars',
     children: [
       {path: '', component: CarsComponent},
-      {path: 'filter', component: FilterComponent}
+      {path: 'car-filter', component: CarFilterComponent}
     ]
   },
   {path: 'flight-special-offers', component: SpecialOffersComponent},
@@ -168,7 +169,13 @@ const routes: Routes = [
 
 
   {path: ':id/home', component: HomeComponent},
-  {path: ':id/cars', component: CarsComponent},
+  {
+    path: ':id/cars',
+    children: [
+      {path: '', component: CarsComponent},
+      {path: 'car-filter', component: CarFilterComponent},
+    ]
+  },
   {
     path: ':id/trips',
     children: [
@@ -192,8 +199,9 @@ const routes: Routes = [
       {path: 'flights', component: MyFlightsComponent},
     ]
   },
-  {path: ':id/flights', component: ShowFlightsComponent},
   {path: ':id/messages', component: MessagesComponent},
+  {path: ':id/flight-special-offers', component: SpecialOffersComponent},
+  {path: ':id/car-special-offers', component: AllCarSpecialOffersComponent},
 
 
   { path: '**', component:  HomeComponent}

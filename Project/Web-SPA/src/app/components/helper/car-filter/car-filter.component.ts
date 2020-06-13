@@ -1,15 +1,13 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
-import { Airline } from 'src/app/entities/airline';
-import { AirlineService } from 'src/services/airline.service';
-import { Location } from '@angular/common';
-import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { NavigationExtras, Router, ActivatedRoute } from '@angular/router';
+import { CarRentService } from 'src/services/car-rent.service';
 
 @Component({
-  selector: 'app-filter',
-  templateUrl: './filter.component.html',
-  styleUrls: ['./filter.component.scss']
+  selector: 'app-car-filter',
+  templateUrl: './car-filter.component.html',
+  styleUrls: ['./car-filter.component.scss']
 })
-export class FilterComponent implements OnInit {
+export class CarFilterComponent implements OnInit {
 
   slidingMinPriceValue: number;
   slidingMaxPriceValue: number;
@@ -33,7 +31,7 @@ export class FilterComponent implements OnInit {
   @Output() closeFilter = new EventEmitter<boolean>();
   @Output() appliedFilters = new EventEmitter<any>();
 
-  constructor(private airlineService: AirlineService, private location: Location,
+  constructor(private racService: CarRentService,
               private router: Router, private route: ActivatedRoute) {
     const array = route.snapshot.queryParamMap.get('array');
     this.urlParams = JSON.parse(array);
@@ -43,7 +41,7 @@ export class FilterComponent implements OnInit {
 
     this.slidingMinPriceValue = 0;
     this.slidingMaxPriceValue = 100;
-    this.allAirlines = new Array<Airline>();
+    this.allAirlines = new Array<any>();
     this.checkedAirlines = new Array<boolean>();
   }
 
@@ -51,6 +49,7 @@ export class FilterComponent implements OnInit {
     let data;
     data = this.generateFilter();
 
+    console.log(this.urlParams);
 
     this.url = {
       type: data.type,
@@ -67,11 +66,9 @@ export class FilterComponent implements OnInit {
 
     this.slidingMinPriceValue = (this.url.minPrice === 0) ? 0 : this.url.minPrice / 30;
     this.slidingMaxPriceValue = (this.url.maxPrice === 0) ? 0 : this.url.maxPrice / 30;
-    this.minHoursDuration = this.url.mind.split('h')[0];
-    this.minMinutesDuration = this.url.mind.split(' ')[1].split('min')[0];
-    this.maxHoursDuration = this.url.maxd.split('h')[0];
-    this.maxMinutesDuration = this.url.maxd.split(' ')[1].split('min')[0];
-    this.allAirlinesBool = (this.url.air === '') ? true : false;
+    this.minHoursDuration = this.url.seatFrom;
+    this.maxHoursDuration = this.url.seatTo;
+    this.allAirlinesBool = (this.url.racs === '') ? true : false;
 
     console.log(this.url);
     console.log(this.slidingMinPriceValue);
@@ -94,40 +91,10 @@ export class FilterComponent implements OnInit {
       return;
     }
     if (this.urlParams !== null) {
-      if (this.urlParams[0].type === 'one') {
-        return {type: 'one', from: this.urlParams[1].from, to: this.urlParams[1].to,
-                dep: this.urlParams[1].dep, ret: '', minPrice: this.urlParams[2].minPrice, maxPrice: this.urlParams[2].maxPrice,
-                air: this.urlParams[2].air, mind: this.urlParams[2].mind, maxd: this.urlParams[2].maxd};
-      } else if (this.urlParams[0].type === 'two') {
-        // tslint:disable-next-line:max-line-length
-        return {type: 'one', from: this.urlParams[1].from, to: this.urlParams[1].to,
-                dep: this.urlParams[1].dep, ret: this.urlParams[1].ret,
-                minPrice: this.urlParams[2].minPrice, maxPrice: this.urlParams[2].maxPrice,
-                air: this.urlParams[2].air, mind: this.urlParams[2].mind, maxd: this.urlParams[2].maxd};
-      } else {
-        let froms = '';
-        let tos = '';
-        let deps = '';
-        for (let i = 1; i < this.urlParams.length - 1; i++) {
-          if (i === this.urlParams.length - 2) {
-            const element = this.urlParams[i];
-            froms += this.urlParams[i].from;
-            tos += this.urlParams[i].to;
-            deps += this.urlParams[i].dep;
-          } else {
-            const element = this.urlParams[i];
-            froms += this.urlParams[i].from + ',';
-            tos += this.urlParams[i].to + ',';
-            deps += this.urlParams[i].dep + ',';
-          }
-        }
-        return {type: 'multi', from: froms, to: tos, dep: deps, ret: '',
-                minPrice: this.urlParams[this.urlParams.length - 1].minPrice,
-                maxPrice: this.urlParams[this.urlParams.length - 1].maxPrice,
-                air: this.urlParams[this.urlParams.length - 1].air,
-                mind: this.urlParams[this.urlParams.length - 1].mind,
-                maxd: this.urlParams[this.urlParams.length - 1].maxd};
-      }
+      return {type: this.urlParams[0].type, from: this.urlParams[0].from, to: this.urlParams[0].to,
+        dep: this.urlParams[0].dep, ret: this.urlParams[0].ret, minPrice: this.urlParams[0].minPrice,
+        maxPrice: this.urlParams[0].maxPrice,
+        racs: this.urlParams[0].racs, seatFrom: this.urlParams[0].seatFrom, seatTo: this.urlParams[0].seatTo};
     }
   }
 
@@ -151,14 +118,14 @@ export class FilterComponent implements OnInit {
     this.checkedAirlines.forEach((v, i, a) => a[i] = true);
   }
 
-  loadAirlines() {
+  loadCars() {
     if (this.allAirlinesBool) {
-      const a = this.airlineService.getAirlines().subscribe(
+      const a = this.racService.getRACs().subscribe(
         (res: any[]) => {
           if (res.length > 0) {
             res.forEach(element => {
               const airline = {
-                airlineId: element.airlineId,
+                id: element.id,
                 name: element.name,
               };
               this.allAirlines.push(airline);
@@ -172,16 +139,16 @@ export class FilterComponent implements OnInit {
         }
       );
     } else {
-      const a = this.airlineService.getAirlines().subscribe(
+      const a = this.racService.getRACs().subscribe(
         (res: any[]) => {
           if (res.length > 0) {
             res.forEach(element => {
               const airline = {
-                airlineId: element.airlineId,
+                id: element.id,
                 name: element.name,
               };
               this.allAirlines.push(airline);
-              if (this.url.air.split(',').contains(airline.airlineId)) {
+              if (this.url.air.split(',').contains(airline.id)) {
                 this.checkedAirlines.push(true);
               } else {
                 this.checkedAirlines.push(false);
@@ -274,4 +241,5 @@ export class FilterComponent implements OnInit {
     }
     return ids;
   }
+
 }

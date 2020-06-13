@@ -37,7 +37,7 @@ export class FlightReservationComponent implements OnInit {
 
   arrayOfValues: Array<TripParameter>;
 
-  showTripDetails = true;
+  showTripDetails = false;
   showOfferCar = false;
   showConfirmReservation = false;
 
@@ -64,7 +64,7 @@ export class FlightReservationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('BALALA');
+    this.nextStep();
   }
 
   initialize() {
@@ -167,6 +167,7 @@ export class FlightReservationComponent implements OnInit {
 
   onExitReservation(value: any) {
     if (value) {
+      this.location.back();
       this.index--;
       this.reservation.seats.forEach(seat => {
         seat.seats = [];
@@ -186,7 +187,6 @@ export class FlightReservationComponent implements OnInit {
   updateVariables() {
     // tslint:disable-next-line:max-line-length
     this.lastStep = (this.index === this.flights.length - 1) ? true : false;
-    this.showTripDetails = (this.index === -1) ? true : false;
     this.pickSeats = (this.index >= 0 && this.index < this.flights.length) ? true : false;
     this.showConfirmReservation = (this.index === this.flights.length) ? true : false;
     if (this.showConfirmReservation) {

@@ -3,6 +3,7 @@ import { Airline } from 'src/app/entities/airline';
 import { AirlineService } from 'src/services/airline.service';
 import { RentACarService } from 'src/app/entities/rent-a-car-service';
 import { CarRentService } from 'src/services/car-rent.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-top-rated',
@@ -13,66 +14,72 @@ export class TopRatedComponent implements OnInit {
 
   @Input() option: string;
 
-  allRentACarServices: Array<RentACarService>;
-  allAirlines: Array<Airline>;
+  allRentACarServices: Array<any>;
+  allAirlines: Array<any>;
 
-  constructor(private airlineService: AirlineService, private rentService: CarRentService) {
-    this.allRentACarServices = new Array<RentACarService>();
-    this.allAirlines = new Array<Airline>();
+  constructor(private airlineService: AirlineService, private rentService: CarRentService, private san: DomSanitizer) {
+    this.allAirlines = [];
+    this.allRentACarServices = [];
    }
 
   ngOnInit(): void {
     // this.loadRentACarServices();
     // this.loadAirlines();
-    this.allAirlines = [];
-    this.allRentACarServices = [];
+    this.loadAirlines();
   }
 
   loadAirlines() {
-    this.allAirlines = this.airlineService.loadAllAirlines();
+    let count = 0;
+    const a = this.airlineService.getAirlines().subscribe(
+      (res: any[]) => {
+        if (res.length > 0) {
+          res.forEach(element => {
+            const airline = {
+              airlineId: element.airlineId,
+              city: element.city,
+              state: element.state,
+              name: element.name,
+              logo: (element.logo === null) ? null : this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.logo}`),
+              about: element.about,
+              destinations: element.destinations
+            };
+            count++;
+            if (count <= 5) {
+              this.allAirlines.push(airline);
+            }
+          });
+        }
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   loadRentACarServices() {
-    const air1 = this.airlineService.getTopRatedAirlines().subscribe(
+    let count = 0;
+    const a = this.rentService.getRACs().subscribe(
       (res: any[]) => {
-        if (res.length) {
+        if (res.length > 0) {
           res.forEach(element => {
-            const new1 = {
-              // flightId: element.flightId,
-              // flightNumber: element.flightNumber,
-              // // tslint:disable-next-line:max-line-length
-              // tslint:disable-next-line:max-line-length
-              // airlineLogo: (element.airlineLogo === null) ? null : this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.airlineLogo}`),
-              // airlineName: element.airlineName,
-              // from: element.from,
-              // takeOffDate: element.takeOffDate,
-              // takeOffTime: element.takeOffTime,
-              // to: element.to,
-              // landingDate: element.landingDate,
-              // landingTime: element.landingTime,
-              // flightLength: element.flightLength,
-              // flightTime: element.flightTime,
-              // stops: element.stops
+            const rac = {
+              racId: element.id,
+              city: element.city,
+              state: element.state,
+              name: element.name,
+              logo: (element.logo === null) ? null : this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.logo}`),
+              about: element.about,
+              branches: element.branches
             };
-            // this.flights.push(new1);
+            count++;
+            if (count <= 5) {
+              this.allRentACarServices.push(rac);
+            }
           });
-          console.log(res);
         }
-        console.log('ok');
-        // this.airlineId = res[0].airlineId;
-        // this.flights = res[0].flights;
       },
       err => {
-        console.log('dada' + err.status);
-        // tslint:disable-next-line: triple-equals
-        if (err.status == 400) {
-          console.log(err);
-        // tslint:disable-next-line: triple-equals
-        } else if (err.status == 401) {
-          console.log(err);
-        } else {
-          console.log(err);
-        }
+        console.log(err);
       }
     );
   }

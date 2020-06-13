@@ -111,6 +111,7 @@ import { PickDatesSpecialOfferComponent } from './components/rac-admin/add-car-s
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AllFlightSpecialOffersComponent } from './components/all-flight-special-offers/all-flight-special-offers.component';
 import { AllCarSpecialOffersComponent } from './components/all-car-special-offers/all-car-special-offers.component';
+import { CarFilterComponent } from './components/helper/car-filter/car-filter.component';
 
 
 export function socialConfigs() {
@@ -217,7 +218,8 @@ export function socialConfigs() {
       AddCarSpecialOfferComponent,
       PickDatesSpecialOfferComponent,
       AllFlightSpecialOffersComponent,
-      AllCarSpecialOffersComponent
+      AllCarSpecialOffersComponent,
+      CarFilterComponent
    ],
    imports: [
       BrowserModule,

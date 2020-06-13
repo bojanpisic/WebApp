@@ -20,7 +20,7 @@ export class AuthGuard implements CanActivate {
         const roles = next.data['permittedRoles'] as Array<string>;
         if (roles) {
           if (this.userService.roleMatch(roles)) {
-            if (roles.includes('AirlineAdmin' || 'RentCarAdmin')) {
+            if (roles.includes('AirlineAdmin' || 'RentACarServiceAdmin')) {
               if (!this.userService.hasChangedPassword()) {
                 const payload = JSON.parse(window.atob(localStorage.getItem('token').split('.')[1]));
                 const userId = payload.UserID;

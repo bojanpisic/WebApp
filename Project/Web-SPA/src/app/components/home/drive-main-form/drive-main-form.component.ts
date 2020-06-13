@@ -105,13 +105,18 @@ export class DriveMainFormComponent implements OnInit {
     if (this.validateSameLocationForm()) {
       const queryParams: any = {};
       const array = [];
-      array.push({pcity: this.pickUpLocation.city, pstate: this.pickUpLocation.state});
-      if (!this.sameLocationChoosed) {
-        array.push({dcity: this.dropOffLocation.city, dstate: this.dropOffLocation.state});
-      }
-      array.push({pdate: this.form.controls.pickupDate.value});
-      array.push({ddate: this.form.controls.dropoffDate.value});
-
+      array.push({
+        type: '',
+        from: this.pickUpLocation.city,
+        to: (this.sameLocationChoosed) ? this.pickUpLocation.city : this.dropOffLocation.city,
+        dep: this.form.controls.pickupDate.value,
+        ret: this.form.controls.dropoffDate.value,
+        minPrice: 0,
+        maxPrice: 3000,
+        racs: '',
+        seatFrom: 0,
+        seatTo: 10
+      });
       queryParams.array = JSON.stringify(array);
 
       const navigationExtras: NavigationExtras = {

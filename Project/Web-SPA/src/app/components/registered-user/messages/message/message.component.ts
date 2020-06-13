@@ -9,7 +9,7 @@ import { Message } from 'src/app/entities/message';
 })
 export class MessageComponent implements OnInit {
 
-  @Input() message: Message;
+  @Input() message: any;
   @Output() action = new EventEmitter<Message>();
 
   constructor(private messageService: MessageService) { }

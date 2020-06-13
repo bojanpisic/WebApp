@@ -81,6 +81,26 @@ main {
       color: rgb(80, 80, 80);
     }
 
+    #changePhoto {
+      text-align: center;
+      font-size: 14px;
+      line-height: 18px;
+      font-family: 'Roboto';
+      color: white;
+      background: $blue;
+      padding: 4px 8px;
+      border: none;
+      border-radius: 5px;
+      margin: 0;
+      width: 100%;
+      img {
+          vertical-align: bottom;
+          height: 16px;
+          width: 16px;
+          margin: 0 4px 1px 0;
+      }
+  }
+
     span {
       margin-top: 8px;
       font-size: .85em;

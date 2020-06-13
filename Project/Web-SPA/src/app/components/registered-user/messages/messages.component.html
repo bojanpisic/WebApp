@@ -6,15 +6,15 @@
         <p>Messages</p>
     </nav>
 </header>
-<main [ngClass]="{'blur': myProps.show}">
+<main *ngIf="isOk" [ngClass]="{'blur': myProps.show}">
     <ul>
-        <li *ngFor="let message of user.messages">
-            <app-message *ngIf="!message.read" (action)='openMessageInfo($event)' [message]='message'></app-message>
+        <li *ngFor="let message of requests">
+            <app-message (action)='openMessageInfo($event)' [message]='message'></app-message>
         </li>
     </ul>
     <ul>
-        <li *ngFor="let message of user.messages">
-            <app-message *ngIf="message.read" (action)='openMessageInfo($event)' [message]='message'></app-message>
+        <li *ngFor="let message of acceptedRequests">
+            <app-message (action)='openMessageInfo($event)' [message]='message'></app-message>
         </li>
     </ul>
 </main>

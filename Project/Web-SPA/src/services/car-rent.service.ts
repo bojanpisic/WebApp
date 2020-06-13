@@ -86,6 +86,24 @@ export class CarRentService {
 
   // *************************************************************************************************************
 
+  test(data: any): Observable<any> {
+    console.log(data);
+    const param = {
+      from: data.from,
+      to: data.to,
+      dep: data.dep,
+      ret: data.ret,
+      seatFrom: data.seatFrom,
+      seatTo: data.seatTo,
+      minPrice: data.minPrice,
+      maxPrice: data.maxPrice,
+      racs: data.racs,
+      type: data.type
+    };
+    const url = this.BaseURI + '/rentcarservice/cars';
+    return this.http.get<any>(url, {params: param});
+  }
+
   addCar(data: any) {
     const body = {
       Brand: data.Brand,
@@ -176,18 +194,11 @@ export class CarRentService {
     //   param2: param2Value
     // };
     // this.router.navigate('/segment1/segment2', { queryParams: params });
-    const url = this.BaseURI + '/airlineadmin/racs-specialoffers';
+    const url = this.BaseURI + '/rentcarservice/racs-specialoffers';
     console.log(url);
     return this.http.get<any>(url);
   }
 
-  test(data: any): Observable<any> {
-    const params1 = {
-      param: data,
-    };
-    const url = this.BaseURI + '/airlineadmin/flights';
-    return this.http.get<any>(url, {params: params1});
-  }
 
   allMockedRentServices() {}
 }

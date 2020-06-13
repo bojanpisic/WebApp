@@ -15,11 +15,13 @@ export class FriendsComponent implements OnInit {
   activeButton = 'all';
   myProps = {friend: undefined, show: false};
 
-  friends: Array<RegisteredUser>;
-  nonFriends: Array<RegisteredUser>;
+  friends: Array<any>;
+  nonFriends: Array<any>;
   user: RegisteredUser;
   userId: number;
   searchText = '';
+
+  isOk = false;
 
   constructor(private route: ActivatedRoute, private userService: UserService) {
     route.params.subscribe(params => {
@@ -31,16 +33,45 @@ export class FriendsComponent implements OnInit {
    }
 
   ngOnInit(): void {
-    const air1 = this.userService.getUser(this.userId);
-    // const airline = this.airlineService.getAdminsAirline(this.adminId);
-    // this.companyFields = {
-    //   name: airline.name,
-    //   location: airline.address,
-    //   about: airline.about
-    // };
-    console.log(air1);
-    this.friends = this.user.friends;
-    this.nonFriends = this.userService.getNonFriends(this.userId, this.user.friends);
+    this.loadAll();
+  }
+
+  loadAll() {
+    this.nonFriends = [];
+    this.friends = [];
+    this.isOk = false;
+    const a = this.userService.getNonFriends().subscribe(
+      (res: any[]) => {
+        if (res.length) {
+          res.forEach(element => {
+            const b = {
+              firstName: element.firstname,
+              lastName: element.lastname,
+              email: element.email,
+              id: element.id
+            };
+            this.nonFriends.push(b);
+          });
+          const c = this.userService.getFriends().subscribe(
+            (res1: any[]) => {
+              if (res1.length) {
+                res1.forEach(element1 => {
+                  const b1 = {
+                    firstName: element1.firstname,
+                    lastName: element1.lastname,
+                    email: element1.email,
+                    id: element1.id
+                  };
+                  this.friends.push(b1);
+                });
+                this.isOk = true;
+              }
+            }
+          );
+          this.isOk = true;
+        }
+      }
+    );
   }
 
   focusInput() {
@@ -52,34 +83,25 @@ export class FriendsComponent implements OnInit {
   }
 
   addFriend(id: number) {
-    this.userService.addFriend(this.userId, id);
-    const air1 = this.userService.getUser(this.userId);
-    // const airline = this.airlineService.getAdminsAirline(this.adminId);
-    // this.companyFields = {
-    //   name: airline.name,
-    //   location: airline.address,
-    //   about: airline.about
-    // };
-    console.log(air1);
-    this.nonFriends = this.userService.getNonFriends(this.userId, this.user.friends);
-    this.friends = this.user.friends;
+    const c = this.userService.addFriend(id).subscribe(
+      (res1: any) => {
+        this.loadAll();
+      },
+      err => {
+        alert(err.error.description);
+      }
+    );
   }
 
   removeFriend(remove: boolean) {
-    this.myProps.show = !this.myProps.show;
-    if (remove) {
-      this.userService.removeFriend(this.userId, this.myProps.friend.id);
-      const air1 = this.userService.getUser(this.userId);
-      // const airline = this.airlineService.getAdminsAirline(this.adminId);
-      // this.companyFields = {
-      //   name: airline.name,
-      //   location: airline.address,
-      //   about: airline.about
-      // };
-      console.log(air1);
-      this.nonFriends = this.userService.getNonFriends(this.userId, this.user.friends);
-      this.friends = this.user.friends;
-    }
+    // const c = this.userService.removeFriend(email).subscribe(
+    //   (res1: any) => {
+    //     this.loadAll();
+    //   },
+    //   err => {
+    //     alert(err.error.description);
+    //   }
+    // );
   }
 
   toggleModal(id: number) {

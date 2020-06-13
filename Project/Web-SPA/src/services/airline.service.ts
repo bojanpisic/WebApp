@@ -23,6 +23,7 @@ export class AirlineService {
    }
 
    test(data: any): Observable<any> {
+    console.log(data);
     const param = {
       type: data.type,
       from: data.from,

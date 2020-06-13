@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RegisteredUser } from 'src/app/entities/registeredUser';
 import { UserService } from 'src/services/user.service';
 import { AirlineService } from 'src/services/airline.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-trips',
@@ -20,10 +21,11 @@ export class TripsComponent implements OnInit {
   filter = false;
 
   url: any;
+  trip1: {flightsObject: Array<any>, minPrice: number};
 
   constructor(private userService: UserService, private tripService: TripService,
               private location: Location, private route: ActivatedRoute, private airlineService: AirlineService,
-              private router: Router) {
+              private router: Router, private san: DomSanitizer) {
     const array = route.snapshot.queryParamMap.get('array');
     this.urlParams = JSON.parse(array);
     console.log(this.urlParams);
@@ -32,6 +34,10 @@ export class TripsComponent implements OnInit {
       this.userId = param.id;
     });
     this.trips = new Array<any>();
+    this.trip1 = {
+      flightsObject: [],
+      minPrice: 0
+    };
    }
 
   ngOnInit(): void {
@@ -55,20 +61,36 @@ export class TripsComponent implements OnInit {
       const a = this.airlineService.test(this.url).subscribe(
         (res: any[]) => {
           if (res.length > 0) {
-            res.forEach(element => {
-              // const airline = {
-              //   minPrice: element.minPrice,
-              //   name: element.name,
-              // };
-              // this.allAirlines.push(airline);
-              // if (this.url.air.split(',').contains(airline.airlineId)) {
-              //   this.checkedAirlines.push(true);
-              // } else {
-              //   this.checkedAirlines.push(false);
-              // }
-              // console.log(airline);
+            console.log(res);
+            res.forEach(el => {
+              console.log(el.flightsObject);
+              this.trip1.flightsObject = [];
+              this.trip1.minPrice = 0;
+              el.flightsObject.forEach(element => {
+                const new1 = {
+                  flightId: element.flightId,
+                  flightNumber: element.flightNumber,
+                  // tslint:disable-next-line:max-line-length
+                  airlineLogo: (element.airlineLogo === null) ? null : this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.airlineLogo}`),
+                  airlineName: element.airlineName,
+                  from: element.from,
+                  takeOffDate: element.takeOffDate,
+                  takeOffTime: element.takeOffTime,
+                  to: element.to,
+                  landingDate: element.landingDate,
+                  landingTime: element.landingTime,
+                  flightLength: element.flightLength,
+                  flightTime: element.flightTime,
+                  stops: element.stops,
+                  minPrice: element.minPrice
+                };
+                this.trip1.flightsObject.push(new1);
+                this.trip1.minPrice += new1.minPrice;
+              });
+              this.trips.push(this.trip1);
             });
           }
+          console.log(res);
         },
         err => {
           console.log(err);
@@ -101,7 +123,8 @@ export class TripsComponent implements OnInit {
         let froms = '';
         let tos = '';
         let deps = '';
-        for (let i = 1; i < this.urlParams.length; i++) {
+        for (let i = 1; i < this.urlParams.length - 1; i++) {
+          console.log(this.urlParams.length);
           if (i === this.urlParams.length - 2) {
             const element = this.urlParams[i];
             froms += this.urlParams[i].from;

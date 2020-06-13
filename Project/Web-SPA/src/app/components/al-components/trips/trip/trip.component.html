@@ -80,14 +80,14 @@
 </ul>
 <button id="book" (click)='viewDeal()'>VIEW DEAL</button> -->
 <ul class="all">
-    <li *ngFor="let flight of trip.flights; let i = index"  [ngStyle]="{'border-bottom': '.5px solid gainsboro'}">
+    <li *ngFor="let flight of trip.flightsObject; let i = index"  [ngStyle]="{'border-bottom': '.5px solid gainsboro'}">
         <app-flight [flight]="flight" [markFlightName]="false"></app-flight>
     </li>
     <li>
         <div class="book">
             <div class="price">
-                <span>Total price:</span>
-                <span id="price">$ {{trip.minumumPrice}}</span>
+                <span>From:</span>
+                <span id="price">$ {{trip.minPrice}}</span>
             </div>
             <a (click)='viewDeal()'>BOOK</a>
         </div>

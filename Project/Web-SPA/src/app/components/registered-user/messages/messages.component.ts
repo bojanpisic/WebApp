@@ -15,6 +15,13 @@ export class MessagesComponent implements OnInit {
   user: RegisteredUser;
   myProps = {message: undefined, show: false};
 
+  requests: Array<any>;
+  acceptedRequests: Array<any>;
+
+  isOk = false;
+
+  senderId;
+
   activeButton = 'inbox';
 
   constructor(private route: ActivatedRoute, private userService: UserService) {
@@ -24,14 +31,36 @@ export class MessagesComponent implements OnInit {
    }
 
   ngOnInit(): void {
-    const air1 = this.userService.getUser(this.userId);
-    // const airline = this.airlineService.getAdminsAirline(this.adminId);
-    // this.companyFields = {
-    //   name: airline.name,
-    //   location: airline.address,
-    //   about: airline.about
-    // };
-    console.log(air1);
+    this.loadAll();
+  }
+
+  loadAll() {
+    this.requests = [];
+    this.acceptedRequests = [];
+    this.isOk = false;
+    const a = this.userService.getRequests().subscribe(
+      (res: any[]) => {
+        console.log(res);
+        if (res.length) {
+          res.forEach(element => {
+            const b = {
+              accepted: element.accepted,
+              senderFirstName: element.senderFirstName,
+              senderLastName: element.senderLastName,
+              senderId: element.senderId,
+              senderEmail: element.senderEmail,
+            };
+            console.log(b.accepted);
+            if (b.accepted === false) {
+              this.acceptedRequests.push(b);
+            } else {
+              this.requests.push(b);
+            }
+          });
+          this.isOk = true;
+        }
+      }
+    );
   }
 
   toggleButton(value: string) {
@@ -40,11 +69,33 @@ export class MessagesComponent implements OnInit {
 
   getResponse(value: string) {
     this.myProps.show = false;
+    console.log('value' + value);
+    if (value === 'accept') {
+      const c = this.userService.acceptFriendship(this.senderId).subscribe(
+        (res1: any) => {
+          this.loadAll();
+        },
+        err => {
+          alert(err.error.description);
+        }
+      );
+    }
+    if (value === 'decline') {
+      const c = this.userService.declineFriendship(this.senderId).subscribe(
+        (res1: any) => {
+          this.loadAll();
+        },
+        err => {
+          alert(err.error.description);
+        }
+      );
+    }
   }
 
-  openMessageInfo(message: Message) {
+  openMessageInfo(message: any) {
     this.myProps.message = message;
     this.myProps.show = true;
+    this.senderId = message.senderId;
   }
 
 }

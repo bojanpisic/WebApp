@@ -49,6 +49,46 @@ export class UserService {
     // return this.http.get<any>(this.BaseURI + '/systemadmin/register-systemadmin', body);
   }
 
+  getNonFriends(): Observable<any> {
+    return this.http.get<any>(this.BaseURI + '/user/get-all-users');
+    // return this.http.get<any>(this.BaseURI + '/systemadmin/register-systemadmin', body);
+  }
+
+  getFriends(): Observable<any> {
+    return this.http.get<any>(this.BaseURI + '/user/get-friends');
+    // return this.http.get<any>(this.BaseURI + '/systemadmin/register-systemadmin', body);
+  }
+
+  getRequests(): Observable<any> {
+    return this.http.get<any>(this.BaseURI + '/user/get-user-requests');
+    // return this.http.get<any>(this.BaseURI + '/systemadmin/register-systemadmin', body);
+  }
+
+  addFriend(data: any) {
+    console.log(data);
+    const body = {
+      UserId: data
+    };
+    const url = this.BaseURI + '/user/send-friendship-invitation';
+    return this.http.post(url, body);
+  }
+
+  acceptFriendship(data: any) {
+    const body = {
+      UserId: data
+    };
+    const url = this.BaseURI + '/user/accept-friendship';
+    return this.http.post(url, body);
+  }
+
+  declineFriendship(data: any) {
+    const body = {
+      UserId: data
+    };
+    const url = this.BaseURI + '/user/reject-request';
+    return this.http.post(url, body);
+  }
+
   changePhoto(data: any) {
     const formData = new FormData();
     formData.append('img', data.image);
@@ -217,42 +257,7 @@ export class UserService {
     return null;
   }
 
-  getFriends(id: number) {
-    // return this.allUsers.find(x => x.id == id).friends;
-  }
 
-  getNonFriends(userId: number, friends: Array<RegisteredUser>) {
-    // const retVal = new Array<RegisteredUser>();
-    // this.allUsers.forEach(user => {
-    //   if (!friends.includes(user) && user.id != userId) {
-    //     retVal.push(user);
-    //   }
-    // });
-    // return retVal;
-    return null;
-
-  }
-
-  addFriend(userId: number, friendId: number) {
-    // const friend = this.getUser(friendId);
-    // const user = this.getUser(userId);
-    // user.friends.push(friend);
-    // const index = this.allUsers.indexOf(user);
-    // this.allUsers[index] = user;
-    return null;
-
-  }
-
-  removeFriend(userId: number, friendId: number) {
-    // const friend = this.getUser(friendId);
-    // const user = this.getUser(userId);
-    // const indexOfFriend = user.friends.indexOf(friend);
-    // user.friends.splice(indexOfFriend, 1);
-    // const index = this.allUsers.indexOf(user);
-    // this.allUsers[index] = user;
-    return null;
-
-  }
 
   // getUser(id: number) {
   //   // return this.allUsers.find(x => x.id == id);

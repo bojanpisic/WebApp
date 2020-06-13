@@ -54,7 +54,7 @@ export class HomeComponent implements OnInit {
       this.router.navigate(['/flight-special-offers']);
     } else {
       console.log('usa ba2');
-      this.router.navigate(['/all-car-special-offers']);
+      this.router.navigate(['/car-special-offers']);
     }
   }
 

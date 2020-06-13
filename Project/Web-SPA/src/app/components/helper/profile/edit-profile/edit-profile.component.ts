@@ -62,10 +62,15 @@ export class EditProfileComponent implements OnInit {
   goBack() {
     const payLoad = JSON.parse(window.atob(localStorage.getItem('token').split('.')[1]));
     const userRole = payLoad.Roles;
+    console.log(userRole);
     if (userRole === 'RegularUser') {
       this.router.navigate(['/' + this.userId + '/profile']);
-    } else {
+    } else if (userRole === 'AirlineAdmin') {
       this.router.navigate(['/admin/' + this.userId]);
+    } else if (userRole === 'RentACarServiceAdmin') {
+      this.router.navigate(['/rac-admin/' + this.userId]);
+    } else if (userRole === 'Admin') {
+      this.router.navigate(['/system-admin/' + this.userId]);
     }
   }
 
@@ -286,6 +291,7 @@ export class EditProfileComponent implements OnInit {
       this.userService.changeEmail(data).subscribe(
         (res: any) => {
           this.editEMail();
+          window.location.reload();
         },
         err => {
           console.log('dada' + err.status);
@@ -314,6 +320,10 @@ export class EditProfileComponent implements OnInit {
         };
         this.userService.changePassword(data).subscribe(
           (res: any) => {
+            if (!this.userService.hasChangedPassword()) {
+              localStorage.removeItem('token');
+              this.router.navigate(['']);
+            }
             this.editPassword();
           },
           err => {

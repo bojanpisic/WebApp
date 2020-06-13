@@ -15,7 +15,7 @@ import { HttpParams } from '@angular/common/http';
 export class TripComponent implements OnInit {
 
   @Input() indexOfTrip;
-  @Input() trip: Trip;
+  @Input() trip: any;
   @Input() userId;
   showInfo: Array<boolean>;
   i: number;
@@ -28,11 +28,12 @@ export class TripComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.i = this.showInfo.length;
-    this.showInfo.push(false);
-    this.trip.flights.forEach(flight => {
-      this.arrayOfValues.push(new TripParameter(flight.airlineId, flight.flightNumber));
-    });
+    console.log(this.trip);
+    // this.i = this.showInfo.length;
+    // this.showInfo.push(false);
+    // this.trip.flights.forEach(flight => {
+    //   this.arrayOfValues.push(new TripParameter(flight.airlineId, flight.flightNumber));
+    // });
   }
   getAirlineName(airlineId: number) {
     // const airline = this.airlineService.getAirline(airlineId);
