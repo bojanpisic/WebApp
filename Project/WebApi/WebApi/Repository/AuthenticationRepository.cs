@@ -21,13 +21,12 @@ namespace WebApi.Repository
 {
     public class AuthenticationRepository : IAuthenticationRepository
     {
-        private readonly DataContext context;
         private readonly UserManager<Person> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
 
-        public AuthenticationRepository(DataContext _context, UserManager<Person> _userManager, RoleManager<IdentityRole> _roleManager = null)
+        public AuthenticationRepository(UserManager<Person> _userManager,
+            RoleManager<IdentityRole> _roleManager = null)
         {
-            context = _context;
             userManager = _userManager;
             roleManager = _roleManager;
         }

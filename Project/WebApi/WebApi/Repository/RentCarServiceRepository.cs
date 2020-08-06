@@ -10,14 +10,10 @@ using WebApi.Models;
 
 namespace WebApi.Repository
 {
-    public class RentCarServiceRepository : IRentCarServiceRepository
+    public class RentCarServiceRepository : GenericRepository<RentACarService>, IRentCarServiceRepository
     {
-        private readonly DataContext context;
-        private readonly UserManager<Person> userManager;
-        public RentCarServiceRepository(DataContext _context, UserManager<Person> _userManager)
+        public RentCarServiceRepository(DataContext context) : base(context)
         {
-            context = _context;
-            userManager = _userManager;
         }
 
         public async Task<IdentityResult> AddBranch(Branch branch)

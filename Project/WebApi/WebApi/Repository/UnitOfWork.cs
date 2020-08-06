@@ -1,48 +1,150 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using WebApi.Data;
 using WebApi.Models;
 
 namespace WebApi.Repository
 {
-    public class UnitOfWork : IDisposable
+    public class UnitOfWork : IDisposable, IUnitOfWork
     {
-        //private DataContext context = new DataContext();
+        private DataContext context;
+        private readonly UserManager<Person> userManager;
+        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly SignInManager<Person> signInManager;
 
-        private GenericRepository<Airline> airlineRepository;
-        private GenericRepository<Person> authenticationRepository;
+        private IAirlineRepository airlineRepository;
+        private IAuthenticationRepository authenticationRepository;
+        private IFlightRepository flightRepository;
+        private IRentCarServiceRepository rentRepository;
+        private IUserRepository userRepository;
+        private IDestinationRepository destinationRepository;
+        private ISeatRepository seatRepository;
+        private ISpecialOfferRepository specialOfferRepository;
+        private IProfileRepository profileRepository;
+        private ICarRepository carRepository;
+        private IBranchRepository branchRepository;
+        private IRACSSpecialOffer racsSpecialOfferRepository;
 
-        public GenericRepository<Airline> DepartmentRepository
+        public UnitOfWork(DataContext _context, RoleManager<IdentityRole> _roleManager, 
+            UserManager<Person> _userManager, SignInManager<Person> _signInManager)
+        {
+            this.context = _context;
+            this.roleManager = _roleManager;
+            this.userManager = _userManager;
+            this.signInManager = _signInManager;
+        }
+
+        public IAirlineRepository AirlineRepository
+        {
+            get
+            {
+                return airlineRepository = airlineRepository ?? new AirlineRepository(this.context); 
+            }
+        }
+
+        public IAuthenticationRepository AuthenticationRepository
+        {
+            get
+            {
+                return authenticationRepository = authenticationRepository ??
+                    new AuthenticationRepository(this.userManager, this.roleManager);
+            }
+        }
+
+        public IFlightRepository FlightRepository
+        {
+            get
+            {
+                return flightRepository = flightRepository ?? new FlightRepository(this.context);
+            }
+        }
+
+        public ISeatRepository SeatRepository
         {
             get
             {
 
-                if (this.airlineRepository == null)
-                {
-                    //this.airlineRepository = new GenericRepository<Airline>(context);
-                }
-                return airlineRepository;
+                return seatRepository = seatRepository ?? new SeatRepository(this.context);
+
             }
         }
 
-        public GenericRepository<Person> CourseRepository
+        public UserManager<Person> UserManager 
+        {
+            get => this.userManager;
+        }
+
+        public RoleManager<IdentityRole> RoleManager 
+        {
+            get => this.roleManager;
+        }
+
+        public IDestinationRepository DestinationRepository
         {
             get
             {
-
-                if (this.authenticationRepository == null)
-                {
-                    //this.authenticationRepository = new GenericRepository<Person>(context);
-                }
-                return authenticationRepository;
+                return destinationRepository = destinationRepository ?? new DestinationRepository(this.context);
             }
         }
 
-        public void Save()
+        public IRentCarServiceRepository RentACarRepository
         {
-            //context.SaveChanges();
+            get
+            {
+                return rentRepository = rentRepository ?? new RentCarServiceRepository(this.context);
+            }
+        }
+
+        public IUserRepository UserRepository
+        {
+            get
+            {
+                return userRepository = userRepository ?? new UserRepository(this.context);
+            }
+        }
+        public ISpecialOfferRepository SpecialOfferRepository
+        {
+            get
+            {
+                return specialOfferRepository = specialOfferRepository ?? new SpecialOfferRepository(this.context);
+            }
+        }
+        public IProfileRepository ProfileRepository
+        {
+            get
+            {
+                return profileRepository = profileRepository ?? new ProfileRepository(this.context, this.userManager, this.signInManager);
+            }
+        }
+        public IBranchRepository BranchRepository
+        {
+            get
+            {
+                return branchRepository = branchRepository ?? new BranchRepository(this.context);
+            }
+        }
+        public ICarRepository CarRepository
+        {
+            get
+            {
+                return carRepository = carRepository ?? new CarRepository(this.context);
+            }
+        }
+        public IRACSSpecialOffer RACSSpecialOfferRepository
+        {
+            get
+            {
+                return racsSpecialOfferRepository = racsSpecialOfferRepository ?? new RACSSpecialOfferRepository(this.context);
+            }
         }
 
         private bool disposed = false;
@@ -53,7 +155,7 @@ namespace WebApi.Repository
             {
                 if (disposing)
                 {
-                    //context.Dispose();
+                    context.Dispose();
                 }
             }
             this.disposed = true;
@@ -63,6 +165,16 @@ namespace WebApi.Repository
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public async void Commit()
+        {
+            await context.SaveChangesAsync();
+        }
+
+        public void Rollback()
+        {
+            this.Dispose();
         }
     }
 }

@@ -29,9 +29,9 @@ namespace WebApi.Repository
         }
 
         public async Task<IdentityResult> ChangeEmail(Person user, string email)
-        { 
-            var emailChangeToken = await userManager.GenerateChangeEmailTokenAsync(user,email);
-            return await userManager.ChangeEmailAsync(user,email, emailChangeToken);
+        {
+            var emailChangeToken = await userManager.GenerateChangeEmailTokenAsync(user, email);
+            return await userManager.ChangeEmailAsync(user, email, emailChangeToken);
         }
         public async Task<IdentityResult> ChangePassword(Person user, string newPassword)
         {
@@ -70,12 +70,12 @@ namespace WebApi.Repository
 
         public async Task<IdentityResult> ChangeUserName(Person user, string username)
         {
-                return await userManager.SetUserNameAsync(user, username);
+            return await userManager.SetUserNameAsync(user, username);
         }
 
         public async Task<IdentityResult> Logout()
         {
-             await _signInManager.SignOutAsync();
+            await _signInManager.SignOutAsync();
             return IdentityResult.Success;
         }
 

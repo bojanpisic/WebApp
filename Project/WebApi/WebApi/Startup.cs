@@ -39,6 +39,7 @@ namespace WebApi
         {
             services.AddDbContext<DataContext>(x =>
                                 x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddControllers().AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
@@ -47,6 +48,10 @@ namespace WebApi
             services.AddScoped<IProfileRepository, ProfileRepository>();
             services.AddScoped<ISystemAdminRepository, SystemAdminRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+
 
 
 

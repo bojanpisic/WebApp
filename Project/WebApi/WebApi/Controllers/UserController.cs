@@ -22,20 +22,10 @@ namespace WebApi.Controllers
     [Route("api/[controller]")]
     public class UserController : Controller
     {
-        private readonly IUserRepository _userRepository;
-        private readonly DataContext _context;
-        private readonly IAirlineRepository _airlineRepository;
-        private readonly UserManager<Person> _userManager;
-        private readonly IAuthenticationRepository _authenticationRepository;
-
-
-
-        public UserController(DataContext dbContext, UserManager<Person> userManager)
+        private IUnitOfWork unitOfWork;
+        public UserController(IUnitOfWork _unitOfWork)
         {
-            _context = dbContext;
-            _userManager = userManager;
-            _userRepository = new UserRepository(dbContext, userManager);
-            _authenticationRepository = new AuthenticationRepository(dbContext, userManager);
+            unitOfWork = _unitOfWork;
         }
 
         [HttpPost]
@@ -47,7 +37,7 @@ namespace WebApi.Controllers
             try
             {
                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
-                var user = await _userManager.FindByIdAsync(userId);
+                var user = await unitOfWork.UserManager.FindByIdAsync(userId);
 
                 string userRole = User.Claims.First(c => c.Type == "Roles").Value;
 
@@ -58,30 +48,50 @@ namespace WebApi.Controllers
 
                 if (user == null)
                 {
-                    return NotFound(new IdentityError() { Code = "400", Description = "User not found" });
+                    return NotFound("User not found");
                 }
 
-                var friend = await _userManager.FindByIdAsync(dto.UserId);
+                var friend = await unitOfWork.UserManager.FindByIdAsync(dto.UserId);
 
                 if (friend == null)
                 {
-                    return BadRequest(new IdentityError() { Description = "User doesnt exist"});
+                    return NotFound("Searched user not found");
                 }
 
-                var result = await _userRepository.CreateFriendshipInvitation(user, friend);
-
-                if (result.Succeeded)
+                //var result = await unitOfWork.UserRepository.CreateFriendshipInvitation(user, friend);
+                try
                 {
-                    return Ok();
+                    //flight.Stops = new List<FlightDestination>
+                    //{
+                    //    new FlightDestination{
+                    //        Flight = flight,
+                    //        Destination = stop
+                    //    }
+                    //};
+                    User s = (User)user;
+                    User r = (User)friend;
+                    var f = new Friendship() { Rejacted = false, Accepted = false, User1 = s, User2 = r };
+
+                    s.FriendshipInvitations.Add(f);
+                    r.FriendshipRequests.Add(f);
+
+                    unitOfWork.UserRepository.Update(s);
+                    unitOfWork.UserRepository.Update(r);
+                    //bilo update usera
+
+                    //await transaction.Result.CommitAsync();
+                    unitOfWork.Commit();
+                }
+                catch (Exception)
+                {
+                    return StatusCode(500, "Failed to send invitation");
                 }
 
-                return BadRequest();
-
+                return Ok("Invitation sent");
             }
             catch (Exception)
             {
-
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, "Failed to send invitation");
             }
 
         }
@@ -94,7 +104,7 @@ namespace WebApi.Controllers
             try
             {
                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
-                var user = (User)await _userManager.FindByIdAsync(userId);
+                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
 
                 string userRole = User.Claims.First(c => c.Type == "Roles").Value;
 
@@ -105,10 +115,10 @@ namespace WebApi.Controllers
 
                 if (user == null)
                 {
-                    return NotFound(new IdentityError() { Code = "400", Description = "User not found" });
+                    return NotFound("User not found");
                 }
 
-                var requests = await _userRepository.GetRequests(user);
+                var requests = await unitOfWork.UserRepository.GetRequests(user);
 
                 List<object> allrequ = new List<object>();
 
@@ -128,8 +138,7 @@ namespace WebApi.Controllers
             }
             catch (Exception)
             {
-
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, "Failed to return requests");
             }
 
         }
@@ -142,7 +151,7 @@ namespace WebApi.Controllers
             try
             {
                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
-                var user = (User)await _userManager.FindByIdAsync(userId);
+                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
 
                 string userRole = User.Claims.First(c => c.Type == "Roles").Value;
 
@@ -153,14 +162,15 @@ namespace WebApi.Controllers
 
                 if (user == null)
                 {
-                    return NotFound(new IdentityError() { Code = "400", Description = "User not found" });
+                    return NotFound("User not found");
                 }
 
-                var allUsers = await _userRepository.GetAllUsers();
+                var allUsers = await unitOfWork.UserRepository.GetAllUsers();
                 var usersToReturn = new List<object>();
+
                 foreach (var item in allUsers)
                 {
-                    var role = await _authenticationRepository.GetRoles(item);
+                    var role = await unitOfWork.AuthenticationRepository.GetRoles(item);
                     if (!role.FirstOrDefault().Equals("RegularUser") || item.UserName.Equals(user.UserName))
                     {
                         continue;
@@ -182,7 +192,7 @@ namespace WebApi.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, "Failed to return all users");
             }
         }
 
@@ -194,7 +204,7 @@ namespace WebApi.Controllers
             try
             {
                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
-                var user = (User)await _userManager.FindByIdAsync(userId);
+                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
 
                 string userRole = User.Claims.First(c => c.Type == "Roles").Value;
 
@@ -205,10 +215,10 @@ namespace WebApi.Controllers
 
                 if (user == null)
                 {
-                    return NotFound(new IdentityError() { Code = "400", Description = "User not found" });
+                    return NotFound("User not found");
                 }
 
-                //var friends = await _userRepository.GetFriends(user);
+                //var friends = await unitOfWork.UserRepository.GetFriends(user);
                 var friends = user.Friends;
 
                 var usersToReturn = new List<object>();
@@ -233,7 +243,7 @@ namespace WebApi.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, "Failed to return user friends");
             }
         }
 
@@ -246,7 +256,7 @@ namespace WebApi.Controllers
             try
             {
                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
-                var user = (User)await _userManager.FindByIdAsync(userId);
+                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
 
                 string userRole = User.Claims.First(c => c.Type == "Roles").Value;
 
@@ -257,10 +267,10 @@ namespace WebApi.Controllers
 
                 if (user == null)
                 {
-                    return NotFound(new IdentityError() { Code = "400", Description = "User not found" });
+                    return NotFound("User not found");
                 }
 
-                var friendship = await _userRepository.GetRequestWhere(userId, dto.UserId);
+                var friendship = await unitOfWork.UserRepository.GetRequestWhere(userId, dto.UserId);
 
                 if (friendship == null)
                 {
@@ -271,27 +281,29 @@ namespace WebApi.Controllers
                 user.FriendshipRequests.FirstOrDefault(f => f.User1Id == friendship.User1.Id && f.User2Id == friendship.User2.Id).Accepted = true;
                 friendship.User1.Friends.Add(user);
 
-                using (var transaction = _context.Database.BeginTransactionAsync()) 
+                //using (var transaction = _context.Database.BeginTransactionAsync()) 
+                //{
+                try
                 {
-                    try
-                    {
-                        await _userRepository.UpdateUser(user);
-                        await _userRepository.UpdateUser(friendship.User1);
+                    unitOfWork.UserRepository.Update(user);
+                    unitOfWork.UserRepository.Update(friendship.User1);
 
-                        await transaction.Result.CommitAsync();
-                    }
-                    catch (Exception)
-                    {
-                        await transaction.Result.RollbackAsync();
-                        return StatusCode(500, "Internal server error");
-                    }
+                    //await transaction.Result.CommitAsync();
+                    unitOfWork.Commit();
                 }
+                catch (Exception)
+                {
+                    //await transaction.Result.RollbackAsync();
+                    //unitOfWork.Rollback();
+                    return StatusCode(500, "Failed to accept friendship. One of transactions failed");
+                }
+                //}
 
                 return Ok();
             }
             catch (Exception)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, "Failed to accept friendship");
             }
         }
 
@@ -303,7 +315,7 @@ namespace WebApi.Controllers
             try
             {
                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
-                var user = (User)await _userManager.FindByIdAsync(userId);
+                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
 
                 string userRole = User.Claims.First(c => c.Type == "Roles").Value;
 
@@ -314,41 +326,42 @@ namespace WebApi.Controllers
 
                 if (user == null)
                 {
-                    return NotFound(new IdentityError() { Code = "400", Description = "User not found" });
+                    return NotFound("User not found");
                 }
 
-                var friendship = await _userRepository.GetRequestWhere(userId, dto.UserId);
+                var friendship = await unitOfWork.UserRepository.GetRequestWhere(userId, dto.UserId);
 
                 if (friendship == null)
                 {
                     return BadRequest();
                 }
 
-                //user.FriendshipRequests.Remove(friendship);
-                //friendship.User1.FriendshipInvitations.Remove(friendship);
 
-                using (var transaction = _context.Database.BeginTransactionAsync())
+
+                //using (var transaction = _context.Database.BeginTransactionAsync())
+                //{
+                try
                 {
-                    try
-                    {
-                        await _userRepository.DeleteFriendship(friendship);
-                        await _userRepository.UpdateUser(user);
-                        await _userRepository.UpdateUser(friendship.User1);
+                    unitOfWork.UserRepository.DeleteFriendship(friendship);
+                    unitOfWork.UserRepository.Update(user);
+                    unitOfWork.UserRepository.Update(friendship.User1);
 
-                        await transaction.Result.CommitAsync();
-                    }
-                    catch (Exception)
-                    {
-                        await transaction.Result.RollbackAsync();
-                        return StatusCode(500, "Internal server error");
-                    }
+                    unitOfWork.Commit();
+                    //await transaction.Result.CommitAsync();
                 }
+                catch (Exception)
+                {
+                    //unitOfWork.Rollback();
+                    //await transaction.Result.RollbackAsync();
+                    return StatusCode(500, "Failed to reject request. One of transactions failed");
+                }
+                //}
 
                 return Ok();
             }
             catch (Exception)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, "Failed to reject request");
             }
         }
 

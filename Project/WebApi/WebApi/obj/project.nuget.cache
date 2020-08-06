@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "BeSA0y/MrU9Uzmc94aMGECy2wD/56eNSFMZ6xnK7yn8XvW56mpYeZHUtQRhn+NtqjBnWFqfRDWrr7yEQ2ZO5NA==",
+  "dgSpecHash": "UQjb4eH5FKIa85wikYzsjorE99fe+dnvAaTQRIGCb5ca9m6YvTAME0sXJ6jnZbRVlKHGVYABzz53bOh/i09jiA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Bojan\\Desktop\\Project\\web2_projekat\\Project\\WebApi\\WebApi\\WebApi.csproj",
+  "projectFilePath": "C:\\Users\\Bojan\\Desktop\\final\\web2_projekat\\Project\\WebApi\\WebApi\\WebApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Bojan\\.nuget\\packages\\microsoft.aspnetcore.authentication\\2.2.0\\microsoft.aspnetcore.authentication.2.2.0.nupkg.sha512",
     "C:\\Users\\Bojan\\.nuget\\packages\\microsoft.aspnetcore.authentication.abstractions\\2.2.0\\microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512",

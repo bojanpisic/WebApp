@@ -8,7 +8,8 @@ import { catchError } from 'rxjs/operators';
 })
 export class SystemAdminService {
 
-  readonly BaseURI = 'http://192.168.0.13:5001/api';
+  readonly BaseURI = 'http://localhost:5001/api';
+
 
   constructor(private http: HttpClient) { }
 

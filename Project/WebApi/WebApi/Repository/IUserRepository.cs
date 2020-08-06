@@ -7,15 +7,15 @@ using WebApi.Models;
 
 namespace WebApi.Repository
 {
-    public interface IUserRepository
+    public interface IUserRepository: IGenericRepository<Person>
     {
-        Task<IdentityResult> CreateFriendshipInvitation(Person sender, Person receiver);
+        //Task<IdentityResult> CreateFriendshipInvitation(Person sender, Person receiver);
         Task<IEnumerable<Friendship>> GetRequests(Person user);
         Task<IEnumerable<Person>> GetAllUsers();
         Task<IEnumerable<User>> GetFriends(User user);
         Task<Friendship> GetRequestWhere(string user, string inviteSender);
-        Task<IdentityResult> UpdateUser(Person user);
-        Task<IdentityResult> DeleteFriendship(Friendship friendship);
+        //void UpdateUser(Person user);
+        void DeleteFriendship(Friendship friendship);
 
     }
 }

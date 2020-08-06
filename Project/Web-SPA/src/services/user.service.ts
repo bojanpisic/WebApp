@@ -20,7 +20,8 @@ import { Observable } from 'rxjs';
 })
 export class UserService {
 
-  readonly BaseURI = 'http://192.168.0.13:5001/api';
+  readonly BaseURI = 'http://localhost:5001/api';
+
 
   constructor(private tripService: TripService, private fb: FormBuilder, private http: HttpClient) {
 

@@ -22,22 +22,10 @@ namespace WebApi.Controllers
 
     public class ProfileController : Controller
     {
-        private readonly UserManager<Person> _userManager;
-        private readonly IAuthenticationRepository _authRepository;
-        private readonly IProfileRepository _profileRepository;
-        private readonly SignInManager<Person> _signInManager;
-        private readonly RoleManager<IdentityRole> roleManager;
-
-
-
-        private readonly DataContext _context;
-        public ProfileController(UserManager<Person> userManager, DataContext context, SignInManager<Person> signInManager, RoleManager<IdentityRole> rm)
+        IUnitOfWork unitOfWork;
+        public ProfileController(IUnitOfWork _unitOfWork)
         {
-            _signInManager = signInManager;
-            _userManager = userManager;
-            _context = context;
-            _profileRepository = new ProfileRepository(context, userManager, signInManager);
-            _authRepository = new AuthenticationRepository(context, userManager, rm);
+            unitOfWork = _unitOfWork;
         }
 
         [HttpPost]
@@ -45,7 +33,7 @@ namespace WebApi.Controllers
         [Route("logout")]
         public async Task<IActionResult> Logout() 
         {
-            await _profileRepository.Logout();
+            await unitOfWork.ProfileRepository.Logout();
 
             return Ok();
         }
@@ -65,7 +53,7 @@ namespace WebApi.Controllers
             try
             {
                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
-                var user = (User)await _userManager.FindByIdAsync(userId);
+                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
 
                 string userRole = User.Claims.First(c => c.Type == "Roles").Value;
 
@@ -76,19 +64,12 @@ namespace WebApi.Controllers
 
                 if (user == null)
                 {
-                    return NotFound(new IdentityError() { Code = "400", Description = "User not found" });
+                    return NotFound("User not found");
                 }
-
-                //var user = await _authRepository.GetUserById(id.ToString());
-
-                //if (user == null)
-                //{
-                //    return Unauthorized();
-                //}
 
                 user.City = profile.City;
 
-                var result = await _profileRepository.ChangeProfile(user);
+                var result = await unitOfWork.ProfileRepository.ChangeProfile(user);
 
                 if (result.Succeeded)
                 {
@@ -99,9 +80,7 @@ namespace WebApi.Controllers
             }
             catch (Exception)
             {
-
-                return StatusCode(500, "Internal server error.");
-
+                return StatusCode(500, "Failed to save changes");
             }
         }
 
@@ -120,7 +99,7 @@ namespace WebApi.Controllers
             try
             {
                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
-                var user = (User)await _userManager.FindByIdAsync(userId);
+                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
 
                 string userRole = User.Claims.First(c => c.Type == "Roles").Value;
 
@@ -131,16 +110,10 @@ namespace WebApi.Controllers
 
                 if (user == null)
                 {
-                    return NotFound(new IdentityError() { Code = "400", Description = "User not found" });
+                    return NotFound("User not found");
                 }
-                //var user = await _authRepository.GetUserById(id.ToString());
 
-                //if (user == null)
-                //{
-                //    return Unauthorized();
-                //}
-
-                var result = await _profileRepository.ChangeEmail(user, profile.Email);
+                var result = await unitOfWork.ProfileRepository.ChangeEmail(user, profile.Email);
 
                 if (result.Succeeded)
                 {
@@ -151,9 +124,7 @@ namespace WebApi.Controllers
             }
             catch (Exception)
             {
-
-                return StatusCode(500, "Internal server error.");
-
+                return StatusCode(500, "Failed to save changes");
             }
         }
 
@@ -171,7 +142,7 @@ namespace WebApi.Controllers
             try
             {
                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
-                var user = (User)await _userManager.FindByIdAsync(userId);
+                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
 
                 string userRole = User.Claims.First(c => c.Type == "Roles").Value;
 
@@ -182,18 +153,12 @@ namespace WebApi.Controllers
 
                 if (user == null)
                 {
-                    return NotFound(new IdentityError() { Code = "400", Description = "User not found" });
+                    return NotFound("User not found");
                 }
-                //var user = await _authRepository.GetUserById(id.ToString());
-
-                //if (user == null)
-                //{
-                //    return Unauthorized();
-                //}
 
                 user.FirstName = profile.FirstName;
 
-                var result = await _profileRepository.ChangeProfile(user);
+                var result = await unitOfWork.ProfileRepository.ChangeProfile(user);
 
                 if (result.Succeeded)
                 {
@@ -204,9 +169,7 @@ namespace WebApi.Controllers
             }
             catch (Exception)
             {
-
-                return StatusCode(500, "Internal server error.");
-
+                return StatusCode(500, "Failed to save changes");
             }
         }
 
@@ -222,7 +185,7 @@ namespace WebApi.Controllers
             try
             {
                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
-                var user = (User)await _userManager.FindByIdAsync(userId);
+                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
 
                 string userRole = User.Claims.First(c => c.Type == "Roles").Value;
 
@@ -233,18 +196,12 @@ namespace WebApi.Controllers
 
                 if (user == null)
                 {
-                    return NotFound(new IdentityError() { Code = "400", Description = "User not found" });
+                    return NotFound("User not found");
                 }
-                //var user = await _authRepository.GetUserById(id.ToString());
-
-                //if (user == null)
-                //{
-                //    return Unauthorized();
-                //}
 
                 user.LastName = profile.LastName;
 
-                var result = await _profileRepository.ChangeProfile(user);
+                var result = await unitOfWork.ProfileRepository.ChangeProfile(user);
 
                 if (result.Succeeded)
                 {
@@ -255,9 +212,7 @@ namespace WebApi.Controllers
             }
             catch (Exception)
             {
-
-                return StatusCode(500, "Internal server error.");
-
+                return StatusCode(500, "Failed to save changes");
             }
         }
 
@@ -275,7 +230,7 @@ namespace WebApi.Controllers
             try
             {
                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
-                var user = (User)await _userManager.FindByIdAsync(userId);
+                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
 
                 string userRole = User.Claims.First(c => c.Type == "Roles").Value;
 
@@ -286,14 +241,8 @@ namespace WebApi.Controllers
 
                 if (user == null)
                 {
-                    return NotFound(new IdentityError() { Code = "400", Description = "User not found" });
+                    return NotFound("User not found");
                 }
-                //var user = await _authRepository.GetUserById(id.ToString());
-
-                //if (user == null)
-                //{
-                //    return Unauthorized();
-                //}
 
                 using (var stream = new MemoryStream())
                 {
@@ -301,7 +250,7 @@ namespace WebApi.Controllers
                     user.ImageUrl = stream.ToArray();
                 }
 
-                var result = await _profileRepository.ChangeProfile(user);
+                var result = await unitOfWork.ProfileRepository.ChangeProfile(user);
 
                 if (result.Succeeded)
                 {
@@ -312,9 +261,7 @@ namespace WebApi.Controllers
             }
             catch (Exception)
             {
-
-                return StatusCode(500, "Internal server error.");
-
+                return StatusCode(500, "Failed to save changes");
             }
         }
 
@@ -331,27 +278,35 @@ namespace WebApi.Controllers
 
             try
             {
-                var user = await _authRepository.GetUserById(id);
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
 
-                if (user == null)
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("RegularUser"))
                 {
                     return Unauthorized();
                 }
 
-                var oldPasswMatch = await _userManager.CheckPasswordAsync(user, profile.OldPassword);
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                var oldPasswMatch = await unitOfWork.UserManager.CheckPasswordAsync(user, profile.OldPassword);
 
                 if (!oldPasswMatch)
                 {
-                    return BadRequest(new IdentityError() { Description = "Old Password dont match"});
+                    return BadRequest("Old Password dont match");
 
                 }
 
                 if (!profile.Password.Equals(profile.PasswordConfirm))
                 {
-                    return BadRequest(new IdentityError() { Description = "Passwords dont match" });
+                    return BadRequest("Passwords dont match");
                 }
 
-                var result = await _profileRepository.ChangePassword(user, profile.Password);
+                var result = await unitOfWork.ProfileRepository.ChangePassword(user, profile.Password);
 
                 if (result.Succeeded)
                 {
@@ -362,9 +317,7 @@ namespace WebApi.Controllers
             }
             catch (Exception)
             {
-
-                return StatusCode(500, "Internal server error.");
-
+                return StatusCode(500, "Failed to save changes");
             }
         }
 
@@ -381,14 +334,22 @@ namespace WebApi.Controllers
 
             try
             {
-                var user = await _authRepository.GetUserById(id.ToString());
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
 
-                if (user == null)
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("RegularUser"))
                 {
                     return Unauthorized();
                 }
 
-                var result = await _profileRepository.ChangePhone(user, profile.Phone);
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                var result = await unitOfWork.ProfileRepository.ChangePhone(user, profile.Phone);
 
                 if (result.Succeeded)
                 {
@@ -399,9 +360,7 @@ namespace WebApi.Controllers
             }
             catch (Exception)
             {
-
-                return StatusCode(500, "Internal server error.");
-
+                return StatusCode(500, "Failed to save changes");
             }
         }
 
@@ -418,14 +377,22 @@ namespace WebApi.Controllers
 
             try
             {
-                var user = await _authRepository.GetUserById(id.ToString());
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
 
-                if (user == null)
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("RegularUser"))
                 {
                     return Unauthorized();
                 }
 
-                var result = await _profileRepository.ChangeUserName(user, profile.UserName);
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                var result = await unitOfWork.ProfileRepository.ChangeUserName(user, profile.UserName);
 
                 if (result.Succeeded)
                 {
@@ -436,9 +403,7 @@ namespace WebApi.Controllers
             }
             catch (Exception)
             {
-
-                return StatusCode(500, "Internal server error.");
-
+                return StatusCode(500, "Failed to save changes");
             }
         }
 
@@ -452,7 +417,19 @@ namespace WebApi.Controllers
             try
             {
                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
-                var user = await _userManager.FindByIdAsync(userId);
+                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
+
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("RegularUser"))
+                {
+                    return Unauthorized();
+                }
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
 
                 return new
                 {
@@ -467,7 +444,7 @@ namespace WebApi.Controllers
             }
             catch (Exception)
             {
-                throw;
+                return StatusCode(500, "Failed to return profile");
             }
 
         }

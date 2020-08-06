@@ -9,60 +9,50 @@ using WebApi.Models;
 
 namespace WebApi.Repository
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : GenericRepository<Person>, IUserRepository
     {
-        private readonly DataContext context;
-        private readonly UserManager<Person> userManager;
-        public UserRepository(DataContext _context, UserManager<Person> _userManager)
+        public UserRepository(DataContext context) : base(context)
         {
-            context = _context;
-            userManager = _userManager;
         }
 
-        public async Task<IdentityResult> CreateFriendshipInvitation(Person sender, Person receiver)
-        {
-            using (var transaction = context.Database.BeginTransactionAsync())
-            {
-                try
-                {
-                    //flight.Stops = new List<FlightDestination>
-                    //{
-                    //    new FlightDestination{
-                    //        Flight = flight,
-                    //        Destination = stop
-                    //    }
-                    //};
-                    User s = (User)sender;
-                    User r = (User)receiver;
-                    var f = new Friendship() {Rejacted = false, Accepted = false, User1 = s, User2 = r };
-                    s.FriendshipInvitations.Add(f);
-                    r.FriendshipRequests.Add(f);
+        //public async Task<IdentityResult> CreateFriendshipInvitation(Person sender, Person receiver)
+        //{
+        //    //using (var transaction = context.Database.BeginTransactionAsync())
+        //    //{
+        //        try
+        //        {
+        //            //flight.Stops = new List<FlightDestination>
+        //            //{
+        //            //    new FlightDestination{
+        //            //        Flight = flight,
+        //            //        Destination = stop
+        //            //    }
+        //            //};
+        //            User s = (User)sender;
+        //            User r = (User)receiver;
+        //            var f = new Friendship() {Rejacted = false, Accepted = false, User1 = s, User2 = r };
 
-                    await this.UpdateUser(s);
-                    await this.UpdateUser(r);
-                    await transaction.Result.CommitAsync();
-                    return IdentityResult.Success;
-                }
-                catch (Exception)
-                {
-                    await transaction.Result.RollbackAsync();
+        //            s.FriendshipInvitations.Add(f);
+        //            r.FriendshipRequests.Add(f);
 
-                    return IdentityResult.Failed();
-                }
-            }
-        }
+        //            this.UpdateUser(s);
+        //            this.UpdateUser(r);
+        //        //await transaction.Result.CommitAsync();
+        //            unitOfWork.Commit();
+        //            return IdentityResult.Success;
+        //        }
+        //        catch (Exception)
+        //        {
+        //        //await transaction.Result.RollbackAsync();
+                    
+        //            return IdentityResult.Failed();
+        //        }
+        //    //}
+        //}
 
-        public async Task<IdentityResult> DeleteFriendship(Friendship friendship)
+        public void DeleteFriendship(Friendship friendship)
         {
             context.Friendships.Remove(friendship);
-            var res = await context.SaveChangesAsync();
-
-            if (res > 0)
-            {
-                return IdentityResult.Success;
-            }
-
-            return IdentityResult.Failed(new IdentityError() { Description = "Delete error" });
         }
 
         public async Task<IEnumerable<Person>> GetAllUsers()
@@ -83,17 +73,6 @@ namespace WebApi.Repository
         public async Task<Friendship> GetRequestWhere(string user, string inviteSender)
         {
             return await context.Friendships.Include(f => f.User1).FirstOrDefaultAsync(f => f.User1Id == inviteSender);
-        }
-
-        public async Task<IdentityResult> UpdateUser(Person user) 
-        {
-            context.Entry(user).State = EntityState.Modified;
-            var res = await context.SaveChangesAsync();
-            if (res > 0)
-            {
-                return IdentityResult.Success;
-            }
-            return IdentityResult.Failed(new IdentityError() { Description = "Update error" });
         }
     }
 }

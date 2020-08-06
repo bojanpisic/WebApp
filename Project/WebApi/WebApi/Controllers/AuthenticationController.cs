@@ -18,6 +18,7 @@ using System.Net.Http;
 using WebApi.Data;
 using System.Security.Cryptography.Xml;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Transactions;
 
 namespace WebApi.Controllers
 {
@@ -25,24 +26,26 @@ namespace WebApi.Controllers
     [Route("api/[controller]")]
     public class AuthenticationController : Controller
     {
-        private readonly IAuthenticationRepository _authenticationRepository;
         private readonly IConfiguration configuration;
-        private readonly UserManager<Person> _userManager;
         private readonly SignInManager<Person> _signInManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly DataContext _context;
+        private IUnitOfWork unitOfWork;
 
-        public AuthenticationController(UserManager<Person> userManager,
-            SignInManager<Person> signInManager, RoleManager<IdentityRole> roleManager, IConfiguration config, DataContext context)
+        //public AuthenticationController(UserManager<Person> userManager,
+        //    SignInManager<Person> signInManager, RoleManager<IdentityRole> roleManager, IConfiguration config, DataContext context)
+        //{
+        //    this._context = context;
+        //    this._authenticationRepository = new AuthenticationRepository(userManager, roleManager);
+        //    this._roleManager = roleManager;
+        //    this._signInManager = signInManager;
+        //    this._userManager = userManager;
+        //    this.configuration = config;
+        //}
+        public AuthenticationController(SignInManager<Person> signInManager, IConfiguration config, IUnitOfWork _unitOfWork) 
         {
-            this._context = context;
-            this._authenticationRepository = new AuthenticationRepository(context, userManager, roleManager);
-            this._roleManager = roleManager;
             this._signInManager = signInManager;
-            this._userManager = userManager;
             this.configuration = config;
+            this.unitOfWork = _unitOfWork;
         }
-
 
         [HttpPost("register-user")]
         public async Task<IActionResult> Register([FromBody] RegistrationDto userDto)
@@ -55,7 +58,7 @@ namespace WebApi.Controllers
 
             try
             {
-                if (!_authenticationRepository.CheckPasswordMatch(userDto.Password, userDto.ConfirmPassword))
+                if (!unitOfWork.AuthenticationRepository.CheckPasswordMatch(userDto.Password, userDto.ConfirmPassword))
                 {
                     return BadRequest(new IdentityError() { Code = "400", Description = "Passwords dont match" });
                 }
@@ -74,38 +77,32 @@ namespace WebApi.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, "Internal server error.");
+                return StatusCode(500, "Registration failed.");
             }
 
-            using (var transaction = _context.Database.BeginTransactionAsync())
+            //using (var transaction = new TransactionScope())
+            //{
+            try
             {
-                try
-                {
-                    var result = await this._authenticationRepository.RegisterUser(createUser, userDto.Password);
-
-                    //if (!result.Succeeded)
-                    //{
-                    //    return BadRequest(result.Errors);
-                    //    //return BadRequest(result);
-                    //}
-
-                    var addToRoleResult = await _authenticationRepository.AddToRole(createUser, "RegularUser");
-
-                    //if (!addToRoleResult.Succeeded)
-                    //{
-                    //    return BadRequest(addToRoleResult);
-                    //}
-                   await transaction.Result.CommitAsync();
-
-                }
-                catch (Exception)
-                {
-                    await transaction.Result.RollbackAsync();
-                    return StatusCode(500, "Internal server error.");
-                }
+                await unitOfWork.AuthenticationRepository.RegisterUser(createUser, userDto.Password);
+                await unitOfWork.AuthenticationRepository.AddToRole(createUser, "RegularUser");
+                unitOfWork.Commit();
+                //transaction.Complete();
             }
-
-            var emailSent = await _authenticationRepository.SendConfirmationMail(createUser, "user");
+            catch (Exception)
+            {
+                //unitOfWork.Rollback();
+                return StatusCode(500, "Registration failed.");
+            }
+            //}
+            try
+            {
+                var emailSent = await unitOfWork.AuthenticationRepository.SendConfirmationMail(createUser, "user");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Sending email failed.");
+            }
             return Ok();
         }
 
@@ -131,7 +128,7 @@ namespace WebApi.Controllers
                     return Unauthorized();
                 }
 
-                if (!_authenticationRepository.CheckPasswordMatch(userDto.Password, userDto.ConfirmPassword))
+                if (!unitOfWork.AuthenticationRepository.CheckPasswordMatch(userDto.Password, userDto.ConfirmPassword))
                 {
                     return BadRequest(new IdentityError() { Code = "400", Description = "Passwords dont match" });
                 }
@@ -143,36 +140,37 @@ namespace WebApi.Controllers
             }
             catch (Exception)
             {
-                throw;
+                return StatusCode(500, "Internal server error.");
             }
 
-            using (var transaction = _context.Database.BeginTransactionAsync())
-                try
-                {
-                    var result = await this._authenticationRepository.RegisterSystemAdmin(createUser, userDto.Password);
+            //using (var transaction = new TransactionScope())
+            try
+            {
+                var result = await this.unitOfWork.AuthenticationRepository.RegisterSystemAdmin(createUser, userDto.Password);
+                //unitOfWork.Commit();
 
-                    //if (!result.Succeeded)
-                    //{
-                    //    return BadRequest(result);
-                    //}
+                var addToRoleResult = await unitOfWork.AuthenticationRepository.AddToRole(createUser, "Admin");
+                unitOfWork.Commit();
 
-                    var addToRoleResult = await _authenticationRepository.AddToRole(createUser, "Admin");
+                //await transaction.Result.CommitAsync();
+            }
+            catch (Exception)
+            {
+                //unitOfWork.Rollback();
+                //await transaction.Result.RollbackAsync();
+                return StatusCode(500, "Internal server error. Registration failed.");
+            }
 
-                    //if (!addToRoleResult.Succeeded)
-                    //{
-                    //    return BadRequest(addToRoleResult);
-                    //}
-                    await transaction.Result.CommitAsync();
+            try
+            {
+                var emailSent = await unitOfWork.AuthenticationRepository.SendConfirmationMail(createUser, "admin", userDto.Password);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Internal server error. Sending email failed.");
+            }
 
-                }
-                catch (Exception)
-                {
-                    await transaction.Result.RollbackAsync();
-                    return StatusCode(500, "Internal server error.");
-                }
-
-            var emailSent = await _authenticationRepository.SendConfirmationMail(createUser, "admin", userDto.Password);
-            return Ok();
+            return StatusCode(201, "Registered"); //201 - created
         }
 
 
@@ -187,9 +185,7 @@ namespace WebApi.Controllers
 
             try
             {
-
-
-                var user = await this._authenticationRepository.GetPerson(loginUser.UserNameOrEmail
+                var user = await this.unitOfWork.AuthenticationRepository.GetPerson(loginUser.UserNameOrEmail
                     /*String.IsNullOrEmpty(loginUser.Email) ? loginUser.Username : loginUser.Email*/,
                     loginUser.Password);
 
@@ -203,10 +199,10 @@ namespace WebApi.Controllers
 
                 if (loginUser.Token != null && loginUser.UserId != null)
                 {
-                    await _authenticationRepository.ConfirmEmail(user, loginUser.Token);
+                    await unitOfWork.AuthenticationRepository.ConfirmEmail(user, loginUser.Token);
                 }
 
-                var isPasswordCorrect = await this._authenticationRepository.CheckPassword(user, loginUser.Password);
+                var isPasswordCorrect = await this.unitOfWork.AuthenticationRepository.CheckPassword(user, loginUser.Password);
 
                 if (!isPasswordCorrect)
                 {
@@ -217,18 +213,17 @@ namespace WebApi.Controllers
                     //return Unauthorized();
                 }
 
-                var role = (await _authenticationRepository.GetRoles(user)).FirstOrDefault();
+                var role = (await unitOfWork.AuthenticationRepository.GetRoles(user)).FirstOrDefault();
 
                 if (role == "RegularUser")
                 {
-                    var isEmailConfirmed = await this._authenticationRepository.IsEmailConfirmed(user);
+                    var isEmailConfirmed = await this.unitOfWork.AuthenticationRepository.IsEmailConfirmed(user);
 
                     if (!isEmailConfirmed)
                     {
                         return BadRequest(new IdentityError() { Description = "Email not confirmed"});
                     }
                 }
-
 
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
@@ -253,7 +248,7 @@ namespace WebApi.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, "Internal server error.");
+                return StatusCode(500, "Login failed.");
             }
         }
 
@@ -263,13 +258,13 @@ namespace WebApi.Controllers
         {
             try
             {
-                var user = await _authenticationRepository.GetUserById(userId);
+                var user = await unitOfWork.AuthenticationRepository.GetUserById(userId);
                 if (user == null)
                 {
                     return BadRequest(new IdentityError() { Code = "User dont exist"});
                 }
 
-                var result = await _authenticationRepository.ConfirmEmail(user, token);
+                var result = await unitOfWork.AuthenticationRepository.ConfirmEmail(user, token);
 
                 if (result.Succeeded)
                 {
@@ -282,7 +277,7 @@ namespace WebApi.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, "Internal server error.");
+                return StatusCode(500, "Email confirmation failed.");
             }
         }
 
@@ -332,7 +327,7 @@ namespace WebApi.Controllers
 
                 if (email != null)
                 {
-                    var user = await _userManager.FindByEmailAsync(email);
+                    var user = await unitOfWork.UserManager.FindByEmailAsync(email);
 
                     if (user == null)
                     {
@@ -341,10 +336,10 @@ namespace WebApi.Controllers
                             UserName = info.Principal.FindFirstValue(ClaimTypes.Email),
                             Email = info.Principal.FindFirstValue(ClaimTypes.Email)
                         };
-                        await _userManager.CreateAsync(user);
+                        await unitOfWork.UserManager.CreateAsync(user);
                     }
 
-                    await _userManager.AddLoginAsync(user, info);
+                    await unitOfWork.UserManager.AddLoginAsync(user, info);
                     await _signInManager.SignInAsync(user, isPersistent: false);
 
                     return LocalRedirect(returnUrl);
@@ -359,7 +354,7 @@ namespace WebApi.Controllers
         [Route("social-login")]
         public async Task<IActionResult> SocialLogin([FromBody] LoginDto loginModel, string provider)
         {
-            if (_authenticationRepository.VerifyToken(loginModel.IdToken))
+            if (unitOfWork.AuthenticationRepository.VerifyToken(loginModel.IdToken))
             {
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {

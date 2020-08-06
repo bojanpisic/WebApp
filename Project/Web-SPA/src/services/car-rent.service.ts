@@ -8,7 +8,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class CarRentService {
-  readonly BaseURI = 'http://192.168.0.13:5001/api';
+  readonly BaseURI = 'http://localhost:5001/api';
+
 
   constructor(private http: HttpClient) {}
 
