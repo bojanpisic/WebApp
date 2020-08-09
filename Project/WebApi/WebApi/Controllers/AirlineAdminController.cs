@@ -123,7 +123,7 @@ namespace WebApi.Controllers
                     return NotFound("User not found.");
                 }
 
-                var findRes = await unitOfWork.AirlineRepository.Get(a => a.AdminId == userId);
+                var findRes = await unitOfWork.AirlineRepository.Get(a => a.AdminId == userId, null, "Address");
                 var airline = findRes.FirstOrDefault();
 
                 if (airline == null)
@@ -136,8 +136,10 @@ namespace WebApi.Controllers
 
                 bool addressChanged = false;
 
-                if (!airline.Address.City.Equals(airlineInfoDto.Address.City) || !airline.Address.City.Equals(airlineInfoDto.Address.State)
-                    || !airline.Address.Lat.Equals(airlineInfoDto.Address.Lat) || !airline.Address.Lon.Equals(airlineInfoDto.Address.Lon))
+                if (!airline.Address.City.Equals(airlineInfoDto.Address.City) || 
+                    !airline.Address.State.Equals(airlineInfoDto.Address.State)
+                    || !airline.Address.Lat.Equals(airlineInfoDto.Address.Lat) || 
+                    !airline.Address.Lon.Equals(airlineInfoDto.Address.Lon))
                 {
                     airline.Address.City = airlineInfoDto.Address.City;
                     airline.Address.State = airlineInfoDto.Address.State;
@@ -157,7 +159,7 @@ namespace WebApi.Controllers
                             //unitOfWork.Commit();
 
                             unitOfWork.AirlineRepository.UpdateAddress(airline.Address);
-                            unitOfWork.Commit();
+                            await unitOfWork.Commit();
 
                             //transaction.Complete();
                         }
@@ -165,7 +167,7 @@ namespace WebApi.Controllers
                         {
                         //unitOfWork.Rollback();
                         //transaction.Dispose();
-                            return StatusCode(500, "Failed to change airline info. One of transactions failed.");
+                        return StatusCode(500, "Failed to change airline info. One of transactions failed.");
                         }
                     //}
                 }
@@ -174,7 +176,7 @@ namespace WebApi.Controllers
                     try
                     {
                         unitOfWork.AirlineRepository.Update(airline);
-                        unitOfWork.Commit();
+                        await unitOfWork.Commit();
                     }
                     catch (Exception)
                     {
@@ -241,7 +243,7 @@ namespace WebApi.Controllers
                 try
                 {
                     unitOfWork.AirlineRepository.Update(airline);
-                    unitOfWork.Commit();
+                    await unitOfWork.Commit();
                 }
                 catch (Exception)
                 {
@@ -303,18 +305,17 @@ namespace WebApi.Controllers
 
                 //var exists = await unitOfWork.AirlineRepository.GetFlightByNumber(airline, flightDto.FlightNumber);
                 //proveri da li postoji vec takav naziv leta
-                if (exists != null || exists.ToList().Count > 0)
+                if (exists.ToList().Count > 0)
                 {
-                    return BadRequest(new IdentityError() { Code = "400", Description = "Flight num already exist" });
+                    return BadRequest("Flight num already exist");
                 }
 
                 var day = Convert.ToDateTime(flightDto.TakeOffDateTime).Day;
 
-                if (Convert.ToDateTime(flightDto.TakeOffDateTime) > Convert.ToDateTime(flightDto.LandingDateTime) || Convert.ToDateTime(flightDto.TakeOffDateTime) < DateTime.Now)
+                if (Convert.ToDateTime(flightDto.TakeOffDateTime) > Convert.ToDateTime(flightDto.LandingDateTime) 
+                    || Convert.ToDateTime(flightDto.TakeOffDateTime) < DateTime.Now)
                 {
-                    return BadRequest(new IdentityError() 
-                                    { Code = "400", 
-                                      Description = "Take of time has to be lower then landing time" });
+                    return BadRequest( "Take of time has to be lower then landing time");
                 }
 
                 var fromIdDest = await unitOfWork.DestinationRepository.GetByID(flightDto.FromId);
@@ -322,9 +323,7 @@ namespace WebApi.Controllers
 
                 if (fromIdDest == null || toIdDest == null)
                 {
-                    return BadRequest(new IdentityError()
-                                        { Code = "400", 
-                                          Description = "Destination is not on airline" });
+                    return BadRequest("Destination is not on airline");
                 }
 
                 var stops = (await unitOfWork.DestinationRepository.GetAirlineDestinations(airline))
@@ -369,8 +368,8 @@ namespace WebApi.Controllers
                 }
                 try
                 {
-                    unitOfWork.FlightRepository.Insert(flight);
-                    unitOfWork.Commit();
+                    await unitOfWork.FlightRepository.Insert(flight);
+                    await unitOfWork.Commit();
                 }
                 catch (Exception)
                 {
@@ -585,8 +584,8 @@ namespace WebApi.Controllers
                 };
                 try
                 {
-                    unitOfWork.DestinationRepository.Insert(destination);
-                    unitOfWork.Commit();
+                    await unitOfWork.DestinationRepository.Insert(destination);
+                    await unitOfWork.Commit();
                 }
                 catch (Exception)
                 {
@@ -720,7 +719,7 @@ namespace WebApi.Controllers
                 try
                 {
                     unitOfWork.SeatRepository.Delete(seat);
-                    unitOfWork.Commit();
+                    await unitOfWork.Commit();
                 }
                 catch (Exception)
                 {
@@ -793,8 +792,8 @@ namespace WebApi.Controllers
 
                 try
                 {
-                   unitOfWork.SeatRepository.Insert(seat);
-                   unitOfWork.Commit();
+                   await unitOfWork.SeatRepository.Insert(seat);
+                   await unitOfWork.Commit();
                 }
                 catch (Exception)
                 {
@@ -858,7 +857,7 @@ namespace WebApi.Controllers
                 try
                 {
                     unitOfWork.SeatRepository.Update(seat);
-                    unitOfWork.Commit();
+                    await unitOfWork.Commit();
                 }
                 catch (Exception)
                 {
@@ -1101,7 +1100,7 @@ namespace WebApi.Controllers
                 //using (var transaction = new TransactionScope()) {
                     try
                     {
-                        unitOfWork.SpecialOfferRepository.Insert(specialOffer);
+                        await unitOfWork.SpecialOfferRepository.Insert(specialOffer);
                         //unitOfWork.Commit();
 
                         unitOfWork.AirlineRepository.Update(airline);
@@ -1113,7 +1112,7 @@ namespace WebApi.Controllers
                             unitOfWork.SeatRepository.Update(seat);
                             //unitOfWork.Commit();
                         }
-                        unitOfWork.Commit();
+                        await unitOfWork.Commit();
                     }
                     catch (Exception)
                     {
@@ -1172,7 +1171,7 @@ namespace WebApi.Controllers
                 try
                 {
                     unitOfWork.SpecialOfferRepository.Delete(specOffer);
-                    unitOfWork.Commit();
+                    await unitOfWork.Commit();
                 }
                 catch (Exception)
                 {

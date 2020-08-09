@@ -13,7 +13,7 @@ namespace WebApi.Repository
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             string includeProperties = "");
         Task<TEntity> GetByID(object id);
-        void Insert(TEntity entity);
+        Task Insert(TEntity entity);
         void Delete(object id);
         void Delete(TEntity entityToDelete);
         void Update(TEntity entityToUpdate);

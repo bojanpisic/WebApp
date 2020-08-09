@@ -65,6 +65,8 @@ namespace WebApi.Repository
             throw new NotImplementedException();
         }
 
+
+
         public async Task<IEnumerable<Friendship>> GetRequests(Person user)
         {
             return await context.Friendships.Include(f=>f.User1).Where(f => f.User2Id == user.Id).ToListAsync();
@@ -73,6 +75,20 @@ namespace WebApi.Repository
         public async Task<Friendship> GetRequestWhere(string user, string inviteSender)
         {
             return await context.Friendships.Include(f => f.User1).FirstOrDefaultAsync(f => f.User1Id == inviteSender);
+        }
+
+        public async Task<CarRent> GetRent(int id)
+        {
+            return await context.CarRents.Include(c => c.RentedCar).FirstOrDefaultAsync(c =>c.CarRentId == id);
+        }
+
+        public async Task<IEnumerable<CarRent>> GetRents(User user)
+        {
+            return await context.CarRents
+                .Include(c => c.RentedCar)
+                .ThenInclude(car => car.Branch)
+                .ThenInclude(car => car.RentACarService)
+                .Where(c => c.User == user).ToListAsync();
         }
     }
 }

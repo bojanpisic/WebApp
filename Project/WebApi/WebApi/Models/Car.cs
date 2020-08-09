@@ -24,12 +24,14 @@ namespace WebApi.Models
         public Branch Branch { get; set; }
 
         public ICollection<CarSpecialOffer> SpecialOffers { get; set; }
+        public ICollection<CarRent> Rents { get; set; }
 
         public Car()
         {
             Branch = null;
             RentACarService = null;
             SpecialOffers = new HashSet<CarSpecialOffer>();
+            Rents = new HashSet<CarRent>();
         }
 
     }

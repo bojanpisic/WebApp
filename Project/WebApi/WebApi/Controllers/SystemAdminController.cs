@@ -84,7 +84,7 @@ namespace WebApi.Controllers
                         await this.unitOfWork.AuthenticationRepository.RegisterAirlineAdmin(admin, registerDto.Password);
                         await unitOfWork.AuthenticationRepository.AddToRole(admin, "AirlineAdmin");
                         //await transaction.Result.CommitAsync();
-                        unitOfWork.Commit();
+                        await unitOfWork.Commit();
                     }
                     catch (Exception)
                     {
@@ -154,7 +154,7 @@ namespace WebApi.Controllers
                 {
                     await this.unitOfWork.AuthenticationRepository.RegisterRACSAdmin(admin, registerDto.Password);
                     await unitOfWork.AuthenticationRepository.AddToRole(admin, "RentACarServiceAdmin");
-                    unitOfWork.Commit();
+                    await unitOfWork.Commit();
                     //await transaction.Result.CommitAsync();
                 }
                 catch (Exception)

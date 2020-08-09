@@ -86,7 +86,7 @@ namespace WebApi.Controllers
             {
                 await unitOfWork.AuthenticationRepository.RegisterUser(createUser, userDto.Password);
                 await unitOfWork.AuthenticationRepository.AddToRole(createUser, "RegularUser");
-                unitOfWork.Commit();
+                await unitOfWork.Commit();
                 //transaction.Complete();
             }
             catch (Exception)
@@ -150,7 +150,7 @@ namespace WebApi.Controllers
                 //unitOfWork.Commit();
 
                 var addToRoleResult = await unitOfWork.AuthenticationRepository.AddToRole(createUser, "Admin");
-                unitOfWork.Commit();
+                await unitOfWork.Commit();
 
                 //await transaction.Result.CommitAsync();
             }

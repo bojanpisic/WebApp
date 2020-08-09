@@ -29,7 +29,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Route("logout")]
         public async Task<IActionResult> Logout() 
         {
@@ -53,11 +53,11 @@ namespace WebApi.Controllers
             try
             {
                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
-                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
+                var user = (Person)await unitOfWork.UserManager.FindByIdAsync(userId);
 
                 string userRole = User.Claims.First(c => c.Type == "Roles").Value;
 
-                if (!userRole.Equals("RegularUser"))
+                if (String.IsNullOrEmpty(userRole))
                 {
                     return Unauthorized();
                 }
@@ -99,11 +99,11 @@ namespace WebApi.Controllers
             try
             {
                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
-                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
+                var user = (Person)await unitOfWork.UserManager.FindByIdAsync(userId);
 
                 string userRole = User.Claims.First(c => c.Type == "Roles").Value;
 
-                if (!userRole.Equals("RegularUser"))
+                if (String.IsNullOrEmpty(userRole))
                 {
                     return Unauthorized();
                 }
@@ -142,11 +142,11 @@ namespace WebApi.Controllers
             try
             {
                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
-                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
+                var user = (Person)await unitOfWork.UserManager.FindByIdAsync(userId);
 
                 string userRole = User.Claims.First(c => c.Type == "Roles").Value;
 
-                if (!userRole.Equals("RegularUser"))
+                if (String.IsNullOrEmpty(userRole))
                 {
                     return Unauthorized();
                 }
@@ -175,6 +175,8 @@ namespace WebApi.Controllers
 
         [HttpPut]
         [Route("change-lastname/{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
         public async Task<IActionResult> ChangeLastName([FromBody] ChangeLastNameDto profile, string id)
         {
             if (!ModelState.IsValid)
@@ -185,11 +187,11 @@ namespace WebApi.Controllers
             try
             {
                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
-                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
+                var user = (Person)await unitOfWork.UserManager.FindByIdAsync(userId);
 
                 string userRole = User.Claims.First(c => c.Type == "Roles").Value;
 
-                if (!userRole.Equals("RegularUser"))
+                if (String.IsNullOrEmpty(userRole))
                 {
                     return Unauthorized();
                 }
@@ -210,8 +212,9 @@ namespace WebApi.Controllers
 
                 return BadRequest(result.Errors);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return StatusCode(500, "Failed to save changes");
             }
         }
@@ -230,11 +233,11 @@ namespace WebApi.Controllers
             try
             {
                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
-                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
+                var user = (Person)await unitOfWork.UserManager.FindByIdAsync(userId);
 
                 string userRole = User.Claims.First(c => c.Type == "Roles").Value;
 
-                if (!userRole.Equals("RegularUser"))
+                if (String.IsNullOrEmpty(userRole))
                 {
                     return Unauthorized();
                 }
@@ -279,11 +282,11 @@ namespace WebApi.Controllers
             try
             {
                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
-                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
+                var user = (Person)await unitOfWork.UserManager.FindByIdAsync(userId);
 
                 string userRole = User.Claims.First(c => c.Type == "Roles").Value;
 
-                if (!userRole.Equals("RegularUser"))
+                if (String.IsNullOrEmpty(userRole))
                 {
                     return Unauthorized();
                 }
@@ -335,11 +338,11 @@ namespace WebApi.Controllers
             try
             {
                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
-                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
+                var user = (Person)await unitOfWork.UserManager.FindByIdAsync(userId);
 
                 string userRole = User.Claims.First(c => c.Type == "Roles").Value;
 
-                if (!userRole.Equals("RegularUser"))
+                if (String.IsNullOrEmpty(userRole))
                 {
                     return Unauthorized();
                 }
@@ -378,11 +381,11 @@ namespace WebApi.Controllers
             try
             {
                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
-                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
+                var user = (Person)await unitOfWork.UserManager.FindByIdAsync(userId);
 
                 string userRole = User.Claims.First(c => c.Type == "Roles").Value;
 
-                if (!userRole.Equals("RegularUser"))
+                if (String.IsNullOrEmpty(userRole))
                 {
                     return Unauthorized();
                 }
@@ -417,11 +420,11 @@ namespace WebApi.Controllers
             try
             {
                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
-                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
+                var user = (Person)await unitOfWork.UserManager.FindByIdAsync(userId);
 
                 string userRole = User.Claims.First(c => c.Type == "Roles").Value;
 
-                if (!userRole.Equals("RegularUser"))
+                if (String.IsNullOrEmpty(userRole))
                 {
                     return Unauthorized();
                 }
@@ -442,8 +445,9 @@ namespace WebApi.Controllers
                     user.PhoneNumber
                 };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return StatusCode(500, "Failed to return profile");
             }
 

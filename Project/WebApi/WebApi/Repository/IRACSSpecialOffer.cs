@@ -8,5 +8,6 @@ namespace WebApi.Repository
 {
     public interface IRACSSpecialOffer: IGenericRepository<CarSpecialOffer>
     {
+        Task<IEnumerable<CarSpecialOffer>> GetSpecialOffersOfRacs(int racsId);
     }
 }

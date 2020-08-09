@@ -37,7 +37,7 @@ export class AirlineService {
       mind: data.mind,
       maxd: data.maxd
     };
-    const url = this.BaseURI + '/airlineadmin/flights';
+    const url = this.BaseURI + '/home/flights';
     return this.http.get<any>(url, {params: param});
   }
 
@@ -48,12 +48,12 @@ export class AirlineService {
   }
 
   getAirlines(): Observable<any> {
-    const url = this.BaseURI + '/airlineadmin/all-airlines';
+    const url = this.BaseURI + '/home/all-airlines';
     return this.http.get<any>(url);
   }
 
   getAirlineProfile(data: any) {
-    const url = `${this.BaseURI + '/airlineadmin/airline'}/${data}`;
+    const url = `${this.BaseURI + '/home/airline'}/${data}`;
     return this.http.get(url);
   }
 
@@ -171,13 +171,13 @@ export class AirlineService {
   }
 
   getAirlineSpecialOffers(data): Observable<any> {
-    const url = `${this.BaseURI + '/airlineadmin/airline-special-offers'}/${data}`;
+    const url = `${this.BaseURI + '/home/airline-special-offers'}/${data}`;
     console.log(url);
     return this.http.get<any>(url);
   }
 
   getAllSpecialOffers(): Observable<any> {
-    const url = this.BaseURI + '/airlineadmin/all-airlines-specialoffers';
+    const url = this.BaseURI + '/home/all-airlines-specialoffers';
     console.log(url);
     return this.http.get<any>(url);
   }

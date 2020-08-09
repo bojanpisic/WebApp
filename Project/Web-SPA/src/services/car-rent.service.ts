@@ -19,7 +19,7 @@ export class CarRentService {
       Address: data.address,
       PromoDescription: data.promoDescription,
     };
-    const url = this.BaseURI + '/rentcarservice/change-racs-info';
+    const url = this.BaseURI + '/rentacarserviceadmin/change-racs-info';
     return this.http.put(url, body);
   }
 
@@ -27,29 +27,29 @@ export class CarRentService {
     const formData = new FormData();
     formData.append('img', data.image);
 
-    const url = this.BaseURI + '/rentcarservice/change-racs-logo';
+    const url = this.BaseURI + '/rentacarserviceadmin/change-racs-logo';
     return this.http.put(url, formData);
   }
 
   getRAC(): Observable<any> {
-    const url = this.BaseURI + '/rentcarservice/get-racs';
+    const url = this.BaseURI + '/rentacarserviceadmin/get-racs';
     console.log(url);
     return this.http.get<any>(url);
   }
 
   getRACCityState(): Observable<any> {
-    const url = this.BaseURI + '/rentcarservice/get-racs-address';
+    const url = this.BaseURI + '/rentacarserviceadmin/get-racs-address';
     console.log(url);
     return this.http.get<any>(url);
   }
 
   getRACs(): Observable<any> {
-    const url = this.BaseURI + '/rentcarservice/rent-car-services';
+    const url = this.BaseURI + '/home/rent-car-services';
     return this.http.get<any>(url);
   }
 
   getRACProfile(data: any) {
-    const url = `${this.BaseURI + '/rentcarservice/rent-car-service'}/${data}`;
+    const url = `${this.BaseURI + '/home/rent-car-service'}/${data}`;
     return this.http.get(url);
   }
 
@@ -61,17 +61,17 @@ export class CarRentService {
       State: data.State,
       City: data.City,
     };
-    const url = this.BaseURI + '/rentcarservice/add-branch';
+    const url = this.BaseURI + '/rentacarserviceadmin/add-branch';
     return this.http.post(url, body);
   }
 
   deleteBranch(data: any) {
-    const url = this.BaseURI + '/rentcarservice/delete-branch/' + data.id;
+    const url = this.BaseURI + '/rentacarserviceadmin/delete-branch/' + data.id;
     return this.http.delete(url);
   }
 
   getAdminsBranches(): Observable<any> {
-    const url = this.BaseURI + '/rentcarservice/get-racs-branches';
+    const url = this.BaseURI + '/rentacarserviceadmin/get-racs-branches';
     console.log(url);
     return this.http.get<any>(url);
   }
@@ -80,7 +80,7 @@ export class CarRentService {
   //   const formData = new FormData();
   //   formData.append('img', data.image);
 
-  //   const url = this.BaseURI + '/rentcarservice/add-car-img';
+  //   const url = this.BaseURI + '/rentacarserviceadmin/add-car-img';
   //   return this.http.put(url, formData);
 
   // }
@@ -101,7 +101,7 @@ export class CarRentService {
       racs: data.racs,
       type: data.type
     };
-    const url = this.BaseURI + '/rentcarservice/cars';
+    const url = this.BaseURI + '/home/cars';
     return this.http.get<any>(url, {params: param});
   }
 
@@ -114,7 +114,7 @@ export class CarRentService {
       SeatsNumber: data.SeatsNumber,
       PricePerDay: data.PricePerDay,
     };
-    const url = this.BaseURI + '/rentcarservice/add-car';
+    const url = this.BaseURI + '/rentacarserviceadmin/add-car';
     return this.http.post(url, body);
   }
 
@@ -127,7 +127,7 @@ export class CarRentService {
       SeatsNumber: data.SeatsNumber,
       PricePerDay: data.PricePerDay,
     };
-    const url = `${this.BaseURI + '/rentcarservice/change-car-info'}/${data.id}`;
+    const url = `${this.BaseURI + '/rentacarserviceadmin/change-car-info'}/${data.id}`;
     return this.http.put(url, body);
   }
 
@@ -141,27 +141,27 @@ export class CarRentService {
       SeatsNumber: data.SeatsNumber,
       PricePerDay: data.PricePerDay,
     };
-    const url = this.BaseURI + '/rentcarservice/add-car-to-branch';
+    const url = this.BaseURI + '/rentacarserviceadmin/add-car-to-branch';
     return this.http.post(url, body);
   }
 
   deleteCar(data: any) {
-    const url = this.BaseURI + '/rentcarservice/delete-car/' + data.id;
+    const url = this.BaseURI + '/rentacarserviceadmin/delete-car/' + data.id;
     return this.http.delete(url);
   }
 
   getCar(data: any) {
-    const url = `${this.BaseURI + '/rentcarservice/get-car'}/${data}`;
+    const url = `${this.BaseURI + '/rentacarserviceadmin/get-car'}/${data}`;
     return this.http.get(url);
   }
 
   getAdminsCars(): Observable<any> {
-    const url = this.BaseURI + '/rentcarservice/get-racs-cars';
+    const url = this.BaseURI + '/rentacarserviceadmin/get-racs-cars';
     return this.http.get<any>(url);
   }
 
   getBranchesCars(data: any): Observable<any> {
-    const url = `${this.BaseURI + '/rentcarservice/get-branch-cars'}/${data}`;
+    const url = `${this.BaseURI + '/rentacarserviceadmin/get-branch-cars'}/${data}`;
     return this.http.get<any>(url);
   }
 
@@ -174,17 +174,17 @@ export class CarRentService {
       ToDate: data.ToDate,
       NewPrice: data.NewPrice,
     };
-    const url = `${this.BaseURI + '/rentcarservice/add-car-specialoffer'}/${data.id}`;
+    const url = `${this.BaseURI + '/rentacarserviceadmin/add-car-specialoffer'}/${data.id}`;
     return this.http.post(url, body);
   }
 
   getAdminsSpecialOffers(): Observable<any> {
-    const url = this.BaseURI + '/rentcarservice/get-cars-specialoffers';
+    const url = this.BaseURI + '/rentacarserviceadmin/get-cars-specialoffers';
     return this.http.get<any>(url);
   }
 
   getRACSpecialOffers(data): Observable<any> {
-    const url = `${this.BaseURI + '/rentcarservice/racs-specialoffers'}/${data}`;
+    const url = `${this.BaseURI + '/home/racs-specialoffers'}/${data}`;
     console.log(url);
     return this.http.get<any>(url);
   }
@@ -195,7 +195,7 @@ export class CarRentService {
     //   param2: param2Value
     // };
     // this.router.navigate('/segment1/segment2', { queryParams: params });
-    const url = this.BaseURI + '/rentcarservice/racs-specialoffers';
+    const url = this.BaseURI + '/rentacarserviceadmin/racs-specialoffers';
     console.log(url);
     return this.http.get<any>(url);
   }

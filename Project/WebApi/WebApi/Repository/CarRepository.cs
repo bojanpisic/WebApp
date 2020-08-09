@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,18 @@ namespace WebApi.Repository
     {
         public CarRepository(DataContext context) : base(context)
         {
+        }
+
+        public async Task<IEnumerable<Car>> AllCars()
+        {
+            return await context.Cars.Include(c => c.SpecialOffers)
+                .Include(c => c.Branch)
+                .ThenInclude(b => b.RentACarService)
+                .Include(c => c.RentACarService)
+                .ThenInclude(r => r.Address)
+                .Include(c => c.RentACarService)
+                .ThenInclude(r => r.Branches)
+                .ToListAsync();
         }
     }
 }

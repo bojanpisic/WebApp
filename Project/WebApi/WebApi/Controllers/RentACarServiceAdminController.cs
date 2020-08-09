@@ -97,7 +97,7 @@ namespace WebApi.Controllers
                     return NotFound("User not found");
                 }
 
-                var res = await unitOfWork.RentACarRepository.Get(racs => racs.AdminId == userId);
+                var res = await unitOfWork.RentACarRepository.Get(racs => racs.AdminId == userId, null, "Address");
                 var racs = res.FirstOrDefault();
 
                 if (racs == null)
@@ -191,7 +191,7 @@ namespace WebApi.Controllers
                             unitOfWork.RentACarRepository.Update(racs);
                             //unitOfWork.Commit();
                             await unitOfWork.RentACarRepository.UpdateAddress(racs.Address);
-                            unitOfWork.Commit();
+                            await unitOfWork.Commit();
 
                             //transaction.Complete();
                             //await transaction.Result.CommitAsync();
@@ -210,7 +210,7 @@ namespace WebApi.Controllers
                     try
                     {
                         unitOfWork.RentACarRepository.Update(racs);
-                        unitOfWork.Commit();
+                        await unitOfWork.Commit();
                     }
                     catch (Exception)
                     {
@@ -270,7 +270,7 @@ namespace WebApi.Controllers
                 try
                 {
                     unitOfWork.RentACarRepository.Update(racs);
-                    unitOfWork.Commit();
+                    await unitOfWork.Commit();
                 }
                 catch (Exception)
                 {
@@ -380,8 +380,8 @@ namespace WebApi.Controllers
 
                 try
                 {
-                    unitOfWork.BranchRepository.Insert(branch);
-                    unitOfWork.Commit();
+                    await unitOfWork.BranchRepository.Insert(branch);
+                    await unitOfWork.Commit();
                 }
                 catch (Exception)
                 {
@@ -461,7 +461,7 @@ namespace WebApi.Controllers
                         //unitOfWork.Commit();
 
                         unitOfWork.BranchRepository.Delete(branch);
-                        unitOfWork.Commit();
+                        await unitOfWork.Commit();
 
                         //transaction.Complete();
                         //await transaction.Result.CommitAsync();
@@ -595,7 +595,7 @@ namespace WebApi.Controllers
                     return NotFound("User not found");
                 }
 
-                var res = await unitOfWork.BranchRepository.Get(b => b.BranchId == id, null, "Cars");
+                var res = await unitOfWork.BranchRepository.Get(b => b.BranchId == id, null, "Cars,RentACarService");
                 var branch = res.FirstOrDefault();
 
                 if (branch == null)
@@ -686,8 +686,8 @@ namespace WebApi.Controllers
 
                 try
                 {
-                    unitOfWork.CarRepository.Insert(car);
-                    unitOfWork.Commit();
+                    await unitOfWork.CarRepository.Insert(car);
+                    await unitOfWork.Commit();
                 }
                 catch (Exception)
                 {
@@ -751,8 +751,8 @@ namespace WebApi.Controllers
 
                 try
                 {
-                    unitOfWork.CarRepository.Insert(car);
-                    unitOfWork.Commit();
+                    await unitOfWork.CarRepository.Insert(car);
+                    await unitOfWork.Commit();
                 }
                 catch (Exception)
                 {
@@ -818,7 +818,7 @@ namespace WebApi.Controllers
                 try
                 {
                     unitOfWork.CarRepository.Update(car);
-                    unitOfWork.Commit();
+                    await unitOfWork.Commit();
                 }
                 catch (Exception)
                 {
@@ -876,7 +876,7 @@ namespace WebApi.Controllers
                 try
                 {
                     unitOfWork.CarRepository.Update(car);
-                    unitOfWork.Commit();
+                    await unitOfWork.Commit();
                 }
                 catch (Exception)
                 {
@@ -998,7 +998,7 @@ namespace WebApi.Controllers
                 try
                 {
                     unitOfWork.CarRepository.Delete(car);
-                    unitOfWork.Commit();
+                    await unitOfWork.Commit();
                 }
                 catch (Exception)
                 {
@@ -1089,11 +1089,11 @@ namespace WebApi.Controllers
                 //{
                     try
                     {
-                        unitOfWork.RACSSpecialOfferRepository.Insert(specialOffer);
+                        await unitOfWork.RACSSpecialOfferRepository.Insert(specialOffer);
                         //unitOfWork.Commit();
 
                         unitOfWork.CarRepository.Update(car);
-                        unitOfWork.Commit();
+                        await unitOfWork.Commit();
 
                         //await transaction.Result.CommitAsync();
                         //transaction.Complete();
@@ -1146,7 +1146,7 @@ namespace WebApi.Controllers
                     return NotFound("RACS not found");
                 }
 
-                var specOffers = await unitOfWork.RentACarRepository.GetSpecialOffersOfRacs(racs.RentACarServiceId);
+                var specOffers = await unitOfWork.RACSSpecialOfferRepository.GetSpecialOffersOfRacs(racs.RentACarServiceId);
 
                 List<object> objs = new List<object>();
 

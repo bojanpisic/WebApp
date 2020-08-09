@@ -55,12 +55,12 @@ namespace WebApi.Repository
             return await dbSet.FindAsync(id);
         }
 
-        public void Insert(TEntity entity)
+        public async Task Insert(TEntity entity)
         {
             if (entity == null) 
                 throw new ArgumentNullException("entity");
 
-            dbSet.Add(entity);
+            await dbSet.AddAsync(entity);
         }
 
         public async void Delete(object id)

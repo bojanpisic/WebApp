@@ -168,6 +168,7 @@ namespace WebApi.Data
         public DbSet<RentCarServiceRates> RentCarServiceRates { get; set; }
         public DbSet<SpecialOffer> SpecialOffers { get; set; }
         public DbSet<CarSpecialOffer> CarSpecialOffers { get; set; }
+        public DbSet<CarRent> CarRents { get; set; }
 
         public DbSet<Friendship> Friendships { get; set; }
 

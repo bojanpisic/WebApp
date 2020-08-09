@@ -167,7 +167,7 @@ namespace WebApi.Repository
             GC.SuppressFinalize(this);
         }
 
-        public async void Commit()
+        public async Task Commit()
         {
             await context.SaveChangesAsync();
         }

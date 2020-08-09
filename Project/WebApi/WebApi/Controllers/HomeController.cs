@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using WebApi.Models;
 using WebApi.Repository;
 
@@ -33,7 +34,7 @@ namespace WebApi.Controllers
                 var sortTypeCity = queryString["typecity"].ToString();
                 var sortByCity = queryString["sortbycity"].ToString();
 
-                var services = await unitOfWork.RentACarRepository.Get(null, null, "Branches,Address");
+                var services = await unitOfWork.RentACarRepository.Get(null, null, "Branches,Address, Rates");
 
                 if (!String.IsNullOrEmpty(sortByCity) && !String.IsNullOrEmpty(sortTypeCity))
                 {
@@ -59,7 +60,6 @@ namespace WebApi.Controllers
                     }
                 }
 
-
                 List<object> retList = new List<object>();
                 List<object> branches = new List<object>();
 
@@ -74,6 +74,18 @@ namespace WebApi.Controllers
                             State = d.State
                         });
                     }
+
+                    var rate = 0.0;
+                    if (item.Rates.Count > 0)
+                    {
+                        foreach (var r in item.Rates)
+                        {
+                            rate += r.Rate;
+                        }
+
+                        rate = rate / item.Rates.Count();
+                    }
+
                     retList.Add(new
                     {
                         Name = item.Name,
@@ -82,6 +94,7 @@ namespace WebApi.Controllers
                         State = item.Address.State,
                         //Lon = item.Address.Lon,
                         //Lat = item.Address.Lat,
+                        Rate = rate,
                         About = item.About,
                         Id = item.RentACarServiceId,
                         Branches = branches
@@ -186,7 +199,7 @@ namespace WebApi.Controllers
                     }
                 }
 
-                var allCars = await unitOfWork.RentACarRepository.AllCars();
+                var allCars = await unitOfWork.CarRepository.AllCars();
 
                 List<object> objs = new List<object>();
                 RentACarService rentService = new RentACarService();
@@ -285,7 +298,7 @@ namespace WebApi.Controllers
         {
             try
             {
-                var specOffers = await unitOfWork.RentACarRepository.GetSpecialOffersOfRacs(id);
+                var specOffers = await unitOfWork.RACSSpecialOfferRepository.GetSpecialOffersOfRacs(id);
 
                 List<object> objs = new List<object>();
 
@@ -466,6 +479,18 @@ namespace WebApi.Controllers
                             dest.Destination.State
                         });
                     }
+
+                    var rate = 0.0;
+                    if (item.Rates.Count > 0)
+                    {
+                        foreach (var r in item.Rates)
+                        {
+                            rate += r.Rate;
+                        }
+
+                        rate = rate / item.Rates.Count();
+                    }
+
                     all.Add(new
                     {
                         AirlineId = item.AirlineId,
@@ -473,6 +498,7 @@ namespace WebApi.Controllers
                         State = item.Address.State,
                         //Lat = item.Address.Lat,
                         //Lon = item.Address.Lon,
+                        Rate = rate,
                         Name = item.Name,
                         Logo = item.LogoUrl,
                         About = item.PromoDescription,
@@ -1089,7 +1115,6 @@ namespace WebApi.Controllers
                         }
                     }
                     return true;
-                    break;
 
                 case "two":
                     bool passed = false;
@@ -1128,7 +1153,6 @@ namespace WebApi.Controllers
                     }
 
                     return true;
-                    break;
 
                 case "multi":
 
@@ -1167,7 +1191,6 @@ namespace WebApi.Controllers
 
                     return true;
 
-                    break;
                 default:
                     break;
             }
@@ -1250,9 +1273,6 @@ namespace WebApi.Controllers
         private bool FilterMultiPassed(Flight flight, List<string> fromMulti, List<string> toMulti, List<int> airlines,
            string minDuration, string maxDuration, List<DateTime> departures, float minPrice, float maxPrice, float currentFlightsPrice)
         {
-            bool pass = false;
-
-
 
             if (fromMulti.Contains(flight.From.City) && toMulti.Contains(flight.To.City))
             {

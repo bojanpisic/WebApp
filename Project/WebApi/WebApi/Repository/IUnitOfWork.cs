@@ -25,9 +25,8 @@ namespace WebApi.Repository
         UserManager<Person> UserManager { get; }
         RoleManager<IdentityRole> RoleManager { get; }
 
-        static DataContext Context { get; }
 
-        void Commit();
+        Task Commit();
         void Rollback();
     }
 }

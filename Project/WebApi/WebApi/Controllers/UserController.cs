@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebSockets;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
@@ -28,6 +29,7 @@ namespace WebApi.Controllers
             unitOfWork = _unitOfWork;
         }
 
+        #region Friendship methods
         [HttpPost]
         [Route("send-friendship-invitation")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -80,7 +82,7 @@ namespace WebApi.Controllers
                     //bilo update usera
 
                     //await transaction.Result.CommitAsync();
-                    unitOfWork.Commit();
+                    await unitOfWork.Commit();
                 }
                 catch (Exception)
                 {
@@ -289,7 +291,7 @@ namespace WebApi.Controllers
                     unitOfWork.UserRepository.Update(friendship.User1);
 
                     //await transaction.Result.CommitAsync();
-                    unitOfWork.Commit();
+                    await unitOfWork.Commit();
                 }
                 catch (Exception)
                 {
@@ -346,7 +348,7 @@ namespace WebApi.Controllers
                     unitOfWork.UserRepository.Update(user);
                     unitOfWork.UserRepository.Update(friendship.User1);
 
-                    unitOfWork.Commit();
+                    await unitOfWork.Commit();
                     //await transaction.Result.CommitAsync();
                 }
                 catch (Exception)
@@ -364,6 +366,249 @@ namespace WebApi.Controllers
                 return StatusCode(500, "Failed to reject request");
             }
         }
+        #endregion
 
+        #region Rent methods
+        [HttpPost]
+        [Route("rent-car")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> RentCar(CarRentDto dto) 
+        {
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
+
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("RegularUser"))
+                {
+                    return Unauthorized();
+                }
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                if (dto.TakeOverDate > dto.ReturnDate)
+                {
+                    return BadRequest("Takeover date shoud be lower then return date.");
+                }
+
+                var res = await unitOfWork.CarRepository.Get(c => c.CarId == dto.CarRentId, null, "Branch, Rents");
+                var car = res.FirstOrDefault();
+
+                if (car == null)
+                {
+                    return NotFound("Car not found");
+                }
+
+                foreach (var rent in car.Rents)
+                {
+                    if (!(rent.TakeOverDate < dto.TakeOverDate && rent.ReturnDate < dto.TakeOverDate ||
+                        rent.TakeOverDate > dto.ReturnDate && rent.ReturnDate > dto.ReturnDate))
+                    {
+                        return BadRequest("The selected car is reserver for selected period");
+                    }
+                }
+
+                var racsId = car.BranchId == null ? car.RentACarServiceId : car.Branch.RentACarServiceId;
+
+                var result = await unitOfWork.RentACarRepository.Get(r => r.RentACarServiceId ==racsId, null, "Address, Branches");
+                var racs = result.FirstOrDefault();
+
+                if (racs == null)
+                {
+                    return NotFound("RACS not found");
+                }
+
+                if ((!car.Branch.City.Equals(dto.TakeOverCity) && car.BranchId != null) || !racs.Address.City.Equals(dto.TakeOverCity))
+                {
+                    return BadRequest("Takeover city and rent service/branch city dont match");
+                }
+
+                var citiesToReturn = new List<string>();
+
+                foreach (var item in racs.Branches)
+                {
+                    citiesToReturn.Add(item.City);
+                }
+
+                citiesToReturn.Add(racs.Address.City);
+
+                if (!citiesToReturn.Contains(dto.ReturnCity))
+                {
+                    return BadRequest("Cant return to selected city");
+                }
+
+                //using (var transaction = _context.Database.BeginTransactionAsync())
+                //{
+                var carRent = new CarRent()
+                {
+                    TakeOverCity = dto.TakeOverCity,
+                    ReturnCity = dto.ReturnCity,
+                    TakeOverDate = dto.TakeOverDate,
+                    ReturnDate = dto.ReturnDate,
+                    RentedCar = car,
+                    User = user
+                };
+
+                user.CarRents.Add(carRent);
+                car.Rents.Add(carRent);
+
+                try
+                {
+                    unitOfWork.UserRepository.Update(user);
+                    unitOfWork.CarRepository.Update(car);
+
+                    await unitOfWork.Commit();
+                    //await transaction.Result.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    //unitOfWork.Rollback();
+                    //await transaction.Result.RollbackAsync();
+                    return StatusCode(500, "Failed to rent car. One of transactions failed");
+                }
+                //}
+
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to rent car");
+            }
+        }
+
+        [HttpDelete]
+        [Route("cancel-rent/{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> CancelRent(int id) 
+        {
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
+
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("RegularUser"))
+                {
+                    return Unauthorized();
+                }
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                var rent = await unitOfWork.UserRepository.GetRent(id);
+
+                var car = rent.RentedCar;
+
+                if (car == null)
+                {
+                    return NotFound("Car not found");
+                }
+
+                if ((rent.TakeOverDate - DateTime.Now).TotalDays < 2)
+                {
+                    return BadRequest("Cant cancel reservation");
+                }
+
+                user.CarRents.Remove(rent);
+                car.Rents.Remove(rent);
+
+                try
+                {
+                    unitOfWork.UserRepository.Update(user);
+                    unitOfWork.CarRepository.Update(car);
+
+                    await unitOfWork.Commit();
+                    //await transaction.Result.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    //unitOfWork.Rollback();
+                    //await transaction.Result.RollbackAsync();
+                    return StatusCode(500, "Failed to cancel rent car. One of transactions failed");
+                }
+                //}
+
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to cancel rent car");
+            }
+        }
+
+        [HttpGet]
+        [Route("get-rents")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> GetRents() 
+        {
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
+
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("RegularUser"))
+                {
+                    return Unauthorized();
+                }
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                var rent = await unitOfWork.UserRepository.GetRents(user);
+                //nesto treba vratiti
+
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to cancel rent car");
+            }
+        }
+
+        //[HttpPost]
+        //[Route("rate-car")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //public async Task<IActionResult> RateCar(CarRateDto dto) 
+        //{
+        //    try
+        //    {
+        //        string userId = User.Claims.First(c => c.Type == "UserID").Value;
+        //        var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
+
+        //        string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+        //        if (!userRole.Equals("RegularUser"))
+        //        {
+        //            return Unauthorized();
+        //        }
+
+        //        if (user == null)
+        //        {
+        //            return NotFound("User not found");
+        //        }
+
+        //        var rent = await unitOfWork.UserRepository.GetRents(user);
+        //        //nesto treba vratiti
+
+        //        return Ok();
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return StatusCode(500, "Failed to rate car");
+        //    }
+        //}
+        #endregion
     }
 }
