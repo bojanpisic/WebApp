@@ -12,7 +12,7 @@ import { FormBuilder } from '@angular/forms';
 export class FlightMainFormComponent implements OnInit {
 
   @ViewChild('viewContainerRef', { read: ViewContainerRef }) VCR: ViewContainerRef;
-  @Input() userId;
+  @Input() userId: any;
   @ViewChild('child') child;
 
   numOfTravellers = 1;

@@ -17,6 +17,7 @@
     "@angular/compiler": "~9.0.6",
     "@angular/core": "~9.0.6",
     "@angular/forms": "~9.0.6",
+    "@angular/localize": "~9.0.6",
     "@angular/platform-browser": "~9.0.6",
     "@angular/platform-browser-dynamic": "~9.0.6",
     "@angular/router": "~9.0.6",
@@ -25,16 +26,16 @@
     "@progress/kendo-angular-intl": "^2.0.0",
     "@progress/kendo-angular-l10n": "^2.0.0",
     "@progress/kendo-angular-popup": "^3.0.0",
+    "@progress/kendo-theme-default": "latest",
     "angular-6-social-login": "^1.1.1",
     "angular-bootstrap-md": "^9.0.1",
     "font-awesome": "^4.7.0",
     "jwt-decode": "^2.2.0",
     "ngx-cookie-service": "^3.0.4",
+    "ngx-toastr": "^13.0.0",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
-    "zone.js": "~0.10.2",
-    "@angular/localize": "~9.0.6",
-    "@progress/kendo-theme-default": "latest"
+    "zone.js": "~0.10.2"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.900.6",

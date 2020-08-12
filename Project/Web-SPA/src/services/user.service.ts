@@ -14,6 +14,7 @@ import { RacAdmin } from 'src/app/entities/racAdmin';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { CustomValidationService } from './custom-validation.service';
 
 @Injectable({
   providedIn: 'root'
@@ -23,19 +24,19 @@ export class UserService {
   readonly BaseURI = 'http://localhost:5001/api';
 
 
-  constructor(private tripService: TripService, private fb: FormBuilder, private http: HttpClient) {
+  constructor(private customValidator: CustomValidationService, private fb: FormBuilder, private http: HttpClient) {
 
    }
 
    formModel = this.fb.group({
     UserName: ['', Validators.required],
-    Email: ['', Validators.email],
+    Email: ['', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$')]],
     FirstName: ['', Validators.required],
     LastName: ['', Validators.required],
-    Phone: ['', [Validators.required, Validators.pattern('^[(][+][0-9]{3}[)][0-9]{2}[/][0-9]{3}[-][0-9]{3,4}')]], //validacija
+    Phone: ['', [Validators.required, Validators.pattern('^[(][+][0-9]{3}[)][0-9]{2}[/][0-9]{3}[-][0-9]{3,4}')]],
     City: ['', Validators.required],
-    Password: ['', [Validators.required, Validators.minLength(4)]],
-    ConfirmPassword: ['', Validators.required], //proveriti da li se poklapaju
+    Password: ['', [Validators.required, this.customValidator.patternValidator()]],
+    ConfirmPassword: ['', Validators.required],
     ImageUrl: [''],
   });
 

@@ -22,7 +22,7 @@
     </div>
     <p>TRAVELLERS</p>
     <app-person-num-search (updateTravellers)="onUpdateTravellers($event)" id="travellers-div"></app-person-num-search>
-    <input (click)="onSubmit()" *ngIf="!filterForm" id="submit" type="submit" value="SEARCH">
+    <input (click)="onSubmit()" *ngIf="!filterForm" class="submit" type="submit" value="SEARCH">
 </form>
 <form *ngIf="flightType === 'multiCityFlight'" class="multiCityForm" action="">
     <ul id="ul">
@@ -36,7 +36,7 @@
     <button id="remove" (click)="removeFlight()">REMOVE</button><button (click)="addFlight()" id="new">NEW</button>
     <p>TRAVELLERS</p>
     <app-person-num-search id="travellers-div"></app-person-num-search>
-    <input (click)="onSubmit()" *ngIf="!filterForm" id="submit" type="submit" value="SEARCH">
+    <input (click)="onSubmit()" *ngIf="!filterForm" class="submit" type="submit" value="SEARCH">
 </form>
 <div *ngIf="!filterForm" class="separator-div">
     <hr class="separator">

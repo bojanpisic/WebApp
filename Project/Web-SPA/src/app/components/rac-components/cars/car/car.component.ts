@@ -14,6 +14,7 @@ export class CarComponent implements OnInit {
   @Input() adminView: boolean;
   @Input() quitReservation: boolean;
   @Input() carRate: boolean;
+  @Output() book = new EventEmitter<number>();
   @Output() editButtonClicked = new EventEmitter<number>();
   @Output() emitRateService = new EventEmitter<number>();
   @Output() emitRateCar = new EventEmitter<number>();
@@ -30,6 +31,9 @@ export class CarComponent implements OnInit {
   showRateService = false;
   showRateCar = false;
 
+  showModal = false;
+  blur = false;
+
   constructor() { }
 
   ngOnInit(): void {
@@ -41,7 +45,7 @@ export class CarComponent implements OnInit {
   }
 
   onBook() {
-
+    this.book.emit(this.car.carId);
   }
 
   onQuit() {

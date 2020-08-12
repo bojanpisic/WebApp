@@ -1,11 +1,11 @@
 <header>
-    <div *ngIf="step === 1" (click)="onExit()" class="back">
+    <div (click)="onExit()" class="back">
         <svg aria-hidden="true" role="presentation" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display: block; fill: rgb(34, 34, 34); height: 16px; width: 16px; stroke: rgb(34, 34, 34); stroke-width: 4; overflow: visible;"><path d="m6 6 20 20"></path><path d="m26 6-20 20"></path></svg>
     </div>
     <span>Register system admin</span>
 </header>
 <main>
-    <form *ngIf="step === 1" [formGroup]="formUser" (ngSubmit)="onSubmitUser()">
+    <form [formGroup]="formUser" (ngSubmit)="onSubmitUser()">
         <div class="content">
             <p class="required">Username:</p>
             <input [ngClass]="{'error-input': formUser.controls.username.invalid && (formUser.controls.username.touched || formUser.controls.username.dirty || errorUsername)}"
@@ -52,3 +52,4 @@
         <button type="submit">CONFIRM</button>
     </form>
 </main>
+<!-- <app-notification show={{showErrorMsg}} message={{errorMsg}}></app-notification> -->

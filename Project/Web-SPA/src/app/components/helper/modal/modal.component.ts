@@ -13,11 +13,13 @@ export class ModalComponent implements OnInit {
   @Input() props: {friend: RegisteredUser, show: boolean};
   @Input() destination: {city: string, state: string};
   @Input() type: string;
+  @Input() car: any;
   closeIt = 0;
 
   constructor(private eRef: ElementRef) { }
 
   ngOnInit(): void {
+    console.log(this.car);
   }
 
   return(value: boolean) {

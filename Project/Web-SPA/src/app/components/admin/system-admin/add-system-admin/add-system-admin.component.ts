@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SystemAdminService } from 'src/services/system-admin.service';
 import { CustomValidationService } from 'src/services/custom-validation.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-add-system-admin',
@@ -15,16 +16,15 @@ export class AddSystemAdminComponent implements OnInit {
   companyType: string;
 
   formUser: FormGroup;
-  formCompany: FormGroup;
-
-  step = 1;
 
   errorEmail = false;
   errorUsername = false;
   errorPassword = false;
   errorConfirmPassword = false;
   errorConfirmPasswordMatch = false;
-  errorMsg = '';
+
+  showErrorMsg = true;
+  errorMsg = 'Error 404 bla bla';
 
   data: {
     email: string,
@@ -35,7 +35,8 @@ export class AddSystemAdminComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private router: Router,
               public adminService: SystemAdminService, private formBuilder: FormBuilder,
-              private customValidator: CustomValidationService) {
+              private customValidator: CustomValidationService,
+              private toastr: ToastrService) {
     route.params.subscribe(params => {
       this.adminId = params.id;
     });
@@ -52,8 +53,24 @@ export class AddSystemAdminComponent implements OnInit {
         username: this.formUser.controls.username.value,
         password: this.formUser.controls.password.value,
         confirmPassword: this.formUser.controls.confirmPassword.value,
-      }
-      this.step = 2;
+      };
+      this.adminService.registerSystemAdmin(this.data).subscribe(
+        (res: any) => {
+          this.toastr.success('Success!');
+        },
+        err => {
+          // tslint:disable-next-line: triple-equals
+          if (err.status == 400) {
+            console.log(err);
+            // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
+            this.toastr.error(err.statusText, 'Error!');
+          } else {
+            console.log(err);
+            console.log(err.status);
+            this.toastr.error(err.statusText, 'Error!');
+          }
+        }
+      );
     }
   }
 

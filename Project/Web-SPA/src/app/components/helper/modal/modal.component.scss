@@ -56,6 +56,61 @@
         }
     }
 
+    .car-content {
+        margin: 0 30px;
+        // display: grid;
+        // grid-template-columns: auto auto;
+        // grid-template-rows: auto auto auto;
+        // grid-template-areas: 'image image'
+        //                      'text text'
+        //                      'cancel delete';
+        img {
+            // grid-area: image;
+            justify-self: center;
+            max-height: calc(100vh * .25);
+            max-width: 100%;
+            margin-bottom: 30px;
+        }
+
+        p {
+            margin: 0;
+            line-height: 20px;
+            font-size: 16px;
+            margin-top: 3px;
+            // grid-area: text;
+            // display: inline;
+        }
+
+        button {
+            display: inline-block;
+            justify-self: center;
+            margin-top: 30px;
+            width: calc(100% - 20px);
+            padding: .5em;
+            border-radius: 24px;
+            background-color: transparent;
+            border: 1px solid rgb(238, 238, 238);
+            color: rgb(80, 80, 80);
+        }
+
+        :focus {
+            outline: none;
+        }
+
+        #cancel {
+            grid-area: cancel;
+            margin-right: 10px;
+        }
+
+        #remove {
+            grid-area: delete;
+            font-weight: bold;
+            color: rgb(34, 34, 34);
+            border: 2px solid rgb(34, 34, 34);
+            box-shadow: $smallest-shadow;
+        }
+    }
+
     .content {
         margin: 0 30px;
         display: grid;

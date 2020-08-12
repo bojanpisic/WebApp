@@ -57,7 +57,8 @@ const routes: Routes = [
   {path: 'system-admin/:id',
   children: [
     {path: '', component: SystemAdminComponent},
-    {path: 'add-system-admin', component: AddSystemAdminComponent, canActivate: [AuthGuard], data: {permittedRoles: ['Admin']}},
+    {path: 'add-system-admin', component: AddSystemAdminComponent},
+    // , canActivate: [AuthGuard], data: {permittedRoles: ['Admin']}
     {path: ':type', component: AddCompanyComponent, canActivate: [AuthGuard], data: {permittedRoles: ['Admin']}},
     {
       path: 'profile',
@@ -174,6 +175,12 @@ const routes: Routes = [
     children: [
       {path: '', component: CarsComponent},
       {path: 'car-filter', component: CarFilterComponent},
+      // {
+      //   path: 'trip-reservation',
+      //   children: [
+      //     {path: '', component: FlightReservationComponent},
+      //   ]
+      // }
     ]
   },
   {

@@ -10,8 +10,24 @@ import { Observable } from 'rxjs';
 export class CarRentService {
   readonly BaseURI = 'http://localhost:5001/api';
 
+  cars: Array<{
+    brand: string,
+    carId: number,
+    city: string,
+    model: string,
+    name: string,
+    pricePerDay: number,
+    seatsNumber: number,
+    state: string,
+    type: string,
+    year: number,
+    priceForSelectedDates: number
+  }>;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.cars = [];
+    this.mock();
+  }
 
   editRAC(data: any) {
     const body = {
@@ -103,6 +119,10 @@ export class CarRentService {
     };
     const url = this.BaseURI + '/home/cars';
     return this.http.get<any>(url, {params: param});
+  }
+
+  getAllCars() {
+    return this.cars;
   }
 
   addCar(data: any) {
@@ -200,6 +220,90 @@ export class CarRentService {
     return this.http.get<any>(url);
   }
 
+  getCarReservation(data: any) {
+    console.log(data);
+    const param = {
+      from: data.from,
+      to: data.to,
+      dep: data.dep,
+      ret: data.ret,
+      carId: data.carId
+    };
+    const url = '';
+    return this.http.get(url, {params: param});
+  }
+
+  reserveCar(data) {
+    console.log(data);
+    const body = {
+      CarId: data.carId,
+      UserId: data.userId,
+      From: data.from,
+      To: data.to,
+      Dep: data.dep, // pocetni datum
+      Ret: data.ret, // datum vracanja auta
+      TotalPrice: data.totalPrice, // uzracunata na osnovu cene po danu
+    };
+    const url = ''; // NZM KOJA
+    return this.http.post(url, body);
+  }
+
 
   allMockedRentServices() {}
+
+  mock() {
+    const c1 = {
+      brand: 'Range Rover',
+      carId: 0,
+      city: 'Berlin',
+      model: 'Evoque',
+      name: 'Hertz',
+      pricePerDay: 50,
+      seatsNumber: 4,
+      state: 'Germany',
+      type: 'Luxury',
+      year: 2020
+    };
+    const c2 = {
+      brand: 'Range Rover',
+      carId: 1,
+      city: 'Berlin',
+      model: 'Evoque',
+      name: 'Hertz',
+      pricePerDay: 50,
+      seatsNumber: 4,
+      state: 'Germany',
+      type: 'Luxury',
+      year: 2020
+    };
+    const c3 = {
+      brand: 'Range Rover',
+      carId: 2,
+      city: 'Berlin',
+      model: 'Evoque',
+      name: 'Hertz',
+      pricePerDay: 50,
+      seatsNumber: 4,
+      state: 'Germany',
+      type: 'Luxury',
+      year: 2020
+    };
+    const c4 = {
+      brand: 'Range Rover',
+      carId: 3,
+      city: 'Berlin',
+      model: 'Evoque',
+      name: 'Hertz',
+      pricePerDay: 50,
+      seatsNumber: 4,
+      state: 'Germany',
+      type: 'Luxury',
+      year: 2020
+    };
+
+    this.cars.push(c1);
+    this.cars.push(c2);
+    this.cars.push(c3);
+    this.cars.push(c4);
+  }
 }

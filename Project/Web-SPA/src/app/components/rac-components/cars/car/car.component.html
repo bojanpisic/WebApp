@@ -34,7 +34,7 @@
             <span> / day</span>
         </div>
         <div *ngIf="customerView" class="book">
-            <a href="#">BOOK NOW</a>
+            <a (click)="onBook()">BOOK NOW</a>
         </div>
         <div *ngIf="adminView" class="edit" (click)="onEdit()">
             <span>Edit<img src="../../../../assets/bold_arrow_blue.svg"></span>

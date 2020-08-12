@@ -84,6 +84,7 @@ import { ConfigureSeatsComponent } from './components/airline-admin/airline-flig
 // tslint:disable-next-line:max-line-length
 import { UserService } from 'src/services/user.service';
 
+// tslint:disable-next-line:max-line-length
 import { ConfigureSeatsModalComponent } from './components/airline-admin/airline-flights/configure-seats/configure-seats-modal/configure-seats-modal.component';
 import { PlaceSeatsPipe } from './pipes/place-seats.pipe';
 import { RacAdminHomeComponent } from './components/rac-admin/rac-admin-home/rac-admin-home.component';
@@ -94,6 +95,7 @@ import { AddCarComponent } from './components/rac-admin/rac-cars/add-car/add-car
 import { EditCarComponent } from './components/rac-admin/rac-cars/edit-car/edit-car.component';
 import { AirlineSpecialOffersComponent } from './components/airline-admin/airline-special-offers/airline-special-offers.component';
 import { AddSpecialOfferComponent } from './components/airline-admin/airline-special-offers/add-special-offer/add-special-offer.component';
+// tslint:disable-next-line:max-line-length
 import { AddSeatsSpecialOfferComponent } from './components/airline-admin/airline-special-offers/add-special-offer/add-seats-special-offer/add-seats-special-offer.component';
 import { AddCompanyComponent } from './components/admin/system-admin/add-company/add-company.component';
 import { SystemAdminComponent } from './components/admin/system-admin/system-admin.component';
@@ -107,12 +109,17 @@ import { TokenInterceptor } from './auth/TokenInterceptor';
 import { AddSystemAdminComponent } from './components/admin/system-admin/add-system-admin/add-system-admin.component';
 import { RacSpecialOffersComponent } from './components/rac-admin/rac-special-offers/rac-special-offers.component';
 import { AddCarSpecialOfferComponent } from './components/rac-admin/add-car-special-offer/add-car-special-offer.component';
+// tslint:disable-next-line:max-line-length
 import { PickDatesSpecialOfferComponent } from './components/rac-admin/add-car-special-offer/pick-dates-special-offer/pick-dates-special-offer.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AllFlightSpecialOffersComponent } from './components/all-flight-special-offers/all-flight-special-offers.component';
 import { AllCarSpecialOffersComponent } from './components/all-car-special-offers/all-car-special-offers.component';
 import { CarFilterComponent } from './components/helper/car-filter/car-filter.component';
+import { NotificationComponent } from './components/helper/notification/notification.component';
 
+
+import { ToastrModule } from 'ngx-toastr';
+import { CarReservationComponent } from './components/reservations/car-reservation/car-reservation.component';
 
 export function socialConfigs() {
   const config = new AuthServiceConfig(
@@ -219,7 +226,9 @@ export function socialConfigs() {
       PickDatesSpecialOfferComponent,
       AllFlightSpecialOffersComponent,
       AllCarSpecialOffersComponent,
-      CarFilterComponent
+      CarFilterComponent,
+      NotificationComponent,
+      CarReservationComponent,
    ],
    imports: [
       BrowserModule,
@@ -233,11 +242,14 @@ export function socialConfigs() {
          libraries: ['places']
       }),
       BrowserAnimationsModule,
+      ToastrModule.forRoot({
+        timeOut: 4000,
+        preventDuplicates: true,
+      })
    ],
    providers: [
       CookieService,
       UserService,
-      
       {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

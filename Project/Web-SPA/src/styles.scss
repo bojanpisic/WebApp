@@ -8,3 +8,33 @@
 body {
     margin: 0;
 }
+
+.overlay-container{
+    position: fixed;
+    top: 10px; left: 22px;
+    width: calc(100% - 2*22px);
+    height: auto;
+    z-index: 100000;
+
+    div {
+        width: 100%;
+        div {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-style: 'Montserrat', sans-serif;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            padding: 5px;
+        }
+        .toast-error {
+            background-color: #ff3d3d;
+        }
+
+        .toast-success {
+            background-color: #317D32;
+        }
+    }
+}

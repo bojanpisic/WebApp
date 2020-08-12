@@ -83,3 +83,24 @@
         <button id="remove" (click)="return(true)">Delete</button>
     </div>
 </div>
+<div *ngIf="type === 'carReservation'" class="popup">
+    <div class="remove-friend-header">
+        <button (click)="return(false)">
+            <svg aria-hidden="true" role="presentation" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display: block; fill: rgb(34, 34, 34); height: 16px; width: 16px; stroke: currentcolor; stroke-width: 4; overflow: visible;"><path d="m6 6 20 20"></path><path d="m26 6-20 20"></path></svg>
+        </button>
+        <span>Confirm Reservation</span>
+    </div>
+    <div class="car-content">
+        <img src='../../../../assets/illustrations/undraw_having_fun_iais.svg'>
+        <p>From: <strong>{{car.from}}</strong> on <strong>{{car.dep}}</strong></p>
+        <p>To: <strong>{{car.to}}</strong> on <strong>{{car.ret}}</strong></p>
+        <p style="font-weight: bold;">{{car.brand}} {{car.model}} {{car.year}}</p>
+        <p>Car company: <strong>{{car.name}}</strong></p>
+        <p>Type: <strong>{{car.type}}</strong></p>
+        <p>Seats: <strong>{{car.seatsNumber}}</strong></p>
+        <p>Total price: <strong>{{car.pricePerDay}}</strong></p>
+        <br>
+        <button id="cancel" (click)="return(false)">Cancel</button>
+        <button id="remove" (click)="return(true)">Confirm</button>
+    </div>
+</div>

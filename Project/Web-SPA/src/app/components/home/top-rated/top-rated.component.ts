@@ -30,30 +30,30 @@ export class TopRatedComponent implements OnInit {
 
   loadAirlines() {
     let count = 0;
-    const a = this.airlineService.getAirlines().subscribe(
-      (res: any[]) => {
-        if (res.length > 0) {
-          res.forEach(element => {
-            const airline = {
-              airlineId: element.airlineId,
-              city: element.city,
-              state: element.state,
-              name: element.name,
-              logo: (element.logo === null) ? null : this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.logo}`),
-              about: element.about,
-              destinations: element.destinations
-            };
-            count++;
-            if (count <= 5) {
-              this.allAirlines.push(airline);
-            }
-          });
-        }
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    // const a = this.airlineService.getAirlines().subscribe(
+    //   (res: any[]) => {
+    //     if (res.length > 0) {
+    //       res.forEach(element => {
+    //         const airline = {
+    //           airlineId: element.airlineId,
+    //           city: element.city,
+    //           state: element.state,
+    //           name: element.name,
+    //           logo: (element.logo === null) ? null : this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.logo}`),
+    //           about: element.about,
+    //           destinations: element.destinations
+    //         };
+    //         count++;
+    //         if (count <= 5) {
+    //           this.allAirlines.push(airline);
+    //         }
+    //       });
+    //     }
+    //   },
+    //   err => {
+    //     console.log(err);
+    //   }
+    // );
   }
 
   loadRentACarServices() {

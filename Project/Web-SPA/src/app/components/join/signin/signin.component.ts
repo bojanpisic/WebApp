@@ -17,11 +17,14 @@ export class SigninComponent implements OnInit {
 
   loggedIn = false;
 
+  errorUsername = false;
+  errorPassword = false;
+
   constructor(private route: ActivatedRoute, private router: Router, public userService: UserService) {
     route.params.subscribe(params => {
       this.userId = params.id;
       this.token = params.token;
-    }); //dobija se username onoga ko je kliknuo become a host
+    });
   }
 
   ngOnInit(): void {
@@ -41,58 +44,73 @@ export class SigninComponent implements OnInit {
     }
   }
 
+  validateForm() {
+    let retVal = true;
+    if (this.userService.formModel.controls.UserName.invalid) {
+      this.errorUsername = true;
+      retVal = false;
+    }
+    if (this.userService.formModel.controls.Password.invalid) {
+      this.errorPassword = true;
+      retVal = false;
+    }
+    return retVal;
+  }
+
   signInClick() {
-    const data = {
-      userId: this.userId,
-      token: this.token
-    };
-    this.userService.logIn(data).subscribe(
-      (res: any) => {
-        localStorage.setItem('token', res.token);
-        const decoded = this.getDecodedAccessToken(res.token);
+    if (this.validateForm()) {
+      const data = {
+        userId: this.userId,
+        token: this.token
+      };
+      this.userService.logIn(data).subscribe(
+        (res: any) => {
+          localStorage.setItem('token', res.token);
+          const decoded = this.getDecodedAccessToken(res.token);
 
-        if (res.token == null || decoded.exp >= Date.now()) {
-            alert('Not registered');
-            return ;
-        }
-        console.log(res);
-        switch (decoded.Roles) {
-          case 'RegularUser':
-            this.router.navigateByUrl(decoded.UserID + '/home');
-            break;
-          case 'AirlineAdmin':
-            console.log(decoded.PasswordChanged);
-            if (decoded.PasswordChanged === 'True') {
-              this.router.navigateByUrl('/admin/' + decoded.UserID);
-            } else {
-              this.router.navigateByUrl('/admin/' + decoded.UserID + '/profile/edit-profile');
-            }
-            break;
-          case 'RentACarServiceAdmin':
-            console.log(decoded.PasswordChanged);
-            if (decoded.PasswordChanged === 'True') {
-              this.router.navigateByUrl('/rac-admin/' + decoded.UserID);
-            } else {
-              this.router.navigateByUrl('/rac-admin/' + decoded.UserID + '/profile/edit-profile');
-            }
-            break;
-          case 'Admin':
-            this.router.navigateByUrl('/system-admin/' + decoded.UserID);
-            break;
-        }
+          if (res.token == null || decoded.exp >= Date.now()) {
+              alert('Not registered');
+              return ;
+          }
+          console.log(res);
+          switch (decoded.Roles) {
+            case 'RegularUser':
+              this.router.navigateByUrl(decoded.UserID + '/home');
+              break;
+            case 'AirlineAdmin':
+              console.log(decoded.PasswordChanged);
+              if (decoded.PasswordChanged === 'True') {
+                this.router.navigateByUrl('/admin/' + decoded.UserID);
+              } else {
+                this.router.navigateByUrl('/admin/' + decoded.UserID + '/profile/edit-profile');
+              }
+              break;
+            case 'RentACarServiceAdmin':
+              console.log(decoded.PasswordChanged);
+              if (decoded.PasswordChanged === 'True') {
+                this.router.navigateByUrl('/rac-admin/' + decoded.UserID);
+              } else {
+                this.router.navigateByUrl('/rac-admin/' + decoded.UserID + '/profile/edit-profile');
+              }
+              break;
+            case 'Admin':
+              this.router.navigateByUrl('/system-admin/' + decoded.UserID);
+              break;
+          }
 
-      },
-      err => {
-        // tslint:disable-next-line: triple-equals
-        alert(err.error.description);
-        if (err.status == 400) {
-          console.log(err);
-          // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
-        } else {
-          console.log(err);
+        },
+        err => {
+          // tslint:disable-next-line: triple-equals
+          alert(err.error.description);
+          if (err.status == 400) {
+            console.log(err);
+            // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
+          } else {
+            console.log(err);
+          }
         }
-      }
-    );
+      );
+    }
   }
 
 

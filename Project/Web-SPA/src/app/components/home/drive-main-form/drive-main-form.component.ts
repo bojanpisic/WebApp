@@ -27,6 +27,8 @@ export class DriveMainFormComponent implements OnInit {
   errorPickUpDate = false;
   errorDropOffDate = false;
 
+  errorForm = false;
+
   form: FormGroup;
 
   constructor(private router: Router) { }
@@ -83,6 +85,7 @@ export class DriveMainFormComponent implements OnInit {
       this.errorDropOffDate = true;
       retVal = false;
     }
+    this.errorForm = true;
     return retVal;
   }
 
