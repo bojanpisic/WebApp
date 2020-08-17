@@ -10,7 +10,7 @@
     <app-flight-main-form [userId]="userId" *ngIf="fly" ></app-flight-main-form>
     <app-drive-main-form [userId]="userId" *ngIf="drive"></app-drive-main-form>
 </div>
-<app-top-rated [option]='option'></app-top-rated>
+<!-- <app-top-rated [option]='option'></app-top-rated>
 <div class="all-special-offers" (click)="onSpecialOffers()">
     <div class="purple">
         <div class="orange">
@@ -19,6 +19,9 @@
             </div>
         </div>
     </div>
+</div> -->
+<div id="kanvas">
+    <canvas id="myChart"></canvas>
 </div>
 <app-redirect-to [option]='option'></app-redirect-to>
 <app-bottom-menu *ngIf='userId !== undefined' [userId] = "userId"></app-bottom-menu>

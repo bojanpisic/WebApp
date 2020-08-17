@@ -22,7 +22,7 @@ export class CarsComponent implements OnInit {
   url: any;
   urlParams = [];
 
-  selectedCar = null;
+  selectedOffer = null;
   showModal = false;
 
   filter = false;
@@ -96,11 +96,11 @@ export class CarsComponent implements OnInit {
         to: this.url.to,
         dep: this.url.dep,
         ret: this.url.ret,
-        carId: this.selectedCar.carId,
+        carId: this.selectedOffer.carId,
         userId: this.userId,
-        totalPrice: this.selectedCar.totalPrice
+        totalPrice: this.selectedOffer.totalPrice
       };
-      alert(data.carId + " ma " + this.selectedCar);
+      alert(data.carId + " ma " + this.selectedOffer);
       this.carService.reserveCar(data).subscribe(
         (res: any) => {
           this.toastr.success('Success!');
@@ -133,22 +133,26 @@ export class CarsComponent implements OnInit {
       ret: this.url.ret,
     };
 
+    const selectedCar = this.cars.find(x => x.carId === value);
+
+    this.selectedOffer = {
+      from: this.url.from,
+      to: this.url.to,
+      dep: this.url.dep,
+      ret: this.url.ret,
+      brand: selectedCar.brand,
+      carId: selectedCar.carId,
+      model: selectedCar.model,
+      name: selectedCar.name, // company name
+      totalPrice: null, // pricePerDay * broj dana
+      seatsNumber: selectedCar.seatsNumber,
+      type: selectedCar.type,
+      year: selectedCar.year
+    };
+
     const a = this.carService.getTotalPriceForResevation(data).subscribe(
         (res: any) => {
-          this.selectedCar = {
-            from: res.from,
-            to: res.to,
-            dep: res.dep,
-            ret: res.ret,
-            brand: res.brand,
-            carId: res.carId,
-            model: res.model,
-            name: res.name, // company name
-            totalPrice: res.totalPrice, // pricePerDay * broj dana
-            seatsNumber: res.seatsNumber,
-            type: res.type,
-            year: res.year
-          }
+          this.selectedOffer.totalPrice = res.totalPrice;
           this.showModal = true;
         },
         err => {
@@ -156,8 +160,6 @@ export class CarsComponent implements OnInit {
           this.toastr.error(err.error.statusText, 'Error!');
         }
       );
-    
-
 
     // ******************************************* ODKOMENTARISI OVO GORE A ZAKOMENTASI OVO DOLE
 

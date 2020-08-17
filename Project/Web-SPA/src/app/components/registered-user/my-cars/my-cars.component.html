@@ -6,7 +6,7 @@
 </header>
 <ul>
     <li *ngFor="let car of cars">
-        <app-car (emitRateCar)="onRateCar($event)" (emitRateService)="onRateService($event)" [carRate]="true" [car]="car"></app-car>
+        <app-car (emitRateCar)="onRateCar($event, car.carId)" (emitRateService)="onRateService($event, car.carServiceId)" [carRate]="true" [car]="car"></app-car>
     </li>
     <div class="addMore">
         <span>Previous reservations</span>

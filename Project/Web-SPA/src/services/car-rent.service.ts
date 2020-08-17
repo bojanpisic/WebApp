@@ -235,6 +235,37 @@ export class CarRentService {
     return this.http.get(url, {params: param});
   }
 
+  getUsersCarReservations(): Observable<any> {
+    return this.http.get<any>(this.BaseURI + '/user/get-car-reservations');
+  }
+
+  rateCar(data) {
+    console.log(data);
+    const body = {
+      CarId: data.carId,
+      UserId: data.userId,
+      Rate: data.rate,
+    };
+    const url = this.BaseURI + '/user/rate-car';
+    return this.http.post(url, body);
+  }
+
+  rateCarService(data) {
+    console.log(data);
+    const body = {
+      CarServiceId: data.carServiceId,
+      UserId: data.userId,
+      Rate: data.rate,
+    };
+    const url = this.BaseURI + '/user/rate-car-service';
+    return this.http.post(url, body);
+  }
+
+  getFriends(): Observable<any> {
+    return this.http.get<any>(this.BaseURI + '/user/get-friends');
+    // return this.http.get<any>(this.BaseURI + '/systemadmin/register-systemadmin', body);
+  }
+
   reserveCar(data) {
     console.log(data);
     const body = {

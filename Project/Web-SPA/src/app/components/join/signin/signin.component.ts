@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { UserService } from 'src/services/user.service';
 import * as jwt_decode from 'jwt-decode';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-signin',
@@ -20,7 +21,10 @@ export class SigninComponent implements OnInit {
   errorUsername = false;
   errorPassword = false;
 
-  constructor(private route: ActivatedRoute, private router: Router, public userService: UserService) {
+  constructor(private route: ActivatedRoute,
+              private router: Router,
+              public userService: UserService,
+              private toastr: ToastrService) {
     route.params.subscribe(params => {
       this.userId = params.id;
       this.token = params.token;
@@ -33,7 +37,7 @@ export class SigninComponent implements OnInit {
 
         const token = localStorage.getItem('token');
         const decoded = this.getDecodedAccessToken(token);
-
+        console.log(1222);
         if (token == null || decoded.exp >= Date.now()) {
             alert('Not registered');
             return ;
@@ -69,10 +73,11 @@ export class SigninComponent implements OnInit {
           const decoded = this.getDecodedAccessToken(res.token);
 
           if (res.token == null || decoded.exp >= Date.now()) {
-              alert('Not registered');
+              this.toastr.error('You are not registered.', 'Error.');
               return ;
           }
           console.log(res);
+          this.toastr.success('Success!');
           switch (decoded.Roles) {
             case 'RegularUser':
               this.router.navigateByUrl(decoded.UserID + '/home');
@@ -103,7 +108,7 @@ export class SigninComponent implements OnInit {
           // tslint:disable-next-line: triple-equals
           if (err.status == 400) {
             console.log(err);
-            // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
+            this.toastr.error('Incorrect username or password.', 'Authentication failed.');
           } else {
             console.log(err);
           }

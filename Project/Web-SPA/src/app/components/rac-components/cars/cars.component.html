@@ -7,5 +7,5 @@
         <app-car (book)="onBook($event)" [customerView]="true" [car]="car"></app-car>
     </li>
 </ul>
-<app-modal (remove)="onModal($event)" type="carReservation" *ngIf="showModal" [car]="selectedCar"></app-modal>
+<app-modal (remove)="onModal($event)" type="carReservation" *ngIf="showModal" [car]="selectedOffer"></app-modal>
 <app-car-filter *ngIf="filter" (appliedFilters)="onApplyFilter()" (closeFilter)="toggleFilter()"></app-car-filter>
