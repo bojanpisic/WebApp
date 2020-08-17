@@ -104,7 +104,7 @@ export class CarRentService {
   // *************************************************************************************************************
 
   test(data: any): Observable<any> {
-    console.log(data);
+    // console.log(data);
     const param = {
       from: data.from,
       to: data.to,
@@ -122,6 +122,8 @@ export class CarRentService {
   }
 
   getAllCars() {
+    alert("mrs");
+
     return this.cars;
   }
 
@@ -220,7 +222,7 @@ export class CarRentService {
     return this.http.get<any>(url);
   }
 
-  getCarReservation(data: any) {
+  getTotalPriceForResevation(data: any) {
     console.log(data);
     const param = {
       from: data.from,
@@ -229,22 +231,22 @@ export class CarRentService {
       ret: data.ret,
       carId: data.carId
     };
-    const url = '';
+    const url = this.BaseURI + '/user/rent-total-price';
     return this.http.get(url, {params: param});
   }
 
   reserveCar(data) {
     console.log(data);
     const body = {
-      CarId: data.carId,
-      UserId: data.userId,
-      From: data.from,
-      To: data.to,
-      Dep: data.dep, // pocetni datum
-      Ret: data.ret, // datum vracanja auta
+      CarRentId: data.carId,
+      // UserId: data.userId,
+      TakeOverCity: data.from,
+      ReturnCity: data.to,
+      TakeOverDate: data.dep, // pocetni datum
+      ReturnDate: data.ret, // datum vracanja auta
       TotalPrice: data.totalPrice, // uzracunata na osnovu cene po danu
     };
-    const url = ''; // NZM KOJA
+    const url = this.BaseURI + '/user/rent-car';
     return this.http.post(url, body);
   }
 
@@ -301,9 +303,9 @@ export class CarRentService {
       year: 2020
     };
 
-    this.cars.push(c1);
-    this.cars.push(c2);
-    this.cars.push(c3);
-    this.cars.push(c4);
+    // this.cars.push(c1);
+    // this.cars.push(c2);
+    // this.cars.push(c3);
+    // this.cars.push(c4);
   }
 }

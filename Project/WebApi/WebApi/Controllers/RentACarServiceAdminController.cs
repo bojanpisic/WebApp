@@ -1058,6 +1058,11 @@ namespace WebApi.Controllers
                 var specialFromDate = Convert.ToDateTime(specialOfferDto.FromDate);
                 var specialToDate = Convert.ToDateTime(specialOfferDto.ToDate);
 
+                if (specialFromDate > specialToDate)
+                {
+                    return BadRequest("From date should be lower then to date");
+                }
+
 
                 foreach (var item in oldSpecOffers)
                 {
@@ -1065,8 +1070,7 @@ namespace WebApi.Controllers
                         || item.FromDate >= specialToDate && item.ToDate <= specialToDate
                         || item.FromDate <= specialFromDate && item.ToDate >= specialToDate)
                     {
-                        return BadRequest(new IdentityError() 
-                        { Description = "Dates are unavailable. Car has another special offers in that time." });
+                        return BadRequest("Dates are unavailable. Car has another special offers in that time.");
                     }
                 }
 

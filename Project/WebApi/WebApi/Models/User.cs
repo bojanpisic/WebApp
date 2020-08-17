@@ -19,7 +19,6 @@ namespace WebApi.Models
         }
         public ICollection<Ticket> FlightReservations { get; set; }
         public ICollection<CarRent> CarRents { get; set; }
-
         public ICollection<AirlineRate> RateAirline { get; set; }
         public ICollection<RentCarServiceRates> RateRACService { get; set; }
         public virtual ICollection<User> Friends { get; set; }

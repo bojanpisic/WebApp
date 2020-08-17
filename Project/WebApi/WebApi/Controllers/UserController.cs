@@ -4,12 +4,14 @@ using System.Linq;
 using System.Net;
 using System.Security.Principal;
 using System.Threading.Tasks;
+using System.Xml.Schema;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebSockets;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using WebApi.Data;
@@ -396,7 +398,7 @@ namespace WebApi.Controllers
                     return BadRequest("Takeover date shoud be lower then return date.");
                 }
 
-                var res = await unitOfWork.CarRepository.Get(c => c.CarId == dto.CarRentId, null, "Branch, Rents");
+                var res = await unitOfWork.CarRepository.Get(c => c.CarId == dto.CarRentId, null, "Branch,Rents");
                 var car = res.FirstOrDefault();
 
                 if (car == null)
@@ -481,6 +483,78 @@ namespace WebApi.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("rent-total-price")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
+        public async Task<IActionResult> GetTotalPrice() 
+        {
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
+
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("RegularUser"))
+                {
+                    return Unauthorized();
+                }
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                var queryString = Request.Query;
+                var carId = 0;
+                DateTime retDate;
+                DateTime takeDate;
+
+                if (!Int32.TryParse(queryString["carId"].ToString(), out carId))
+                {
+                    return BadRequest();
+                }
+                if (!DateTime.TryParse(queryString["ret"].ToString(), out retDate))
+                {
+                    return BadRequest();
+                }
+                if (!DateTime.TryParse(queryString["dep"].ToString(), out takeDate))
+                {
+                    return BadRequest();
+                }
+                if (retDate < takeDate)
+                {
+                    return BadRequest();
+                }
+
+                var car = await unitOfWork.CarRepository.GetByID(carId);
+
+                if (car == null)
+                {
+                    return NotFound("Car not found");
+                }
+                //ovde bi se trebali uracunati i bodovi korisnika, kako bi se uracunala snizenja
+                var totalPrice = (retDate - takeDate).TotalDays == 0 ? car.PricePerDay : car.PricePerDay * (retDate - takeDate).TotalDays;
+
+                //var returnData = new {
+                //    from = queryString["from"].ToString(),
+                //    to = queryString["to"].ToString(),
+                //    dep = takeDate,
+                //    ret = retDate,
+                //    brand = car.Brand,
+                //    carId = car.CarId,
+                //    model = car.Model, =
+                //    name = car.
+                //};
+
+                return Ok(totalPrice);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to return total price");
+            }
+        }
         [HttpDelete]
         [Route("cancel-rent/{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -577,38 +651,102 @@ namespace WebApi.Controllers
             }
         }
 
-        //[HttpPost]
-        //[Route("rate-car")]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        //public async Task<IActionResult> RateCar(CarRateDto dto) 
-        //{
-        //    try
-        //    {
-        //        string userId = User.Claims.First(c => c.Type == "UserID").Value;
-        //        var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
+        [HttpPost]
+        [Route("rate-car")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> RateCar(RateDto dto)
+        {
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
 
-        //        string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
 
-        //        if (!userRole.Equals("RegularUser"))
-        //        {
-        //            return Unauthorized();
-        //        }
+                if (!userRole.Equals("RegularUser"))
+                {
+                    return Unauthorized();
+                }
 
-        //        if (user == null)
-        //        {
-        //            return NotFound("User not found");
-        //        }
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
 
-        //        var rent = await unitOfWork.UserRepository.GetRents(user);
-        //        //nesto treba vratiti
+                var rents = await unitOfWork.UserRepository.GetRents(user);
 
-        //        return Ok();
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return StatusCode(500, "Failed to rate car");
-        //    }
-        //}
+                var rent = rents.FirstOrDefault(r => r.CarRentId == dto.Id);
+
+                if (rent == null)
+                {
+                    return BadRequest("This car is not on your rent list");
+                }
+
+                if (rent.ReturnDate < DateTime.Now)
+                {
+                    return BadRequest("You can rate this car only when rate period expires");
+                }
+
+                var rentedCar = rent.RentedCar;
+
+                rentedCar.Rates.Add(new CarRate() {
+                    Rate = dto.Rate,
+                    User = user,
+                    UserId = user.Id,
+                    Car = rentedCar
+                });
+
+                try
+                {
+                    unitOfWork.CarRepository.Update(rentedCar);
+                    await unitOfWork.Commit();
+                }
+                catch (Exception)
+                {
+                    return StatusCode(500, "Failed to rate car. One of transactions failed");
+                }
+
+                //nesto treba vratiti
+
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to rate car");
+            }
+        }
+        [HttpPost]
+        [Route("rate-car")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> RateRACS(RateDto dto)
+        {
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
+
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("RegularUser"))
+                {
+                    return Unauthorized();
+                }
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                var rent = await unitOfWork.UserRepository.GetRents(user);
+                //nesto treba vratiti
+
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to rate car");
+            }
+        }
         #endregion
     }
 }

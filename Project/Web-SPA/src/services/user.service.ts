@@ -241,12 +241,12 @@ export class UserService {
 
   logIn(data: any) {
     const body = {
-      UserNameOrEmail: this.formModelLogin.value.UserNameOrEmail,
-      Password: this.formModelLogin.value.Password,
+      UserNameOrEmail: this.formModel.value.UserName,
+      Password: this.formModel.value.Password,
       UserId: data.userId,
       Token: data.token
     };
-    console.log(body);
+    console.log("body:" + body.UserNameOrEmail + " " + body.Password );
     return this.http.post(this.BaseURI + '/authentication/login', body);
   }
 

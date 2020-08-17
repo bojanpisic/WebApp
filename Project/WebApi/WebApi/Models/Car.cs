@@ -25,6 +25,8 @@ namespace WebApi.Models
 
         public ICollection<CarSpecialOffer> SpecialOffers { get; set; }
         public ICollection<CarRent> Rents { get; set; }
+        public ICollection<CarRate> Rates { get; set; }
+
 
         public Car()
         {
@@ -32,6 +34,7 @@ namespace WebApi.Models
             RentACarService = null;
             SpecialOffers = new HashSet<CarSpecialOffer>();
             Rents = new HashSet<CarRent>();
+            Rates = new HashSet<CarRate>();
         }
 
     }

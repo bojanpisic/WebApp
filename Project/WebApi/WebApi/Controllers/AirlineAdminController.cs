@@ -83,15 +83,7 @@ namespace WebApi.Controllers
             }
         }
 
-        [AllowAnonymous]
-        [HttpGet]
-        [Route("get-toprated-airlines")]
-        //public async Task<ActionResult<IEnumerable<Airline>>> GetTopRated() 
-        public async Task<IActionResult> GetTopRated()
-        {
-            var airlines = await unitOfWork.AirlineRepository.GetTopRated();
-            return Ok(airlines);
-        }
+
 
         #region Change airline info methods
 

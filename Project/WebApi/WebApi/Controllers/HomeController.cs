@@ -34,7 +34,7 @@ namespace WebApi.Controllers
                 var sortTypeCity = queryString["typecity"].ToString();
                 var sortByCity = queryString["sortbycity"].ToString();
 
-                var services = await unitOfWork.RentACarRepository.Get(null, null, "Branches,Address, Rates");
+                var services = await unitOfWork.RentACarRepository.Get(null, null, "Branches,Address,Rates");
 
                 if (!String.IsNullOrEmpty(sortByCity) && !String.IsNullOrEmpty(sortTypeCity))
                 {
@@ -169,6 +169,10 @@ namespace WebApi.Controllers
                 if (!String.IsNullOrEmpty(toDate))
                 {
                     DateTo = Convert.ToDateTime(toDate);
+                }
+                if (DateFrom > DateTo)
+                {
+                    return BadRequest("From date should be lower then to date");
                 }
 
                 var fromCity = queryString["from"].ToString();
@@ -394,7 +398,7 @@ namespace WebApi.Controllers
             {
                 fromFound = true;
             }
-            else if (racs.Address.City == toCity)
+            if (racs.Address.City == toCity)
             {
                 toFound = true;
             }
@@ -405,7 +409,7 @@ namespace WebApi.Controllers
                 {
                     fromFound = true;
                 }
-                else if (branch.City == toCity && !toFound)
+                if (branch.City == toCity && !toFound)
                 {
                     toFound = true;
                 }
@@ -424,6 +428,15 @@ namespace WebApi.Controllers
 
         #region Airline user methods
         // user methods
+
+        [HttpGet]
+        [Route("get-toprated-airlines")]
+        //public async Task<ActionResult<IEnumerable<Airline>>> GetTopRated() 
+        public async Task<IActionResult> GetTopRated()
+        {
+            var airlines = await unitOfWork.AirlineRepository.GetTopRated();
+            return Ok(airlines);
+        }
 
         [HttpGet]
         [Route("all-airlines")]

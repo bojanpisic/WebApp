@@ -28,9 +28,7 @@
               "src/assets"
             ],
             "styles": [
-              {
-                "input": "node_modules/@progress/kendo-theme-default/dist/all.css"
-              },
+
               "src/styles.scss",
               "node_modules/ngx-toastr/toastr.css"
             ],
@@ -96,9 +94,7 @@
               "src/assets"
             ],
             "styles": [
-              {
-                "input": "node_modules/@progress/kendo-theme-default/dist/all.css"
-              },
+
               "src/styles.scss"
             ],
             "scripts": []

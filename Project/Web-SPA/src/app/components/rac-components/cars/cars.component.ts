@@ -59,33 +59,33 @@ export class CarsComponent implements OnInit {
         seatTo: data.seatTo
       };
 
-      this.cars = this.carService.getAllCars();
+      // this.cars = this.carService.getAllCars();
 
-      // const a = this.carService.test(this.url).subscribe(
-      //   (res: any[]) => {
-      //     if (res.length > 0) {
-      //       res.forEach(el => {
-      //         const r = {
-      //           brand: el.brand,
-      //           carId: el.carId,
-      //           city: el.city,
-      //           model: el.model,
-      //           name: el.name,
-      //           pricePerDay: el.pricePerDay,
-      //           seatsNumber: el.seatsNumber,
-      //           state: el.state,
-      //           type: el.type,
-      //           year: el.year
-      //         };
-      //         this.cars.push(r);
-      //       });
-      //     }
-      //     console.log(res);
-      //   },
-      //   err => {
-      //     console.log(err);
-      //   }
-      // );
+      const a = this.carService.test(this.url).subscribe(
+        (res: any[]) => {
+          if (res.length > 0) {
+            res.forEach(el => {
+              const r = {
+                brand: el.brand,
+                carId: el.carId,
+                city: el.city,
+                model: el.model,
+                name: el.name,
+                pricePerDay: el.pricePerDay,
+                seatsNumber: el.seatsNumber,
+                state: el.state,
+                type: el.type,
+                year: el.year
+              };
+              this.cars.push(r);
+            });
+          }
+          console.log(res);
+        },
+        err => {
+          console.log(err);
+        }
+      );
     }
   }
 
@@ -100,6 +100,7 @@ export class CarsComponent implements OnInit {
         userId: this.userId,
         totalPrice: this.selectedCar.totalPrice
       };
+      alert(data.carId + " ma " + this.selectedCar);
       this.carService.reserveCar(data).subscribe(
         (res: any) => {
           this.toastr.success('Success!');
@@ -132,53 +133,53 @@ export class CarsComponent implements OnInit {
       ret: this.url.ret,
     };
 
-    // const a = this.carService.getCarReservation(data).subscribe(
-    //     (res: any) => {
-    //       this.selectedCar = {
-    //         from: res.from,
-    //         to: res.to,
-    //         dep: res.dep,
-    //         ret: res.ret,
-    //         brand: res.brand,
-    //         carId: res.carId,
-    //         model: res.model,
-    //         name: res.name, // company name
-    //         totalPrice: res.totalPrice, // pricePerDay * broj dana
-    //         seatsNumber: res.seatsNumber,
-    //         type: res.type,
-    //         year: res.year
-    //       }
-    //       this.showModal = true;
-    //     },
-    //     err => {
-    //       console.log(err);
-    //       this.toastr.error(err.error.statusText, 'Error!');
-    //     }
-    //   );
-    //
+    const a = this.carService.getTotalPriceForResevation(data).subscribe(
+        (res: any) => {
+          this.selectedCar = {
+            from: res.from,
+            to: res.to,
+            dep: res.dep,
+            ret: res.ret,
+            brand: res.brand,
+            carId: res.carId,
+            model: res.model,
+            name: res.name, // company name
+            totalPrice: res.totalPrice, // pricePerDay * broj dana
+            seatsNumber: res.seatsNumber,
+            type: res.type,
+            year: res.year
+          }
+          this.showModal = true;
+        },
+        err => {
+          console.log(err);
+          this.toastr.error(err.error.statusText, 'Error!');
+        }
+      );
+    
 
 
     // ******************************************* ODKOMENTARISI OVO GORE A ZAKOMENTASI OVO DOLE
 
 
 
-    this.selectedCar = {
-      from: this.url.from,
-      to: this.url.to,
-      dep: this.url.dep,
-      ret: this.url.ret,
-      brand: 'Range Rover',
-      carId: 1,
-      city: 'Berlin',
-      model: 'Evoque',
-      name: 'Hertz',
-      pricePerDay: 50,
-      seatsNumber: 4,
-      state: 'Germany',
-      type: 'Luxury',
-      year: 2020
-    };
-    this.showModal = true;
+    // this.selectedCar = {
+    //   from: this.url.from,
+    //   to: this.url.to,
+    //   dep: this.url.dep,
+    //   ret: this.url.ret,
+    //   brand: 'Range Rover',
+    //   carId: 1,
+    //   city: 'Berlin',
+    //   model: 'Evoque',
+    //   name: 'Hertz',
+    //   pricePerDay: 50,
+    //   seatsNumber: 4,
+    //   state: 'Germany',
+    //   type: 'Luxury',
+    //   year: 2020
+    // };
+    // this.showModal = true;
   }
 
   generateFilter() {

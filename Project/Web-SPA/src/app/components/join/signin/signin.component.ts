@@ -101,7 +101,6 @@ export class SigninComponent implements OnInit {
         },
         err => {
           // tslint:disable-next-line: triple-equals
-          alert(err.error.description);
           if (err.status == 400) {
             console.log(err);
             // this.toastr.error('Incorrect username or password.', 'Authentication failed.');

@@ -60,7 +60,7 @@ namespace WebApi.Controllers
             {
                 if (!unitOfWork.AuthenticationRepository.CheckPasswordMatch(userDto.Password, userDto.ConfirmPassword))
                 {
-                    return BadRequest(new IdentityError() { Code = "400", Description = "Passwords dont match" });
+                    return BadRequest("Passwords dont match");
                 }
 
                 createUser = new User()
@@ -130,7 +130,7 @@ namespace WebApi.Controllers
 
                 if (!unitOfWork.AuthenticationRepository.CheckPasswordMatch(userDto.Password, userDto.ConfirmPassword))
                 {
-                    return BadRequest(new IdentityError() { Code = "400", Description = "Passwords dont match" });
+                    return BadRequest("Passwords dont match");
                 }
                 createUser = new Person()
                 {
@@ -191,10 +191,7 @@ namespace WebApi.Controllers
 
                 if (user == null)
                 {
-                    var res = new IdentityError();
-                    res.Code = "404";
-                    res.Description = "Username or email doesnt exist";
-                    return NotFound(res);
+                    return NotFound("Username or email doesnt exist");
                 }
 
                 if (loginUser.Token != null && loginUser.UserId != null)
@@ -206,11 +203,7 @@ namespace WebApi.Controllers
 
                 if (!isPasswordCorrect)
                 {
-                    var res = new IdentityError();
-                    res.Code = "400";
-                    res.Description = "Username or email or password is incorrect";
-                    return BadRequest(res);
-                    //return Unauthorized();
+                    return BadRequest("Username or email or password is incorrect");
                 }
 
                 var role = (await unitOfWork.AuthenticationRepository.GetRoles(user)).FirstOrDefault();
@@ -221,7 +214,7 @@ namespace WebApi.Controllers
 
                     if (!isEmailConfirmed)
                     {
-                        return BadRequest(new IdentityError() { Description = "Email not confirmed"});
+                        return BadRequest("Email not confirmed");
                     }
                 }
 
