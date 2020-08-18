@@ -143,8 +143,8 @@ export class CarsComponent implements OnInit {
       brand: selectedCar.brand,
       carId: selectedCar.carId,
       model: selectedCar.model,
-      name: selectedCar.name, // company name
-      totalPrice: null, // pricePerDay * broj dana
+      name: selectedCar.name,
+      totalPrice: null,
       seatsNumber: selectedCar.seatsNumber,
       type: selectedCar.type,
       year: selectedCar.year
@@ -152,7 +152,7 @@ export class CarsComponent implements OnInit {
 
     const a = this.carService.getTotalPriceForResevation(data).subscribe(
         (res: any) => {
-          this.selectedOffer.totalPrice = res.totalPrice;
+          this.selectedOffer.totalPrice = res;
           this.showModal = true;
         },
         err => {

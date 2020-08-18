@@ -75,16 +75,24 @@ namespace WebApi.Controllers
                         });
                     }
 
-                    var rate = 0.0;
-                    if (item.Rates.Count > 0)
+                    var sum = 0.0;
+                    foreach (var r in item.Rates)
                     {
-                        foreach (var r in item.Rates)
-                        {
-                            rate += r.Rate;
-                        }
-
-                        rate = rate / item.Rates.Count();
+                        sum += r.Rate;
                     }
+
+                    float rate = sum == 0 ? 0 : (float)sum / item.Rates.ToArray().Length;
+
+                    //var rate = 0.0;
+                    //if (item.Rates.Count > 0)
+                    //{
+                    //    foreach (var r in item.Rates)
+                    //    {
+                    //        rate += r.Rate;
+                    //    }
+
+                    //    rate = rate / item.Rates.Count();
+                    //}
 
                     retList.Add(new
                     {
@@ -97,7 +105,8 @@ namespace WebApi.Controllers
                         Rate = rate,
                         About = item.About,
                         Id = item.RentACarServiceId,
-                        Branches = branches
+                        Branches = branches,
+                        rate = rate
                     });
                 }
 
@@ -115,7 +124,7 @@ namespace WebApi.Controllers
         {
             try
             {
-                var res = await unitOfWork.RentACarRepository.Get(racs => racs.RentACarServiceId == id, null, "Branches,Address");
+                var res = await unitOfWork.RentACarRepository.Get(racs => racs.RentACarServiceId == id, null, "Branches,Address,Rates");
                 var rentservice = res.FirstOrDefault();
 
                 List<object> branches = new List<object>();
@@ -128,6 +137,14 @@ namespace WebApi.Controllers
                     });
                 }
 
+                var sum = 0.0;
+                foreach (var r in rentservice.Rates)
+                {
+                    sum += r.Rate;
+                }
+
+                float rate = sum == 0 ? 0 : (float)sum / rentservice.Rates.ToArray().Length;
+
                 object obj = new
                 {
                     Name = rentservice.Name,
@@ -138,7 +155,8 @@ namespace WebApi.Controllers
                     Lon = rentservice.Address.Lon,
                     Logo = rentservice.LogoUrl,
                     Id = rentservice.RentACarServiceId,
-                    Branches = branches
+                    Branches = branches,
+                    rate = rate
                 };
 
                 return Ok(obj);
@@ -239,6 +257,14 @@ namespace WebApi.Controllers
                         continue;
                     }
 
+                    var sum = 0.0;
+                    foreach (var r in item.Rates)
+                    {
+                        sum += r.Rate;
+                    }
+
+                    float rate = sum == 0 ? 0 : (float)sum / item.Rates.ToArray().Length;
+
                     objs.Add(new
                     {
 
@@ -253,7 +279,8 @@ namespace WebApi.Controllers
                         address.City,
                         address.State,
                         logo,
-                        name
+                        name,
+                        rate = rate
                     });
                 }
 
@@ -271,8 +298,16 @@ namespace WebApi.Controllers
         {
             try
             {
-                var res = await unitOfWork.CarRepository.Get(c => c.CarId == id, null, "Branch, RentACarService");
+                var res = await unitOfWork.CarRepository.Get(c => c.CarId == id, null, "Branch,RentACarService,Rates");
                 var car = res.FirstOrDefault();
+
+                var sum = 0.0;
+                foreach (var r in car.Rates)
+                {
+                    sum += r.Rate;
+                }
+
+                float rate = sum == 0 ? 0 : (float)sum / car.Rates.ToArray().Length;
 
                 var obj = new
                 {
@@ -492,17 +527,23 @@ namespace WebApi.Controllers
                             dest.Destination.State
                         });
                     }
-
-                    var rate = 0.0;
-                    if (item.Rates.Count > 0)
+                    var sum = 0.0;
+                    foreach (var r in item.Rates)
                     {
-                        foreach (var r in item.Rates)
-                        {
-                            rate += r.Rate;
-                        }
-
-                        rate = rate / item.Rates.Count();
+                        sum += r.Rate;
                     }
+
+                    float rate = sum == 0 ? 0 : (float)sum / item.Rates.ToArray().Length;
+                    //var rate = 0.0;
+                    //if (item.Rates.Count > 0)
+                    //{
+                    //    foreach (var r in item.Rates)
+                    //    {
+                    //        rate += r.Rate;
+                    //    }
+
+                    //    rate = rate / item.Rates.Count();
+                    //}
 
                     all.Add(new
                     {
@@ -511,7 +552,7 @@ namespace WebApi.Controllers
                         State = item.Address.State,
                         //Lat = item.Address.Lat,
                         //Lon = item.Address.Lon,
-                        Rate = rate,
+                        rate = rate,
                         Name = item.Name,
                         Logo = item.LogoUrl,
                         About = item.PromoDescription,
@@ -556,6 +597,14 @@ namespace WebApi.Controllers
                     });
                 }
 
+                var sum = 0.0;
+                foreach (var r in airline.Rates)
+                {
+                    sum += r.Rate;
+                }
+
+                float rate = sum == 0 ? 0 : (float)sum / airline.Rates.ToArray().Length;
+
                 object obj = new
                 {
                     AirlineId = airline.AirlineId,
@@ -566,7 +615,8 @@ namespace WebApi.Controllers
                     Name = airline.Name,
                     Logo = airline.LogoUrl,
                     About = airline.PromoDescription,
-                    Destinations = allDest
+                    Destinations = allDest,
+                    rate = rate
                 };
 
                 return Ok(obj);
@@ -731,7 +781,7 @@ namespace WebApi.Controllers
                     foreach (var flight in flights)
                     {
 
-                        if (!FilterFromPassed(flight, to, from, ids, minDuration, maxDuration, departures, minPrice, maxPrice))
+                        if (!(await FilterFromPassed(flight, to, from, ids, minDuration, maxDuration, departures, minPrice, maxPrice)))
                         {
                             continue;
                         }
@@ -777,7 +827,7 @@ namespace WebApi.Controllers
                     foreach (var flight in flights)
                     {
 
-                        if (!FilterFromPassed(flight, to, from, ids, minDuration, maxDuration, departures, minPrice, maxPrice))
+                        if (!(await FilterFromPassed(flight, to, from, ids, minDuration, maxDuration, departures, minPrice, maxPrice)))
                         {
                             continue;
                         }
@@ -816,7 +866,7 @@ namespace WebApi.Controllers
 
                         foreach (var returnFlights in flights)
                         {
-                            if (!FilterReturnPassed(flight, from, to, ids, minDuration, maxDuration, ret, minPrice, maxPrice))
+                            if (!(await FilterReturnPassed(flight, from, to, ids, minDuration, maxDuration, ret, minPrice, maxPrice)))
                             {
                                 continue;
                             }
@@ -873,7 +923,7 @@ namespace WebApi.Controllers
                         List<DateTime> tempDepartures = departures;
                         currentPrice = 0;
 
-                        if (!FilterMultiPassed(flight, fromList, toList, ids, minDuration, maxDuration, departures, minPrice, maxPrice, currentPrice))
+                        if (!(await FilterMultiPassed(flight, fromList, toList, ids, minDuration, maxDuration, departures, minPrice, maxPrice, currentPrice)))
                         {
                             continue;
                         }
@@ -922,7 +972,7 @@ namespace WebApi.Controllers
                             {
                                 break;
                             }
-                            if (!FilterMultiPassed(returnFlights, tempFrom, tempTo, ids, minDuration, maxDuration, tempDepartures, minPrice, maxPrice, currentPrice))
+                            if (!(await FilterMultiPassed(returnFlights, tempFrom, tempTo, ids, minDuration, maxDuration, tempDepartures, minPrice, maxPrice, currentPrice)))
                             {
 
 
@@ -1091,10 +1141,12 @@ namespace WebApi.Controllers
         }
 
 
-        private bool FilterPassed(Flight flight, string tripType, string to, string from,
+        private async Task<bool> FilterPassed(Flight flight, string tripType, string to, string from,
             List<string> fromMulti, List<string> toMulti, List<int> airlines, DateTime returnDate,
             string minDuration, string maxDuration, List<DateTime> departures, float minPrice, float maxPrice)
         {
+            await Task.Yield();
+
             switch (tripType)
             {
                 case "one":
@@ -1212,9 +1264,11 @@ namespace WebApi.Controllers
         }
 
 
-        private bool FilterFromPassed(Flight flight, string to, string from, List<int> airlines,
+        private async Task<bool> FilterFromPassed(Flight flight, string to, string from, List<int> airlines,
             string minDuration, string maxDuration, List<DateTime> departures, float minPrice, float maxPrice)
         {
+            await Task.Yield();
+
             if (!flight.From.City.Equals(from) || !flight.To.City.Equals(to))
             {
                 return false;
@@ -1247,9 +1301,11 @@ namespace WebApi.Controllers
             return true;
         }
 
-        private bool FilterReturnPassed(Flight flight, string from, string to, List<int> airlines,
+        private async Task<bool> FilterReturnPassed(Flight flight, string from, string to, List<int> airlines,
           string minDuration, string maxDuration, DateTime departure, float minPrice, float maxPrice)
         {
+            await Task.Yield();
+
             if (!flight.From.City.Equals(from) || !flight.To.City.Equals(to))
             {
                 return false;
@@ -1283,9 +1339,10 @@ namespace WebApi.Controllers
         }
 
 
-        private bool FilterMultiPassed(Flight flight, List<string> fromMulti, List<string> toMulti, List<int> airlines,
+        private async Task<bool> FilterMultiPassed(Flight flight, List<string> fromMulti, List<string> toMulti, List<int> airlines,
            string minDuration, string maxDuration, List<DateTime> departures, float minPrice, float maxPrice, float currentFlightsPrice)
         {
+            await Task.Yield();
 
             if (fromMulti.Contains(flight.From.City) && toMulti.Contains(flight.To.City))
             {

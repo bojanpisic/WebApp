@@ -40,6 +40,7 @@ namespace WebApi.Repository
                 .Include(a => a.Destinations)
                 .ThenInclude(d => d.Destination)
                 .Include(a => a.Address)
+                .Include(a => a.Rates)
                 .FirstOrDefaultAsync(a => a.AirlineId == id);
         }
     }

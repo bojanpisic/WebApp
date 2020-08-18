@@ -13,7 +13,7 @@ namespace WebApi.Models
         public DateTime ReturnDate { get; set; }
         public string TakeOverCity { get; set; }
         public string ReturnCity { get; set; }
-
+        public float TotalPrice { get; set; }
         public Car RentedCar { get; set; }
         public User User { get; set; }
 

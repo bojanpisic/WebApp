@@ -23,6 +23,7 @@ namespace WebApi.Repository
                 .ThenInclude(r => r.Address)
                 .Include(c => c.RentACarService)
                 .ThenInclude(r => r.Branches)
+                .Include(c => c.Rates)
                 .ToListAsync();
         }
     }

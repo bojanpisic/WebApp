@@ -251,7 +251,7 @@ export class UserService {
   }
 
   externalLogin(formData) {
-    return this.http.post(this.BaseURI + '/ApplicationUser/SocialLogin', formData);
+    return this.http.post(this.BaseURI + '/authentication/social-login', formData);
   }
 
   getAllUsers() {

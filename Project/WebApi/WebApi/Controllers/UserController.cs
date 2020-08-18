@@ -417,7 +417,7 @@ namespace WebApi.Controllers
 
                 var racsId = car.BranchId == null ? car.RentACarServiceId : car.Branch.RentACarServiceId;
 
-                var result = await unitOfWork.RentACarRepository.Get(r => r.RentACarServiceId ==racsId, null, "Address, Branches");
+                var result = await unitOfWork.RentACarRepository.Get(r => r.RentACarServiceId ==racsId, null, "Address,Branches");
                 var racs = result.FirstOrDefault();
 
                 if (racs == null)
@@ -425,10 +425,20 @@ namespace WebApi.Controllers
                     return NotFound("RACS not found");
                 }
 
-                if ((!car.Branch.City.Equals(dto.TakeOverCity) && car.BranchId != null) || !racs.Address.City.Equals(dto.TakeOverCity))
+                if (car.Branch != null)
+                {
+                    if (!car.Branch.City.Equals(dto.TakeOverCity))
+                    {
+                        return BadRequest("Takeover city and rent service/branch city dont match");
+
+                    }
+                }
+
+                if (!racs.Address.City.Equals(dto.TakeOverCity))
                 {
                     return BadRequest("Takeover city and rent service/branch city dont match");
                 }
+                
 
                 var citiesToReturn = new List<string>();
 
@@ -453,7 +463,8 @@ namespace WebApi.Controllers
                     TakeOverDate = dto.TakeOverDate,
                     ReturnDate = dto.ReturnDate,
                     RentedCar = car,
-                    User = user
+                    User = user,
+                    TotalPrice = await CalculateTotalPrice(dto.TakeOverDate, dto.ReturnDate, car.PricePerDay)
                 };
 
                 user.CarRents.Add(carRent);
@@ -535,7 +546,7 @@ namespace WebApi.Controllers
                     return NotFound("Car not found");
                 }
                 //ovde bi se trebali uracunati i bodovi korisnika, kako bi se uracunala snizenja
-                var totalPrice = (retDate - takeDate).TotalDays == 0 ? car.PricePerDay : car.PricePerDay * (retDate - takeDate).TotalDays;
+                var totalPrice = await CalculateTotalPrice(takeDate, retDate, car.PricePerDay);
 
                 //var returnData = new {
                 //    from = queryString["from"].ToString(),
@@ -577,8 +588,8 @@ namespace WebApi.Controllers
                     return NotFound("User not found");
                 }
 
-                var rent = await unitOfWork.UserRepository.GetRent(id);
-
+                var ress = await unitOfWork.CarRentRepository.Get(crr => crr.CarRentId == id, null, "RentedCar");
+                var rent = ress.FirstOrDefault();
                 var car = rent.RentedCar;
 
                 if (car == null)
@@ -586,7 +597,7 @@ namespace WebApi.Controllers
                     return NotFound("Car not found");
                 }
 
-                if ((rent.TakeOverDate - DateTime.Now).TotalDays < 2)
+                if (Math.Abs((rent.TakeOverDate - DateTime.Now).TotalDays) < 2)
                 {
                     return BadRequest("Cant cancel reservation");
                 }
@@ -619,7 +630,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        [Route("get-rents")]
+        [Route("get-car-reservations")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetRents() 
         {
@@ -640,10 +651,36 @@ namespace WebApi.Controllers
                     return NotFound("User not found");
                 }
 
-                var rent = await unitOfWork.UserRepository.GetRents(user);
-                //nesto treba vratiti
+                var rents = await unitOfWork.CarRentRepository.GetRents(user);
+                var retVal = new List<object>();
 
-                return Ok();
+                foreach (var rent in rents)
+                {
+                    retVal.Add(new {
+                        brand = rent.RentedCar.Brand,
+                        carId = rent.RentedCar.CarId,
+                        carServiceId = rent.RentedCar.RentACarService == null ? 
+                                       rent.RentedCar.Branch.RentACarService.RentACarServiceId : rent.RentedCar.RentACarService.RentACarServiceId,
+                        model = rent.RentedCar.Model,
+                        name = rent.RentedCar.RentACarService == null ?
+                                       rent.RentedCar.Branch.RentACarService.Name : rent.RentedCar.RentACarService.Name,
+                        seatsNumber = rent.RentedCar.SeatsNumber,
+                        pricePerDay = rent.RentedCar.PricePerDay,
+                        type = rent.RentedCar.Type,
+                        year = rent.RentedCar.Year,
+                        totalPrice = rent.TotalPrice,
+                        from = rent.TakeOverCity,
+                        to = rent.ReturnCity,
+                        dep = rent.TakeOverDate,
+                        ret = rent.ReturnDate,
+                        city = rent.RentedCar.RentACarService == null ?
+                                       rent.RentedCar.Branch.RentACarService.Address.City : rent.RentedCar.RentACarService.Address.City,
+                        state = rent.RentedCar.RentACarService == null ?
+                                       rent.RentedCar.Branch.RentACarService.Address.State : rent.RentedCar.RentACarService.Address.State,
+                    });
+                }
+
+                return Ok(retVal);
             }
             catch (Exception)
             {
@@ -673,16 +710,16 @@ namespace WebApi.Controllers
                     return NotFound("User not found");
                 }
 
-                var rents = await unitOfWork.UserRepository.GetRents(user);
+                var rents = await unitOfWork.CarRentRepository.Get(crr => crr.User == user, null, "RentedCar");
 
-                var rent = rents.FirstOrDefault(r => r.CarRentId == dto.Id);
+                var rent = rents.FirstOrDefault(r => r.RentedCar.CarId == dto.Id);
 
                 if (rent == null)
                 {
                     return BadRequest("This car is not on your rent list");
                 }
 
-                if (rent.ReturnDate < DateTime.Now)
+                if (rent.ReturnDate > DateTime.Now)
                 {
                     return BadRequest("You can rate this car only when rate period expires");
                 }
@@ -716,7 +753,7 @@ namespace WebApi.Controllers
             }
         }
         [HttpPost]
-        [Route("rate-car")]
+        [Route("rate-car-service")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> RateRACS(RateDto dto)
         {
@@ -737,15 +774,59 @@ namespace WebApi.Controllers
                     return NotFound("User not found");
                 }
 
-                var rent = await unitOfWork.UserRepository.GetRents(user);
-                //nesto treba vratiti
+
+                var rents = await unitOfWork.CarRentRepository
+                    .Get(crr => crr.User == user &&
+                    crr.RentedCar.RentACarService == null ? 
+                    crr.RentedCar.Branch.RentACarService.RentACarServiceId == dto.Id : crr.RentedCar.RentACarService.RentACarServiceId == dto.Id
+                    , null, "RentedCar");
+
+                //var rent = rents.FirstOrDefault(r => r.RentedCar.CarId == dto.Id);
+                var rent = rents.FirstOrDefault();
+
+                if (rent == null)
+                {
+                    return BadRequest("Cant rate this service.");
+                }
+
+                if (rent.ReturnDate > DateTime.Now)
+                {
+                    return BadRequest("You can rate this rent service only when rate period expires");
+                }
+
+                var racs = await unitOfWork.RentACarRepository.GetByID(dto.Id);
+
+                racs.Rates.Add(new RentCarServiceRates()
+                {
+                    Rate = dto.Rate,
+                    User = user,
+                    UserId = user.Id,
+                    RentACarService = racs
+                });
+
+                try
+                {
+                    unitOfWork.RentACarRepository.Update(racs);
+                    await unitOfWork.Commit();
+                }
+                catch (Exception)
+                {
+                    return StatusCode(500, "Failed to rate car. One of transactions failed");
+                }
 
                 return Ok();
             }
             catch (Exception)
             {
-                return StatusCode(500, "Failed to rate car");
+                return StatusCode(500, "Failed to rate rent service");
             }
+        }
+
+        private async Task<float> CalculateTotalPrice(DateTime startDate, DateTime endDate, float pricePerDay) 
+        {
+            await Task.Yield();
+
+            return (float)((endDate - startDate).TotalDays == 0 ? pricePerDay : pricePerDay * (endDate - startDate).TotalDays);
         }
         #endregion
     }

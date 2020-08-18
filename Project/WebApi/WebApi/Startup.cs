@@ -21,6 +21,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Identity;
 using WebApi.Controllers;
+using Microsoft.Owin.Security.Facebook;
+using WebApi.Facebook;
 
 namespace WebApi
 {
@@ -44,16 +46,12 @@ namespace WebApi
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
-            services.AddScoped<IAirlineRepository, AirlineRepository>();
-            services.AddScoped<IProfileRepository, ProfileRepository>();
-            services.AddScoped<ISystemAdminRepository, SystemAdminRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
+            //services.AddScoped<IAirlineRepository, AirlineRepository>();
+            //services.AddScoped<IProfileRepository, ProfileRepository>();
+            //services.AddScoped<ISystemAdminRepository, SystemAdminRepository>();
+            //services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-
-
-
 
             services.AddDefaultIdentity<Person>()
                   .AddRoles<IdentityRole>()
@@ -107,12 +105,24 @@ namespace WebApi
             {
                 options.ClientId = "962258612347-6kbnosm4gnu8glcm4l0ke9tlepv7a1e0.apps.googleusercontent.com";
                 options.ClientSecret = "ig0EMiso0j3jhh9qHSvyUgHu";
-            }
-            ).AddFacebook("Facebook", options => 
+            }   
+            ).AddFacebook("Facebook", options =>
             {
                 options.AppId = "176053310509690";
                 options.AppSecret = "b8369edaa6c01c05dd8466ed045c7e81";
+                options.BackchannelHttpHandler = new FacebookBackChannelHandler();
+                options.UserInformationEndpoint = "https://graph.facebook.com/v2.4/me?fields=id,email";
             });
+
+            var facebookOptions = new FacebookAuthenticationOptions()
+            {
+                AppId = "176053310509690",
+                AppSecret = "b8369edaa6c01c05dd8466ed045c7e81",
+                BackchannelHttpHandler = new FacebookBackChannelHandler(),
+                UserInformationEndpoint = "https://graph.facebook.com/v2.4/me?fields=id,email"
+            };
+            facebookOptions.Scope.Add("email");
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -122,6 +132,7 @@ namespace WebApi
             {
                 app.UseDeveloperExceptionPage();
             }
+            
 
             //app.Use((context, next) => {
             //    context.Response.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });

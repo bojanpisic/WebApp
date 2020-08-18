@@ -331,10 +331,9 @@ namespace WebApi.Controllers
                     Airline = airline,
                     tripLength = flightDto.TripLength
                 };
-
-                flight.TripTime = this.GetLocalDateByCityName(flight.From.City, flight.To.City, 
-                                                              flight.TakeOffDateTime, flight.LandingDateTime)
-                                                              .ToString();
+                var tripTime = await GetLocalDateByCityName(flight.From.City, flight.To.City,
+                                                              flight.TakeOffDateTime, flight.LandingDateTime);
+                flight.TripTime = tripTime;
 
                 flight.Seats = new HashSet<Seat>();
 
@@ -1181,8 +1180,10 @@ namespace WebApi.Controllers
 
         #endregion
 
-        private string GetLocalDateByCityName(string departureCity, string arrivalCity, DateTime departureDate, DateTime arrivalDate)
+        private async Task<string> GetLocalDateByCityName(string departureCity, string arrivalCity, DateTime departureDate, DateTime arrivalDate)
         {
+            await Task.Yield();
+
             var timeZoneInfoDeparture = TimeZoneInfo.GetSystemTimeZones()
                         .Where(k => k.DisplayName.Substring(k.DisplayName.IndexOf(')') + 2).ToLower().IndexOf("tokyo") >= 0)
                         .ToList();

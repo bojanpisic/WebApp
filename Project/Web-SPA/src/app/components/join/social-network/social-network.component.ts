@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService, GoogleLoginProvider, FacebookLoginProvider } from 'angular-6-social-login';
+// import { AuthService, GoogleLoginProvider, FacebookLoginProvider } from 'angular-6-social-login';
 import { UserService } from 'src/services/user.service';
 import { Router } from '@angular/router';
 
@@ -10,7 +10,9 @@ import { Router } from '@angular/router';
 })
 export class SocialNetworkComponent implements OnInit {
 
-  constructor( public userService: UserService, private router: Router) { } public OAuth: AuthService;
+  constructor( private userService: UserService, private router: Router)
+     {
+     }
 
   ngOnInit(): void {
   }

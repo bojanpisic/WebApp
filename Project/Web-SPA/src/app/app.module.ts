@@ -99,6 +99,7 @@ import { AddSpecialOfferComponent } from './components/airline-admin/airline-spe
 import { AddSeatsSpecialOfferComponent } from './components/airline-admin/airline-special-offers/add-special-offer/add-seats-special-offer/add-seats-special-offer.component';
 import { AddCompanyComponent } from './components/admin/system-admin/add-company/add-company.component';
 import { SystemAdminComponent } from './components/admin/system-admin/system-admin.component';
+import { ToastrModule } from 'ngx-toastr';
 
 import { CookieService } from 'ngx-cookie-service';
 
@@ -118,7 +119,6 @@ import { CarFilterComponent } from './components/helper/car-filter/car-filter.co
 import { NotificationComponent } from './components/helper/notification/notification.component';
 
 
-import { ToastrModule } from 'ngx-toastr';
 import { CarReservationComponent } from './components/reservations/car-reservation/car-reservation.component';
 
 export function socialConfigs() {
@@ -129,7 +129,7 @@ export function socialConfigs() {
         provider: new FacebookLoginProvider('176053310509690')
       },
       {
-        id: GoogleLoginProvider.PROVIDER_ID,  
+        id: GoogleLoginProvider.PROVIDER_ID,
         provider: new GoogleLoginProvider('962258612347-6kbnosm4gnu8glcm4l0ke9tlepv7a1e0.apps.googleusercontent.com')
       }
     ]
@@ -260,6 +260,7 @@ export function socialConfigs() {
         useClass: TokenInterceptor,
         multi: true,
       },
+      // AuthService,
       {
         provide: AuthServiceConfig,
         useFactory: socialConfigs

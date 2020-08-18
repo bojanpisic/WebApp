@@ -22,6 +22,7 @@ namespace WebApi.Repository
         IBranchRepository BranchRepository { get; }
         IRACSSpecialOffer RACSSpecialOfferRepository { get; }
         ICarRepository CarRepository { get; }
+        ICarRentRepository CarRentRepository { get; }
         UserManager<Person> UserManager { get; }
         RoleManager<IdentityRole> RoleManager { get; }
 

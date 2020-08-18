@@ -33,6 +33,7 @@ namespace WebApi.Repository
         private ICarRepository carRepository;
         private IBranchRepository branchRepository;
         private IRACSSpecialOffer racsSpecialOfferRepository;
+        private ICarRentRepository carRentRepository;
 
         public UnitOfWork(DataContext _context, RoleManager<IdentityRole> _roleManager, 
             UserManager<Person> _userManager, SignInManager<Person> _signInManager)
@@ -144,6 +145,14 @@ namespace WebApi.Repository
             get
             {
                 return racsSpecialOfferRepository = racsSpecialOfferRepository ?? new RACSSpecialOfferRepository(this.context);
+            }
+        }
+
+        public ICarRentRepository CarRentRepository
+        {
+            get
+            {
+                return carRentRepository = carRentRepository ?? new CarRentRepository(this.context);
             }
         }
 

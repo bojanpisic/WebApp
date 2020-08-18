@@ -242,8 +242,7 @@ export class CarRentService {
   rateCar(data) {
     console.log(data);
     const body = {
-      CarId: data.carId,
-      UserId: data.userId,
+      Id: data.carId,
       Rate: data.rate,
     };
     const url = this.BaseURI + '/user/rate-car';
@@ -253,8 +252,7 @@ export class CarRentService {
   rateCarService(data) {
     console.log(data);
     const body = {
-      CarServiceId: data.carServiceId,
-      UserId: data.userId,
+      Id: data.carServiceId,
       Rate: data.rate,
     };
     const url = this.BaseURI + '/user/rate-car-service';

@@ -17,7 +17,7 @@ namespace WebApi.Repository
         //void UpdateUser(Person user);
         void DeleteFriendship(Friendship friendship);
 
-        Task<CarRent> GetRent(int id);
-        Task<IEnumerable<CarRent>> GetRents(User user);
+        //Task<CarRent> GetRent(int id);
+        //Task<IEnumerable<CarRent>> GetRents(User user);
     }
 }
