@@ -16,6 +16,7 @@ export class CarComponent implements OnInit {
   @Input() carRate: boolean;
   @Output() book = new EventEmitter<number>();
   @Output() editButtonClicked = new EventEmitter<number>();
+  @Output() quitButtonClicked = new EventEmitter<number>();
   @Output() emitRateService = new EventEmitter<number>();
   @Output() emitRateCar = new EventEmitter<number>();
 
@@ -49,7 +50,7 @@ export class CarComponent implements OnInit {
   }
 
   onQuit() {
-
+    this.quitButtonClicked.emit(this.car.reservationId);
   }
 
   onConfirmServiceRate() {

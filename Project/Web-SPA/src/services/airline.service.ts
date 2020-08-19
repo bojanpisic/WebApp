@@ -116,6 +116,30 @@ export class AirlineService {
     return this.http.post(url, body);
   }
 
+  getStatsForDate(data: any): Observable<any> {
+    const param = {
+      date: data.date // 2020-09-25
+    };
+    const url = this.BaseURI + '/airlineadmin/get-stats-date';
+    return this.http.get<any>(url, {params: param});
+  }
+
+  getStatsForWeek(data: any): Observable<any> {
+    const param = {
+      week: data.week // 2020-W34 to je 34. nedelja
+    };
+    const url = this.BaseURI + '/airlineadmin/get-stats-week';
+    return this.http.get<any>(url, {params: param});
+  }
+
+  getStatsForMonth(data: any): Observable<any> {
+    const param = {
+      month: data.month // 2020-09
+    };
+    const url = this.BaseURI + '/airlineadmin/get-stats-month';
+    return this.http.get<any>(url, {params: param});
+  }
+
 
   getAdminsDestinations(): Observable<any> {
     const url = this.BaseURI + '/airlineadmin/get-airline-destinations';

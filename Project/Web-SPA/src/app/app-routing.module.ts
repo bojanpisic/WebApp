@@ -48,6 +48,7 @@ import { AllCarSpecialOffersComponent } from './components/all-car-special-offer
 import { MyCarsComponent } from './components/registered-user/my-cars/my-cars.component';
 import { MyFlightsComponent } from './components/registered-user/my-flights/my-flights.component';
 import { CarFilterComponent } from './components/helper/car-filter/car-filter.component';
+import { AirlineStatsComponent } from './components/airline-admin/airline-stats/airline-stats.component';
 
 const routes: Routes = [
 
@@ -57,8 +58,9 @@ const routes: Routes = [
   {path: 'system-admin/:id',
   children: [
     {path: '', component: SystemAdminComponent},
-    {path: 'add-system-admin', component: AddSystemAdminComponent},
-    // , canActivate: [AuthGuard], data: {permittedRoles: ['Admin']}
+    {path: 'add-system-admin', component: AddSystemAdminComponent}
+    //  canActivate: [AuthGuard], data: {permittedRoles: ['Admin']}
+    ,
     {path: ':type', component: AddCompanyComponent, canActivate: [AuthGuard], data: {permittedRoles: ['Admin']}},
     {
       path: 'profile',
@@ -81,6 +83,8 @@ const routes: Routes = [
       {path: ':flight/configure-seats', component: ConfigureSeatsComponent,
        canActivate: [AuthGuard], data: {permittedRoles: ['AirlineAdmin']}},
     ]},
+    {path: 'stats', component: AirlineStatsComponent},
+    // , canActivate: [AuthGuard], data: {permittedRoles: ['AirlineAdmin']}
     {path: 'special-offers',
     children : [
       {path: '',  component: AirlineSpecialOffersComponent, canActivate: [AuthGuard], data: {permittedRoles: ['AirlineAdmin']}},

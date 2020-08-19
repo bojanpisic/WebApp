@@ -75,7 +75,8 @@ export class CarsComponent implements OnInit {
                 seatsNumber: el.seatsNumber,
                 state: el.state,
                 type: el.type,
-                year: el.year
+                year: el.year,
+                rate: el.rate
               };
               this.cars.push(r);
             });
@@ -100,7 +101,6 @@ export class CarsComponent implements OnInit {
         userId: this.userId,
         totalPrice: this.selectedOffer.totalPrice
       };
-      alert(data.carId + " ma " + this.selectedOffer);
       this.carService.reserveCar(data).subscribe(
         (res: any) => {
           this.toastr.success('Success!');

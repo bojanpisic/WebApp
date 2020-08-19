@@ -98,7 +98,7 @@
         <p>Car company: <strong>{{car.name}}</strong></p>
         <p>Type: <strong>{{car.type}}</strong></p>
         <p>Seats: <strong>{{car.seatsNumber}}</strong></p>
-        <p>Total price: <strong>{{car.pricePerDay}}</strong></p>
+        <p>Total price: <strong>{{car.totalPrice.toFixed(2)}}</strong></p>
         <br>
         <button id="cancel" (click)="return(false)">Cancel</button>
         <button id="remove" (click)="return(true)">Confirm</button>

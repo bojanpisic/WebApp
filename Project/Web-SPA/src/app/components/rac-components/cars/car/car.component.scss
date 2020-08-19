@@ -243,7 +243,7 @@
         }
     }
 
-    .edit {
+    .edit, .quit {
         grid-area: book;
         justify-self: end;
         margin: auto 8px 0 0;

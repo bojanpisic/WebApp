@@ -122,7 +122,6 @@ export class CarRentService {
   }
 
   getAllCars() {
-    alert("mrs");
 
     return this.cars;
   }
@@ -235,8 +234,16 @@ export class CarRentService {
     return this.http.get(url, {params: param});
   }
 
-  getUsersCarReservations(): Observable<any> {
-    return this.http.get<any>(this.BaseURI + '/user/get-car-reservations');
+  // getUsersCarReservations(): Observable<any> {
+  //   return this.http.get<any>(this.BaseURI + '/user/get-car-reservations');
+  // }
+
+  getUsersUpcomingCarReservations(): Observable<any> {
+    return this.http.get<any>(this.BaseURI + '/user/get-upcoming-car-reservations');
+  }
+
+  getUsersPreviousCarReservations(): Observable<any> {
+    return this.http.get<any>(this.BaseURI + '/user/get-previous-car-reservations');
   }
 
   rateCar(data) {
@@ -257,6 +264,14 @@ export class CarRentService {
     };
     const url = this.BaseURI + '/user/rate-car-service';
     return this.http.post(url, body);
+  }
+
+  quitReservation(data: any) {
+    const body = {
+      ReservationId: data.reservationId
+    };
+    const url = this.BaseURI + '/user/quit-car-reservation';
+    return this.http.post(url, body); // promeni u delete ako treba
   }
 
   getFriends(): Observable<any> {
