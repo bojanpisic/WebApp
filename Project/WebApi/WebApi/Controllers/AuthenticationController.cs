@@ -29,17 +29,6 @@ namespace WebApi.Controllers
         private readonly IConfiguration configuration;
         private readonly SignInManager<Person> _signInManager;
         private IUnitOfWork unitOfWork;
-
-        //public AuthenticationController(UserManager<Person> userManager,
-        //    SignInManager<Person> signInManager, RoleManager<IdentityRole> roleManager, IConfiguration config, DataContext context)
-        //{
-        //    this._context = context;
-        //    this._authenticationRepository = new AuthenticationRepository(userManager, roleManager);
-        //    this._roleManager = roleManager;
-        //    this._signInManager = signInManager;
-        //    this._userManager = userManager;
-        //    this.configuration = config;
-        //}
         public AuthenticationController(SignInManager<Person> signInManager, IConfiguration config, IUnitOfWork _unitOfWork) 
         {
             this._signInManager = signInManager;
@@ -58,6 +47,14 @@ namespace WebApi.Controllers
 
             try
             {
+                if (unitOfWork.AuthenticationRepository.GetPersonBy(userDto.Email) != null)
+                {
+                    return BadRequest("User with that email already exists!");
+                }
+                if (unitOfWork.AuthenticationRepository.GetPersonBy(userDto.UserName) != null)
+                {
+                    return BadRequest("User with that usermane already exists!");
+                }
                 if (!unitOfWork.AuthenticationRepository.CheckPasswordMatch(userDto.Password, userDto.ConfirmPassword))
                 {
                     return BadRequest("Passwords dont match");
@@ -126,6 +123,15 @@ namespace WebApi.Controllers
                 if (!userRole.Equals("Admin"))
                 {
                     return Unauthorized();
+                }
+
+                if (unitOfWork.AuthenticationRepository.GetPersonBy(userDto.Email) != null)
+                {
+                    return BadRequest("User with that email already exists!");
+                }
+                if (unitOfWork.AuthenticationRepository.GetPersonBy(userDto.UserName) != null)
+                {
+                    return BadRequest("User with that usermane already exists!");
                 }
 
                 if (!unitOfWork.AuthenticationRepository.CheckPasswordMatch(userDto.Password, userDto.ConfirmPassword))

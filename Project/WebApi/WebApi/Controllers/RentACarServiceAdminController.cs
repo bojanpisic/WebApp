@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.Xml;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Transactions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -105,12 +106,21 @@ namespace WebApi.Controllers
                     return NotFound("RACS not found");
                 }
 
+                var sum = 0.0;
+                foreach (var r in racs.Rates)
+                {
+                    sum += r.Rate;
+                }
+
+                float rate = sum == 0 ? 0 : (float)sum / racs.Rates.ToArray().Length;
+
                 object obj = new
                 {
                     racs.Name,
                     racs.About,
                     racs.Address,
-                    racs.LogoUrl
+                    racs.LogoUrl,
+                    rate = rate
                 };
 
                 return Ok(obj);
@@ -494,6 +504,112 @@ namespace WebApi.Controllers
         #endregion
 
         #region Car methods
+
+        [HttpGet]
+        [Route("get-car-report")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> GetReport()  //  dobijaju izveštaje o slobodnim i zauzetim vozilima za određeni period
+        {
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+                var user = await unitOfWork.UserManager.FindByIdAsync(userId);
+
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("RentACarServiceAdmin"))
+                {
+                    return Unauthorized();
+                }
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                var racss = await unitOfWork.RentACarRepository.Get(racs => racs.AdminId == userId);
+                var racs = racss.FirstOrDefault();
+
+                if (racs == null)
+                {
+                    return NotFound("RACS not found");
+                }
+
+                var queryString = Request.Query;
+                var from = queryString["from"].ToString();
+                var to = queryString["to"].ToString();
+                var isFree = queryString["isFree"].ToString().ToUpper();
+
+                var fromDate = DateTime.Now;
+                var toDate = DateTime.Now;
+
+                if (!DateTime.TryParse(from, out fromDate))
+                {
+                    return BadRequest("Incorrect date format");
+                }
+
+                if (!DateTime.TryParse(to, out toDate))
+                {
+                    return BadRequest("Incorrect date format");
+                }
+
+                var allCars =
+                    await unitOfWork.CarRepository
+                    .Get(car => car.Branch.RentACarService.RentACarServiceId == racs.RentACarServiceId
+                    || car.RentACarService.RentACarServiceId == racs.RentACarServiceId,
+                    null, "Rents,Rates");
+
+                List<object> objs = new List<object>();
+
+                foreach (var item in allCars)
+                {
+                    //PROVERA DA LI POSTOJI REZERVACIJA U TOM PERIODU
+                    var rent = item.Rents.FirstOrDefault(rent => 
+                    rent.TakeOverDate >= fromDate && rent.ReturnDate <= toDate ||
+                    rent.TakeOverDate <= fromDate && rent.ReturnDate >= toDate ||
+                    rent.TakeOverDate <= fromDate && rent.ReturnDate <= toDate && rent.ReturnDate >= fromDate ||
+                    rent.TakeOverDate >= fromDate && rent.TakeOverDate <= toDate && rent.ReturnDate >= toDate);
+
+                    if (isFree.Equals("TRUE") && rent != null || isFree.Equals("FALSE") && rent == null)
+                    {
+                        continue;
+                    }
+
+                    var sum = 0.0;
+                    foreach (var r in item.Rates)
+                    {
+                        sum += r.Rate;
+                    }
+
+                    float rate = sum == 0 ? 0 : (float)sum / item.Rates.ToArray().Length;
+
+                    objs.Add(new
+                    {
+                        racs.Name,
+                        item.CarId,
+                        item.ImageUrl,
+                        item.Model,
+                        item.PricePerDay,
+                        item.SeatsNumber,
+                        item.Type,
+                        item.Year,
+                        item.Brand,
+                        racs.Address.City,
+                        racs.Address.State,
+                        isFree = rent == null ? true: false,
+                        rate = rate
+                    });
+                }
+
+                return Ok(objs);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to return reports");
+            }
+        }
+
+
         [HttpGet]
         [Route("get-racs-cars")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -529,6 +645,15 @@ namespace WebApi.Controllers
 
                 foreach (var item in allCars)
                 {
+
+                    var sum = 0.0;
+                    foreach (var r in item.Rates)
+                    {
+                        sum += r.Rate;
+                    }
+
+                    float rate = sum == 0 ? 0 : (float)sum / item.Rates.ToArray().Length;
+
                     objs.Add(new
                     {
                         racs.Name,
@@ -541,7 +666,8 @@ namespace WebApi.Controllers
                         item.Year,
                         item.Brand,
                         racs.Address.City,
-                        racs.Address.State
+                        racs.Address.State,
+                        rate = rate
                     });
                 }
 
@@ -549,6 +675,14 @@ namespace WebApi.Controllers
                 {
                     foreach (var car in branch.Cars)
                     {
+                        var sum = 0.0;
+                        foreach (var r in car.Rates)
+                        {
+                            sum += r.Rate;
+                        }
+
+                        float rate = sum == 0 ? 0 : (float)sum / car.Rates.ToArray().Length;
+
                         objs.Add(new
                         {
                             racs.Name,
@@ -561,7 +695,8 @@ namespace WebApi.Controllers
                             car.Year,
                             car.Brand,
                             branch.City,
-                            branch.State
+                            branch.State,
+                            rate = rate
                         });
                     }
                 }
@@ -595,7 +730,9 @@ namespace WebApi.Controllers
                     return NotFound("User not found");
                 }
 
-                var res = await unitOfWork.BranchRepository.Get(b => b.BranchId == id, null, "Cars,RentACarService");
+                //var res = await unitOfWork.Branchrepository.Get(b => b.BranchId == id, null, "Cars,RentACarService");
+                var res = await unitOfWork.CarRepository.Get(car => car.Branch.BranchId == id, null, "Rates");
+
                 var branch = res.FirstOrDefault();
 
                 if (branch == null)
@@ -603,12 +740,20 @@ namespace WebApi.Controllers
                     return BadRequest("Branch not found");
                 }
 
-                var allCars = branch.Cars;
+                //var allCars = branch.Cars;
 
                 List<object> objs = new List<object>();
 
-                foreach (var item in allCars)
+                foreach (var item in res) //bilo allcars
                 {
+                    var sum = 0.0;
+                    foreach (var r in item.Rates)
+                    {
+                        sum += r.Rate;
+                    }
+
+                    float rate = sum == 0 ? 0 : (float)sum / item.Rates.ToArray().Length;
+
                     objs.Add(new
                     {
                         branch.RentACarService.Name,
@@ -619,7 +764,8 @@ namespace WebApi.Controllers
                         item.SeatsNumber,
                         item.Type,
                         item.Year,
-                        item.Brand
+                        item.Brand, 
+                        rate = rate
                     });
                 }
 
@@ -801,11 +947,17 @@ namespace WebApi.Controllers
                     return NotFound("User not found");
                 }
 
-                var car = await unitOfWork.CarRepository.GetByID(id);
+                var cars = await unitOfWork.CarRepository.Get(car => car.CarId == id, null, "Rents");
+                var car = cars.FirstOrDefault();
 
                 if (car == null)
                 {
                     return NotFound("Car not found");
+                }
+
+                if (car.Rents.FirstOrDefault(rent => rent.TakeOverDate <= DateTime.Now && rent.TakeOverDate >= DateTime.Now) != null)
+                {
+                    return BadRequest("Cant modifie this car");
                 }
 
                 car.Brand = dto.Brand;
@@ -860,11 +1012,17 @@ namespace WebApi.Controllers
                     return NotFound("User not found");
                 }
 
-                var car = await unitOfWork.CarRepository.GetByID(id);
+                var cars = await unitOfWork.CarRepository.Get(car => car.CarId == id, null, "Rents");
+                var car = cars.FirstOrDefault();
 
                 if (car == null)
                 {
                     return NotFound("Car not found");
+                }
+
+                if (car.Rents.FirstOrDefault(rent => rent.TakeOverDate <= DateTime.Now && rent.TakeOverDate >= DateTime.Now) != null)
+                {
+                    return BadRequest("Cant modifie this car");
                 }
 
                 using (var stream = new MemoryStream())
@@ -918,7 +1076,7 @@ namespace WebApi.Controllers
                     return NotFound("User not found");
                 }
 
-                var res = await unitOfWork.CarRepository.Get(c => c.CarId == id, null, "SpecialOffers");
+                var res = await unitOfWork.CarRepository.Get(c => c.CarId == id, null, "SpecialOffers,Rates");
                 var car = res.FirstOrDefault();
 
                 if (car == null)
@@ -941,6 +1099,14 @@ namespace WebApi.Controllers
                     specOffDates.Add(new { From = item.FromDate, To = item.ToDate });
                 }
 
+                var sum = 0.0;
+                foreach (var r in car.Rates)
+                {
+                    sum += r.Rate;
+                }
+
+                float rate = sum == 0 ? 0 : (float)sum / car.Rates.ToArray().Length;
+
                 var obj = new
                 {
                     racs.Name,
@@ -952,7 +1118,8 @@ namespace WebApi.Controllers
                     car.Type,
                     car.Year,
                     car.Brand,
-                    SpecialOfferDatesOfCar = specOffDates
+                    SpecialOfferDatesOfCar = specOffDates,
+                    rate = rate
                 };
 
                 return Ok(obj);
@@ -989,12 +1156,19 @@ namespace WebApi.Controllers
                     return NotFound("User not found");
                 }
 
-                var car = await unitOfWork.CarRepository.GetByID(id);
+                var cars = await unitOfWork.CarRepository.Get(car => car.CarId == id, null, "Rents");
+                var car = cars.FirstOrDefault();
 
                 if (car == null)
                 {
-                    return NotFound("Car doesnt exist");
+                    return NotFound("Car not found");
                 }
+
+                if (car.Rents.FirstOrDefault(rent => rent.TakeOverDate <= DateTime.Now && rent.TakeOverDate >= DateTime.Now) != null)
+                {
+                    return BadRequest("Cant delete this car");
+                }
+
                 try
                 {
                     unitOfWork.CarRepository.Delete(car);
@@ -1184,5 +1358,229 @@ namespace WebApi.Controllers
 
         #endregion
 
+        #region Chart methods
+        [HttpGet]
+        [Route("get-day-stats")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> GetDayStats() 
+        {
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("RentACarServiceAdmin"))
+                {
+                    return Unauthorized();
+                }
+
+                var user = await unitOfWork.UserManager.FindByIdAsync(userId);
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                var queryString = Request.Query;
+                var date = queryString["date"].ToString();
+
+                var day = DateTime.Now;
+
+                if (!DateTime.TryParse(date, out day))
+                {
+                    return BadRequest("Date format is incorrect");
+                }
+
+                var cars = await unitOfWork.CarRepository.Get(car =>
+                    car.RentACarService == null ?
+                    car.Branch.RentACarService.AdminId == userId : car.RentACarService.AdminId == userId,
+                    null, "Rents");
+
+                int rentNum = 0;
+
+                foreach (var item in cars)
+                {
+                    if (item.Rents.FirstOrDefault(rent => rent.TakeOverDate == day) != null)
+                    {
+                        rentNum++;
+                    }
+                }
+
+                return Ok(new Tuple<DateTime, int>(day, rentNum));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to get day state");
+            }
+        }
+
+        [HttpGet]
+        [Route("get-week-stats")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> GetWeekStats()
+        {
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("RentACarServiceAdmin"))
+                {
+                    return Unauthorized();
+                }
+
+                var user = await unitOfWork.UserManager.FindByIdAsync(userId);
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                var queryString = Request.Query;
+                var week = queryString["week"].ToString().Split("W")[1];
+                var year = queryString["week"].ToString().Split("W")[0];
+
+                int weekNum = 0;
+                int yearNum = 0;
+
+                if (!Int32.TryParse(week, out weekNum))
+                {
+                    return BadRequest();
+                }
+                if (!Int32.TryParse(year, out yearNum))
+                {
+                    return BadRequest();
+                }
+
+                List<DateTime> daysOfWeek = new List<DateTime>();
+
+                var lastDay = new DateTime(yearNum, 1, 1).AddDays((weekNum) * 7);
+                daysOfWeek.Add(lastDay);
+
+                for (int i = 1; i < 7; i++)
+                {
+                    daysOfWeek.Add(lastDay.AddDays(-i));
+                }
+
+                var cars = await unitOfWork.CarRepository.Get(car =>
+                    car.RentACarService == null ?
+                    car.Branch.RentACarService.AdminId == userId : car.RentACarService.AdminId == userId,
+                    null, "Rents");
+
+                List<Tuple<DateTime, int>> stats = new List<Tuple<DateTime, int>>();
+
+                foreach (var day in daysOfWeek)
+                {
+                    stats.Add(new Tuple<DateTime, int>(day, 0));
+                }
+
+                CarRent r;
+
+                foreach (var item in cars)
+                {
+                    if (( r = item.Rents.FirstOrDefault(rent => daysOfWeek.Contains(rent.TakeOverDate))) != null)
+                    {
+                        var s = stats.Find(s => s.Item1 == r.TakeOverDate);
+                        int index = stats.IndexOf(s);
+
+                        stats[index] =  new Tuple<DateTime, int>(s.Item1, s.Item2 + 1);
+                    }
+                }
+
+                return Ok(stats);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to get day state");
+            }
+        }
+
+        [HttpGet]
+        [Route("get-month-stats")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> GetMonthStats()
+        {
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("RentACarServiceAdmin"))
+                {
+                    return Unauthorized();
+                }
+
+                var user = await unitOfWork.UserManager.FindByIdAsync(userId);
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                var queryString = Request.Query;
+                var month = queryString["week"].ToString().Split("-")[1];
+                var year = queryString["week"].ToString().Split("-")[0];
+
+                int monthNum = 0;
+                int yearNum = 0;
+
+                if (!Int32.TryParse(month, out monthNum))
+                {
+                    return BadRequest();
+                }
+                if (!Int32.TryParse(year, out yearNum))
+                {
+                    return BadRequest();
+                }
+
+                int numOfDays = DateTime.DaysInMonth(yearNum, monthNum);
+                DateTime firstDayOfMonth = new DateTime(yearNum, monthNum, 1);
+
+
+                List<DateTime> daysOfMonth = new List<DateTime>();
+
+                daysOfMonth.Add(firstDayOfMonth);
+
+                for (int i = 1; i < numOfDays; i++)
+                {
+                    daysOfMonth.Add(firstDayOfMonth.AddDays(i));
+                }
+
+                var cars = await unitOfWork.CarRepository.Get(car =>
+                    car.RentACarService == null ?
+                    car.Branch.RentACarService.AdminId == userId : car.RentACarService.AdminId == userId,
+                    null, "Rents");
+
+                List<Tuple<DateTime, int>> stats = new List<Tuple<DateTime, int>>();
+
+                foreach (var day in daysOfMonth)
+                {
+                    stats.Add(new Tuple<DateTime, int>(day, 0));
+                }
+
+                CarRent r;
+
+                foreach (var item in cars)
+                {
+                    if ((r = item.Rents.FirstOrDefault(rent => daysOfMonth.Contains(rent.TakeOverDate))) != null)
+                    {
+                        var s = stats.Find(s => s.Item1 == r.TakeOverDate);
+                        int index = stats.IndexOf(s);
+
+                        stats[index] = new Tuple<DateTime, int>(s.Item1, s.Item2 + 1);
+                    }
+                }
+
+                return Ok(stats);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to get day state");
+            }
+        }
+        #endregion
     }
 }

@@ -611,15 +611,11 @@ namespace WebApi.Controllers
                     unitOfWork.CarRepository.Update(car);
 
                     await unitOfWork.Commit();
-                    //await transaction.Result.CommitAsync();
                 }
                 catch (Exception)
                 {
-                    //unitOfWork.Rollback();
-                    //await transaction.Result.RollbackAsync();
                     return StatusCode(500, "Failed to cancel rent car. One of transactions failed");
                 }
-                //}
 
                 return Ok();
             }
@@ -677,6 +673,9 @@ namespace WebApi.Controllers
                                        rent.RentedCar.Branch.RentACarService.Address.City : rent.RentedCar.RentACarService.Address.City,
                         state = rent.RentedCar.RentACarService == null ?
                                        rent.RentedCar.Branch.RentACarService.Address.State : rent.RentedCar.RentACarService.Address.State,
+                        isCarRated = rent.IsCarRated,
+                        isRACSRated = rent.IsRACSRated,
+                        reservationId = rent.CarRentId
                     });
                 }
 
@@ -719,6 +718,11 @@ namespace WebApi.Controllers
                     return BadRequest("This car is not on your rent list");
                 }
 
+                if (rent.IsCarRated)
+                {
+                    return BadRequest("you already rate this car");
+                }
+
                 if (rent.ReturnDate > DateTime.Now)
                 {
                     return BadRequest("You can rate this car only when rate period expires");
@@ -733,9 +737,13 @@ namespace WebApi.Controllers
                     Car = rentedCar
                 });
 
+                rent.IsCarRated = true;
+
                 try
                 {
                     unitOfWork.CarRepository.Update(rentedCar);
+                    unitOfWork.CarRentRepository.Update(rent);
+
                     await unitOfWork.Commit();
                 }
                 catch (Exception)
@@ -789,6 +797,11 @@ namespace WebApi.Controllers
                     return BadRequest("Cant rate this service.");
                 }
 
+                if (rent.IsRACSRated)
+                {
+                    return BadRequest("you already rate this racs");
+                }
+
                 if (rent.ReturnDate > DateTime.Now)
                 {
                     return BadRequest("You can rate this rent service only when rate period expires");
@@ -804,9 +817,13 @@ namespace WebApi.Controllers
                     RentACarService = racs
                 });
 
+                rent.IsRACSRated = true;
+
                 try
                 {
                     unitOfWork.RentACarRepository.Update(racs);
+                    unitOfWork.CarRentRepository.Update(rent);
+
                     await unitOfWork.Commit();
                 }
                 catch (Exception)

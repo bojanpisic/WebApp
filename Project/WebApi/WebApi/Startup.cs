@@ -21,7 +21,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Identity;
 using WebApi.Controllers;
-using Microsoft.Owin.Security.Facebook;
 using WebApi.Facebook;
 
 namespace WebApi
@@ -113,15 +112,6 @@ namespace WebApi
                 options.BackchannelHttpHandler = new FacebookBackChannelHandler();
                 options.UserInformationEndpoint = "https://graph.facebook.com/v2.4/me?fields=id,email";
             });
-
-            var facebookOptions = new FacebookAuthenticationOptions()
-            {
-                AppId = "176053310509690",
-                AppSecret = "b8369edaa6c01c05dd8466ed045c7e81",
-                BackchannelHttpHandler = new FacebookBackChannelHandler(),
-                UserInformationEndpoint = "https://graph.facebook.com/v2.4/me?fields=id,email"
-            };
-            facebookOptions.Scope.Add("email");
             
         }
 

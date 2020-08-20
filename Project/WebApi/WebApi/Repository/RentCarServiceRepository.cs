@@ -16,11 +16,6 @@ namespace WebApi.Repository
         {
         }
 
-        public async Task<IEnumerable<RentACarService>> GetTopRated()
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<IdentityResult> UpdateAddress(Address2 addr)
         {
             context.Entry(addr).State = EntityState.Modified;
@@ -34,7 +29,13 @@ namespace WebApi.Repository
 
         public async Task<RentACarService> GetRACSAndCars(string adminId)  // kupi i od filijala auta
         {
-            return await context.RentACarServices.Include(r => r.Cars).Include(r => r.Address).Include(r => r.Branches).ThenInclude(b => b.Cars).FirstOrDefaultAsync(r=>r.AdminId == adminId);
+            return await context.RentACarServices
+                .Include(r => r.Cars)
+                .Include(r => r.Address)
+                .Include(r => r.Branches)
+                .ThenInclude(b => b.Cars)
+                .ThenInclude(c => c.Rates)
+                .FirstOrDefaultAsync(r=>r.AdminId == adminId);
         }
     }
 }

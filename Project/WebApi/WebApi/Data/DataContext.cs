@@ -35,7 +35,10 @@ namespace WebApi.Data
                 .HasOne(a => a.Ticket)
                 .WithOne(b => b.Seat)
                 .HasForeignKey<Ticket>(b => b.SeatId);
-
+            modelBuilder.Entity<Seat>()
+                .HasOne(a => a.Ticket2)
+                .WithOne(b => b.Seat)
+                .HasForeignKey<Ticket2>(b => b.SeatId);
             //one to many
             modelBuilder.Entity<Airline>()
                .HasMany(c => c.SpecialOffers)
@@ -177,6 +180,8 @@ namespace WebApi.Data
         public DbSet<FlightDestination> FlightsAddresses { get; set; }
         public DbSet<Seat> Seats { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<Ticket2> Tickets2 { get; set; }
+
         public DbSet<RentACarService> RentACarServices { get; set; }
         public DbSet<Car> Cars { get; set; }
         public DbSet<Branch> Branches { get; set; }

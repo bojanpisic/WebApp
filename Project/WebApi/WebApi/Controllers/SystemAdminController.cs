@@ -46,6 +46,15 @@ namespace WebApi.Controllers
                     return Unauthorized();
                 }
 
+                if (unitOfWork.AuthenticationRepository.GetPersonBy(registerDto.Email) != null)
+                {
+                    return BadRequest("User with that email already exists!");
+                }
+                if (unitOfWork.AuthenticationRepository.GetPersonBy(registerDto.UserName) != null)
+                {
+                    return BadRequest("User with that usermane already exists!");
+                }
+
                 if (!unitOfWork.AuthenticationRepository.CheckPasswordMatch(registerDto.Password, registerDto.ConfirmPassword))
                 {
                     return BadRequest(new IdentityError() { Description = "Passwords dont match" });
@@ -122,6 +131,15 @@ namespace WebApi.Controllers
                 if (!userRole.Equals("Admin"))
                 {
                     return Unauthorized();
+                }
+
+                if (unitOfWork.AuthenticationRepository.GetPersonBy(registerDto.Email) != null)
+                {
+                    return BadRequest("User with that email already exists!");
+                }
+                if (unitOfWork.AuthenticationRepository.GetPersonBy(registerDto.UserName) != null)
+                {
+                    return BadRequest("User with that usermane already exists!");
                 }
 
                 if (!unitOfWork.AuthenticationRepository.CheckPasswordMatch(registerDto.Password, registerDto.ConfirmPassword))

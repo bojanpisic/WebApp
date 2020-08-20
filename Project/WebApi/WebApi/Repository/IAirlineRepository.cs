@@ -14,7 +14,6 @@ namespace WebApi.Repository
     {
         Task<IEnumerable<Airline>> GetAllAirlines();
         void UpdateAddress(Address addr);
-        Task<IEnumerable<Airline>> GetTopRated();
         Task<Airline> GetAirline(int id);
     }
 }

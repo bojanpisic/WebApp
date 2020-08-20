@@ -19,10 +19,6 @@ namespace WebApi.Repository
         public AirlineRepository(DataContext context) : base(context)
         {
         }
-        public async Task<IEnumerable<Airline>> GetTopRated()
-        {
-            return await context.Airlines.OrderBy(a => a.Rates).Take(5).ToListAsync();
-        }
 
         public async Task<IEnumerable<Airline>> GetAllAirlines()
         {

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApi.Data;
 
 namespace WebApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20200820184056_newfieldMig")]
+    partial class newfieldMig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -738,7 +740,14 @@ namespace WebApi.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Passport")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<float>("Price")
@@ -758,36 +767,6 @@ namespace WebApi.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Tickets");
-                });
-
-            modelBuilder.Entity("WebApi.Models.Ticket2", b =>
-                {
-                    b.Property<int>("Ticket2Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Passport")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<float>("Price")
-                        .HasColumnType("real");
-
-                    b.Property<int>("SeatId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Ticket2Id");
-
-                    b.HasIndex("SeatId")
-                        .IsUnique();
-
-                    b.ToTable("Tickets2");
                 });
 
             modelBuilder.Entity("WebApi.Models.Person", b =>
@@ -1083,15 +1062,6 @@ namespace WebApi.Migrations
                     b.HasOne("WebApi.Models.User", "User")
                         .WithMany("FlightReservations")
                         .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("WebApi.Models.Ticket2", b =>
-                {
-                    b.HasOne("WebApi.Models.Seat", "Seat")
-                        .WithOne("Ticket2")
-                        .HasForeignKey("WebApi.Models.Ticket2", "SeatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("WebApi.Models.User", b =>

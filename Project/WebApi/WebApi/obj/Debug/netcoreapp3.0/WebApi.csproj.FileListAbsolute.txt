@@ -235,3 +235,6 @@ C:\Users\Bojan\Desktop\final\web2_projekat\Project\WebApi\WebApi\obj\Debug\netco
 C:\Users\Bojan\Desktop\final\web2_projekat\Project\WebApi\WebApi\obj\Debug\netcoreapp3.0\WebApi.pdb
 C:\Users\Bojan\Desktop\final\web2_projekat\Project\WebApi\WebApi\obj\Debug\netcoreapp3.0\WebApi.genruntimeconfig.cache
 C:\Users\Bojan\Desktop\final\web2_projekat\Project\WebApi\WebApi\obj\Debug\netcoreapp3.0\WebApi.csprojAssemblyReference.cache
+C:\Users\Bojan\Desktop\final\web2_projekat\Project\WebApi\WebApi\obj\Debug\netcoreapp3.0\WebApi.csproj.CoreCompileInputs.cache
+C:\Users\Bojan\Desktop\final\web2_projekat\Project\WebApi\WebApi\obj\Debug\netcoreapp3.0\WebApi.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\Bojan\Desktop\final\web2_projekat\Project\WebApi\WebApi\obj\Debug\netcoreapp3.0\WebApi.MvcApplicationPartsAssemblyInfo.cache

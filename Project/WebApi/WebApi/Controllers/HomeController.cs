@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
+using Microsoft.EntityFrameworkCore.Storage;
 using WebApi.Models;
 using WebApi.Repository;
 
@@ -21,7 +23,30 @@ namespace WebApi.Controllers
 
 
         #region RACS user methods
+        [HttpGet]
+        [Route("get-toprated-racs")]
+        public async Task<IActionResult> GetTopRatedRACS()
+        {
+            var racs = await unitOfWork.RentACarRepository.Get(null, null, "Rates");
 
+            List<Tuple<float, RentACarService>> newList = new List<Tuple<float, RentACarService>>();
+            float sum = 0;
+
+            foreach (var item in racs)
+            {
+                sum = 0;
+                foreach (var rate in item.Rates)
+                {
+                    sum += rate.Rate;
+                }
+
+                newList.Add(new Tuple<float, RentACarService>(sum == 0 ? 0 : sum /item.Rates.Count, item));
+            }
+
+            var tuples = newList.OrderBy(n => n.Item1).Take(5);
+
+            return Ok(tuples);
+        }
         [HttpGet]
         [Route("rent-car-services")]
         public async Task<IActionResult> RentCarServices()
@@ -469,8 +494,25 @@ namespace WebApi.Controllers
         //public async Task<ActionResult<IEnumerable<Airline>>> GetTopRated() 
         public async Task<IActionResult> GetTopRated()
         {
-            var airlines = await unitOfWork.AirlineRepository.GetTopRated();
-            return Ok(airlines);
+            var airlines = await unitOfWork.AirlineRepository.Get(null, null, "Rates");
+
+            List<Tuple<float, Airline>> newList = new List<Tuple<float, Airline>>();
+            float sum = 0;
+
+            foreach (var item in airlines)
+            {
+                sum = 0;
+                foreach (var rate in item.Rates)
+                {
+                    sum += rate.Rate;
+                }
+
+                newList.Add(new Tuple<float, Airline>(sum == 0 ? 0 : sum / item.Rates.Count, item));
+            }
+
+            var tuples = newList.OrderBy(n => n.Item1).Take(5);
+
+            return Ok(tuples);
         }
 
         [HttpGet]

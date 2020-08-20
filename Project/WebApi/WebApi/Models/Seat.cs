@@ -20,6 +20,8 @@ namespace WebApi.Models
         public Flight Flight { get; set; }
         //public int TicketId { get; set; }
         public Ticket Ticket { get; set; }
+        public Ticket2 Ticket2 { get; set; }
+
         public SpecialOffer SpecialOffer { get; set; }
     }
 }
