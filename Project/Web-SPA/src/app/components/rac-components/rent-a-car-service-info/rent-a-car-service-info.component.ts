@@ -4,6 +4,7 @@ import { RentACarService } from 'src/app/entities/rent-a-car-service';
 import { CarRentService } from 'src/services/car-rent.service';
 import { Location } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -18,7 +19,9 @@ export class RentACarServiceInfoComponent implements OnInit {
 
   isOk = false;
 
-  constructor(private route: ActivatedRoute, private carService: CarRentService, private location: Location, private san: DomSanitizer) {
+  constructor(private route: ActivatedRoute, private carService: CarRentService,
+              private location: Location, private san: DomSanitizer,
+              private toastr: ToastrService) {
     route.params.subscribe(params => { this.id = params.id; });
   }
 
@@ -48,7 +51,7 @@ export class RentACarServiceInfoComponent implements OnInit {
         this.isOk = true;
       },
       err => {
-        console.log(err);
+        this.toastr.error(err.statusText, 'Error!');
       }
     );
   }

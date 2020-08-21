@@ -7,6 +7,7 @@ import { RegisteredUser } from 'src/app/entities/registeredUser';
 import { UserService } from 'src/services/user.service';
 import { AirlineService } from 'src/services/airline.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-trips',
@@ -24,8 +25,9 @@ export class TripsComponent implements OnInit {
   trip1: {flightsObject: Array<any>, minPrice: number};
 
   constructor(private userService: UserService, private tripService: TripService,
-              private location: Location, private route: ActivatedRoute, private airlineService: AirlineService,
-              private router: Router, private san: DomSanitizer) {
+              private route: ActivatedRoute, private airlineService: AirlineService,
+              private router: Router, private san: DomSanitizer,
+              private toastr: ToastrService) {
     const array = route.snapshot.queryParamMap.get('array');
     this.urlParams = JSON.parse(array);
     console.log(this.urlParams);
@@ -93,7 +95,7 @@ export class TripsComponent implements OnInit {
           console.log(res);
         },
         err => {
-          console.log(err);
+          this.toastr.error(err.statusText, 'Error.');
         }
       );
     }
@@ -156,7 +158,11 @@ export class TripsComponent implements OnInit {
   }
 
   goBack() {
-    this.location.back();
+    if (this.userId === undefined) {
+      this.router.navigate(['/']);
+    } else {
+      this.router.navigate(['/' + this.userId]);
+    }
   }
 
 }

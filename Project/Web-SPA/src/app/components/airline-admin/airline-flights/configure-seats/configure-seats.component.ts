@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FlightService } from 'src/services/flight.service';
 import { Flight } from 'src/app/entities/flight';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Seat } from 'src/app/entities/seat';
 import { AirlineService } from 'src/services/airline.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-configure-seats',
@@ -14,7 +15,8 @@ import { AirlineService } from 'src/services/airline.service';
 export class ConfigureSeatsComponent implements OnInit {
 
   seats: Array<{column: string, row: string, class: string, price: number, seatId: number}>;
-  flightId: number;
+  adminId: any;
+  flightId: any;
 
   pickedSeat: {
     column: string,
@@ -39,9 +41,13 @@ export class ConfigureSeatsComponent implements OnInit {
   start = false;
   itsOk = false;
 
-  constructor(private airlineService: AirlineService, private route: ActivatedRoute, private location: Location) {
+  constructor(private airlineService: AirlineService,
+              private route: ActivatedRoute,
+              private router: Router,
+              private toastr: ToastrService) {
     route.params.subscribe(param => {
       this.flightId = param.flight;
+      this.adminId = param.id;
     });
 
     this.seats = [];
@@ -54,12 +60,9 @@ export class ConfigureSeatsComponent implements OnInit {
 
   ngOnInit(): void {
     window.scroll(0, 0);
-    console.log(this.flightId);
     const air1 = this.airlineService.getFlightsSeats(this.flightId).subscribe(
       (res: any[]) => {
-        console.log(res);
         if (res.length) {
-          console.log('alo1111');
           res.forEach(element => {
             const new1 = {
               column: element.column,
@@ -78,16 +81,7 @@ export class ConfigureSeatsComponent implements OnInit {
         }
       },
       err => {
-        console.log('dada' + err.status);
-        // tslint:disable-next-line: triple-equals
-        if (err.status == 400) {
-          console.log(err);
-        // tslint:disable-next-line: triple-equals
-        } else if (err.status == 401) {
-          console.log(err);
-        } else {
-          console.log(err);
-        }
+        this.toastr.error(err.statusText, 'Error.');
       }
     );
   }
@@ -141,19 +135,11 @@ export class ConfigureSeatsComponent implements OnInit {
           this.setBusinessSeats();
           this.setBasicEconomySeats();
           this.itsOk = true;
+          this.toastr.success('Success!');
         }
       },
       err => {
-        console.log('dada' + err.status);
-        // tslint:disable-next-line: triple-equals
-        if (err.status == 400) {
-          console.log(err);
-        // tslint:disable-next-line: triple-equals
-        } else if (err.status == 401) {
-          console.log(err);
-        } else {
-          console.log(err);
-        }
+        this.toastr.error(err.statusText, 'Error.');
       }
     );
     // if (classParam === 'F') {
@@ -228,19 +214,11 @@ export class ConfigureSeatsComponent implements OnInit {
             this.setBusinessSeats();
             this.setBasicEconomySeats();
             this.itsOk = true;
+            this.toastr.success('Success!');
           }
         },
         err => {
-          console.log('dada' + err.status);
-          // tslint:disable-next-line: triple-equals
-          if (err.status == 400) {
-            console.log(err);
-          // tslint:disable-next-line: triple-equals
-          } else if (err.status == 401) {
-            console.log(err);
-          } else {
-            console.log(err);
-          }
+          this.toastr.error(err.statusText, 'Error.');
         }
       );
       // this.seats.splice(indexOfSeat, 1);
@@ -271,9 +249,7 @@ export class ConfigureSeatsComponent implements OnInit {
     };
     this.airlineService.changeSeat(data).subscribe(
       (res: any) => {
-        console.log('obrisao1');
         if (res.length) {
-          console.log('obrisao2');
           this.seats = [];
           res.forEach(element => {
             const new1 = {
@@ -295,19 +271,11 @@ export class ConfigureSeatsComponent implements OnInit {
           this.setBusinessSeats();
           this.setBasicEconomySeats();
           this.itsOk = true;
+          this.toastr.success('Success!');
         }
       },
       err => {
-        console.log('dada' + err.status);
-        // tslint:disable-next-line: triple-equals
-        if (err.status == 400) {
-          console.log(err);
-        // tslint:disable-next-line: triple-equals
-        } else if (err.status == 401) {
-          console.log(err);
-        } else {
-          console.log(err);
-        }
+        this.toastr.error(err.statusText, 'Error.');
       }
     );
     // if (this.pickedSeat.class === 'F') {
@@ -322,7 +290,7 @@ export class ConfigureSeatsComponent implements OnInit {
   }
 
   exit() {
-    this.location.back();
+    this.router.navigate(['/admin/' + this.adminId + '/flights']);
   }
 
   setFirstClassSeats() {

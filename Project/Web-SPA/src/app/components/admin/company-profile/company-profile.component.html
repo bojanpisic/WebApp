@@ -10,9 +10,6 @@
 </header>
 <main>
     <section class="image">
-        <!-- <div *ngIf="selectedFile" class="logo">
-            <img id="logo" src="{{selectedFile.src}}">
-        </div> -->
         <div *ngIf="img && selectedFile === undefined" class="logo">
             <img id="logo" [src]="img">
         </div>

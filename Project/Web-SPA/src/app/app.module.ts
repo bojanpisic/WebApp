@@ -14,7 +14,6 @@ import { SignupComponent } from './components/join/signup/signup.component';
 import { HomeComponent } from './components/home/home.component';
 import { SigninComponent } from './components/join/signin/signin.component';
 import { SocialNetworkComponent } from './components/join/social-network/social-network.component';
-import { BecomeAHostComponent } from './components/home/become-a-host/become-a-host.component';
 import { RedirectToComponent } from './components/home/redirect-to/redirect-to.component';
 import { BottomMenuComponent } from './components/helper/bottom-menu/bottom-menu.component';
 import { FooterComponent } from './components/helper/footer/footer.component';
@@ -29,7 +28,6 @@ import { RentACarServicesComponent } from './components/rac-components/rent-a-ca
 import { RentACarServiceInfoComponent } from './components/rac-components/rent-a-car-service-info/rent-a-car-service-info.component';
 import { TopRatedComponent } from './components/home/top-rated/top-rated.component';
 import { FlightFormPartComponent } from './components/home/flight-main-form/flight-form-part/flight-form-part.component';
-import { RegisterCompanyComponent } from './components/register-company/register-company.component';
 import { AddFlightComponent } from './components/airline-admin/airline-flights/add-flight/add-flight.component';
 import { DestinationsComponent } from './components/helper/destinations/destinations.component';
 import { SpecialOffersComponent } from './components/al-components/special-offers/special-offers.component';
@@ -119,8 +117,6 @@ import { CarFilterComponent } from './components/helper/car-filter/car-filter.co
 import { NotificationComponent } from './components/helper/notification/notification.component';
 
 
-import { CarReservationComponent } from './components/reservations/car-reservation/car-reservation.component';
-
 export function socialConfigs() {
   const config = new AuthServiceConfig(
     [
@@ -146,7 +142,6 @@ export function socialConfigs() {
       HomeComponent,
       SigninComponent,
       SocialNetworkComponent,
-      BecomeAHostComponent,
       RedirectToComponent,
       BottomMenuComponent,
       FooterComponent,
@@ -160,7 +155,6 @@ export function socialConfigs() {
       RentACarServicesComponent,
       RentACarServiceInfoComponent,
       FlightFormPartComponent,
-      RegisterCompanyComponent,
       AddFlightComponent,
       DestinationsComponent,
       SpecialOffersComponent,
@@ -228,7 +222,6 @@ export function socialConfigs() {
       AllCarSpecialOffersComponent,
       CarFilterComponent,
       NotificationComponent,
-      CarReservationComponent,
    ],
    imports: [
       BrowserModule,

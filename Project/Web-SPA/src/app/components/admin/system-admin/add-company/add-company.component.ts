@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SystemAdminService } from 'src/services/system-admin.service';
 import { CustomValidationService } from 'src/services/custom-validation.service';
 import { Address } from 'src/app/entities/address';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-company',
@@ -47,7 +48,8 @@ export class AddCompanyComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private router: Router,
               public adminService: SystemAdminService, private formBuilder: FormBuilder,
-              private customValidator: CustomValidationService) {
+              private customValidator: CustomValidationService,
+              private toastr: ToastrService) {
     route.params.subscribe(params => {
       this.adminId = params.id;
       this.companyType = params.type;
@@ -64,30 +66,29 @@ export class AddCompanyComponent implements OnInit {
     if (this.companyType === 'register-airline') {
       this.adminService.registerAirline(this.data).subscribe(
         (res: any) => {
+          this.toastr.success('Success!');
         },
         err => {
           alert(err.error.description);
           // tslint:disable-next-line: triple-equals
           if (err.status == 400) {
-            console.log(err);
-            // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
+            this.toastr.error('Incorrect username or password.', 'Authentication failed.');
           } else {
-            console.log(err);
+            this.toastr.error(err.statusText, 'Error.');
           }
         }
       );
     } else {
       this.adminService.registerRACService(this.data).subscribe(
         (res: any) => {
+          this.toastr.success('Success!');
         },
         err => {
-          alert(err.error.description);
           // tslint:disable-next-line: triple-equals
           if (err.status == 400) {
-            console.log(err);
-            // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
+            this.toastr.error('Incorrect username or password.', 'Authentication failed.');
           } else {
-            console.log(err);
+            this.toastr.error(err.statusText, 'Error.');
           }
         }
       );
@@ -172,7 +173,6 @@ export class AddCompanyComponent implements OnInit {
       this.errorConfirmPasswordMatch = true;
       retVal = false;
     }
-    console.log('retval' + retVal);
     return retVal;
   }
 
@@ -199,8 +199,6 @@ export class AddCompanyComponent implements OnInit {
   onInput(value: any) {
     const obj = JSON.parse(value);
     this.address = obj.city;
-    console.log(obj.latitude);
-    console.log(obj.longitude);
     this.fullAddress = new Address(obj.city, obj.state, obj.longitude, obj.latitude);
     this.lastGoodAddress = this.lastAddress;
   }

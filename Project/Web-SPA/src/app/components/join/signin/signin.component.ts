@@ -37,12 +37,10 @@ export class SigninComponent implements OnInit {
 
         const token = localStorage.getItem('token');
         const decoded = this.getDecodedAccessToken(token);
-        console.log(1222);
         if (token == null || decoded.exp >= Date.now()) {
-            alert('Not registered');
+            this.toastr.error('You are not registered.', 'Error.');
             return ;
         }
-        console.log(decoded);
         // this.router.navigateByUrl(decoded + '/home');
       }
     }
@@ -110,7 +108,7 @@ export class SigninComponent implements OnInit {
             console.log(err);
             this.toastr.error('Incorrect username or password.', 'Authentication failed.');
           } else {
-            console.log(err);
+            this.toastr.error(err.statusText, 'Error.');
           }
         }
       );

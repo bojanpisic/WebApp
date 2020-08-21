@@ -84,7 +84,7 @@ export class CarsComponent implements OnInit {
           console.log(res);
         },
         err => {
-          console.log(err);
+          this.toastr.error(err.statusText, 'Error!');
         }
       );
     }

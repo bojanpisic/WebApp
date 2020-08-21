@@ -17,8 +17,6 @@ export class FlightMainFormComponent implements OnInit {
 
   numOfTravellers = 1;
   errorForm = false;
-  // let.flightType = form.controls['flight-type'].value;
-  // u svaki radio input [ngModel]="let.flightType"
   flightType: string;
   @Input() filterForm;
 
@@ -86,14 +84,34 @@ export class FlightMainFormComponent implements OnInit {
         this.errorForm = true;
       }
     } else {
-      this.components.forEach(component => {
-        console.log(component);
-        if (component.okFromLocation && component.okToLocation && component.inputDepart !== undefined) {
+      if (this.components === []) {
+        if (this.validateOneWay()) {
           this.onRoute();
         } else {
           this.errorForm = true;
         }
-      });
+      } else {
+        if (this.validateOneWay()) {
+          let isValid = true;
+          this.components.forEach(component => {
+            console.log('usao');
+            isValid = (component.okFromLocation && component.okToLocation && component.inputDepart !== undefined) && isValid;
+            // if (component.okFromLocation && component.okToLocation && component.inputDepart !== undefined) {
+            //   this.onRoute();
+            // } else {
+            //   this.errorForm = true;
+            // }
+          });
+          if (isValid) {
+            this.onRoute();
+          } else {
+            this.errorForm = true;
+          }
+        } else {
+          this.errorForm = true;
+        }
+      }
+      console.log(this.components);
     }
   }
 

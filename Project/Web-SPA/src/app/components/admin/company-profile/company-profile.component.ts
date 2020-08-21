@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Address } from 'src/app/entities/address';
 import { CarRentService } from 'src/services/car-rent.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ToastrService } from 'ngx-toastr';
 
 class ImageSnippet {
   pending = false;
@@ -47,8 +48,12 @@ export class CompanyProfileComponent implements OnInit {
 
   img;
 
-  // tslint:disable-next-line:max-line-length
-  constructor(private route: ActivatedRoute, private airlineService: AirlineService, private racService: CarRentService, private san: DomSanitizer) {
+
+  constructor(private route: ActivatedRoute,
+              private airlineService: AirlineService,
+              private racService: CarRentService,
+              private san: DomSanitizer,
+              private toastr: ToastrService) {
     route.params.subscribe(params => {
       this.adminId = params.id;
       this.companyType = params.type;
@@ -83,12 +88,14 @@ export class CompanyProfileComponent implements OnInit {
             about: data.promoDescription
           };
           this.img = this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${data.logoUrl}`);
-          console.log(this.selectedFile);
           this.form.patchValue({
             name: data.name,
             about: data.promoDescription
           });
           this.formOk = true;
+        },
+        err => {
+          this.toastr.error(err.statusText, 'Error.');
         }
       );
     } else if (this.companyType === 'rac-profile') {
@@ -106,6 +113,9 @@ export class CompanyProfileComponent implements OnInit {
             about: data.about
           });
           this.formOk = true;
+        },
+        err => {
+          this.toastr.error(err.statusText, 'Error.');
         }
       );
     }
@@ -127,9 +137,10 @@ export class CompanyProfileComponent implements OnInit {
         this.airlineService.changePhoto(body).subscribe(
           (res) => {
             this.onSuccess();
+            this.toastr.success('Success!.');
           },
-          (err) => {
-            this.onError();
+          err => {
+            this.toastr.error(err.statusText, 'Error.');
           });
       } else if (this.companyType === 'rac-profile') {
         const body = {
@@ -138,9 +149,10 @@ export class CompanyProfileComponent implements OnInit {
         this.racService.changeLogo(body).subscribe(
           (res) => {
             this.onSuccess();
+            this.toastr.success('Success!.');
           },
-          (err) => {
-            this.onError();
+          err => {
+            this.toastr.error(err.statusText, 'Error.');
           });
       }
     });
@@ -167,19 +179,10 @@ export class CompanyProfileComponent implements OnInit {
         // OVDE
         this.airlineService.editAirline(data).subscribe(
           (res: any) => {
-
+            this.toastr.success('Success!.');
           },
           err => {
-            console.log('dada' + err.status);
-            // tslint:disable-next-line: triple-equals
-            if (err.status == 400) {
-              console.log(err);
-            // tslint:disable-next-line: triple-equals
-            } else if (err.status == 401) {
-              console.log(err);
-            } else {
-              console.log(err);
-            }
+            this.toastr.error(err.statusText, 'Error.');
           }
         );
       } else if (this.companyType === 'rac-profile') {
@@ -192,19 +195,10 @@ export class CompanyProfileComponent implements OnInit {
         // OVDE
         this.racService.editRAC(data).subscribe(
           (res: any) => {
-
+            this.toastr.success('Success!.');
           },
           err => {
-            console.log('dada' + err.status);
-            // tslint:disable-next-line: triple-equals
-            if (err.status == 400) {
-              console.log(err);
-            // tslint:disable-next-line: triple-equals
-            } else if (err.status == 401) {
-              console.log(err);
-            } else {
-              console.log(err);
-            }
+            this.toastr.error(err.statusText, 'Error.');
           }
         );
       }

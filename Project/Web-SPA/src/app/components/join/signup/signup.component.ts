@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from 'src/services/user.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-signup',
@@ -24,7 +25,10 @@ export class SignupComponent implements OnInit {
   errorCity = false;
   errorConfirmPasswordMatch = false;
 
-  constructor(private route: ActivatedRoute, private router: Router, public userService: UserService) {
+  constructor(private route: ActivatedRoute,
+              private router: Router,
+              public userService: UserService,
+              private toastr: ToastrService) {
     route.params.subscribe(params => {
       this.registrationType = params.registrationType;
       this.adminId = params.id;
@@ -36,7 +40,7 @@ export class SignupComponent implements OnInit {
   }
 
   next(nextStep: string) {
-    if(nextStep === 'step2') {
+    if (nextStep === 'step2') {
       if (this.validateFirstStep()) {
         this.step = nextStep;
       }
@@ -105,28 +109,25 @@ export class SignupComponent implements OnInit {
     if (this.validateFirstStep() && this.validateSecondStep()) {
       this.userService.userRegistration().subscribe(
         (res: any) => {
-          // if (res.status === 201) {
-          //   alert('uspeo');
-          //   this.userService.formModel.reset();
-          // } else {
-          //   alert('nije');
-  
-          //   res.errors.array.forEach(element => {
-          //     switch (element.code)
-          //     {
-          //       case 'DuplicateUserName':
-          //         // this.toastr.error('Username is already taken','Registration failed.');
-          //         break;
-  
-          //       default:
-          //       // this.toastr.error(element.description,'Registration failed.');
-          //         break;
-          //     }
-          //   });
-          // }
+          if (res.status === 201) {
+            this.userService.formModel.reset();
+            this.toastr.success('Success!');
+          } else {
+            res.errors.array.forEach(element => {
+              switch (element.code) {
+                case 'DuplicateUserName':
+                  this.toastr.error('Username is already taken', 'Registration failed.');
+                  break;
+
+                default:
+                  this.toastr.error(element.description, 'Registration failed.');
+                  break;
+              }
+            });
+          }
         },
         err => {
-          alert(err.error.description);
+          this.toastr.error(err.statusText, 'Error.');
         }
       );
     }

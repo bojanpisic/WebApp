@@ -12,6 +12,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Seat } from 'src/app/entities/seat';
 import { Location } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-add-flight',
@@ -87,7 +88,8 @@ export class AddFlightComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private router: Router,
               private userService: UserService, private airlineService: AirlineService,
-              private CFR: ComponentFactoryResolver, private location: Location, private san: DomSanitizer) {
+              private CFR: ComponentFactoryResolver, private location: Location,
+              private san: DomSanitizer, private toastr: ToastrService) {
     route.params.subscribe(params => {
       this.adminId = params.id;
     });
@@ -115,20 +117,9 @@ export class AddFlightComponent implements OnInit {
             this.pickedFromDestination = this.destinations[0];
           });
         }
-        // this.destinations = res;
-        // console.log(res);
       },
       err => {
-        console.log('dada' + err.status);
-        // tslint:disable-next-line: triple-equals
-        if (err.status == 400) {
-          console.log('400' + err);
-          // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
-        } else if (err.status === 401) {
-          console.log(err);
-        } else {
-          console.log(err);
-        }
+        this.toastr.error(err.statusText, 'Error.');
       }
     );
     this.flight.airlineId = this.airlineService.getAirlineId(this.adminId);
@@ -176,22 +167,13 @@ export class AddFlightComponent implements OnInit {
         //     this.destinations.push(new1);
         //   }
         // });
+        this.toastr.success('Success!');
         setTimeout(() => {
           this.exit();
         }, 100);
-        console.log('okkkkky');
       },
       err => {
-        console.log('dada' + err.status);
-        // tslint:disable-next-line: triple-equals
-        if (err.status == 400) {
-          console.log(err);
-        // tslint:disable-next-line: triple-equals
-        } else if (err.status == 401) {
-          console.log(err);
-        } else {
-          console.log(err);
-        }
+        this.toastr.error(err.statusText, 'Error.');
       }
     );
   }

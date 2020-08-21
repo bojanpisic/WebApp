@@ -3,6 +3,7 @@ import { Airline } from 'src/app/entities/airline';
 import { AirlineService } from 'src/services/airline.service';
 import { Location } from '@angular/common';
 import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-filter',
@@ -34,7 +35,8 @@ export class FilterComponent implements OnInit {
   @Output() appliedFilters = new EventEmitter<any>();
 
   constructor(private airlineService: AirlineService, private location: Location,
-              private router: Router, private route: ActivatedRoute) {
+              private router: Router, private route: ActivatedRoute,
+              private toastr: ToastrService) {
     const array = route.snapshot.queryParamMap.get('array');
     this.urlParams = JSON.parse(array);
     this.route.params.subscribe(param => {
@@ -168,7 +170,7 @@ export class FilterComponent implements OnInit {
           }
         },
         err => {
-          console.log(err);
+          this.toastr.error(err.statusText, 'Error.');
         }
       );
     } else {
@@ -186,12 +188,11 @@ export class FilterComponent implements OnInit {
               } else {
                 this.checkedAirlines.push(false);
               }
-              console.log(airline);
             });
           }
         },
         err => {
-          console.log(err);
+          this.toastr.error(err.statusText, 'Error.');
         }
       );
     }

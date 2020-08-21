@@ -3,6 +3,7 @@ import { Airline } from 'src/app/entities/airline';
 import { AirlineService } from 'src/services/airline.service';
 import { Location } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -31,7 +32,10 @@ export class AirlinesComponent implements OnInit {
   citydown = false;
   scrolledY: number;
 
-  constructor(private airlineService: AirlineService, private location: Location, private san: DomSanitizer) {
+  constructor(private airlineService: AirlineService,
+              private location: Location,
+              private san: DomSanitizer,
+              private toastr: ToastrService) {
     this.allAirlines = [];
     this.colorsOfArilineDest = new Array<string>();
   }
@@ -57,15 +61,15 @@ export class AirlinesComponent implements OnInit {
               name: element.name,
               logo: (element.logo === null) ? null : this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.logo}`),
               about: element.about,
-              destinations: element.destinations
+              destinations: element.destinations,
+              rate: element.rate
             };
             this.allAirlines.push(airline);
-            console.log(airline);
           });
         }
       },
       err => {
-        console.log(err);
+        this.toastr.error(err.statusText, 'Error!');
       }
     );
   }

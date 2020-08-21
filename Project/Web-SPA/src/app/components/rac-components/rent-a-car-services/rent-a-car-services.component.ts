@@ -3,6 +3,7 @@ import { RentACarService } from 'src/app/entities/rent-a-car-service';
 import { CarRentService } from 'src/services/car-rent.service';
 import { Location } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-rent-a-car-services',
@@ -32,7 +33,8 @@ export class RentACarServicesComponent implements OnInit {
   citydown = false;
   scrolledY: number;
 
-  constructor(private service: CarRentService, private san: DomSanitizer, private location: Location) {
+  constructor(private service: CarRentService, private san: DomSanitizer, private location: Location,
+              private toastr: ToastrService) {
     this.allRentServices = [];
     this.colorsOfBranches = new Array<string>();
    }
@@ -61,7 +63,7 @@ export class RentACarServicesComponent implements OnInit {
         }
       },
       err => {
-        console.log(err);
+        this.toastr.error(err.statusText, 'Error!');
       }
     );
   }

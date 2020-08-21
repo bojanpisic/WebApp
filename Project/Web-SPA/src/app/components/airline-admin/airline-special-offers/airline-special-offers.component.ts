@@ -4,6 +4,7 @@ import { AirlineService } from 'src/services/airline.service';
 import { SpecialOfferService } from 'src/services/special-offer.service';
 import { SpecialOffer } from 'src/app/entities/special-offer';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-airline-special-offers',
@@ -20,7 +21,9 @@ export class AirlineSpecialOffersComponent implements OnInit {
   itsOk = false;
 
   constructor(private router: Router, private routes: ActivatedRoute, private airlineService: AirlineService,
-              private specialOfferService: SpecialOfferService, private san: DomSanitizer) {
+              private specialOfferService: SpecialOfferService,
+              private san: DomSanitizer,
+              private toastr: ToastrService) {
     routes.params.subscribe(param => {
       this.adminId = param.id;
     });
@@ -67,16 +70,7 @@ export class AirlineSpecialOffersComponent implements OnInit {
         console.log(res);
       },
       err => {
-        console.log('dada' + err.status);
-        // tslint:disable-next-line: triple-equals
-        if (err.status == 400) {
-          console.log('400' + err);
-          // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
-        } else if (err.status === 401) {
-          console.log(err);
-        } else {
-          console.log(err);
-        }
+        this.toastr.error(err.statusText, 'Error.');
       }
     );
   }

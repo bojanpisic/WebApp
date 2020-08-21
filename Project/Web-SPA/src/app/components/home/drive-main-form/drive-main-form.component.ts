@@ -85,7 +85,6 @@ export class DriveMainFormComponent implements OnInit {
       this.errorDropOffDate = true;
       retVal = false;
     }
-    this.errorForm = true;
     return retVal;
   }
 
@@ -106,6 +105,7 @@ export class DriveMainFormComponent implements OnInit {
 
   onSubmit() {
     if (this.validateSameLocationForm()) {
+      this.errorForm = false;
       const queryParams: any = {};
       const array = [];
       array.push({
@@ -131,7 +131,7 @@ export class DriveMainFormComponent implements OnInit {
         this.router.navigate(['/cars'], navigationExtras);
       }
     } else {
-      console.log('error');
+      this.errorForm = true;
     }
   }
 

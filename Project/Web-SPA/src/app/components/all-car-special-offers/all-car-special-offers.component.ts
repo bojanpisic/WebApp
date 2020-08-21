@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CarRentService } from 'src/services/car-rent.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-all-car-special-offers',
@@ -28,7 +29,7 @@ export class AllCarSpecialOffersComponent implements OnInit {
   itsOk = false;
 
   constructor(private router: Router, private routes: ActivatedRoute, private carService: CarRentService
-            , private san: DomSanitizer) {
+            , private san: DomSanitizer, private toastr: ToastrService) {
     routes.params.subscribe(param => {
       this.racId = param.id;
       this.userId = param.user;
@@ -62,16 +63,7 @@ export class AllCarSpecialOffersComponent implements OnInit {
           console.log(res);
         },
         err => {
-          console.log('dada' + err.status);
-          // tslint:disable-next-line: triple-equals
-          if (err.status == 400) {
-            console.log('400' + err);
-            // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
-          } else if (err.status === 401) {
-            console.log(err);
-          } else {
-            console.log(err);
-          }
+          this.toastr.error(err.statusText, 'Error!');
         }
       );
     } else {
@@ -98,20 +90,10 @@ export class AllCarSpecialOffersComponent implements OnInit {
           console.log(res);
         },
         err => {
-          console.log('dada' + err.status);
-          // tslint:disable-next-line: triple-equals
-          if (err.status == 400) {
-            console.log('400' + err);
-            // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
-          } else if (err.status === 401) {
-            console.log(err);
-          } else {
-            console.log(err);
-          }
+          this.toastr.error(err.statusText, 'Error!');
         }
       );
     }
-    
   }
 
   goBack() {

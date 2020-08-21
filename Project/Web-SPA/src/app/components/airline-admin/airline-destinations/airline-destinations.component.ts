@@ -6,6 +6,7 @@ import { UserService } from 'src/services/user.service';
 import { AirlineService } from 'src/services/airline.service';
 import { Address } from 'src/app/entities/address';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-airline-destinations',
@@ -24,7 +25,11 @@ export class AirlineDestinationsComponent implements OnInit {
   searchText = '';
 
   // tslint:disable-next-line:max-line-length
-  constructor(private routes: ActivatedRoute, private userService: UserService, private airlineService: AirlineService, private san: DomSanitizer) {
+  constructor(private routes: ActivatedRoute,
+              private userService: UserService,
+              private airlineService: AirlineService,
+              private san: DomSanitizer,
+              private toastr: ToastrService) {
     routes.params.subscribe(route => {
       this.adminId = route.id;
     });
@@ -45,20 +50,9 @@ export class AirlineDestinationsComponent implements OnInit {
             this.destinations.push(new1);
           });
         }
-        // this.destinations = res;
-        // console.log(res);
       },
       err => {
-        console.log('dada' + err.status);
-        // tslint:disable-next-line: triple-equals
-        if (err.status == 400) {
-          console.log('400' + err);
-          // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
-        } else if (err.status === 401) {
-          console.log(err);
-        } else {
-          console.log(err);
-        }
+        this.toastr.error(err.statusText, 'Error.');
       }
     );
   }
@@ -76,31 +70,24 @@ export class AirlineDestinationsComponent implements OnInit {
       };
       this.airlineService.deleteDestination(data).subscribe(
         (res: any) => {
-          // res.forEach(element => {
-          //   if (!this.destinations.find(x => x.city === element.city)) {
-          //     console.log(element);
-          //     const new1 = {
-          //       destinationId: element.destinationId,
-          //       imageUrl: this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.imageUrl}`),
-          //       city: element.city,
-          //       state: element.state
-          //     };
-          //     this.destinations.push(new1);
-          //   }
-          // });
-          console.log('eo me');
+          this.destinations = [];
+          res.forEach(element => {
+            if (!this.destinations.find(x => x.city === element.city)) {
+              console.log(element);
+              const new1 = {
+                destinationId: element.destinationId,
+                imageUrl: this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.imageUrl}`),
+                city: element.city,
+                state: element.state
+              };
+              this.destinations.push(new1);
+            }
+          });
+          this.toastr.success('Success!');
+          console.log('deleted');
         },
         err => {
-          console.log('dada' + err.status);
-          // tslint:disable-next-line: triple-equals
-          if (err.status == 400) {
-            console.log(err);
-          // tslint:disable-next-line: triple-equals
-          } else if (err.status == 401) {
-            console.log(err);
-          } else {
-            console.log(err);
-          }
+          this.toastr.error(err.statusText, 'Error.');
         }
       );
     }
@@ -136,18 +123,10 @@ export class AirlineDestinationsComponent implements OnInit {
             this.destinations.push(new1);
           }
         });
+        this.toastr.success('Success!');
       },
       err => {
-        console.log('dada' + err.status);
-        // tslint:disable-next-line: triple-equals
-        if (err.status == 400) {
-          console.log(err);
-        // tslint:disable-next-line: triple-equals
-        } else if (err.status == 401) {
-          console.log(err);
-        } else {
-          console.log(err);
-        }
+        this.toastr.error(err.statusText, 'Error.');
       }
     );
   }

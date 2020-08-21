@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-redirect-to',
@@ -8,10 +8,15 @@ import { Component, OnInit, Input } from '@angular/core';
 export class RedirectToComponent implements OnInit {
 
   @Input() option: string;
+  @Output() redirect = new EventEmitter<any>();
 
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  onRedirect(value: any) {
+    this.redirect.emit(value);
   }
 
 }

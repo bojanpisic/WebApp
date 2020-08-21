@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Destination } from 'src/app/entities/destination';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-airline-info',
@@ -19,7 +20,9 @@ export class AirlineInfoComponent implements OnInit {
   isOk = false;
 
   // tslint:disable-next-line:max-line-length
-  constructor(private route: ActivatedRoute, private san: DomSanitizer, private airlineService: AirlineService, private location: Location) {
+  constructor(private route: ActivatedRoute, private san: DomSanitizer,
+              private airlineService: AirlineService, private location: Location,
+              private toastr: ToastrService) {
     route.params.subscribe(params => { this.id = params.id; });
   }
 
@@ -27,7 +30,6 @@ export class AirlineInfoComponent implements OnInit {
     window.scroll(0, 0);
     const a = this.airlineService.getAirlineProfile(this.id).subscribe(
       (res: any) => {
-        console.log(res);
         const destina = [];
         res.destinations.forEach(element => {
           const des = {
@@ -38,6 +40,7 @@ export class AirlineInfoComponent implements OnInit {
           destina.push(des);
         });
         this.airline = {
+          rate: res.rate,
           city: res.city,
           state: res.state,
           lat: res.lat,
@@ -50,7 +53,7 @@ export class AirlineInfoComponent implements OnInit {
         this.isOk = true;
       },
       err => {
-        console.log(err);
+        this.toastr.error(err.statusText, 'Error!');
       }
     );
   }

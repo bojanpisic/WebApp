@@ -1,1 +1,23 @@
-<p>rac-stats works!</p>
+<header>
+    <div (click)="onExit()" class="back">
+        <svg aria-hidden="true" role="presentation" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display: block; fill: rgb(34, 34, 34); height: 16px; width: 16px; stroke: rgb(34, 34, 34); stroke-width: 4; overflow: visible;"><path d="m6 6 20 20"></path><path d="m26 6-20 20"></path></svg>
+    </div>
+    <span>Stats</span>
+</header>
+<main>
+    <div [ngClass]="{droppedDown: dropdown}" (click)="toggleDropDown()" class="carType">
+        <p>{{pickedType.displayedType}}<svg [ngStyle]="{'transform': !dropdown ? 'rotateZ(-90deg)' : 'rotateZ(90deg)'}" viewBox="0 0 16 16" role="presentation" aria-hidden="true" focusable="false" style="height: 16px; width: 16px; display: inline-block;"><path d="m10.8 16c-.4 0-.7-.1-.9-.4l-6.8-6.7c-.5-.5-.5-1.3 0-1.8l6.8-6.7c.5-.5 1.2-.5 1.7 0s .5 1.2 0 1.7l-5.8 5.9 5.8 5.9c.5.5.5 1.2 0 1.7-.2.3-.5.4-.8.4"></path></svg></p>
+    </div>
+    <div *ngIf="dropdown" class="dropdown">
+        <ul>
+            <li *ngFor="let type of types">
+                <p [ngClass]="{'pickedType': pickedType.type === type.type}" (click)="setType(type)">{{type.displayedType}}</p>
+            </li>
+        </ul>
+    </div>
+    <input id="from" type="date" [(ngModel)]="from"/>
+    <input id="to" type="date" [(ngModel)]="to"/>
+    <li *ngFor="let car of cars">
+        <app-car [car]="car"></app-car>
+    </li>
+</main>

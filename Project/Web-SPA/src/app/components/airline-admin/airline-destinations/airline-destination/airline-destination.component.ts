@@ -24,7 +24,7 @@ export class AirlineDestinationComponent implements OnInit {
         // tslint:disable-next-line:only-arrow-functions
         reader.onloadend = function() {
             callback(reader.result);
-        }
+        };
         reader.readAsDataURL(xhr.response);
     };
     xhr.open('GET', url);

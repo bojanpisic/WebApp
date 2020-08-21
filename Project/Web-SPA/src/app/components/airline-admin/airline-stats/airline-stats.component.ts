@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {Chart} from 'chart.js';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AirlineService } from 'src/services/airline.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-airline-stats',
@@ -23,7 +24,8 @@ export class AirlineStatsComponent implements OnInit {
 
   constructor(private router: Router,
               private routes: ActivatedRoute,
-              private airlineService: AirlineService) {
+              private airlineService: AirlineService,
+              private toastr: ToastrService) {
     routes.params.subscribe(route => {
       this.adminId = route.id;
     });
@@ -74,8 +76,6 @@ export class AirlineStatsComponent implements OnInit {
   }
 
   onDateSelected() {
-    // this.labels = ['2020-09-01'];
-    // this.dataset = ['123'];
     const data = {
       date: this.pickedDate
     };
@@ -85,16 +85,12 @@ export class AirlineStatsComponent implements OnInit {
         this.dataset.push(res.result);
       },
       err => {
-        console.log(err);
+        this.toastr.error(err.statusText, 'Error.');
       }
     );
   }
 
   onWeekSelected() {
-    // this.labels = ['2020-09-01', '2020-09-02', '2020-09-03', '2020-09-04', '2020-09-05',
-    //                '2020-09-06', '2020-09-07'];
-    // this.dataset = ['123', '223', '323', '423', '523',
-    // '423', '124'];
     const data = {
       week: this.pickedWeek
     };
@@ -115,24 +111,12 @@ export class AirlineStatsComponent implements OnInit {
         }
       },
       err => {
-        console.log(err);
+        this.toastr.error(err.statusText, 'Error.');
       }
     );
   }
 
   onMonthSelected() {
-    // this.labels = ['2020-09-01', '2020-09-02', '2020-09-03', '2020-09-04', '2020-09-05',
-    //                '2020-09-06', '2020-09-07', '2020-09-08', '2020-09-09', '2020-09-10',
-    //                '2020-09-11', '2020-09-12', '2020-09-13', '2020-09-14', '2020-09-15',
-    //                '2020-09-16', '2020-09-17', '2020-09-18', '2020-09-19', '2020-09-20',
-    //                '2020-09-21', '2020-09-22', '2020-09-23', '2020-09-24', '2020-09-25',
-    //                '2020-09-26', '2020-09-27', '2020-09-28', '2020-09-29', '2020-09-30'];
-    // this.dataset = ['123', '223', '323', '423', '523',
-    // '423', '124', '123', '1233', '123',
-    // '223', '123', '1263', '723', '123',
-    // '623', '123', '123', '123', '123',
-    // '143', '123', '143', '123', '123',
-    // '123', '123', '123', '123', '123'];
     const data = {
       month: this.pickedMonth
     };
@@ -150,7 +134,7 @@ export class AirlineStatsComponent implements OnInit {
         }
       },
       err => {
-        console.log(err);
+        this.toastr.error(err.statusText, 'Error.');
       }
     );
   }

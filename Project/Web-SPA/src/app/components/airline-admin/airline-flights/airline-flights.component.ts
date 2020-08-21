@@ -4,6 +4,7 @@ import { Flight } from 'src/app/entities/flight';
 import { AirlineService } from 'src/services/airline.service';
 import { FlightService } from 'src/services/flight.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-airline-flights',
@@ -33,7 +34,8 @@ export class AirlineFlightsComponent implements OnInit {
   flightId;
 
   constructor(private router: Router, private routes: ActivatedRoute, private airlineService: AirlineService,
-              private flightService: FlightService, private san: DomSanitizer) {
+              private flightService: FlightService, private san: DomSanitizer,
+              private toastr: ToastrService) {
     routes.params.subscribe(param => {
       this.adminId = param.id;
     });
@@ -63,23 +65,10 @@ export class AirlineFlightsComponent implements OnInit {
             };
             this.flights.push(new1);
           });
-          console.log(res);
         }
-        console.log('ok');
-        // this.airlineId = res[0].airlineId;
-        // this.flights = res[0].flights;
       },
       err => {
-        console.log('dada' + err.status);
-        // tslint:disable-next-line: triple-equals
-        if (err.status == 400) {
-          console.log(err);
-        // tslint:disable-next-line: triple-equals
-        } else if (err.status == 401) {
-          console.log(err);
-        } else {
-          console.log(err);
-        }
+        this.toastr.error(err.statusText, 'Error.');
       }
     );
   }
