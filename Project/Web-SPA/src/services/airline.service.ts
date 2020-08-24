@@ -58,7 +58,7 @@ export class AirlineService {
   }
 
   getTopRatedAirlines(): Observable<any> {
-    const url = this.BaseURI + '/airlineadmin/get-toprated-airlines';
+    const url = this.BaseURI + '/home/get-toprated-airlines';
     console.log(url);
     return this.http.get<any>(url);
   }

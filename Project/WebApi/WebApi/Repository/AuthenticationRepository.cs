@@ -165,6 +165,119 @@ namespace WebApi.Repository
             return IdentityResult.Success;
         }
 
+        public async Task<IdentityResult> SendRentConfirmationMail(Person user, CarRent rent)
+        {
+            await Task.Yield();
+
+            var fromMail = new MailAddress("bojanpisic@gmail.com");
+            var frontEmailPassowrd = "bojan.pisic.123";
+
+            var toMail = new MailAddress(user.Email);
+            string subject;
+            string body;
+
+            subject = "Your rent is successfull created.";
+            body = "<br/><br/>Your rent is created. Check your rents on your profile. <br/>Reservation details: " +
+                    "From: "+ rent.TakeOverCity + "<br/>To: " + rent.ReturnCity + "<br/>Take over date: " + rent.TakeOverDate +
+                    "Return date: " + rent.ReturnDate + "<br/>Car details<br/>" + " Brand: "+ rent.RentedCar.Brand + " Model: " + rent.RentedCar.Model
+                            +" <br/><br/> SkyRoads";
+
+            var smtp = new SmtpClient
+            {
+                Host = "smtp.gmail.com",
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(fromMail.Address, frontEmailPassowrd)
+            };
+
+            using (var message = new MailMessage(fromMail, toMail)
+            {
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = true
+            })
+                smtp.Send(message);
+
+            return IdentityResult.Success;
+        }
+
+        public async Task<IdentityResult> SendTicketConfirmationMail(Person user, Ticket ticket)
+        {
+            await Task.Yield();
+
+            var fromMail = new MailAddress("bojanpisic@gmail.com");
+            var frontEmailPassowrd = "bojan.pisic.123";
+
+            var toMail = new MailAddress(user.Email);
+            string subject;
+            string body;
+
+            subject = "Your flight ticket is successfull created.";
+            body = "<br/><br/>Your flight ticket is created. Check your flights on your profile." +
+                            " <br/><br/> SkyRoads";
+
+            var smtp = new SmtpClient
+            {
+                Host = "smtp.gmail.com",
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(fromMail.Address, frontEmailPassowrd)
+            };
+
+            using (var message = new MailMessage(fromMail, toMail)
+            {
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = true
+            })
+                smtp.Send(message);
+
+            return IdentityResult.Success;
+        }
+        public async Task<IdentityResult> SendMailToFriend(string email, Person inviter)
+        {
+            await Task.Yield();
+
+            var fromMail = new MailAddress("bojanpisic@gmail.com");
+            var frontEmailPassowrd = "bojan.pisic.123";
+
+            var toMail = new MailAddress(email);
+            string subject;
+            string body;
+
+            var url = ""; //dodati neki url
+
+            subject = "You have trip invite!";
+            body = "<br/><br/>Your friend " + inviter.FirstName + " " + inviter.LastName + " invited you on a trip!" +
+                    "<br/>Trip informations<br/>" + //ovde info dodati
+                    "Click on <a href='" + url + "'> THIS</a> link to answer on invite!" +
+                            " <br/><br/> SkyRoads";
+
+            var smtp = new SmtpClient
+            {
+                Host = "smtp.gmail.com",
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(fromMail.Address, frontEmailPassowrd)
+            };
+
+            using (var message = new MailMessage(fromMail, toMail)
+            {
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = true
+            })
+                smtp.Send(message);
+
+            return IdentityResult.Success;
+        }
+
         public async Task<IdentityResult> AddToRole(Person user, string roleName)
         {
             IdentityResult createRoleRes = IdentityResult.Success;
@@ -205,5 +318,7 @@ namespace WebApi.Repository
 
             return user;
         }
+
+
     }
 }

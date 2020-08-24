@@ -339,11 +339,16 @@ namespace WebApi.Controllers
 
                 foreach (var seat in flightDto.Seats)
                 {
-                    flight.Seats.Add(new Seat()
-                        { Column = seat.Column, 
-                        Row = seat.Row, Class = seat.Class, Price = seat.Price,
-                        Flight = flight, Available = true, Reserved = false,
-                        Ticket = null});
+                    flight.Seats.Add(new Seat() {
+                        Column = seat.Column, 
+                        Row = seat.Row,
+                        Class = seat.Class,
+                        Price = seat.Price,
+                        Flight = flight,
+                        Available = true,
+                        Reserved = false,
+                        Ticket = null
+                    });
                 }
 
                 foreach (var stop in stops)

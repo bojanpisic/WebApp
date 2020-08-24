@@ -53,7 +53,9 @@ export class AirlinesComponent implements OnInit {
     const a = this.airlineService.getAirlines().subscribe(
       (res: any[]) => {
         if (res.length > 0) {
+          console.log('AIRLINES' + res);
           res.forEach(element => {
+            console.log(element);
             const airline = {
               airlineId: element.airlineId,
               city: element.city,

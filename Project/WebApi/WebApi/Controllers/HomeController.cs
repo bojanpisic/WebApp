@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -27,7 +28,7 @@ namespace WebApi.Controllers
         [Route("get-toprated-racs")]
         public async Task<IActionResult> GetTopRatedRACS()
         {
-            var racs = await unitOfWork.RentACarRepository.Get(null, null, "Rates");
+            var racs = await unitOfWork.RentACarRepository.Get(null, null, "Rates,Address,Branches");
 
             List<Tuple<float, RentACarService>> newList = new List<Tuple<float, RentACarService>>();
             float sum = 0;
@@ -494,9 +495,11 @@ namespace WebApi.Controllers
         //public async Task<ActionResult<IEnumerable<Airline>>> GetTopRated() 
         public async Task<IActionResult> GetTopRated()
         {
-            var airlines = await unitOfWork.AirlineRepository.Get(null, null, "Rates");
+            var airlines = await unitOfWork.AirlineRepository.GetAllAirlines();
 
-            List<Tuple<float, Airline>> newList = new List<Tuple<float, Airline>>();
+            var airlineList = new List<object>();
+            var tupleList = new List<Tuple<float, object>>();
+
             float sum = 0;
 
             foreach (var item in airlines)
@@ -507,12 +510,44 @@ namespace WebApi.Controllers
                     sum += rate.Rate;
                 }
 
-                newList.Add(new Tuple<float, Airline>(sum == 0 ? 0 : sum / item.Rates.Count, item));
+                var allDest = new List<object>();
+
+                foreach (var dest in item.Destinations)
+                {
+                    allDest.Add(new
+                    {
+                        dest.Destination.City,
+                        dest.Destination.State
+                    });
+                }
+
+                var airlineObj = new
+                {
+                    AirlineId = item.AirlineId,
+                    City = item.Address.City,
+                    State = item.Address.State,
+                    Lat = item.Address.Lat,
+                    Lon = item.Address.Lon,
+                    rate = sum == 0 ? 0 : sum / item.Rates.Count,
+                    Name = item.Name,
+                    Logo = item.LogoUrl,
+                    About = item.PromoDescription,
+                    Destinations = allDest
+                };
+                tupleList.Add(new Tuple<float, object>(airlineObj.rate, airlineObj));
+                airlineList.Add(airlineObj);
             }
 
-            var tuples = newList.OrderBy(n => n.Item1).Take(5);
+            var ordredList = tupleList.OrderBy(x => x.Item1).Take(5);
 
-            return Ok(tuples);
+            var retlist = new List<object>();
+
+            foreach (var item in ordredList)
+            {
+                retlist.Add(item.Item2);
+            }
+            
+            return Ok(retlist);
         }
 
         [HttpGet]

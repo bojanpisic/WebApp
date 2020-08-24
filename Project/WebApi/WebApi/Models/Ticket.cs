@@ -9,7 +9,7 @@ namespace WebApi.Models
     public class Ticket
     {
         public int TicketId { get; set; }
-        public User User { get; set; }
+        public FlightReservation Reservation { get; set; }
         public int SeatId { get; set; }
         public Seat Seat { get; set; }
         public float Price { get; set; }

@@ -527,7 +527,7 @@ namespace WebApi.Controllers
                     return NotFound("User not found");
                 }
 
-                var racss = await unitOfWork.RentACarRepository.Get(racs => racs.AdminId == userId);
+                var racss = await unitOfWork.RentACarRepository.Get(racs => racs.AdminId == userId, null, "Address");
                 var racs = racss.FirstOrDefault();
 
                 if (racs == null)
@@ -1360,7 +1360,7 @@ namespace WebApi.Controllers
 
         #region Chart methods
         [HttpGet]
-        [Route("get-day-stats")]
+        [Route("get-stats-date")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetDayStats() 
         {
@@ -1416,7 +1416,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        [Route("get-week-stats")]
+        [Route("get-stats-week")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetWeekStats()
         {
@@ -1439,8 +1439,8 @@ namespace WebApi.Controllers
                 }
 
                 var queryString = Request.Query;
-                var week = queryString["week"].ToString().Split("W")[1];
-                var year = queryString["week"].ToString().Split("W")[0];
+                var week = queryString["week"].ToString().Split("-W")[1];
+                var year = queryString["week"].ToString().Split("-W")[0];
 
                 int weekNum = 0;
                 int yearNum = 0;
@@ -1498,7 +1498,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        [Route("get-month-stats")]
+        [Route("get-stats-month")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetMonthStats()
         {
@@ -1521,8 +1521,8 @@ namespace WebApi.Controllers
                 }
 
                 var queryString = Request.Query;
-                var month = queryString["week"].ToString().Split("-")[1];
-                var year = queryString["week"].ToString().Split("-")[0];
+                var month = queryString["month"].ToString().Split("-")[1];
+                var year = queryString["month"].ToString().Split("-")[0];
 
                 int monthNum = 0;
                 int yearNum = 0;

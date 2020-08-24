@@ -41,6 +41,7 @@ import { MyCarsComponent } from './components/registered-user/my-cars/my-cars.co
 import { MyFlightsComponent } from './components/registered-user/my-flights/my-flights.component';
 import { CarFilterComponent } from './components/helper/car-filter/car-filter.component';
 import { AirlineStatsComponent } from './components/airline-admin/airline-stats/airline-stats.component';
+import { RacStatsComponent } from './components/rac-admin/rac-stats/rac-stats.component';
 
 const routes: Routes = [
 
@@ -106,6 +107,7 @@ const routes: Routes = [
       // tslint:disable-next-line:max-line-length
       {path: 'add-car-special-offer', component: AddCarSpecialOfferComponent, canActivate: [AuthGuard], data: {permittedRoles: ['RentACarServiceAdmin']}},
     ]},
+    {path: 'stats', component: RacStatsComponent},
     {path: ':type', component: CompanyProfileComponent, canActivate: [AuthGuard], data: {permittedRoles: ['RentACarServiceAdmin']}},
   ]},
 

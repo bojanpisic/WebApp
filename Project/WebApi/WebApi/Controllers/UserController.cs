@@ -398,7 +398,7 @@ namespace WebApi.Controllers
                     return BadRequest("Takeover date shoud be lower then return date.");
                 }
 
-                var res = await unitOfWork.CarRepository.Get(c => c.CarId == dto.CarRentId, null, "Branch,Rents");
+                var res = await unitOfWork.CarRepository.Get(c => c.CarId == dto.CarRentId, null, "Branch,Rents,SpecialOffers");
                 var car = res.FirstOrDefault();
 
                 if (car == null)
@@ -406,12 +406,24 @@ namespace WebApi.Controllers
                     return NotFound("Car not found");
                 }
 
+                //provera da li ima special offer za taj period
+                var specialOffer = car.SpecialOffers.FirstOrDefault(so => 
+                                    dto.ReturnDate >= so.FromDate && so.FromDate >= dto.TakeOverDate ||
+                                    dto.ReturnDate >= so.ToDate && so.FromDate >= dto.TakeOverDate || 
+                                    so.FromDate < dto.TakeOverDate && so.ToDate > dto.ReturnDate);
+
+                if (specialOffer != null)
+                {
+                    return BadRequest("This car has special offer for selected period. Cant rent this car");
+                }
+
+                //provera da li je vec rezervisan u datom periodu
                 foreach (var rent in car.Rents)
                 {
                     if (!(rent.TakeOverDate < dto.TakeOverDate && rent.ReturnDate < dto.TakeOverDate ||
                         rent.TakeOverDate > dto.ReturnDate && rent.ReturnDate > dto.ReturnDate))
                     {
-                        return BadRequest("The selected car is reserver for selected period");
+                        return BadRequest("The selected car is reserved for selected period");
                     }
                 }
 
@@ -424,7 +436,6 @@ namespace WebApi.Controllers
                 {
                     return NotFound("RACS not found");
                 }
-
                 if (car.Branch != null)
                 {
                     if (!car.Branch.City.Equals(dto.TakeOverCity))
@@ -438,7 +449,8 @@ namespace WebApi.Controllers
                 {
                     return BadRequest("Takeover city and rent service/branch city dont match");
                 }
-                
+
+                //provera da li postoje branch gde moze da se vrati auto
 
                 var citiesToReturn = new List<string>();
 
@@ -476,15 +488,21 @@ namespace WebApi.Controllers
                     unitOfWork.CarRepository.Update(car);
 
                     await unitOfWork.Commit();
-                    //await transaction.Result.CommitAsync();
                 }
                 catch (Exception)
                 {
-                    //unitOfWork.Rollback();
-                    //await transaction.Result.RollbackAsync();
                     return StatusCode(500, "Failed to rent car. One of transactions failed");
                 }
-                //}
+
+                //slanje email-a
+                try
+                {
+                    await unitOfWork.AuthenticationRepository.SendRentConfirmationMail(user, carRent);
+                }
+                catch (Exception)
+                {
+                    return StatusCode(500, "Car is rented, but failed to send confirmation email.");
+                }
 
                 return Ok();
             }
@@ -687,6 +705,15 @@ namespace WebApi.Controllers
             }
         }
 
+        private async Task<float> CalculateTotalPrice(DateTime startDate, DateTime endDate, float pricePerDay) 
+        {
+            await Task.Yield();
+
+            return (float)((endDate - startDate).TotalDays == 0 ? pricePerDay : pricePerDay * (endDate - startDate).TotalDays);
+        }
+        #endregion
+
+        #region Rate car/racs methods
         [HttpPost]
         [Route("rate-car")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -730,7 +757,8 @@ namespace WebApi.Controllers
 
                 var rentedCar = rent.RentedCar;
 
-                rentedCar.Rates.Add(new CarRate() {
+                rentedCar.Rates.Add(new CarRate()
+                {
                     Rate = dto.Rate,
                     User = user,
                     UserId = user.Id,
@@ -785,7 +813,7 @@ namespace WebApi.Controllers
 
                 var rents = await unitOfWork.CarRentRepository
                     .Get(crr => crr.User == user &&
-                    crr.RentedCar.RentACarService == null ? 
+                    crr.RentedCar.RentACarService == null ?
                     crr.RentedCar.Branch.RentACarService.RentACarServiceId == dto.Id : crr.RentedCar.RentACarService.RentACarServiceId == dto.Id
                     , null, "RentedCar");
 
@@ -838,12 +866,239 @@ namespace WebApi.Controllers
                 return StatusCode(500, "Failed to rate rent service");
             }
         }
+        #endregion
 
-        private async Task<float> CalculateTotalPrice(DateTime startDate, DateTime endDate, float pricePerDay) 
+        #region Flight reservation methods
+        [HttpPost]
+        [Route("flight-reservation")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> FlightReservation(FlightReservationDto dto)
         {
-            await Task.Yield();
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
 
-            return (float)((endDate - startDate).TotalDays == 0 ? pricePerDay : pricePerDay * (endDate - startDate).TotalDays);
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("RegularUser"))
+                {
+                    return Unauthorized();
+                }
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                var seatsForUpdate = new List<Seat>();
+
+                var mySeats = await unitOfWork.SeatRepository.Get(s => dto.MySeatsIds.Contains(s.SeatId));
+
+                if (mySeats.ToList().Count != dto.MySeatsIds.Count)
+                {
+                    return BadRequest("Something went wrong");
+                }
+
+                var err = mySeats.FirstOrDefault(s => s.Available == false || s.Reserved == true);
+
+                if (err != null)
+                {
+                    return BadRequest("One of seats is already reserved by other user");
+                }
+
+                var myFlightReservation = new FlightReservation()
+                {
+                    User = user,
+                };
+
+                var myTickets = new List<Ticket>();
+
+                foreach (var seat in mySeats)
+                {
+                    myTickets.Add(new Ticket() {
+                        Seat = seat,
+                        SeatId = seat.SeatId,
+                        Reservation = myFlightReservation,
+                        Price = seat.Price, //trebalo bi popust uracunati
+                        Passport = dto.MyPassport,
+                    });
+
+                    seat.Available = false;
+                    seat.Reserved = true;
+                    seat.Ticket = myTickets.Last();
+                    seatsForUpdate.Add(seat);
+                }
+
+                myFlightReservation.Tickets = myTickets;
+
+                //za neregistrovane prijatelje koji idu na putovanje******************
+
+                var unregTicketList = new List<Ticket2>();
+
+                foreach (var unregisteredRes in dto.UnregisteredFriends)
+                {
+                    var seats = await unitOfWork.SeatRepository.Get(s => dto.MySeatsIds.Contains(s.SeatId));
+
+                    if (seats.ToList().Count != unregisteredRes.SeatsIds.Count)
+                    {
+                        return BadRequest("Something went wrong");
+                    }
+
+                    var error = seats.FirstOrDefault(s => s.Available == false || s.Reserved == true);
+
+                    if (err != null)
+                    {
+                        return BadRequest("One of seats is already reserved by other user");
+                    }
+
+                    foreach (var s in seats)
+                    {
+                        unregTicketList.Add(new Ticket2()
+                        {
+                            Seat = s,
+                            SeatId = s.SeatId,
+                            Reservation = myFlightReservation,
+                            Price = s.Price, //trebalo bi popust uracunati
+                            Passport = unregisteredRes.Passport,
+                            FirstName = unregisteredRes.FirstName,
+                            LastName = unregisteredRes.LastName,
+                        });
+
+                        s.Available = false;
+                        s.Reserved = true;
+                        s.Ticket2 = unregTicketList.Last();
+                        seatsForUpdate.Add(s);
+                    }
+                }
+
+                myFlightReservation.UnregistredFriendsTickets = unregTicketList;
+
+                //za registrovane prijatelje
+
+                foreach (var friend in dto.Friends)
+                {
+                    var seats = await unitOfWork.SeatRepository.Get(s => dto.MySeatsIds.Contains(s.SeatId));
+
+                    if (seats.ToList().Count != friend.SeatsIds.Count)
+                    {
+                        return BadRequest("Something went wrong");
+                    }
+
+                    var error = seats.FirstOrDefault(s => s.Available == false || s.Reserved == true);
+
+                    if (err != null)
+                    {
+                        return BadRequest("One of seats is already reserved by other user");
+                    }
+
+                    foreach (var s in seats)
+                    {
+                        s.Available = false;
+                        s.Reserved = true;
+                        seatsForUpdate.Add(s);
+                    }
+                }
+
+                user.FlightReservations.Add(myFlightReservation);
+
+                try
+                {
+                    foreach (var seat in seatsForUpdate)
+                    {
+                        unitOfWork.SeatRepository.Update(seat);
+                    }
+
+                    unitOfWork.UserRepository.Update(user);
+
+                    await unitOfWork.Commit();
+                }
+                catch (Exception)
+                {
+                    return StatusCode(500, "One of transactions failed. Failed to reserve flight");
+                }
+
+                try
+                {
+                    foreach (var friend in dto.Friends)
+                    {
+                        await unitOfWork.AuthenticationRepository.SendMailToFriend(friend.Email, user); //rebalo bi slati i letove
+                    }
+                }
+                catch (Exception)
+                {
+                    return StatusCode(500, "Failed to send one of emails.");
+                }
+
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to reserve flight");
+            }
+        }
+        #endregion
+
+        #region Rate flight/air methods
+        [HttpPost]
+        [Route("rate-flight")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> RateFlight(RateDto dto)
+        {
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
+
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("RegularUser"))
+                {
+                    return Unauthorized();
+                }
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+               
+
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to rate car");
+            }
+        }
+        [HttpPost]
+        [Route("rate-airline")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> RateAirline(RateDto dto)
+        {
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+                var user = (User)await unitOfWork.UserManager.FindByIdAsync(userId);
+
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("RegularUser"))
+                {
+                    return Unauthorized();
+                }
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to rate rent service");
+            }
         }
         #endregion
     }

@@ -25,6 +25,10 @@ namespace WebApi.Repository
         bool VerifyToken(string providerToken);
         bool CheckPasswordMatch(string password, string confirmPassword);
         Task<IdentityResult> SendConfirmationMail(Person user, string usertype, string password = "");
+        Task<IdentityResult> SendRentConfirmationMail(Person user, CarRent rent);
+        Task<IdentityResult> SendTicketConfirmationMail(Person user, Ticket ticket);
+        Task<IdentityResult> SendMailToFriend(string email, Person inviter);
+
         Task<IdentityResult> ConfirmEmail(Person user, string token);
         Task<Person> GetUserById(string id);
         Task<Person> GetPersonBy(string usrNameOrEmail);

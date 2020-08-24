@@ -32,6 +32,22 @@
         <button id="remove" (click)="return(true)">Yes</button>
     </div>
 </div>
+<div *ngIf="type === 'bookError'" class="popup">
+    <div class="remove-friend-header">
+        <button (click)="return(false)">
+            <svg aria-hidden="true" role="presentation" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display: block; fill: rgb(34, 34, 34); height: 16px; width: 16px; stroke: currentcolor; stroke-width: 4; overflow: visible;"><path d="m6 6 20 20"></path><path d="m26 6-20 20"></path></svg>
+        </button>
+        <span>Not logged in</span>
+    </div>
+    <div class="content">
+        <img src='../../../../assets/illustrations/undraw_reminder_pa79.png'>
+        <h4>To continue you will have to log in first. Please log in.
+        </h4>
+        <br>
+        <button id="cancel" (click)="return(false)">Cancel</button>
+        <button id="remove" (click)="return(true)">Log in</button>
+    </div>
+</div>
 <div *ngIf="type === 'errorReservation'" class="popup">
     <div class="remove-friend-header">
         <button (click)="return(false)">

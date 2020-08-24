@@ -64,6 +64,12 @@ export class CarRentService {
     return this.http.get<any>(url);
   }
 
+  getTopRatedRACs(): Observable<any> {
+    const url = this.BaseURI + '/rentacarserviceadmin/get-toprated-racs';
+    console.log(url);
+    return this.http.get<any>(url);
+  }
+
   getRACProfile(data: any) {
     const url = `${this.BaseURI + '/home/rent-car-service'}/${data}`;
     return this.http.get(url);
@@ -219,6 +225,42 @@ export class CarRentService {
     const url = this.BaseURI + '/rentacarserviceadmin/racs-specialoffers';
     console.log(url);
     return this.http.get<any>(url);
+  }
+
+  getStats(data): Observable<any> {
+    // saljem kao query ili ovako?
+    const param = {
+      from: data.from,
+      to: data.to,
+      isFree: data.isFree
+    };
+    const url = this.BaseURI + '/rentacarserviceadmin/get-car-report';
+    console.log(url);
+    return this.http.get<any>(url, {params: param});
+  }
+
+  getStatsForDate(data: any): Observable<any> {
+    const param = {
+      date: data.date // 2020-09-25
+    };
+    const url = this.BaseURI + '/rentacarserviceadmin/get-stats-date';
+    return this.http.get<any>(url, {params: param});
+  }
+
+  getStatsForWeek(data: any): Observable<any> {
+    const param = {
+      week: data.week // 2020-W34 to je 34. nedelja
+    };
+    const url = this.BaseURI + '/rentacarserviceadmin/get-stats-week';
+    return this.http.get<any>(url, {params: param});
+  }
+
+  getStatsForMonth(data: any): Observable<any> {
+    const param = {
+      month: data.month // 2020-09
+    };
+    const url = this.BaseURI + '/rentacarserviceadmin/get-stats-month';
+    return this.http.get<any>(url, {params: param});
   }
 
   getTotalPriceForResevation(data: any) {

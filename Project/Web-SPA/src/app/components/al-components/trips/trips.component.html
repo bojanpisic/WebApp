@@ -1,11 +1,12 @@
-<nav *ngIf="!filter">
+<nav [ngClass]="{blur: showModal}" *ngIf="!filter">
     <img (click)='goBack()' src="../../../../assets/back.png">
     <a (click)="toggleFilter()" id="filter"><img src="../../../../assets/icons8-slider-100.png">Filters</a>
 </nav>
-<ul *ngIf="!filter">
+<ul [ngClass]="{blur: showModal}" *ngIf="!filter">
     <!--ovde izlistavamo sve nase specijalne karte, svaka od njih moze biti oneway, roundtrip ili multicity-->
     <li *ngFor="let trip of trips; let i = index">
-        <app-trip [trip]="trip" [userId]="userId" [indexOfTrip]="i"></app-trip>
+        <app-trip (showModal)="onShowModal($event)" [trip]="trip" [userId]="userId" [indexOfTrip]="i"></app-trip>
     </li>
 </ul>
-<app-filter *ngIf="filter" (appliedFilters)="onApplyFilter()" (closeFilter)="toggleFilter()"></app-filter>
+<app-filter [ngClass]="{blur: showModal}" *ngIf="filter" (appliedFilters)="onApplyFilter()" (closeFilter)="toggleFilter()"></app-filter>
+<app-modal *ngIf="showModal" [type]="'bookError'" (remove)="onModal($event)"></app-modal>

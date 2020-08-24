@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { AirlineService } from 'src/services/airline.service';
 import { Router, ActivatedRoute, NavigationExtras } from '@angular/router';
 import { Flight } from 'src/app/entities/flight';
@@ -17,6 +17,7 @@ export class TripComponent implements OnInit {
   @Input() indexOfTrip;
   @Input() trip: any;
   @Input() userId;
+  @Output() showModal = new EventEmitter<any>();
   showInfo: Array<boolean>;
   i: number;
   arrayOfValues: Array<TripParameter>;
@@ -64,7 +65,7 @@ export class TripComponent implements OnInit {
     if (this.userId !== undefined) {
       this.router.navigate([this.userId + '/trips/trip-reservation'], navigationExtras);
     } else {
-      alert('niste ulogovani');
+      this.showModal.emit(true);
     }
   }
 

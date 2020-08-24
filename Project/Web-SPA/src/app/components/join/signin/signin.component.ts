@@ -75,7 +75,6 @@ export class SigninComponent implements OnInit {
               return ;
           }
           console.log(res);
-          this.toastr.success('Success!');
           switch (decoded.Roles) {
             case 'RegularUser':
               this.router.navigateByUrl(decoded.UserID + '/home');

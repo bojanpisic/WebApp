@@ -50,7 +50,8 @@ export class RacSpecialOffersComponent implements OnInit {
               oldPrice: element.oldPrice,
               fromDate: element.fromDate.split('T')[0],
               toDate: element.toDate.split('T')[0],
-              seatsNumber: element.seatsNumber
+              seatsNumber: element.seatsNumber,
+              rate: element.rate === undefined ? null : element.rate
             };
             this.specialOffers.push(new1);
           });

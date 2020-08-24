@@ -23,6 +23,7 @@ export class TripsComponent implements OnInit {
 
   url: any;
   trip1: {flightsObject: Array<any>, minPrice: number};
+  showModal = false;
 
   constructor(private userService: UserService, private tripService: TripService,
               private route: ActivatedRoute, private airlineService: AirlineService,
@@ -63,7 +64,6 @@ export class TripsComponent implements OnInit {
       const a = this.airlineService.test(this.url).subscribe(
         (res: any[]) => {
           if (res.length > 0) {
-            console.log(res);
             res.forEach(el => {
               console.log(el.flightsObject);
               this.trip1.flightsObject = [];
@@ -163,6 +163,17 @@ export class TripsComponent implements OnInit {
     } else {
       this.router.navigate(['/' + this.userId]);
     }
+  }
+
+  onShowModal(value: any) {
+    this.showModal = true;
+  }
+
+  onModal(value: any){
+    if (value) {
+      this.router.navigate(['/signin']);
+    }
+    this.showModal = false;
   }
 
 }

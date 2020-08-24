@@ -9,7 +9,7 @@ namespace WebApi.Models
     {
         public User()
         {
-            FlightReservations = new HashSet<Ticket>();
+            FlightReservations = new HashSet<FlightReservation>();
             RateAirline = new HashSet<AirlineRate>();
             RateRACService = new HashSet<RentCarServiceRates>();
             FriendshipRequests = new HashSet<Friendship>();
@@ -17,7 +17,7 @@ namespace WebApi.Models
             Friends = new HashSet<User>();
             CarRents = new HashSet<CarRent>();
         }
-        public ICollection<Ticket> FlightReservations { get; set; }
+        public ICollection<FlightReservation> FlightReservations { get; set; }
         public ICollection<CarRent> CarRents { get; set; }
         public ICollection<AirlineRate> RateAirline { get; set; }
         public ICollection<RentCarServiceRates> RateRACService { get; set; }

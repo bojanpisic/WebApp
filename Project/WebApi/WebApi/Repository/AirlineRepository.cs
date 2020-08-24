@@ -22,7 +22,10 @@ namespace WebApi.Repository
 
         public async Task<IEnumerable<Airline>> GetAllAirlines()
         {
-            return await context.Airlines.Include(a=>a.Destinations).ThenInclude(d=>d.Destination).Include(a => a.Address).ToListAsync();
+            return await context.Airlines
+                .Include(a=>a.Destinations)
+                .ThenInclude(d=>d.Destination)
+                .Include(a => a.Address).ToListAsync();
         }
 
         public void UpdateAddress(Address addr)

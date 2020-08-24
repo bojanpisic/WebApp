@@ -34,44 +34,26 @@ export class TopRatedComponent implements OnInit {
 
   loadAirlines() {
     let count = 0;
-    const a = this.airlineService.getAirlines().subscribe(
+    const a = this.airlineService.getTopRatedAirlines().subscribe(
       (res: any[]) => {
         if (res.length > 0) {
+          console.log('TOP AIRLINES' + res);
           res.forEach(element => {
             console.log(element);
-            // {
-            //   pretpostavljam da cu dobiti:
-            //   {
-            //     [4.5, {airlineId: 5, city: 'Nzm', ...}],
-            //     [4.2, {airlineId: 5, city: 'Nzm', ...}],
-            //     [3.4, {airlineId: 5, city: 'Nzm', ...}],
-            //     ...
-            //   }
-            // }
-            // ako ne kopiraj mi console log i nalepi ovde da ispravim
-            const grade = element[0];
             const airline = {
-              airlineId: element[1].airlineId,
-              city: element[1].city,
-              state: element[1].state,
-              name: element[1].name,
+              airlineId: element.airlineId,
+              city: element.city,
+              state: element.state,
+              name: element.name,
               // tslint:disable-next-line:max-line-length
-              logo: (element[1].logo === null) ? null : this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element[1].logo}`),
-              about: element[1].about,
-              destinations: element[1].destinations
+              logo: (element.logo === null) ? null : this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.logo}`),
+              about: element.about,
+              destinations: element.destinations,
+              rate: element.rate
             };
             count++;
             if (count <= 5) {
-              this.allAirlines.push({
-                rate: grade,
-                airlineId: airline.airlineId,
-                city: airline.city,
-                state: airline.state,
-                name: airline.name,
-                logo: airline.logo,
-                about: airline.about,
-                destinations: airline.destinations
-              });
+              this.allAirlines.push(airline);
             }
           });
         }
@@ -84,20 +66,20 @@ export class TopRatedComponent implements OnInit {
 
   loadRentACarServices() {
     let count = 0;
-    const a = this.rentService.getRACs().subscribe(
+    const a = this.rentService.getTopRatedRACs().subscribe(
       (res: any[]) => {
         if (res.length > 0) {
           res.forEach(element => {
-            const grade = element[0];
+            const grade = element.item1;
             const rac = {
-              racId: element[1].id,
-              city: element[1].city,
-              state: element[1].state,
-              name: element[1].name,
+              racId: element.item2.id,
+              city: element.item2.city,
+              state: element.item2.state,
+              name: element.item2.name,
               // tslint:disable-next-line:max-line-length
-              logo: (element[1].logo === null) ? null : this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element[1].logo}`),
-              about: element[1].about,
-              branches: element[1].branches
+              logo: (element.item2.logo === null) ? null : this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.item2.logo}`),
+              about: element.item2.about,
+              branches: element.item2.branches,
             };
             count++;
             if (count <= 5) {
@@ -114,6 +96,7 @@ export class TopRatedComponent implements OnInit {
             }
           });
         }
+        console.log(res);
       },
       err => {
         this.toastr.error(err.statusText, 'Error!');
