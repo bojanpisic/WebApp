@@ -16,11 +16,21 @@ export class AirlineStatsComponent implements OnInit {
   types: Array<any>;
   dropdown = false;
   pickedType;
-  pickedDate = '2020-08-30';
   pickedWeek = '2020-W35';
   pickedMonth = '2020-09';
+  pickedYear = '2020';
   labels: Array<any>;
   dataset: Array<any>;
+
+  myChartTickets;
+  typesTickets: Array<any>;
+  dropdownTickets = false;
+  pickedTypeTickets;
+  pickedDateTickets = '2020-08-30';
+  pickedWeekTickets = '2020-W35';
+  pickedMonthTickets = '2020-09';
+  labelsTickets: Array<any>;
+  datasetTickets: Array<any>;
 
   constructor(private router: Router,
               private routes: ActivatedRoute,
@@ -31,22 +41,37 @@ export class AirlineStatsComponent implements OnInit {
     });
     this.types = new Array<any>();
     this.types.push({
-      type: 'date', displayedType: 'By date'
-    });
-    this.types.push({
       type: 'week', displayedType: 'By week'
     });
     this.types.push({
       type: 'month', displayedType: 'By month'
     });
+    this.types.push({
+      type: 'year', displayedType: 'By year'
+    });
+    this.typesTickets = new Array<any>();
+    this.typesTickets.push({
+      type: 'date', displayedType: 'By date'
+    });
+    this.typesTickets.push({
+      type: 'week', displayedType: 'By week'
+    });
+    this.typesTickets.push({
+      type: 'month', displayedType: 'By month'
+    });
     this.pickedType = this.types[0];
+    this.pickedTypeTickets = this.typesTickets[0];
     this.labels = new Array<any>();
+    this.labelsTickets = new Array<any>();
     this.dataset = new Array<any>();
+    this.datasetTickets = new Array<any>();
   }
 
   ngOnInit(): void {
-    this.onDateSelected();
+    this.onWeekSelected();
+    this.onDateTicketsSelected();
     this.updateChart();
+    this.updateChartTickets();
   }
 
   updateChart() {
@@ -56,9 +81,9 @@ export class AirlineStatsComponent implements OnInit {
         labels: this.labels,
         datasets: [{
           data: this.dataset,
-          label: this.pickedType.type === 'date' ? this.pickedDate :
-                this.pickedType.type === 'week' ? this.pickedWeek :
-                this.pickedMonth,
+          label: this.pickedType.type === 'week' ? this.pickedWeek :
+                this.pickedType.type === 'month' ? this.pickedMonth :
+                this.pickedYear,
           borderColor: 'rgba(75, 192, 192, 1)',
           backgroundColor: 'rgba(75, 192, 192, 0.2)',
         }
@@ -67,22 +92,34 @@ export class AirlineStatsComponent implements OnInit {
       options: {
         title: {
           display: true,
-          text: this.pickedType.type === 'date' ? 'Income for  ' + this.pickedDate :
-                this.pickedType.type === 'week' ? 'Income for  ' + this.pickedWeek :
-                'Income for  ' + this.pickedMonth,
+          text: this.pickedType.type === 'week' ? 'Income for  ' + this.pickedWeek :
+                this.pickedType.type === 'month' ? 'Income for  ' + this.pickedMonth :
+                'Income for  ' + this.pickedYear,
         }
       }
     });
   }
 
-  onDateSelected() {
+  onYearSelected() {
     const data = {
-      date: this.pickedDate
+      year: this.pickedYear
     };
-    const a = this.airlineService.getStatsForDate(data).subscribe(
+    const a = this.airlineService.getStatsForYear(data).subscribe(
       (res: any) => {
-        this.labels.push(this.pickedDate);
-        this.dataset.push(res.result);
+        console.log(res);
+        res.forEach(element => {
+          this.labels.push(element.item1);
+          this.dataset.push(element.item2);
+        });
+        this.updateChart();
+        // tslint:disable-next-line:forin
+        // for (const key in res.days) {
+        //   this.labels.push(key);
+        // }
+        // // tslint:disable-next-line:forin
+        // for (const key in res.tickets) {
+        //   this.dataset.push(key);
+        // }
       },
       err => {
         this.toastr.error(err.statusText, 'Error.');
@@ -96,19 +133,14 @@ export class AirlineStatsComponent implements OnInit {
     };
     const a = this.airlineService.getStatsForWeek(data).subscribe(
       (res: any) => {
-        // ovde mi moras vratiti dane te nedelje tipa:
-        // [2020-05-20, 2020-05-21, 2020-05-22, 2020-05-23...]
-        // nek bude u days
-        // tslint:disable-next-line:forin
-        for (const key in res.days) {
-          this.labels.push(key);
-        }
-        // a onda mi u tickets vrati niz prodatih karti za te dane tih 7
-        // tipa [200, 245, 233, 432, ...]
-        // tslint:disable-next-line:forin
-        for (const key in res.tickets) {
-          this.dataset.push(key);
-        }
+        console.log(res);
+        res.forEach(element => {
+          this.labels.push(element.item1.split('T')[0]);
+          this.dataset.push(element.item2);
+        });
+        console.log(this.labels);
+        console.log(this.dataset);
+        this.updateChart();
       },
       err => {
         this.toastr.error(err.statusText, 'Error.');
@@ -122,16 +154,12 @@ export class AirlineStatsComponent implements OnInit {
     };
     const a = this.airlineService.getStatsForMonth(data).subscribe(
       (res: any) => {
-        // isto ko i sa week samo ovde nema 7 vec 28,29,30 ili 31 dan
-        // tslint:disable-next-line:forin
-        for (const key in res.days) {
-          this.labels.push(key);
-        }
-        // isto ko i sa week samo ovde nema 7 vec 28,29,30 ili 31 dan
-        // tslint:disable-next-line:forin
-        for (const key in res.tickets) {
-          this.dataset.push(key);
-        }
+        console.log(res);
+        res.forEach(element => {
+          this.labels.push(element.item1.split('T')[0]);
+          this.dataset.push(element.item2);
+        });
+        this.updateChart();
       },
       err => {
         this.toastr.error(err.statusText, 'Error.');
@@ -144,18 +172,115 @@ export class AirlineStatsComponent implements OnInit {
   }
 
   setType(value: any) {
-    if (value.type === 'date') {
-      this.onDateSelected();
+    this.labels = [];
+    this.dataset = [];
+    console.log(this.pickedYear);
+    if (value.type === 'year' && this.pickedYear !== null) {
+      this.onYearSelected();
     } else if (value.type === 'week') {
       this.onWeekSelected();
     } else {
       this.onMonthSelected();
     }
     this.pickedType = value;
-    this.updateChart();
   }
 
   toggleDropDown() {
     this.dropdown = !this.dropdown;
+  }
+
+  updateChartTickets() {
+    this.myChartTickets = new Chart('myChartTickets', {
+      type: 'line',
+      data: {
+        labels: this.labelsTickets,
+        datasets: [{
+          data: this.datasetTickets,
+          label: this.pickedTypeTickets.type === 'date' ? this.pickedDateTickets :
+                this.pickedTypeTickets.type === 'week' ? this.pickedWeekTickets :
+                this.pickedMonthTickets,
+          borderColor: 'rgba(75, 192, 192, 1)',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        }]
+      },
+      options: {
+        title: {
+          display: true,
+          text: this.pickedTypeTickets.type === 'date' ? 'Income for  ' + this.pickedDateTickets :
+                this.pickedTypeTickets.type === 'week' ? 'Income for  ' + this.pickedWeekTickets :
+                'Income for  ' + this.pickedMonthTickets,
+        }
+      }
+    });
+  }
+
+  onDateTicketsSelected() {
+    const data = {
+      date: this.pickedDateTickets
+    };
+    const a = this.airlineService.getTicketStatsForDate(data).subscribe(
+      (res: any) => {
+        this.labelsTickets.push(res.item1.split('T')[0]);
+        this.datasetTickets.push(res.item2);
+        this.updateChartTickets();
+      },
+      err => {
+        this.toastr.error(err.statusText, 'Error.');
+      }
+    );
+  }
+
+  onWeekTicketsSelected() {
+    const data = {
+      week: this.pickedWeekTickets
+    };
+    const a = this.airlineService.getTicketStatsForWeek(data).subscribe(
+      (res: any) => {
+        res.forEach(element => {
+          this.labelsTickets.push(element.item1.split('T')[0]);
+          this.datasetTickets.push(element.item2);
+        });
+        this.updateChartTickets();
+      },
+      err => {
+        this.toastr.error(err.statusText, 'Error.');
+      }
+    );
+  }
+
+  onMonthTicketsSelected() {
+    const data = {
+      month: this.pickedMonthTickets
+    };
+    const a = this.airlineService.getTicketStatsForMonth(data).subscribe(
+      (res: any) => {
+        console.log(res);
+        res.forEach(element => {
+          this.labelsTickets.push(element.item1.split('T')[0]);
+          this.datasetTickets.push(element.item2);
+        });
+        this.updateChartTickets();
+      },
+      err => {
+        this.toastr.error(err.statusText, 'Error.');
+      }
+    );
+  }
+
+  setTypeTickets(value: any) {
+    this.labelsTickets = [];
+    this.datasetTickets = [];
+    if (value.type === 'date') {
+      this.onDateTicketsSelected();
+    } else if (value.type === 'week') {
+      this.onWeekTicketsSelected();
+    } else {
+      this.onMonthTicketsSelected();
+    }
+    this.pickedTypeTickets = value;
+  }
+
+  toggleDropDownTickets() {
+    this.dropdownTickets = !this.dropdownTickets;
   }
 }

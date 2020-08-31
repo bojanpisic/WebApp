@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Flight } from 'src/app/entities/flight';
 import { AirlineService } from 'src/services/airline.service';
-import { FlightService } from 'src/services/flight.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
 
@@ -32,9 +31,10 @@ export class AirlineFlightsComponent implements OnInit {
     stops: Array<any>
   }>;
   flightId;
+  noFlights = false;
 
   constructor(private router: Router, private routes: ActivatedRoute, private airlineService: AirlineService,
-              private flightService: FlightService, private san: DomSanitizer,
+              private san: DomSanitizer,
               private toastr: ToastrService) {
     routes.params.subscribe(param => {
       this.adminId = param.id;
@@ -45,6 +45,10 @@ export class AirlineFlightsComponent implements OnInit {
   ngOnInit(): void {
     const air1 = this.airlineService.getAdminsFlights().subscribe(
       (res: any[]) => {
+        console.log(res);
+        if (res.length === 0) {
+          this.noFlights = true;
+        }
         if (res.length) {
           res.forEach(element => {
             const new1 = {

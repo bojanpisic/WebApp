@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Car } from 'src/app/entities/car';
 import { Router, ActivatedRoute } from '@angular/router';
-import { CarService } from 'src/services/car.service';
 import { CarRentService } from 'src/services/car-rent.service';
 
 @Component({
@@ -49,6 +48,7 @@ export class RacCarsComponent implements OnInit {
       console.log('USAO1');
       const air1 = this.carService.getBranchesCars(this.branchId).subscribe(
         (res: any[]) => {
+          console.log(res);
           if (res.length) {
             res.forEach(element => {
               const car = {
@@ -61,7 +61,8 @@ export class RacCarsComponent implements OnInit {
                 seatsNumber: element.seatsNumber,
                 state: element.state,
                 type: element.type,
-                year: element.year
+                year: element.year,
+                rate: element.rate
               };
               this.cars.push(car);
             });
@@ -87,6 +88,7 @@ export class RacCarsComponent implements OnInit {
       console.log('USAO2');
       const air1 = this.carService.getAdminsCars().subscribe(
         (res: any[]) => {
+          console.log(res);
           if (res.length) {
             res.forEach(element => {
               const car = {
@@ -99,7 +101,8 @@ export class RacCarsComponent implements OnInit {
                 seatsNumber: element.seatsNumber,
                 state: element.state,
                 type: element.type,
-                year: element.year
+                year: element.year,
+                rate: element.rate
               };
               this.cars.push(car);
             });

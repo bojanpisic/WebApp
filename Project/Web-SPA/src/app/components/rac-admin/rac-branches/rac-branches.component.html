@@ -17,6 +17,6 @@
             <a (click)="onBranchInfo(branch.branchId)">info</a>
         </div>
     </li>
-    <h3 *ngIf="branches.length === 0">You are not flying to any destination. Add them now!</h3>
+    <h3 *ngIf="branches.length === 0">You have not added any branches yet. Add them now!</h3>
 </ul>
 <app-modal *ngIf="showModal" (remove)="onDeleteBranch($event)" [destination]="pickedBranchAddress" [type]="'deleteDestination'"></app-modal>

@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Car } from 'src/app/entities/car';
 import { CarRentService } from 'src/services/car-rent.service';
-import { CarService } from 'src/services/car.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-edit-car',
@@ -21,6 +21,7 @@ export class EditCarComponent implements OnInit {
   numberOfSeats = 4;
   pricePerDay = 200;
   minusDisabled = false;
+  plusDisabled = false;
 
   dropdown = false;
   pickedCarType = 'Luxury';
@@ -34,7 +35,11 @@ export class EditCarComponent implements OnInit {
 
   isOk = false;
 
-  constructor(private router: Router, private routes: ActivatedRoute, private carService: CarRentService, private san: DomSanitizer) {
+  constructor(private router: Router,
+              private routes: ActivatedRoute,
+              private carService: CarRentService,
+              private san: DomSanitizer,
+              private toastr: ToastrService) {
     routes.params.subscribe(param => {
       this.adminId = param.id;
     });
@@ -83,15 +88,17 @@ export class EditCarComponent implements OnInit {
   }
 
   onPlus() {
-    this.seatsNumber++;
+    this.numberOfSeats++;
     this.minusDisabled = false;
+    if (this.numberOfSeats === 10) {
+      this.plusDisabled = true;
+    }
   }
 
   onMinus() {
-    if (this.seatsNumber > 1) {
-      this.seatsNumber--;
-    }
-    if (this.seatsNumber === 1) {
+    this.plusDisabled = false;
+    this.numberOfSeats--;
+    if (this.numberOfSeats === 2) {
       this.minusDisabled = true;
     }
   }
@@ -107,16 +114,7 @@ export class EditCarComponent implements OnInit {
         }, 100);
       },
       err => {
-        console.log('dada' + err.status);
-        // tslint:disable-next-line: triple-equals
-        if (err.status == 400) {
-          console.log(err);
-        // tslint:disable-next-line: triple-equals
-        } else if (err.status == 401) {
-          console.log(err);
-        } else {
-          console.log(err);
-        }
+        this.toastr.error(err.error, 'Error!');
       }
     );
   }
@@ -181,11 +179,11 @@ export class EditCarComponent implements OnInit {
       this.errorModel = true;
       retVal = false;
     }
-    if (this.form.controls.year.value === '') {
+    if (this.form.controls.year.value === '' || isNaN(+this.form.controls.year.value)) {
       this.errorYear = true;
       retVal = false;
     }
-    if (this.form.controls.price.value === '') {
+    if (this.form.controls.price.value === '' || isNaN(+this.form.controls.price.value)) {
       this.errorPrice = true;
       retVal = false;
     }
@@ -196,8 +194,8 @@ export class EditCarComponent implements OnInit {
     this.form = new FormGroup({
       brand: new FormControl(this.car.brand, Validators.required),
       model: new FormControl(this.car.model, Validators.required),
-      year: new FormControl(this.car.year, Validators.required),
-      price: new FormControl(this.car.pricePerDay, Validators.required),
+      year: new FormControl(this.car.year, [Validators.required, Validators.pattern('^[0-9]*$')]),
+      price: new FormControl(this.car.pricePerDay, [Validators.required, Validators.pattern('^[0-9]*$')]),
    });
   }
 

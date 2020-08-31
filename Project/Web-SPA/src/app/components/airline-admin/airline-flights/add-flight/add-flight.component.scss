@@ -7,6 +7,14 @@
     box-sizing: border-box;
 }
 
+#note {
+    margin: 100px 22px;
+    a {
+        color: hotpink;
+        font-weight: bold;
+    }
+}
+
 header {
     @extend %container-top;
     display: grid;

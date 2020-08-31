@@ -9,9 +9,10 @@ import { Seat } from 'src/app/entities/seat';
 })
 export class PickSeatsComponent implements OnInit, OnChanges {
 
-  @Input() flight: Flight;
+  @Input() flight: any;
   @Input() blur: boolean;
-  @Input() mySeats: Array<Seat>;
+  @Input() mySeats;
+  @Input() index;
   @Output() bookSeat = new EventEmitter<Seat>();
 
   firstClassSeats: Array<any>;
@@ -24,6 +25,9 @@ export class PickSeatsComponent implements OnInit, OnChanges {
   economyPriceRange: {minPrice: number, maxPrice: number};
   basicEconomyPriceRange: {minPrice: number, maxPrice: number};
 
+  isOk = false;
+  modifiedSeats;
+
   constructor() {
     this.firstClassSeats = new Array<any>();
     this.businessSeats = new Array<any>();
@@ -32,10 +36,10 @@ export class PickSeatsComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+    this.modifiedSeats = this.mySeats.map(el => +el.seats).concat([]);
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log('dobrodosao' + this.flight.from.city);
     this.firstClassSeats = [];
     this.businessSeats = [];
     this.economySeats = [];
@@ -44,29 +48,34 @@ export class PickSeatsComponent implements OnInit, OnChanges {
     this.setBusinessSeats();
     this.setEconomySeats();
     this.setBasicEconomySeats();
+    this.modifiedSeats = [];
+    this.mySeats.forEach(element => {
+      element.seats.forEach(el => {
+        this.modifiedSeats.push(el.seatId);
+      });
+    });
+    // this.modifiedSeats = this.mySeats.map(el => {
+    //   el.seats.map(element => {
+    //     return element.seatId;
+    //   });
+    // }).concat([]);
   }
 
-  book(seat: Seat) {
-    console.log(seat);
-    console.log('MOJ LET JE' + this.flight.seats);
+  book(seat: any) {
     this.bookSeat.emit(seat);
   }
 
   setFirstClassSeats() {
-    console.log('usao11111' + this.flight.from.city);
     const numberOfSeats = this.flight.seats.length;
     const rows = this.flight.seats.filter(x => x.class === 'F')[this.flight.seats.filter(x => x.class === 'F').length - 1].row;
     let column;
-    console.log('usao' + this.flight.from.city);
     for (let r = 1; r < rows + 1; r++) {
       for (let c = 0; c < 6; c++) {
         column = (c === 0) ? 'A' : (c === 1) ? 'B' : (c === 2) ? 'C' : (c === 3) ? 'D' : (c === 4) ? 'E' : 'F';
-        if (this.flight.seats.some(seat => seat.row === r && seat.column === column && seat.class === 'F')) {
-          this.firstClassSeats.push(this.flight.seats.find(seat => seat.class === 'F' && seat.column === column && seat.row === r));
-          console.log(column, r);
+        if (this.flight.seats.some(seat => seat.row == r && seat.column === column && seat.class === 'F')) {
+          this.firstClassSeats.push(this.flight.seats.find(seat => seat.class === 'F' && seat.column === column && seat.row == r));
         } else {
           this.firstClassSeats.push((column === 'A' || column === 'B' || column === 'C') ? 'left' : 'right');
-          console.log(column, r);
         }
       }
     }
@@ -79,7 +88,6 @@ export class PickSeatsComponent implements OnInit, OnChanges {
       value = this.firstClassSeats[this.firstClassSeats.length - 1];
     }
     this.firstClassSeats.push(lastValue);
-    console.log('izasao' + this.flight.from.city);
   }
 
   setBusinessSeats() {
@@ -90,8 +98,8 @@ export class PickSeatsComponent implements OnInit, OnChanges {
       for (let r = 1; r < rows + 1; r++) {
         for (let c = 0; c < 6; c++) {
           column = (c === 0) ? 'A' : (c === 1) ? 'B' : (c === 2) ? 'C' : (c === 3) ? 'D' : (c === 4) ? 'E' : 'F';
-          if (this.flight.seats.some(seat => seat.row === r && seat.column === column && seat.class === 'B')) {
-            this.businessSeats.push(this.flight.seats.find(seat => seat.class === 'B' && seat.column === column && seat.row === r));
+          if (this.flight.seats.some(seat => seat.row == r && seat.column === column && seat.class === 'B')) {
+            this.businessSeats.push(this.flight.seats.find(seat => seat.class === 'B' && seat.column === column && seat.row == r));
           } else {
             this.businessSeats.push((column === 'A' || column === 'B' || column === 'C') ? 'left' : 'right');
           }
@@ -117,8 +125,8 @@ export class PickSeatsComponent implements OnInit, OnChanges {
       for (let r = 1; r < rows + 1; r++) {
         for (let c = 0; c < 6; c++) {
           column = (c === 0) ? 'A' : (c === 1) ? 'B' : (c === 2) ? 'C' : (c === 3) ? 'D' : (c === 4) ? 'E' : 'F';
-          if (this.flight.seats.some(seat => seat.row === r && seat.column === column && seat.class === 'E')) {
-            this.economySeats.push(this.flight.seats.find(seat => seat.class === 'E' && seat.column === column && seat.row === r));
+          if (this.flight.seats.some(seat => seat.row == r && seat.column === column && seat.class === 'E')) {
+            this.economySeats.push(this.flight.seats.find(seat => seat.class === 'E' && seat.column === column && seat.row == r));
           } else {
             this.economySeats.push((column === 'A' || column === 'B' || column === 'C') ? 'left' : 'right');
           }
@@ -144,8 +152,8 @@ export class PickSeatsComponent implements OnInit, OnChanges {
       for (let r = 1; r < rows + 1; r++) {
         for (let c = 0; c < 6; c++) {
           column = (c === 0) ? 'A' : (c === 1) ? 'B' : (c === 2) ? 'C' : (c === 3) ? 'D' : (c === 4) ? 'E' : 'F';
-          if (this.flight.seats.some(seat => seat.row === r && seat.column === column && seat.class === 'BE')) {
-            this.basicEconomySeats.push(this.flight.seats.find(seat => seat.class === 'BE' && seat.column === column && seat.row === r));
+          if (this.flight.seats.some(seat => seat.row == r && seat.column === column && seat.class === 'BE')) {
+            this.basicEconomySeats.push(this.flight.seats.find(seat => seat.class === 'BE' && seat.column === column && seat.row == r));
           } else {
             this.basicEconomySeats.push((column === 'A' || column === 'B' || column === 'C') ? 'left' : 'right');
           }
@@ -161,5 +169,6 @@ export class PickSeatsComponent implements OnInit, OnChanges {
       }
       this.basicEconomySeats.push(lastValue);
     }
+    this.isOk = true;
   }
 }

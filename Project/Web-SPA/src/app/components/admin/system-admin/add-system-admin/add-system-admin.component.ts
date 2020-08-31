@@ -57,18 +57,10 @@ export class AddSystemAdminComponent implements OnInit {
       this.adminService.registerSystemAdmin(this.data).subscribe(
         (res: any) => {
           this.toastr.success('Success!');
+          this.router.navigate(['/system-admin/' + this.adminId]);
         },
         err => {
-          // tslint:disable-next-line: triple-equals
-          if (err.status == 400) {
-            console.log(err);
-            // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
-            this.toastr.error(err.statusText, 'Error!');
-          } else {
-            console.log(err);
-            console.log(err.status);
-            this.toastr.error(err.statusText, 'Error!');
-          }
+          this.toastr.error(err.statusText, 'Error!');
         }
       );
     }

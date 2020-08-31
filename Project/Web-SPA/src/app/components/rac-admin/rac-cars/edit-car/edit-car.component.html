@@ -44,8 +44,11 @@
             <p>Year:</p>
             <input [ngClass]="{'error-input': (form.controls.year.touched || errorYear) && form.controls.year.invalid}"
             formControlName="year" type="text">
-            <div class="error" *ngIf="(form.controls.year.touched || errorYear) && form.controls.year.invalid">
+            <div class="error" *ngIf="(form.controls.year.touched || errorYear) && form.controls.year.errors?.required">
                 Year of manufacture is required!
+            </div>
+            <div class="error" *ngIf="form.controls.year.errors?.pattern && (form.controls.year.touched || form.controls.year.dirty || errorYear)">
+                Must be a number!
             </div>
         </div>
         <div class="numberOfSeats">
@@ -55,8 +58,8 @@
                 <svg [ngStyle]="{'fill': minusDisabled ? 'rgb(234, 234, 234)' : 'rgb(113, 113, 113)'}" viewBox="0 0 24 24" role="presentation" aria-hidden="true" focusable="false" style="height: 22px; width: 22px; display: block;"><rect height="2" rx="1" width="12" x="6" y="11"></rect></svg>
             </button>
             <p id="numberOfSeats">{{numberOfSeats}}</p>
-            <button type="button" class="plusBtn" (click)="onPlus()">
-                <svg viewBox="0 0 24 24" role="presentation" aria-hidden="true" focusable="false" style="height: 22px; width: 22px; display: block; fill: rgb(113, 113, 113);"><rect height="2" rx="1" width="12" x="6" y="11"></rect><rect height="12" rx="1" width="2" x="11" y="6"></rect></svg>
+            <button type="button" [ngClass]="{'disabled': plusDisabled}" [disabled]="plusDisabled" class="plusBtn" (click)="onPlus()">
+                <svg [ngStyle]="{'fill': plusDisabled ? 'rgb(234, 234, 234)' : 'rgb(113, 113, 113)'}" viewBox="0 0 24 24" role="presentation" aria-hidden="true" focusable="false" style="height: 22px; width: 22px; display: block; fill: rgb(113, 113, 113);"><rect height="2" rx="1" width="12" x="6" y="11"></rect><rect height="12" rx="1" width="2" x="11" y="6"></rect></svg>
             </button>
         </div>
         <div class="pricePerDay">
@@ -80,7 +83,7 @@
             <p [ngClass]="{pickedCarType: pickedCarType === 'Minivan'}" (click)="setCarType('Minivan')">Minivan</p>
         </div>
         <div class="buttons">
-            <button id="delete" (click)="onDelete()">Delete car</button>
+            <button type="button" id="delete" (click)="onDelete()">Delete car</button>
             <button type="submit" id="confirm">Confirm</button>
         </div>
     </form>

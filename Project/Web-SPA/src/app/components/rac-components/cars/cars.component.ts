@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { CarService } from 'src/services/car.service';
 import { Car } from 'src/app/entities/car';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { RegisteredUser } from 'src/app/entities/registeredUser';
 import { UserService } from 'src/services/user.service';
 import { Location } from '@angular/common';
 import { CarRentService } from 'src/services/car-rent.service';
 import { ToastrService } from 'ngx-toastr';
+import { FlightPlusCarService } from 'src/services/flight-plus-car.service';
 
 @Component({
   selector: 'app-cars',
@@ -27,10 +27,15 @@ export class CarsComponent implements OnInit {
 
   filter = false;
 
+  mySubscription;
+  flights;
+  showModalError = false;
+
   constructor(private userService: UserService, private carService: CarRentService,
               private routes: ActivatedRoute, private location: Location,
               private router: Router,
-              private toastr: ToastrService) {
+              private toastr: ToastrService,
+              private flightPlusCar: FlightPlusCarService) {
     const array = routes.snapshot.queryParamMap.get('array');
     this.urlParams = JSON.parse(array);
     console.log(this.urlParams);
@@ -38,10 +43,41 @@ export class CarsComponent implements OnInit {
     routes.params.subscribe(param => {
       this.userId = param.id;
     });
+
+    this.router.routeReuseStrategy.shouldReuseRoute = () => {
+      return false;
+    };
+
+    this.mySubscription = this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        // Trick the Router into believing it's last link wasn't previously loaded
+        this.router.navigated = false;
+      }
+    });
     this.cars = new Array<any>();
+    this.flightPlusCar.subscriber$.subscribe(data => {
+      console.log(data);
+      this.flights = data;
+    });
    }
 
   ngOnInit(): void {
+    this.loadCars();
+    this.flightPlusCar.subscriber$.subscribe(data => {
+      console.log(data);
+      this.flights = data;
+    });
+    console.log(this.flights);
+  }
+
+  // tslint:disable-next-line:use-lifecycle-interface
+  ngOnDestroy() {
+    if (this.mySubscription) {
+      this.mySubscription.unsubscribe();
+    }
+  }
+
+  loadCars() {
     let data;
     data = this.generateFilter();
 
@@ -84,7 +120,7 @@ export class CarsComponent implements OnInit {
           console.log(res);
         },
         err => {
-          this.toastr.error(err.statusText, 'Error!');
+          this.toastr.error(err.error, 'Error!');
         }
       );
     }
@@ -92,6 +128,7 @@ export class CarsComponent implements OnInit {
 
   onModal(value: boolean) {
     if (value) {
+      // carreservation
       const data = {
         from: this.url.from,
         to: this.url.to,
@@ -112,9 +149,9 @@ export class CarsComponent implements OnInit {
           if (err.status == 400) {
             console.log(err);
             // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
-            this.toastr.error(err.statusText, 'Error!');
+            this.toastr.error(err.error, 'Error!');
           } else {
-            this.toastr.error(err.error.statusText, 'Error!');
+            this.toastr.error(err.error, 'Error!');
           }
           this.showModal = false;
         }
@@ -125,41 +162,46 @@ export class CarsComponent implements OnInit {
   }
 
   onBook(value: any) {
-    const data = {
-      carId: value,
-      from: this.url.from,
-      to: this.url.to,
-      dep: this.url.dep,
-      ret: this.url.ret,
-    };
-
-    const selectedCar = this.cars.find(x => x.carId === value);
-
-    this.selectedOffer = {
-      from: this.url.from,
-      to: this.url.to,
-      dep: this.url.dep,
-      ret: this.url.ret,
-      brand: selectedCar.brand,
-      carId: selectedCar.carId,
-      model: selectedCar.model,
-      name: selectedCar.name,
-      totalPrice: null,
-      seatsNumber: selectedCar.seatsNumber,
-      type: selectedCar.type,
-      year: selectedCar.year
-    };
-
-    const a = this.carService.getTotalPriceForResevation(data).subscribe(
-        (res: any) => {
-          this.selectedOffer.totalPrice = res;
-          this.showModal = true;
-        },
-        err => {
-          console.log(err);
-          this.toastr.error(err.error.statusText, 'Error!');
-        }
-      );
+    if (this.userId !== undefined) {
+      const data = {
+        carId: value,
+        from: this.url.from,
+        to: this.url.to,
+        dep: this.url.dep,
+        ret: this.url.ret,
+      };
+  
+      const selectedCar = this.cars.find(x => x.carId === value);
+  
+      this.selectedOffer = {
+        from: this.url.from,
+        to: this.url.to,
+        dep: this.url.dep,
+        ret: this.url.ret,
+        brand: selectedCar.brand,
+        carId: selectedCar.carId,
+        model: selectedCar.model,
+        name: selectedCar.name,
+        totalPrice: null,
+        seatsNumber: selectedCar.seatsNumber,
+        type: selectedCar.type,
+        year: selectedCar.year
+      };
+  
+      const a = this.carService.getTotalPriceForResevation(data).subscribe(
+          (res: any) => {
+            this.selectedOffer.totalPrice = res;
+            this.showModal = true;
+          },
+          err => {
+            console.log(err);
+            this.toastr.error(err.error, 'Error!');
+          }
+        );
+    } else {
+      this.showModalError = true;
+    }
+    
 
     // ******************************************* ODKOMENTARISI OVO GORE A ZAKOMENTASI OVO DOLE
 
@@ -202,13 +244,26 @@ export class CarsComponent implements OnInit {
   }
 
   goBack() {
-    this.location.back();
+    if (this.userId === undefined) {
+      this.router.navigate(['/']);
+    } else {
+      this.router.navigate(['/' + this.userId + '/home']);
+    }
   }
-  onApplyFilter() {
-
+  onApplyFilter(value: any) {
+    this.loadCars();
+    // window.location.reload();
+    this.filter = false;
   }
 
-  toggleFilter() {
+  toggleFilter(value: any) {
     this.filter = !this.filter;
+  }
+
+  onModalError(value: any) {
+    if (value) {
+      this.router.navigate(['/signin']);
+    }
+    this.showModalError = false;
   }
 }

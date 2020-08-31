@@ -8,7 +8,6 @@ import { ChangeOver } from 'src/app/entities/changeOver';
 import { Seat } from 'src/app/entities/seat';
 import { Address } from 'src/app/entities/address';
 import { Message } from '../app/entities/message';
-import { TripService } from './trip.service';
 import { AirlineAdmin } from 'src/app/entities/airlineAdmin';
 import { RacAdmin } from 'src/app/entities/racAdmin';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
@@ -21,7 +20,7 @@ import { CustomValidationService } from './custom-validation.service';
 })
 export class UserService {
 
-  readonly BaseURI = 'http://localhost:5001/api';
+  readonly BaseURI = 'http://192.168.43.54:5001/api';
 
 
   constructor(private customValidator: CustomValidationService, private fb: FormBuilder, private http: HttpClient) {
@@ -52,11 +51,13 @@ export class UserService {
   }
 
   getNonFriends(): Observable<any> {
+    console.log('nonfriends');
     return this.http.get<any>(this.BaseURI + '/user/get-all-users');
     // return this.http.get<any>(this.BaseURI + '/systemadmin/register-systemadmin', body);
   }
 
   getFriends(): Observable<any> {
+    console.log('friends');
     return this.http.get<any>(this.BaseURI + '/user/get-friends');
     // return this.http.get<any>(this.BaseURI + '/systemadmin/register-systemadmin', body);
   }
@@ -66,12 +67,26 @@ export class UserService {
     // return this.http.get<any>(this.BaseURI + '/systemadmin/register-systemadmin', body);
   }
 
+  getFlightInvitations(): Observable<any> {
+    return this.http.get<any>(this.BaseURI + '/user/get-trip-invitations');
+    // return this.http.get<any>(this.BaseURI + '/systemadmin/register-systemadmin', body);
+  }
+
   addFriend(data: any) {
     console.log(data);
     const body = {
       UserId: data
     };
     const url = this.BaseURI + '/user/send-friendship-invitation';
+    return this.http.post(url, body);
+  }
+
+  removeFriend(data: any) {
+    console.log(data);
+    const body = {
+      UserId: data
+    };
+    const url = this.BaseURI + '/user/delete-friend';
     return this.http.post(url, body);
   }
 
@@ -299,6 +314,10 @@ export class UserService {
     const passwordChanged = payLoad.PasswordChanged;
     if (passwordChanged === "False") {
       return false;
+    } else {
+      localStorage.setItem('PasswordChanged', 'True');
+      const payLoad1 = JSON.parse(window.atob(localStorage.getItem('token').split('.')[1]));
+      console.log(payLoad1);
     }
     return true;
   }

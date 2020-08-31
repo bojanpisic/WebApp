@@ -1,10 +1,10 @@
-<header>
+<header *ngIf="formOk">
     <nav>
-        <img routerLink='/{{userId}}/home' src="../../../../assets/back.png">
+        <img (click)="onBack()" src="../../../../assets/back.png">
         <span>Profile</span>
-        <div class="bonus">
+        <div *ngIf="decoded.Roles === 'RegularUser'" class="bonus">
             <img src="../../../../assets/icons8-coins-16.png">
-            <span id="bonus">160</span>
+            <span id="bonus">{{user.bonus}}</span>
         </div>
     </nav>
 </header>
@@ -21,22 +21,22 @@
         </div>
         <input style="display: none" type="file" accept="image/*" (change)="onFileChanged(fileInput)" #fileInput>
         <button id="changePhoto" (click)="fileInput.click()"><img src="../../../../assets/camera-100.png">Change photo</button>
-        <span id="spanfirstname">First name</span>
+        <span id="spanfirstname">First name:</span>
         <p id="firstname">{{user.firstName}}</p>
-        <span id="spanlastname">Last name</span>
+        <span id="spanlastname">Last name:</span>
         <p id="lastname"> {{user.lastName}}</p>
-        <span id="spanphone">E-mail</span>
+        <span id="spanphone">E-mail:</span>
         <p id="phone">{{user.email}}</p>
         <a id="edit" routerLink='/{{userId}}/profile/edit-profile'><img src="../../../../assets/create-white-18dp.svg">Edit profile</a>
     </div>
-    <div class="separator-div" style="margin: 0 30px;">
+    <div *ngIf="decoded.Roles === 'RegularUser'" class="separator-div" style="margin: 0 30px;">
         <hr class="separator">
     </div>
-    <div class="friends">
+    <div *ngIf="decoded.Roles === 'RegularUser'" class="friends">
         <h4>My friends</h4>
         <a routerLink='/{{userId}}/profile/friends'>Check all</a>
     </div>
-    <ul>
+    <ul *ngIf="decoded.Roles === 'RegularUser'">
         <li class="friends-avatar" style="background-image: url('../../../../../../assets/friend1.jpeg')"></li>
         <li class="friends-avatar" style="background-image: url('../../../../../../assets/friend2.jpeg')"></li>
         <li class="friends-avatar" style="background-image: url('../../../../../../assets/friend3.jpeg')"></li>
@@ -48,12 +48,12 @@
     <div class="separator-div" style="margin: 0 30px;">
         <hr class="separator">
     </div>
-    <div class="points">
+    <div *ngIf="decoded.Roles === 'RegularUser'" class="points">
         <a href="#" routerLink='/{{userId}}/profile/flights'>My flights<img src="../../../../assets/icons8-airplane-landing-50.png"></a>
         <a href="#" routerLink='/{{userId}}/profile/cars'>My cars<img src="../../../../assets/icons8-car-50.png"></a>
-        <p>So far you've collect <img src="../../../../assets/icons8-coins-16.png"> <span>160</span> bonus points!</p>
+        <p>So far you've collect <img src="../../../../assets/icons8-coins-16.png"> <span>{{user.bonus}}</span> bonus points!</p>
         <br>
     </div>
-    <button>SIGN OUT</button>
+    <button (click)="onSignOut()">SIGN OUT</button>
 </main>
 <app-footer></app-footer>

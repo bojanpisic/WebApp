@@ -5,6 +5,7 @@ import { RentACarService } from 'src/app/entities/rent-a-car-service';
 import { CarRentService } from 'src/services/car-rent.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-top-rated',
@@ -17,17 +18,23 @@ export class TopRatedComponent implements OnInit {
 
   allRentACarServices: Array<any>;
   allAirlines: Array<any>;
+  userId;
 
   constructor(private airlineService: AirlineService,
               private rentService: CarRentService,
               private san: DomSanitizer,
-              private toastr: ToastrService) {
+              private toastr: ToastrService,
+              private route: ActivatedRoute,
+              private router: Router) {
+    route.params.subscribe(params => {
+      this.userId = params.id;
+    });
     this.allAirlines = [];
     this.allRentACarServices = [];
    }
 
   ngOnInit(): void {
-    // this.loadRentACarServices();
+    this.loadRentACarServices();
     // this.loadAirlines();
     this.loadAirlines();
   }
@@ -70,29 +77,20 @@ export class TopRatedComponent implements OnInit {
       (res: any[]) => {
         if (res.length > 0) {
           res.forEach(element => {
-            const grade = element.item1;
             const rac = {
-              racId: element.item2.id,
-              city: element.item2.city,
-              state: element.item2.state,
-              name: element.item2.name,
+              racId: element.id,
+              city: element.city,
+              state: element.state,
+              name: element.name,
               // tslint:disable-next-line:max-line-length
-              logo: (element.item2.logo === null) ? null : this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.item2.logo}`),
-              about: element.item2.about,
-              branches: element.item2.branches,
+              logo: (element.logo === null) ? null : this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.logo}`),
+              about: element.about,
+              branches: element.branches,
+              rate: element.rate
             };
             count++;
             if (count <= 5) {
-              this.allRentACarServices.push({
-                rate: grade,
-                racId: rac.racId,
-                city: rac.city,
-                state: rac.state,
-                name: rac.name,
-                logo: rac.logo,
-                about: rac.about,
-                branches: rac.branches
-              });
+              this.allRentACarServices.push(rac);
             }
           });
         }
@@ -102,6 +100,22 @@ export class TopRatedComponent implements OnInit {
         this.toastr.error(err.statusText, 'Error!');
       }
     );
+  }
+
+  onAirlines() {
+    if (this.userId === undefined) {
+      this.router.navigate(['/airlines']);
+    } else {
+      this.router.navigate(['/' + this.userId + '/airlines']);
+    }
+  }
+
+  onRAC() {
+    if (this.userId === undefined) {
+      this.router.navigate(['/rent-a-car-services']);
+    } else {
+      this.router.navigate(['/' + this.userId + '/rent-a-car-services']);
+    }
   }
 
 }

@@ -15,7 +15,7 @@
     border-top-right-radius: 3px;
     display: grid;
     grid-template-columns: auto auto auto auto;
-    grid-template-rows: 200px 36px 30px 26px 32px;
+    grid-template-rows: 200px 36px 30px 26px auto;
     grid-template-areas: "img img img img"
                          "racs-name racs-name racs-name grade"
                          "name name name name"
@@ -27,8 +27,8 @@
         background-repeat: no-repeat;
         background-position: center;
         background-size: cover;
-        border-top-left-radius: 3px;
-        border-top-right-radius: 3px;
+        border-top-left-radius: 0px;
+        border-top-right-radius: 0px;
         box-shadow: inset 0 -14px 28px -14px black;
         position: relative;
     }
@@ -107,6 +107,14 @@
             font-size: 16px;
             line-height: 20px;
             color: rgb(72, 72, 72);
+        }
+
+        #dates {
+            font-size: 16px;
+            font-weight: normal;
+            color: rgb(34, 34, 34);
+            font-family:'Bebas Neue', cursive;
+            color: $blue;
         }
 
         .pricey {

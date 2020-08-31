@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AirlineService } from 'src/services/airline.service';
-import { SpecialOfferService } from 'src/services/special-offer.service';
 import { SpecialOffer } from 'src/app/entities/special-offer';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
@@ -21,7 +20,6 @@ export class AirlineSpecialOffersComponent implements OnInit {
   itsOk = false;
 
   constructor(private router: Router, private routes: ActivatedRoute, private airlineService: AirlineService,
-              private specialOfferService: SpecialOfferService,
               private san: DomSanitizer,
               private toastr: ToastrService) {
     routes.params.subscribe(param => {

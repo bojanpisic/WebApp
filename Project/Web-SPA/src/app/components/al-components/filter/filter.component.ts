@@ -53,7 +53,6 @@ export class FilterComponent implements OnInit {
     let data;
     data = this.generateFilter();
 
-
     this.url = {
       type: data.type,
       from: data.from,
@@ -263,6 +262,10 @@ export class FilterComponent implements OnInit {
     } else {
       this.router.navigate(['/trips'], navigationExtras);
     }
+
+    console.log(array);
+
+    this.appliedFilters.emit(true);
   }
 
   getIdsOfCheckedAirlines() {

@@ -17,6 +17,8 @@ export class MessagesComponent implements OnInit {
 
   requests: Array<any>;
   acceptedRequests: Array<any>;
+  flightInvitations: Array<any>;
+  acceptedFlightInvitations: Array<any>;
 
   isOk = false;
 
@@ -32,6 +34,10 @@ export class MessagesComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadAll();
+    console.log(this.requests);
+    console.log(this.acceptedRequests);
+    console.log(this.flightInvitations);
+    console.log(this.acceptedFlightInvitations);
   }
 
   loadAll() {
@@ -61,6 +67,29 @@ export class MessagesComponent implements OnInit {
         }
       }
     );
+
+    const n = this.userService.getFlightInvitations().subscribe(
+      (res: any[]) => {
+        console.log(res);
+        if (res.length) {
+          res.forEach(element => {
+            const b = {
+              accepted: element.accepted,
+              senderFirstName: element.senderFirstName,
+              senderLastName: element.senderLastName,
+              senderId: element.senderId,
+              senderEmail: element.senderEmail,
+            };
+            if (b.accepted === false) {
+              this.acceptedFlightInvitations.push(b);
+            } else {
+              this.flightInvitations.push(b);
+            }
+          });
+          this.isOk = true;
+        }
+      }
+    );
   }
 
   toggleButton(value: string) {
@@ -81,6 +110,7 @@ export class MessagesComponent implements OnInit {
       );
     }
     if (value === 'decline') {
+      console.log('eo me');
       const c = this.userService.declineFriendship(this.senderId).subscribe(
         (res1: any) => {
           this.loadAll();

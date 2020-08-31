@@ -8,7 +8,7 @@ import { catchError } from 'rxjs/operators';
 })
 export class SystemAdminService {
 
-  readonly BaseURI = 'http://localhost:5001/api';
+  readonly BaseURI = 'http://192.168.43.54:5001/api';
 
 
   constructor(private http: HttpClient) { }
@@ -20,7 +20,7 @@ export class SystemAdminService {
       ConfirmPassword: data.confirmPassword,
       Password: data.password,
     };
-    return this.http.post(this.BaseURI + '/systemadmin/register-systemadmin', body);
+    return this.http.post(this.BaseURI + '/authentication/register-systemadmin', body);
   }
 
   registerAirline(data: any) {
@@ -46,6 +46,21 @@ export class SystemAdminService {
       Address: { City: data.city, State: data.state, Lat: data.lat, Lon: data.lon }
     };
     return this.http.post(this.BaseURI + '/systemadmin/register-racservice', body);
+  }
+
+  configureBonusAndDiscount(data: any): Observable<any> {
+    console.log(data);
+    const body = {
+      Bonus: data.bonus,
+      Discount: data.discount,
+    };
+    const url = this.BaseURI + '/systemadmin/set-bonus';
+    return this.http.post(url, body);
+  }
+
+  getBonusAndDiscount(): Observable<any> {
+    const url = this.BaseURI + '/systemadmin/get-bonus';
+    return this.http.get(url);
   }
 
   private handleError(error: HttpErrorResponse) {

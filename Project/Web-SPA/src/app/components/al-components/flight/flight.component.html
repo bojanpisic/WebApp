@@ -30,3 +30,40 @@
         <span *ngIf="flight.stops.length === 0" style="color: rgb(34, 34, 34); font-weight: bold; font-family: Montserrat, sans-serif;">direct</span>
     </div>
 </div>
+<div *ngIf="rate" class="book" (click)="onRate()">
+    <a>RATE EXPERIENCE <svg [ngStyle]="{'transform': rateExperience ? 'rotate(90deg)' : 'rotate(-90deg)'}" viewBox="0 0 16 16" role="presentation" aria-hidden="true" focusable="false" style="height: 12px; width: 14px; fill: #1C4CB2"><path d="m10.8 16c-.4 0-.7-.1-.9-.4l-6.8-6.7c-.5-.5-.5-1.3 0-1.8l6.8-6.7c.5-.5 1.2-.5 1.7 0s .5 1.2 0 1.7l-5.8 5.9 5.8 5.9c.5.5.5 1.2 0 1.7-.2.3-.5.4-.8.4"></path></svg></a>
+</div>
+<div *ngIf="rateExperience" class="rateExperience">
+    <p (click)="onRateAirline()">Rate airline <svg [ngStyle]="{'transform': showRateAirline ? 'rotate(90deg)' : 'rotate(-90deg)'}" viewBox="0 0 16 16" role="presentation" aria-hidden="true" focusable="false" style="height: 12px; width: 14px; fill: #1C4CB2"><path d="m10.8 16c-.4 0-.7-.1-.9-.4l-6.8-6.7c-.5-.5-.5-1.3 0-1.8l6.8-6.7c.5-.5 1.2-.5 1.7 0s .5 1.2 0 1.7l-5.8 5.9 5.8 5.9c.5.5.5 1.2 0 1.7-.2.3-.5.4-.8.4"></path></svg></p>
+    <div *ngIf="showRateAirline && !airlineRated" class="rateService">
+        <p>Rate airline</p>
+        <span>Rate it from 1 to 5</span>
+        <button [ngClass]="{'disabled': minusRateAirlineDisabled}" class="minusBtn" [disabled]="minusRateAirlineDisabled" (click)="onMinusRateAirline()">
+            <svg [ngStyle]="{'fill': minusRateAirlineDisabled ? 'rgb(234, 234, 234)' : 'rgb(113, 113, 113)'}" viewBox="0 0 24 24" role="presentation" aria-hidden="true" focusable="false" style="height: 22px; width: 22px; display: block;"><rect height="2" rx="1" width="12" x="6" y="11"></rect></svg>
+        </button>
+        <p id="rateService">{{rateAirline}}</p>
+        <button class="plusBtn" [ngClass]="{'disabled': plusRateAirlineDisabled}" [disabled]="plusRateAirlineDisabled" (click)="onPlusRateAirline()">
+            <svg viewBox="0 0 24 24" role="presentation" aria-hidden="true" focusable="false" style="height: 22px; width: 22px; display: block; fill: rgb(113, 113, 113);"><rect height="2" rx="1" width="12" x="6" y="11"></rect><rect height="12" rx="1" width="2" x="11" y="6"></rect></svg>
+        </button>
+    </div>
+    <div *ngIf="showRateAirline && airlineRated" class="rateService">
+        <p>You've already rated this airline!</p>
+    </div>
+    <button *ngIf="showRateAirline && !airlineRated" id="confirmRates" (click)="onConfirmAirlineRate()">Confirm rate</button>
+    <p (click)="onRateFlight()">Rate flight <svg [ngStyle]="{'transform': showRateFlight ? 'rotate(90deg)' : 'rotate(-90deg)'}" viewBox="0 0 16 16" role="presentation" aria-hidden="true" focusable="false" style="height: 12px; width: 14px; fill: #1C4CB2"><path d="m10.8 16c-.4 0-.7-.1-.9-.4l-6.8-6.7c-.5-.5-.5-1.3 0-1.8l6.8-6.7c.5-.5 1.2-.5 1.7 0s .5 1.2 0 1.7l-5.8 5.9 5.8 5.9c.5.5.5 1.2 0 1.7-.2.3-.5.4-.8.4"></path></svg></p>
+    <div *ngIf="showRateFlight && !flightRated" class="rateCar">
+        <p>Rate flight</p>
+        <span>Rate it from 1 to 5</span>
+        <button [ngClass]="{'disabled': minusRateFlightDisabled}" class="minusBtn" [disabled]="minusRateFlightDisabled" (click)="onMinusRateFlight()">
+            <svg [ngStyle]="{'fill': minusRateFlightDisabled ? 'rgb(234, 234, 234)' : 'rgb(113, 113, 113)'}" viewBox="0 0 24 24" role="presentation" aria-hidden="true" focusable="false" style="height: 22px; width: 22px; display: block;"><rect height="2" rx="1" width="12" x="6" y="11"></rect></svg>
+        </button>
+        <p id="rateCar">{{rateFlight}}</p>
+        <button [ngClass]="{'disabled': plusRateFlightDisabled}" [disabled]="plusRateFlightDisabled" class="plusBtn" (click)="onPlusRateFlight()">
+            <svg viewBox="0 0 24 24" role="presentation" aria-hidden="true" focusable="false" style="height: 22px; width: 22px; display: block; fill: rgb(113, 113, 113);"><rect height="2" rx="1" width="12" x="6" y="11"></rect><rect height="12" rx="1" width="2" x="11" y="6"></rect></svg>
+        </button>
+    </div>
+    <div *ngIf="showRateFlight && flightRated" class="rateService">
+        <p>You've already rated this flight!</p>
+    </div>
+    <button *ngIf="showRateFlight && !flightRated" id="confirmRates" (click)="onConfirmFlightRate()">Confirm rate</button>
+</div>

@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Trip } from 'src/app/entities/trip';
-import { TripService } from 'src/services/trip.service';
 import { Location } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { RegisteredUser } from 'src/app/entities/registeredUser';
 import { UserService } from 'src/services/user.service';
 import { AirlineService } from 'src/services/airline.service';
@@ -21,11 +20,13 @@ export class TripsComponent implements OnInit {
   urlParams = [];
   filter = false;
 
+  mySubscription;
+
   url: any;
   trip1: {flightsObject: Array<any>, minPrice: number};
   showModal = false;
 
-  constructor(private userService: UserService, private tripService: TripService,
+  constructor(private userService: UserService,
               private route: ActivatedRoute, private airlineService: AirlineService,
               private router: Router, private san: DomSanitizer,
               private toastr: ToastrService) {
@@ -36,6 +37,18 @@ export class TripsComponent implements OnInit {
     this.route.params.subscribe(param => {
       this.userId = param.id;
     });
+
+    this.router.routeReuseStrategy.shouldReuseRoute = () => {
+      return false;
+    };
+
+    this.mySubscription = this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        // Trick the Router into believing it's last link wasn't previously loaded
+        this.router.navigated = false;
+      }
+    });
+
     this.trips = new Array<any>();
     this.trip1 = {
       flightsObject: [],
@@ -75,6 +88,72 @@ export class TripsComponent implements OnInit {
                   // tslint:disable-next-line:max-line-length
                   airlineLogo: (element.airlineLogo === null) ? null : this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.airlineLogo}`),
                   airlineName: element.airlineName,
+                  airlineId: element.airlineId,
+                  from: element.from,
+                  takeOffDate: element.takeOffDate,
+                  takeOffTime: element.takeOffTime,
+                  to: element.to,
+                  landingDate: element.landingDate,
+                  landingTime: element.landingTime,
+                  flightLength: element.flightLength,
+                  flightTime: element.flightTime,
+                  stops: element.stops,
+                  minPrice: element.minPrice
+                };
+                this.trip1.flightsObject.push(new1);
+                this.trip1.minPrice += new1.minPrice;
+              });
+              this.trips.push(this.trip1);
+            });
+          }
+          console.log(res);
+        },
+        err => {
+          this.toastr.error(err.statusText, 'Error.');
+        }
+      );
+    }
+  }
+
+  loadAll() {
+    let data;
+    const array = this.route.snapshot.queryParamMap.get('array');
+    this.urlParams = JSON.parse(array);
+    data = this.generateFilter();
+
+    if (this.urlParams !== null) {
+      this.url = {
+        type: data.type,
+        from: data.from,
+        to: data.to,
+        dep: data.dep,
+        ret: data.ret,
+        minPrice: data.minPrice,
+        maxPrice: data.maxPrice,
+        air: data.air,
+        mind: data.mind,
+        maxd: data.maxd
+      };
+
+      this.trips = [];
+
+      console.log(this.url);
+
+      const a = this.airlineService.test(this.url).subscribe(
+        (res: any[]) => {
+          if (res.length > 0) {
+            res.forEach(el => {
+              console.log(el.flightsObject);
+              this.trip1.flightsObject = [];
+              this.trip1.minPrice = 0;
+              el.flightsObject.forEach(element => {
+                const new1 = {
+                  flightId: element.flightId,
+                  flightNumber: element.flightNumber,
+                  // tslint:disable-next-line:max-line-length
+                  airlineLogo: (element.airlineLogo === null) ? null : this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.airlineLogo}`),
+                  airlineName: element.airlineName,
+                  airlineId: element.airlineId,
                   from: element.from,
                   takeOffDate: element.takeOffDate,
                   takeOffTime: element.takeOffTime,
@@ -149,8 +228,11 @@ export class TripsComponent implements OnInit {
     }
   }
 
-  onApplyFilter() {
-
+  onApplyFilter(value: any) {
+    console.log('USAO');
+    this.loadAll();
+    // window.location.reload();
+    this.filter = false;
   }
 
   toggleFilter() {
@@ -161,7 +243,7 @@ export class TripsComponent implements OnInit {
     if (this.userId === undefined) {
       this.router.navigate(['/']);
     } else {
-      this.router.navigate(['/' + this.userId]);
+      this.router.navigate(['/' + this.userId + '/home']);
     }
   }
 

@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Car } from 'src/app/entities/car';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { CarService } from 'src/services/car.service';
 import { CarRentService } from 'src/services/car-rent.service';
+import { ToastrService } from 'ngx-toastr';
 
 class ImageSnippet {
   pending = false;
@@ -26,6 +26,7 @@ export class AddCarComponent implements OnInit {
   seatsNumber = 10;
   pricePerDay = 200;
   minusDisabled = false;
+  plusDisabled = false;
 
   dropdown = false;
   dropdownBranch = false;
@@ -54,7 +55,9 @@ export class AddCarComponent implements OnInit {
   imageToSend: any;
   addToMain = false;
 
-  constructor(private router: Router, private routes: ActivatedRoute, private carService: CarService, private racService: CarRentService) {
+  constructor(private router: Router, private routes: ActivatedRoute,
+              private racService: CarRentService,
+              private toastr: ToastrService) {
     routes.params.subscribe(param => {
       this.adminId = param.id;
     });
@@ -74,16 +77,7 @@ export class AddCarComponent implements OnInit {
         this.formOk = true;
       },
       err => {
-        console.log(err.error.description);
-        // tslint:disable-next-line: triple-equals
-        if (err.status == 400) {
-          console.log('400' + err);
-          // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
-        } else if (err.status === 401) {
-          console.log(err);
-        } else {
-          console.log(err);
-        }
+        this.toastr.error(err.error, 'Error!');
       }
     );
     const air2 = this.racService.getAdminsBranches().subscribe(
@@ -100,16 +94,7 @@ export class AddCarComponent implements OnInit {
         }
       },
       err => {
-        console.log(err.error.description);
-        // tslint:disable-next-line: triple-equals
-        if (err.status == 400) {
-          console.log('400' + err);
-          // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
-        } else if (err.status === 401) {
-          console.log(err);
-        } else {
-          console.log(err);
-        }
+        this.toastr.error(err.error, 'Error!');
       }
     );
     this.initForm();
@@ -122,13 +107,15 @@ export class AddCarComponent implements OnInit {
   onPlus() {
     this.numberOfSeats++;
     this.minusDisabled = false;
+    if (this.numberOfSeats === 10) {
+      this.plusDisabled = true;
+    }
   }
 
   onMinus() {
-    if (this.numberOfSeats > 1) {
-      this.numberOfSeats--;
-    }
-    if (this.numberOfSeats === 1) {
+    this.plusDisabled = false;
+    this.numberOfSeats--;
+    if (this.numberOfSeats === 2) {
       this.minusDisabled = true;
     }
   }
@@ -189,16 +176,7 @@ export class AddCarComponent implements OnInit {
             }, 100);
           },
           err => {
-            console.log('dada' + err.status);
-            // tslint:disable-next-line: triple-equals
-            if (err.status == 400) {
-              console.log(err);
-            // tslint:disable-next-line: triple-equals
-            } else if (err.status == 401) {
-              console.log(err);
-            } else {
-              console.log(err);
-            }
+            this.toastr.error(err.error, 'Error!');
           }
         );
       } else {
@@ -220,16 +198,7 @@ export class AddCarComponent implements OnInit {
             }, 100);
           },
           err => {
-            console.log('dada' + err.status);
-            // tslint:disable-next-line: triple-equals
-            if (err.status == 400) {
-              console.log(err);
-            // tslint:disable-next-line: triple-equals
-            } else if (err.status == 401) {
-              console.log(err);
-            } else {
-              console.log(err);
-            }
+            this.toastr.error(err.error, 'Error!');
           }
         );
       }
@@ -238,14 +207,6 @@ export class AddCarComponent implements OnInit {
 
   validateForm() {
     let retVal = true;
-    // if (!this.imagePicked) {
-    //   this.errorImage = true;
-    //   retVal = false;
-    // }
-    // if (this.imageToSend === undefined) {
-    //   this.errorImage = true;
-    //   retVal = false;
-    // }
     if (this.form.controls.brand.value === '') {
       this.errorBrand = true;
       retVal = false;
@@ -254,7 +215,7 @@ export class AddCarComponent implements OnInit {
       this.errorModel = true;
       retVal = false;
     }
-    if (this.form.controls.year.value === '') {
+    if (this.form.controls.year.value === '' || isNaN(+this.form.controls.year.value)) {
       this.errorYear = true;
       retVal = false;
     }
@@ -269,9 +230,9 @@ export class AddCarComponent implements OnInit {
     this.form = new FormGroup({
       brand: new FormControl('', Validators.required),
       model: new FormControl('', Validators.required),
-      year: new FormControl('', Validators.required),
+      year: new FormControl('', [Validators.required, Validators.pattern('^[0-9]*$')]),
       seats: new FormControl('5', Validators.required),
-      price: new FormControl('50', Validators.required),
+      price: new FormControl('50', [Validators.required, Validators.pattern('^[0-9]*$')]),
    });
   }
 

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { TripParameter } from 'src/app/entities/trip-parameter';
 import { Location } from '@angular/common';
 import { Flight } from 'src/app/entities/flight';
@@ -9,6 +9,8 @@ import { Seat } from 'src/app/entities/seat';
 import { SeatsForFlight } from 'src/app/entities/seats-for-flight';
 import { PassengersForFlight } from 'src/app/entities/passengers-for-flight';
 import { Passenger } from 'src/app/entities/passenger';
+import { ToastrService } from 'ngx-toastr';
+import { FlightPlusCarService } from 'src/services/flight-plus-car.service';
 
 @Component({
   selector: 'app-flight-reservation',
@@ -21,9 +23,11 @@ export class FlightReservationComponent implements OnInit {
   lastStep = false;
   pickSeats = false;
   fillInfo = false;
-  pickedSeat: Seat;
-  passenger: Passenger;
+  pickedSeat: any;
+  passenger: any;
+  pickedSeats: Array<{seats: Array<{seatId: any, passenger: any}>}>;
   invitedFriend = false;
+  confirmData;
 
   exitReservation = 'exitReservation';
   errorReservation = 'errorReservation';
@@ -31,54 +35,69 @@ export class FlightReservationComponent implements OnInit {
   error = false;
   blur = false;
 
-  reservation: TripReservation;
-  flights: Array<Flight>;
-  mySeats: Array<{seats: Array<Seat>}>;
+  flights: Array<any>;
+  mySeats: Array<{seatId: number}>;
+  myPassport;
+  friends: Array<{id: any, seatId: number}>;
+  unregisteredFriends: Array<{firstName: string, lastName: string, passport: string, seatId: number}>;
 
-  arrayOfValues: Array<TripParameter>;
+  arrayOfValues: Array<any>;
 
   showTripDetails = false;
   showOfferCar = false;
   showConfirmReservation = false;
 
+  pickSeatForMe = true;
+  withBonus = false;
+  withCar = false;
+  toDateWithCar;
+
+  userId;
+
   constructor(private activatedRoute: ActivatedRoute, private location: Location, private router: Router,
-              private airlineService: AirlineService) {
+              private airlineService: AirlineService,
+              private toastr: ToastrService,
+              private flightPlusCar: FlightPlusCarService) {
 
     const trip = this.activatedRoute.snapshot.queryParamMap.get('trip');
-    console.log('1');
+    activatedRoute.params.subscribe(param => {
+      this.userId = param.id;
+    });
     if (trip === null) {
       this.arrayOfValues = new Array<TripParameter>();
-      console.log('2');
     } else {
       this.arrayOfValues = JSON.parse(trip);
-      console.log('3');
     }
-    console.log('4');
-    this.reservation = new TripReservation();
-    this.flights = new Array<Flight>();
 
+    this.flights = [];
     this.mySeats = [];
+    this.friends = [];
+    this.unregisteredFriends = [];
+    this.pickedSeats = [];
 
     this.index = -1;
-    console.log('5' + this.arrayOfValues);
   }
 
   ngOnInit(): void {
-    this.nextStep();
+    this.initialize();
   }
 
   initialize() {
+    const ids = [];
     for (const item of this.arrayOfValues) {
-      const flight = this.airlineService.getFlight(item.a, item.f);
-      this.flights.push(flight);
-
-      this.reservation.flights.push(flight);
-      this.reservation.seats.push(new SeatsForFlight(flight));
-
-      this.mySeats.push({
-        seats: new Array<Seat>()
-      });
+      ids.push(item.f);
+      this.mySeats.push({seatId: null});
+      this.pickedSeats.push({seats: []});
     }
+    const seats = this.airlineService.getFlightSeats(ids).subscribe(
+      (res: any[]) => {
+        this.flights = res;
+        this.nextStep();
+      },
+      err => {
+        this.toastr.error(err.statusText, 'Error!');
+      }
+    );
   }
 
   // STEPS
@@ -97,15 +116,17 @@ export class FlightReservationComponent implements OnInit {
   }
 
   nextStep() {
-    if (this.index === -1) {
-      this.initialize();
-    }
-    if (this.validateStep()) {
+    if (this.index === this.flights.length) {
       this.index++;
       this.updateVariables();
     } else {
-      this.error = true;
-      this.blur = true;
+      if (this.validateStep()) {
+        this.index++;
+        this.updateVariables();
+      } else {
+        this.error = true;
+        this.blur = true;
+      }
     }
   }
 
@@ -127,37 +148,147 @@ export class FlightReservationComponent implements OnInit {
       this.fillInfo = true;
       this.blur = true;
       this.pickedSeat = seat;
-      if (this.mySeats[this.index].seats.includes(seat)) {
-        const takenSeatIndex = this.reservation.seats[this.index].seats.indexOf(seat);
-        this.passenger = this.reservation.seats[this.index].seats[takenSeatIndex].passenger;
-        if (this.passenger.passport === '') {
-          this.invitedFriend = true;
+
+      let isTaken = false;
+      this.pickedSeats[this.index].seats.forEach(element => {
+        if (element.seatId === seat.seatId) {
+          isTaken = true;
         }
+      });
+      if (isTaken) {
+        this.pickedSeats[this.index].seats.forEach(element => {
+          if (element.seatId === seat.seatId) {
+            this.passenger = element.passenger;
+          }
+        });
+        if (this.passenger.firstName === undefined && this.passenger.lastName === undefined && this.passenger.friendsId === undefined) {
+          this.pickSeatForMe = true;
+        } else {
+          this.pickSeatForMe = false;
+        }
+        if (this.passenger.friendsId) {
+          this.invitedFriend = true;
+        } else {
+          this.invitedFriend = false;
+        }
+        // TREBA DA PROMENIS DA THIS.PICKEDSEATS IMAJU SEM ID-EVA SEDISTA ZA SVAKI LET UZ TO DA IMAJU
+        // I PASSPORT I FIRST NAME I LAST NAME PASSENGERA
       } else {
+        if (this.mySeats[this.index].seatId === null) {
+          this.pickSeatForMe = true;
+        } else {
+          this.pickSeatForMe = false;
+        }
         this.passenger = undefined;
       }
     }
   }
 
   addPassenger(passenger: any) {
+    if (passenger === 'CLOSE') {
+      this.blur = false;
+      this.fillInfo = false;
+      this.pickedSeat = null;
+      return;
+    }
+    console.log('STIGAO PASENGER!!!!!!!' + passenger);
     const seatIndex = this.flights[this.index].seats.indexOf(this.pickedSeat);
     if (passenger !== null) {
       // TREBA U BAZU ZAPISATI DA JE ZAUZETO
       this.pickedSeat.passenger = passenger;
-      this.mySeats[this.index].seats.push(this.pickedSeat);
-      this.reservation.seats[this.index].seats.push(this.pickedSeat);
-    } else if (this.mySeats[this.index].seats.includes(this.pickedSeat)) {
-      const index = this.mySeats[this.index].seats.indexOf(this.pickedSeat);
-      this.mySeats[this.index].seats.splice(index, 1);
-      // tslint:disable-next-line:prefer-for-of
-      for (let i = 0; i < this.reservation.seats.length; i++) {
-        if (this.reservation.seats[i].seats.includes(this.pickedSeat)) {
-          const indexOfSeat = this.reservation.seats[i].seats.indexOf(this.pickedSeat);
-          this.reservation.seats[i].seats.splice(indexOfSeat, 1);
+      if (this.mySeats[this.index].seatId === null) {
+        this.mySeats[this.index].seatId = this.pickedSeat.seatId;
+        this.pickSeatForMe = false;
+        if (this.myPassport === undefined) {
+          this.myPassport = passenger.passport;
+        }
+      } else {
+        if (passenger.passport === undefined) {
+          // zovi frienda preko passenger.id
+          this.friends.push({id: passenger, seatId: this.pickedSeat.seatId});
+        } else {
+          this.unregisteredFriends.push({
+            firstName: passenger.firstName,
+            lastName: passenger.lastName,
+            passport: passenger.passport,
+            seatId: this.pickedSeat.seatId
+          });
         }
       }
+      this.pickedSeats[this.index].seats.push({
+        seatId: this.pickedSeat.seatId,
+        // tslint:disable-next-line:object-literal-shorthand
+        passenger: passenger
+      });
+    } else {
+      let isTaken = false;
+      this.pickedSeats[this.index].seats.forEach(element => {
+        if (this.pickedSeat.seatId == element.seatId) {
+          isTaken = true;
+        }
+      });
+      if (isTaken) {
+        console.log('SEDISTE JE ZAUZETO ' + this.pickedSeat.seatId);
+        let ind;
+        console.log('SVA SEDISTA:');
+        // tslint:disable-next-line:prefer-for-of
+        for (let i = 0; i < this.pickedSeats[this.index].seats.length; i++) {
+          console.log(this.pickedSeats[this.index].seats[i].seatId);
+          if (this.pickedSeats[this.index].seats[i].seatId == this.pickedSeat.seatId) {
+            ind = i;
+          }
+        }
+        console.log('ind:' + ind);
+        this.pickedSeats[this.index].seats.splice(ind, 1);
+        const isMySeat = this.mySeats[this.index].seatId == this.pickedSeat.seatId;
+        if (isMySeat) {
+          console.log('OVO JE MOJE SEDISTE');
+          this.mySeats[this.index].seatId = null;
+          let isEmpty = true;
+          this.mySeats.forEach(element => {
+            if (element.seatId !== null) {
+              isEmpty = false;
+            }
+          });
+          if (isEmpty) {
+            this.myPassport = undefined;
+            this.pickSeatForMe = true;
+          }
+        }
+        let isFriendsSeat = false;
+        let indexOfFriendsSeat;
+        for (let i = 0; i < this.friends.length; i++) {
+          console.log(this.friends[i].seatId, this.pickedSeat.seatId);
+          if (this.friends[i].seatId == this.pickedSeat.seatId) {
+            isFriendsSeat = true;
+            indexOfFriendsSeat = i;
+          }
+        }
+        if (isFriendsSeat) {
+          console.log('OVO JE FRENDOVO SEDISTE');
+          console.log(indexOfFriendsSeat);
+          this.friends.splice(indexOfFriendsSeat, 1);
+        }
+        let isUnregisteredUsersSeat = false;
+        let indexOfUnregisteredUsersSeat;
+        for (let i = 0; i < this.unregisteredFriends.length; i++) {
+          if (this.unregisteredFriends[i].seatId == this.pickedSeat.seatId) {
+            isUnregisteredUsersSeat = true;
+            indexOfUnregisteredUsersSeat = i;
+          }
+        }
+        if (isUnregisteredUsersSeat) {
+          this.unregisteredFriends.splice(indexOfUnregisteredUsersSeat, 1);
+        }
+      }
+      // OVDE JE NESTO SA BRISANJEM
     }
 
+    console.log(this.mySeats);
+    console.log(this.myPassport);
+    console.log(this.friends);
+    console.log(this.unregisteredFriends);
+    console.log(this.pickedSeats);
     this.blur = false;
     this.fillInfo = false;
     this.pickedSeat = null;
@@ -169,9 +300,6 @@ export class FlightReservationComponent implements OnInit {
     if (value) {
       this.location.back();
       this.index--;
-      this.reservation.seats.forEach(seat => {
-        seat.seats = [];
-      });
       this.emptyReserved();
       this.updateVariables();
     }
@@ -188,10 +316,116 @@ export class FlightReservationComponent implements OnInit {
     // tslint:disable-next-line:max-line-length
     this.lastStep = (this.index === this.flights.length - 1) ? true : false;
     this.pickSeats = (this.index >= 0 && this.index < this.flights.length) ? true : false;
-    this.showConfirmReservation = (this.index === this.flights.length) ? true : false;
-    if (this.showConfirmReservation) {
-      console.log('INDEX JE' + this.index);
-      console.log(this.mySeats);
+    this.showConfirmReservation = false;
+    if (this.index === this.flights.length) {
+      // console.log('INDEX JE' + this.index);
+      // console.log(this.mySeats);
+      // console.log(this.myPassport);
+      // console.log(this.friends);
+      // console.log(this.unregisteredFriends);
+      // console.log(this.pickedSeats);
+      const data = {
+        mySeatsIds: this.mySeats.map(res => res.seatId),
+        friends: this.friends.map(res => {
+          return {id: res.id.friendsId, seatId: res.seatId};
+        }),
+        unregisteredFriends: this.unregisteredFriends
+      };
+      console.log('SALJEM' + data);
+      this.airlineService.getTripInfo(data).subscribe(
+        (res: any) => {
+          this.confirmData = {
+            friends: res.friends,
+            bonus: res.myBonus,
+            mySeats: res.mySeats,
+            priceWithBonus: res.priceWithBonus,
+            totalPrice: res.totalPrice,
+            unregisteredFriends: res.unregisteredFriends,
+            flights: this.flights
+          };
+          this.showConfirmReservation = true;
+        },
+        err => {
+          // tslint:disable-next-line: triple-equals
+          if (err.status == 400) {
+            // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
+            this.toastr.error(err.error, 'Error!');
+          } else {
+            this.toastr.error(err.error, 'Error!');
+          }
+        }
+      );
+    }
+    if (this.index === this.flights.length + 1) {
+      if (this.withCar) {
+        const queryParams: any = {};
+        const array = [];
+        // let toDate = '';
+        // if (this.flights.length === 2) {
+        //   toDate = (this.flights[0].from === this.flights[1].to &&
+        //             this.flights[0].to === this.flights[1].from) ?
+        //             this.flights[1].takeOffDate : '';
+        // }
+        console.log(this.flights[0].landingDate);
+        const fromDateee = new Date(this.flights[0].landingDate);
+        const rettt = new Date(this.flights[0].landingDate);
+        rettt.setDate(fromDateee.getDate() + 1);
+        console.log(rettt);
+        console.log(fromDateee);
+        console.log(this.flights[0].landingDate);
+        array.push({
+          type: '',
+          from: this.flights[0].to,
+          to: this.flights[0].to,
+          dep: this.flights[0].landingDate,
+          ret: rettt,
+          minPrice: 0,
+          maxPrice: 3000,
+          racs: '',
+          seatFrom: 0,
+          seatTo: 10
+        });
+        queryParams.array = JSON.stringify(array);
+
+        const navigationExtras: NavigationExtras = {
+          queryParams
+        };
+        this.flightPlusCar.emitData({
+          mySeatsIds: this.mySeats.map(res => res.seatId),
+          myPassport: this.myPassport,
+          friends: this.friends,
+          unregisteredFriends: this.unregisteredFriends,
+          withBonus: this.withBonus
+        });
+        if (this.userId !== undefined) {
+          this.router.navigate(['/' + this.userId + '/cars'], navigationExtras);
+        } else {
+          this.router.navigate(['/cars'], navigationExtras);
+        }
+      } else {
+        const data = {
+          mySeatsIds: this.mySeats.map(res => res.seatId),
+          myPassport: this.myPassport,
+          friends: this.friends,
+          unregisteredFriends: this.unregisteredFriends,
+          withBonus: this.withBonus
+        };
+        this.airlineService.reserveTrip(data).subscribe(
+          (res: any) => {
+            this.toastr.success('Success!');
+            this.router.navigate(['/' + this.userId + '/home']);
+          },
+          err => {
+            // tslint:disable-next-line: triple-equals
+            if (err.status == 400) {
+              // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
+              this.toastr.error(err.error, 'Error!');
+            } else {
+              this.toastr.error(err.error, 'Error!');
+            }
+          }
+        );
+      }
     }
   }
 
@@ -208,11 +442,23 @@ export class FlightReservationComponent implements OnInit {
 
   validateStep() {
     if (this.index >= 0) {
-      if (this.reservation.seats[this.index].seats.length === 0) {
+      if (this.pickedSeats[this.index].seats.length === 0) {
         return false;
       }
     }
     return true;
+  }
+
+  onBonusEmitter(value: any) {
+    this.withBonus = value;
+  }
+
+  onCarEmitter(value: any) {
+    this.withCar = value;
+  }
+
+  onDateEmitter(value: any) {
+    this.toDateWithCar = value;
   }
 
 }

@@ -34,9 +34,17 @@ export class HomeComponent implements OnInit {
 
   onSpecialOffers() {
     if (this.option === 'fly') {
-      this.router.navigate(['/flight-special-offers']);
+      if (this.userId === undefined) {
+        this.router.navigate(['/flight-special-offers']);
+      } else {
+        this.router.navigate(['/' + this.userId + '/flight-special-offers']);
+      }
     } else {
-      this.router.navigate(['/car-special-offers']);
+      if (this.userId === undefined) {
+        this.router.navigate(['/car-special-offers']);
+      } else {
+        this.router.navigate(['/' + this.userId + '/car-special-offers']);
+      }
     }
   }
 

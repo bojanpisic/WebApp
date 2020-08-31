@@ -191,3 +191,132 @@
     }
 
 }
+
+.rateExperience {
+    grid-column: 1/ span 4;
+    margin: 0 8px;
+
+    p {
+        margin: 0;
+        padding: 16px 0;
+        border-top: 1px solid rgb(234, 234, 234);
+        font-weight: bold;
+        line-height: 20px;
+        font-size: 16px;
+        color: #222222;
+        position: relative;
+
+        svg {
+            position: absolute;
+            top: 17px; right: 0;
+        }
+    }
+
+    .rateService, .rateCar {
+        padding: 16px 0 8px 0;
+        display: grid;
+        width: 100%;
+        grid-template-columns: auto 32px 60px 32px;
+        grid-template-rows: 20px 18px;
+        grid-template-areas: "pText minus input plus"
+                             "spanText minus input plus";
+                             
+
+        p {
+            grid-area: pText;
+            margin: 0;
+            border-top: none;
+            padding: 0;
+            color: #222222;
+            font-weight: bold;
+            line-height: 20px;
+            font-size: 16px;
+        }
+
+        span {
+            grid-area: spanText;
+            font-size: 14px;
+            line-height: 18px;
+            color: rgb(113, 113, 113);
+        }
+
+        #rateService, #rateCar, input {
+            grid-area: input;
+            text-align: center;
+            width: 60px;
+            height: 32px;
+            font-size: 16px;
+            padding: 8px 5px;
+            border: none;
+            color: rgb(34, 34, 34);
+            font-weight: bold;
+        }
+
+        :focus {
+            outline: none;
+        }
+
+        .minusBtn, .plusBtn {
+            margin-top: 3px;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            background-color: white;
+            padding: 4px;
+        }
+
+        .minusBtn {
+            grid-area: minus;
+            border: 1px solid rgb(113, 113, 113);
+        }
+
+        .plusBtn {
+            grid-area: plus;
+            border: 1px solid rgb(113, 113, 113);
+        }
+
+        .disabled {
+            border: 1px solid rgb(234, 234, 234);
+
+            svg {
+                fill: rgb(234, 234, 234);
+            }
+        }
+    }
+
+    #confirmRates {
+        display: block;
+        margin: 0 0 15px auto;
+        width: 124px;
+        padding: 8px 0;
+        line-height: 20px;
+        font-size: 16px;
+        color: #222222;
+        border: 1px solid #222222;
+        background-color: white;
+        font-weight: bold;
+        border-radius: 4px;
+        box-shadow: $smallest-shadow;
+    }
+
+    #confirmRates {
+        border: 1px solid $blue;
+        outline: none;
+    }
+}
+
+.book {
+    margin: auto 8px 0 0;
+    height: 44px;
+    padding: 12px 0;
+    a {
+        display: block;
+        margin: 0 0 0 auto;
+        text-align: right;
+        font-size: 18px;
+        line-height: 20px;
+        text-decoration: none;
+        font-family:'Bebas Neue', cursive;
+        color: $blue;
+    }
+}

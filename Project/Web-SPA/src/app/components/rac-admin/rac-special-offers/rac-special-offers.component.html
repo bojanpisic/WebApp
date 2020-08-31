@@ -5,6 +5,9 @@
     <span>Special offers</span>
 </header>
 <main *ngIf="itsOk">
+    <h3 *ngIf="specialOffers.length === 0" style="color: rgb(34, 34, 34); margin-top: 40px;">
+        You have no added any special offers yet.<br>Add them now!
+    </h3>
     <ul>
         <li *ngFor="let specialOffer of specialOffers">
             <div class="specialOffer">
@@ -14,11 +17,11 @@
                 </div>
                 <p>Special offer</p>
             </div>
-            <app-car [car]="specialOffer"></app-car>
-            <div class="specialOffer">
+            <app-car [spec]="true" [fromDate]="specialOffer.fromDate" [toDate]="specialOffer.toDate" [car]="specialOffer"></app-car>
+            <!-- <div class="specialOffer">
                 <p>from: {{specialOffer.fromDate}}</p>
                 <p>to: {{specialOffer.toDate}}</p>
-            </div>
+            </div> -->
         </li>
     </ul>
 </main>

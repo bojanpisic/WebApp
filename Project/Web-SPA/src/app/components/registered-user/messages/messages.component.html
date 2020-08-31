@@ -13,7 +13,17 @@
         </li>
     </ul>
     <ul>
+        <li *ngFor="let message of flightInvitations">
+            <app-message (action)='openMessageInfo($event)' [message]='message'></app-message>
+        </li>
+    </ul>
+    <ul>
         <li *ngFor="let message of acceptedRequests">
+            <app-message (action)='openMessageInfo($event)' [message]='message'></app-message>
+        </li>
+    </ul>
+    <ul>
+        <li *ngFor="let message of acceptedFlightInvitations">
             <app-message (action)='openMessageInfo($event)' [message]='message'></app-message>
         </li>
     </ul>

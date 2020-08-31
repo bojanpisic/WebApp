@@ -93,28 +93,57 @@ export class AirlinesComponent implements OnInit {
   }
 
   sortBy() {
-    console.log(this.namedown);
-    console.log(this.nameup);
-    console.log(this.citydown);
-    console.log(this.cityup);
-    if (this.namedown) {
-      if (!this.cityup && !this.citydown) {
-        this.allAirlines.sort((a, b) => (a.name > b.name) ? 1 : -1);
-      } else if (this.citydown) {
-        this.allAirlines.sort((a, b) => (a.name > b.name) ? 1 : (a.name === b.name) ? ((a.city > b.city) ? 1 : -1) : -1);
-      } else {
-        this.allAirlines.sort((a, b) => (a.name > b.name) ? 1 : (a.name === b.name) ? ((a.city < b.city) ? 1 : -1) : -1);
-      }
-    } else {
-      if (this.nameup) {
-        if (!this.cityup && !this.citydown) {
-          this.allAirlines.sort((a, b) => (a.name < b.name) ? 1 : -1);
-        } else if (this.cityup) {
-          this.allAirlines.sort((a, b) => (a.name < b.name) ? 1 : (a.name === b.name) ? ((a.city < b.city) ? 1 : -1) : -1);
-        } else {
-          this.allAirlines.sort((a, b) => (a.name < b.name) ? 1 : (a.name === b.name) ? ((a.city > b.city) ? 1 : -1) : -1);
-        }
-      }
+    if (this.namedown && this.citydown) {
+      // tslint:disable-next-line:max-line-length
+      this.allAirlines.sort((a, b) => (a.name.toUpperCase() > b.name.toUpperCase()) ? 1 : (a.name.toUpperCase() === b.name.toUpperCase()) ? ((a.city.toUpperCase() > b.city.toUpperCase()) ? 1 : -1) : -1);
     }
+    if (this.namedown && this.cityup) {
+      // tslint:disable-next-line:max-line-length
+      this.allAirlines.sort((a, b) => (a.name.toUpperCase() > b.name.toUpperCase()) ? 1 : (a.name.toUpperCase() === b.name.toUpperCase()) ? ((a.city.toUpperCase() < b.city.toUpperCase()) ? 1 : -1) : -1);
+    }
+    if (this.namedown && !this.citydown && !this.cityup) {
+      this.allAirlines.sort((a, b) => (a.name.toUpperCase() > b.name.toUpperCase()) ? 1 : -1);
+    }
+    if (this.nameup && this.citydown) {
+      // tslint:disable-next-line:max-line-length
+      this.allAirlines.sort((a, b) => (a.name.toUpperCase() < b.name.toUpperCase()) ? 1 : (a.name.toUpperCase() === b.name.toUpperCase()) ? ((a.city.toUpperCase() > b.city.toUpperCase()) ? 1 : -1) : -1);
+    }
+    if (this.nameup && this.cityup) {
+      // tslint:disable-next-line:max-line-length
+      this.allAirlines.sort((a, b) => (a.name.toUpperCase() < b.name.toUpperCase()) ? 1 : (a.name.toUpperCase() === b.name.toUpperCase()) ? ((a.city.toUpperCase() < b.city.toUpperCase()) ? 1 : -1) : -1);
+    }
+    if (this.nameup && !this.citydown && !this.cityup) {
+      this.allAirlines.sort((a, b) => (a.name.toUpperCase() < b.name.toUpperCase()) ? 1 : -1);
+    }
+    if (this.citydown && !this.namedown && !this.nameup) {
+      this.allAirlines.sort((a, b) => (a.city.toUpperCase() > b.city.toUpperCase()) ? 1 : -1);
+    }
+    if (this.cityup && !this.namedown && !this.nameup) {
+      this.allAirlines.sort((a, b) => (a.city.toUpperCase() < b.city.toUpperCase()) ? 1 : -1);
+    }
+
+    // if (this.namedown) {
+    //   if (!this.cityup && !this.citydown) {
+    //     this.allAirlines.sort((a, b) => (a.name.toUpperCase() > b.name.toUpperCase()) ? 1 : -1);
+    //   } else if (this.citydown) {
+    //     // tslint:disable-next-line:max-line-length
+    //     this.allAirlines.sort((a, b) => (a.name.toUpperCase() > b.name.toUpperCase()) ? 1 : (a.name.toUpperCase() === b.name.toUpperCase()) ? ((a.city.toUpperCase() > b.city.toUpperCase()) ? 1 : -1) : -1);
+    //   } else {
+    //     // tslint:disable-next-line:max-line-length
+    //     this.allAirlines.sort((a, b) => (a.name.toUpperCase() > b.name.toUpperCase()) ? 1 : (a.name.toUpperCase() === b.name.toUpperCase()) ? ((a.city.toUpperCase() < b.city.toUpperCase()) ? 1 : -1) : -1);
+    //   }
+    // } else {
+    //   if (this.nameup) {
+    //     if (!this.cityup && !this.citydown) {
+    //       this.allAirlines.sort((a, b) => (a.name.toUpperCase() < b.name.toUpperCase()) ? 1 : -1);
+    //     } else if (this.cityup) {
+    //       // tslint:disable-next-line:max-line-length
+    //       this.allAirlines.sort((a, b) => (a.name.toUpperCase() < b.name.toUpperCase()) ? 1 : (a.name.toUpperCase() === b.name.toUpperCase()) ? ((a.city.toUpperCase() < b.city.toUpperCase()) ? 1 : -1) : -1);
+    //     } else {
+    //       // tslint:disable-next-line:max-line-length
+    //       this.allAirlines.sort((a, b) => (a.name.toUpperCase() < b.name.toUpperCase()) ? 1 : (a.name.toUpperCase() === b.name.toUpperCase()) ? ((a.city.toUpperCase() > b.city.toUpperCase()) ? 1 : -1) : -1);
+    //     }
+    //   }
+    // }
   }
 }

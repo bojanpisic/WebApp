@@ -8,7 +8,7 @@
     <span>Add flight</span>
     <span>{{step}}/4</span>
 </header>
-<main *ngIf="this.destinations.length > 1">
+<main *ngIf="this.destinations.length >= 1">
     <div *ngIf="step === 1 && this.destinations.length > 1" class="main">
         <form [formGroup]="formFrom" (ngSubmit)="onSubmitFrom()">
             <h3>Departure</h3>
@@ -186,3 +186,7 @@
         <button id="finish" (click)="addSeats()">Finish</button>
     </div>
 </main>
+<h3 *ngIf="this.destinations.length === 0" id="note" style="color: rgb(34, 34, 34); margin-top: 100px;">
+    You don't travel to any destinations at the moment!<br>
+    Please add some <a href="#" [routerLink]="['/admin/' + adminId + '/destinations']">travel destinations</a> first!
+</h3>

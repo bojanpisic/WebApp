@@ -11,14 +11,12 @@ export class CarFilterComponent implements OnInit {
 
   slidingMinPriceValue: number;
   slidingMaxPriceValue: number;
-  minHoursDuration = 0;
-  minMinutesDuration = 0;
-  maxHoursDuration = 40;
-  maxMinutesDuration = 0;
+  minSeatsNumber = 0;
+  maxSeatsNumber = 10;
 
   airlinesButton: string;
-  allAirlines: Array<any>;
-  checkedAirlines: Array<boolean>;
+  allCompanies: Array<any>;
+  checkedCompanies: Array<boolean>;
 
   fromString: string;
   toString: string;
@@ -27,7 +25,7 @@ export class CarFilterComponent implements OnInit {
   urlParams: any;
   userId: number;
   url: any;
-  allAirlinesBool = false;
+  allCompaniesBool = false;
   @Output() closeFilter = new EventEmitter<boolean>();
   @Output() appliedFilters = new EventEmitter<any>();
 
@@ -41,8 +39,8 @@ export class CarFilterComponent implements OnInit {
 
     this.slidingMinPriceValue = 0;
     this.slidingMaxPriceValue = 100;
-    this.allAirlines = new Array<any>();
-    this.checkedAirlines = new Array<boolean>();
+    this.allCompanies = new Array<any>();
+    this.checkedCompanies = new Array<boolean>();
   }
 
   ngOnInit(): void {
@@ -59,26 +57,16 @@ export class CarFilterComponent implements OnInit {
       ret: data.ret,
       minPrice: data.minPrice,
       maxPrice: data.maxPrice,
-      air: data.air,
-      mind: data.mind,
-      maxd: data.maxd
+      racs: data.racs,
     };
 
     this.slidingMinPriceValue = (this.url.minPrice === 0) ? 0 : this.url.minPrice / 30;
     this.slidingMaxPriceValue = (this.url.maxPrice === 0) ? 0 : this.url.maxPrice / 30;
-    this.minHoursDuration = this.url.seatFrom;
-    this.maxHoursDuration = this.url.seatTo;
-    this.allAirlinesBool = (this.url.racs === '') ? true : false;
+    this.minSeatsNumber = this.url.seatFrom;
+    this.maxSeatsNumber = this.url.seatTo;
+    this.allCompaniesBool = (this.url.racs === '') ? true : false;
 
-    console.log(this.url);
-    console.log(this.slidingMinPriceValue);
-    console.log(this.slidingMaxPriceValue);
-    console.log(this.minHoursDuration);
-    console.log(this.minMinutesDuration);
-    console.log(this.maxHoursDuration);
-    console.log(this.maxMinutesDuration);
-
-    // this.loadAirlines();
+    this.loadCars();
   }
 
   generateFilter() {
@@ -114,12 +102,12 @@ export class CarFilterComponent implements OnInit {
     return Math.max(+this.slidingMinPriceValue, +this.slidingMaxPriceValue) + 1;
   }
 
-  allAirlinesButton() {
-    this.checkedAirlines.forEach((v, i, a) => a[i] = true);
+  allCompaniesButton() {
+    this.checkedCompanies.forEach((v, i, a) => a[i] = true);
   }
 
   loadCars() {
-    if (this.allAirlinesBool) {
+    if (this.allCompaniesBool) {
       const a = this.racService.getRACs().subscribe(
         (res: any[]) => {
           if (res.length > 0) {
@@ -128,8 +116,8 @@ export class CarFilterComponent implements OnInit {
                 id: element.id,
                 name: element.name,
               };
-              this.allAirlines.push(airline);
-              this.checkedAirlines.push(true);
+              this.allCompanies.push(airline);
+              this.checkedCompanies.push(true);
               console.log(airline);
             });
           }
@@ -147,11 +135,14 @@ export class CarFilterComponent implements OnInit {
                 id: element.id,
                 name: element.name,
               };
-              this.allAirlines.push(airline);
-              if (this.url.air.split(',').contains(airline.id)) {
-                this.checkedAirlines.push(true);
+              this.allCompanies.push(airline);
+              console.log(this.url.racs);
+              const a111 = this.url.racs.split(',');
+              console.log(airline.id);
+              if (this.url.racs.split(',').includes(airline.id.toString())) {
+                this.checkedCompanies.push(true);
               } else {
-                this.checkedAirlines.push(false);
+                this.checkedCompanies.push(false);
               }
               console.log(airline);
             });
@@ -164,59 +155,63 @@ export class CarFilterComponent implements OnInit {
     }
   }
 
-  toggleAirlineCheckBox(index: number) {
-    this.checkedAirlines[index] = !this.checkedAirlines[index];
+  toggleCompanyCheckBox(index: number) {
+    this.checkedCompanies[index] = !this.checkedCompanies[index];
   }
 
   goBack() {
     this.closeFilter.emit(true);
   }
 
-  onApplyFilters() {
-    let airIds = '';
-    if (this.checkedAirlines.length !== this.allAirlines.length) {
-      const airlines = this.getIdsOfCheckedAirlines();
-      for (let i = 0; i < airlines.length; i++) {
-        const element = airlines[i];
-        if (i === airlines.length - 1) {
-          airIds += element;
-        } else {
-          airIds += element + ',';
-        }
+  onApplyFilters(value: any) {
+    let racIds = '';
+    const companies = this.getIdsOfCheckedCompanies();
+    console.log(companies);
+    for (let i = 0; i < companies.length; i++) {
+      const element = companies[i];
+      if (i === companies.length - 1) {
+        racIds += element;
+      } else {
+        racIds += element + ',';
       }
     }
 
     const queryParams: any = {};
     const array = [];
-    if (this.url.type === 'one') {
-      array.push({type: 'one'});
-      array.push({from: this.url.from, to: this.url.to, dep: this.url.dep});
-    }
-    if (this.url.type === 'two') {
-      array.push({type: 'two'});
-      array.push({from: this.url.from, to: this.url.to,
-                  dep: this.url.dep, ret: this.url.ret});
-    }
-    if (this.url.type === 'multi') {
-      array.push({type: 'multi'});
-      this.fromString = this.url.from;
-      this.toString = this.url.to;
-      this.depString = this.url.dep;
-      const fromSplitted = this.fromString.split(',');
-      const toSplitted = this.toString.split(',');
-      const depSplitted = this.depString.split(',');
-      for (let i = 0; i < fromSplitted.length - 1; i++) {
-        const element = fromSplitted[i];
-        array.push({from: element, to: toSplitted[i], dep: depSplitted[i]});
-      }
-    }
+    // if (this.url.type === 'one') {
+    //   array.push({type: 'one'});
+    //   array.push({from: this.url.from, to: this.url.to, dep: this.url.dep});
+    // }
+    // if (this.url.type === 'two') {
+    //   array.push({type: 'two'});
+    //   array.push({from: this.url.from, to: this.url.to,
+    //               dep: this.url.dep, ret: this.url.ret});
+    // }
+    // if (this.url.type === 'multi') {
+    //   array.push({type: 'multi'});
+    //   this.fromString = this.url.from;
+    //   this.toString = this.url.to;
+    //   this.depString = this.url.dep;
+    //   const fromSplitted = this.fromString.split(',');
+    //   const toSplitted = this.toString.split(',');
+    //   const depSplitted = this.depString.split(',');
+    //   for (let i = 0; i < fromSplitted.length - 1; i++) {
+    //     const element = fromSplitted[i];
+    //     array.push({from: element, to: toSplitted[i], dep: depSplitted[i]});
+    //   }
+    // }
 
     array.push({
+      type: '',
+      from: this.url.from,
+      to: this.url.to,
+      dep: this.url.dep,
+      ret: this.url.ret,
       minPrice: this.slidingMinPriceValue * 30,
       maxPrice: this.slidingMaxPriceValue * 30,
-      mind: this.minHoursDuration + 'h ' + this.minMinutesDuration + 'min',
-      maxd: this.maxHoursDuration + 'h ' + this.maxMinutesDuration + 'min',
-      air: airIds
+      racs: racIds,
+      seatFrom: this.minSeatsNumber,
+      seatTo: this.maxSeatsNumber
     });
 
     queryParams.array = JSON.stringify(array);
@@ -225,18 +220,20 @@ export class CarFilterComponent implements OnInit {
       queryParams
     };
     if (this.userId !== undefined) {
-      this.router.navigate(['/' + this.userId + '/trips'], navigationExtras);
+      this.router.navigate(['/' + this.userId + '/cars'], navigationExtras);
     } else {
-      this.router.navigate(['/trips'], navigationExtras);
+      this.router.navigate(['/cars'], navigationExtras);
     }
+
+    this.appliedFilters.emit(true);
   }
 
-  getIdsOfCheckedAirlines() {
+  getIdsOfCheckedCompanies() {
     const ids = [];
-    for (let i = 0; i < this.checkedAirlines.length; i++) {
-      const element = this.checkedAirlines[i];
+    for (let i = 0; i < this.checkedCompanies.length; i++) {
+      const element = this.checkedCompanies[i];
       if (element) {
-        ids.push(this.allAirlines[i].airlineId);
+        ids.push(this.allCompanies[i].id);
       }
     }
     return ids;

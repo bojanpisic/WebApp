@@ -7,6 +7,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { RegisteredUser } from 'src/app/entities/registeredUser';
 import { UserService } from 'src/services/user.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-invite-friends',
@@ -17,10 +18,13 @@ export class InviteFriendsComponent implements OnInit {
 
   @Input() seat: Seat;
   @Input() flight: Flight;
-  @Input() person: Passenger;
-  @Output() passenger = new EventEmitter<Passenger>();
+  @Input() person: any;
+  @Input() pickSeatForMe: boolean;
+  @Output() passenger = new EventEmitter<any>();
   userId: number;
   user: RegisteredUser;
+
+  friends: Array<any>;
 
   closeIt = 0;
 
@@ -35,55 +39,73 @@ export class InviteFriendsComponent implements OnInit {
 
   form: FormGroup;
 
-  constructor(private eRef: ElementRef, route: ActivatedRoute, private userService: UserService) {
+  constructor(private eRef: ElementRef, route: ActivatedRoute, private userService: UserService,
+              private toastr: ToastrService) {
     route.params.subscribe(params => {
       this.userId = params.id;
     });
+
+    this.friends = [];
   }
 
   ngOnInit(): void {
-    const air1 = this.userService.getUser(this.userId);
-    // const airline = this.airlineService.getAdminsAirline(this.adminId);
-    // this.companyFields = {
-    //   name: airline.name,
-    //   location: airline.address,
-    //   about: airline.about
-    // };
-    console.log(air1);
+    const rez = this.userService.getFriends().subscribe(
+      (res: any[]) => {
+        if (res.length > 0) {
+          res.forEach(element => {
+            this.friends.push(element);
+          });
+        }
+      }, err => {
+        this.toastr.error(err.error, 'Error!');
+      }
+    );
     if (this.person !== undefined) {
-      if (this.person.passport === '') {
+      if (this.person.friendsId) {
         this.onClick();
       }
     }
     this.initForm();
-    console.log(this.person);
   }
 
   initForm() {
-    this.form = new FormGroup({
-      firstName: new FormControl((this.person === undefined) ? '' : this.person.firstName, Validators.required),
-      lastName: new FormControl((this.person === undefined) ? '' : this.person.lastName, Validators.required),
-      passport: new FormControl((this.person === undefined) ? '' : this.person.passport, Validators.required),
-   });
+    if (this.pickSeatForMe) {
+      this.form = new FormGroup({
+        passport: new FormControl((this.person === undefined) ? '' : this.person.passport, Validators.required),
+     });
+    } else {
+      this.form = new FormGroup({
+        firstName: new FormControl((this.person === undefined) ? '' : this.person.firstName, Validators.required),
+        lastName: new FormControl((this.person === undefined) ? '' : this.person.lastName, Validators.required),
+        passport: new FormControl((this.person === undefined) ? '' : this.person.passport, Validators.required),
+     });
+    }
   }
 
   confirm() {
     // proveriti da li ima putnik sa takvim pasosem na ovom letu
     if (this.validate()) {
       // tslint:disable-next-line:max-line-length
-      this.passenger.emit(new Passenger(this.form.controls.firstName.value, this.form.controls.lastName.value, this.form.controls.passport.value));
+      if (this.pickSeatForMe) {
+        this.passenger.emit({passport: this.form.controls.passport.value});
+      } else {
+        // tslint:disable-next-line:max-line-length
+        this.passenger.emit(new Passenger(this.form.controls.firstName.value, this.form.controls.lastName.value, this.form.controls.passport.value));
+      }
     }
   }
 
   validate() {
     let retVal = true;
-    if (this.form.controls.firstName.value === '') {
-      this.firstNameInvalid = true;
-      retVal = false;
-    }
-    if (this.form.controls.lastName.value === '') {
-      this.lastNameInvalid = true;
-      retVal = false;
+    if (!this.pickSeatForMe) {
+      if (this.form.controls.firstName.value === '') {
+        this.firstNameInvalid = true;
+        retVal = false;
+      }
+      if (this.form.controls.lastName.value === '') {
+        this.lastNameInvalid = true;
+        retVal = false;
+      }
     }
     if (this.form.controls.passport.value === '') {
       this.passportInvalid = true;
@@ -96,17 +118,13 @@ export class InviteFriendsComponent implements OnInit {
     document.getElementById('searchInput').focus();
   }
 
-  inviteFriend(friend: RegisteredUser) {
+  inviteFriend(friend: any) {
     // tslint:disable-next-line:max-line-length
-    this.passenger.emit(new Passenger(friend.firstName, friend.lastName, ''));
+    this.passenger.emit({friendsId: friend.id});
   }
 
   close() {
-    if (this.person !== undefined) {
-      this.passenger.emit(this.person);
-    } else {
-      this.passenger.emit(null);
-    }
+    this.passenger.emit('CLOSE');
   }
 
   onClick() {

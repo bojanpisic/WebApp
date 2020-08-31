@@ -29,7 +29,7 @@
                         <p>Stats</p>
                     </div>
                     <div style="background-color: #8795fa;" class="footer">
-                        <a>Check all<img src="../../../../assets/bold_arrow_Lobe.svg"></a>
+                        <a href="#" routerLink="/admin/{{adminId}}/stats">Check all<img src="../../../../assets/bold_arrow_Lobe.svg"></a>
                     </div>
                 </div>
             </li>
@@ -73,4 +73,4 @@
         </ul>
     </div>
 </div>
-<app-bottom-menu [userId]="adminId"></app-bottom-menu>
+<app-bottom-menu *ngIf="isOk" [userId]="adminId"></app-bottom-menu>

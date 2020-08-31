@@ -102,7 +102,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { CookieService } from 'ngx-cookie-service';
 
 import { AuthInterceptor } from './auth/auth.interceptor';
-import { SocialLoginModule, AuthServiceConfig, GoogleLoginProvider, FacebookLoginProvider, AuthService } from 'angular-6-social-login';
+import { GoogleLoginProvider, FacebookLoginProvider, SocialAuthServiceConfig, SocialLoginModule } from 'angularx-social-login';
 
 import { TokenInterceptor } from './auth/TokenInterceptor';
 import { AddSystemAdminComponent } from './components/admin/system-admin/add-system-admin/add-system-admin.component';
@@ -115,23 +115,9 @@ import { AllFlightSpecialOffersComponent } from './components/all-flight-special
 import { AllCarSpecialOffersComponent } from './components/all-car-special-offers/all-car-special-offers.component';
 import { CarFilterComponent } from './components/helper/car-filter/car-filter.component';
 import { NotificationComponent } from './components/helper/notification/notification.component';
-
-
-export function socialConfigs() {
-  const config = new AuthServiceConfig(
-    [
-      {
-        id: FacebookLoginProvider.PROVIDER_ID,
-        provider: new FacebookLoginProvider('176053310509690')
-      },
-      {
-        id: GoogleLoginProvider.PROVIDER_ID,
-        provider: new GoogleLoginProvider('962258612347-6kbnosm4gnu8glcm4l0ke9tlepv7a1e0.apps.googleusercontent.com')
-      }
-    ]
-  );
-  return config;
-}
+import { CarsFilterComponent } from './components/rac-components/cars-filter/cars-filter.component';
+import { ConfigureDiscountsComponent } from './components/admin/system-admin/configure-discounts/configure-discounts.component';
+import { FindCarPipe } from './pipes/find-car.pipe';
 
 @NgModule({
    declarations: [
@@ -222,6 +208,9 @@ export function socialConfigs() {
       AllCarSpecialOffersComponent,
       CarFilterComponent,
       NotificationComponent,
+      CarsFilterComponent,
+      ConfigureDiscountsComponent,
+      FindCarPipe,
    ],
    imports: [
       BrowserModule,
@@ -238,15 +227,16 @@ export function socialConfigs() {
       ToastrModule.forRoot({
         timeOut: 4000,
         preventDuplicates: true,
-      })
+      }),
+      SocialLoginModule
    ],
    providers: [
       CookieService,
       UserService,
       {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true,
+        provide: HTTP_INTERCEPTORS,
+        useClass: AuthInterceptor,
+        multi: true,
       },
       {
         provide: HTTP_INTERCEPTORS,
@@ -255,8 +245,22 @@ export function socialConfigs() {
       },
       // AuthService,
       {
-        provide: AuthServiceConfig,
-        useFactory: socialConfigs
+        provide: 'SocialAuthServiceConfig',
+        useValue: {
+          autoLogin: false,
+          providers: [
+            {
+              id: GoogleLoginProvider.PROVIDER_ID,
+              provider: new GoogleLoginProvider(
+                '962258612347-6kbnosm4gnu8glcm4l0ke9tlepv7a1e0.apps.googleusercontent.com'
+              ),
+            },
+            {
+              id: FacebookLoginProvider.PROVIDER_ID,
+              provider: new FacebookLoginProvider('176053310509690'),
+            },
+          ],
+        } as SocialAuthServiceConfig,
       }
 
    ],

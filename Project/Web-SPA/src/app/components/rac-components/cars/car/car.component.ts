@@ -9,11 +9,18 @@ import { Car } from 'src/app/entities/car';
 export class CarComponent implements OnInit {
 
   @Input() car: any;
+  @Input() fromDate: any;
+  @Input() toDate: any;
+  @Input() fromPlace: any;
+  @Input() toPlace: any;
   @Input() spec: boolean;
   @Input() customerView: boolean;
   @Input() adminView: boolean;
   @Input() quitReservation: boolean;
   @Input() carRate: boolean;
+  @Input() carRated: boolean;
+  @Input() racsRated: boolean;
+  @Input() canQuit: boolean;
   @Output() book = new EventEmitter<number>();
   @Output() editButtonClicked = new EventEmitter<number>();
   @Output() quitButtonClicked = new EventEmitter<number>();
@@ -39,6 +46,12 @@ export class CarComponent implements OnInit {
 
   ngOnInit(): void {
     console.log(this.car);
+    if (this.fromDate !== undefined) {
+      this.fromDate = this.fromDate.split('T')[0];
+    }
+    if (this.toDate !== undefined) {
+      this.toDate = this.toDate.split('T')[0];
+    }
   }
 
   onEdit() {

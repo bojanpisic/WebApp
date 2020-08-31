@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Address } from 'src/app/entities/address';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-drive-main-form',
@@ -31,10 +32,30 @@ export class DriveMainFormComponent implements OnInit {
 
   form: FormGroup;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.initForm();
+    this.setDateTimeInputs();
+  }
+
+  setDateTimeInputs() {
+    const dtToday = new Date();
+
+    let month = (dtToday.getMonth() + 1).toString();
+    let day = (dtToday.getDate()).toString();
+    const year = dtToday.getFullYear();
+    if (+month < 10) {
+        month = '0' + month.toString();
+    }
+    if (+day < 10) { 
+        day = '0' + day.toString();
+    }
+    const maxDate = year + '-' + month + '-' + day;
+    const inputDate1 = document.getElementById('fromDate');
+    inputDate1.setAttribute('min', maxDate);
+    const inputDate2 = document.getElementById('toDate');
+    inputDate2.setAttribute('min', maxDate);
   }
 
   sameLocation() {
@@ -85,6 +106,9 @@ export class DriveMainFormComponent implements OnInit {
       this.errorDropOffDate = true;
       retVal = false;
     }
+    // if (this.form.controls.pickupDate.value.toDate() < Date.now()) {
+    //   this.toastr.error('', 'Error');
+    // }
     return retVal;
   }
 

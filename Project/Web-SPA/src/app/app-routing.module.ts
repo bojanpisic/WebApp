@@ -42,6 +42,7 @@ import { MyFlightsComponent } from './components/registered-user/my-flights/my-f
 import { CarFilterComponent } from './components/helper/car-filter/car-filter.component';
 import { AirlineStatsComponent } from './components/airline-admin/airline-stats/airline-stats.component';
 import { RacStatsComponent } from './components/rac-admin/rac-stats/rac-stats.component';
+import { ConfigureDiscountsComponent } from './components/admin/system-admin/configure-discounts/configure-discounts.component';
 
 const routes: Routes = [
 
@@ -51,7 +52,8 @@ const routes: Routes = [
   {path: 'system-admin/:id',
   children: [
     {path: '', component: SystemAdminComponent},
-    {path: 'add-system-admin', component: AddSystemAdminComponent}
+    {path: 'add-system-admin', component: AddSystemAdminComponent, canActivate: [AuthGuard], data: {permittedRoles: ['Admin']}},
+    {path: 'configure-discounts', component: ConfigureDiscountsComponent, canActivate: [AuthGuard], data: {permittedRoles: ['Admin']}}
     //  canActivate: [AuthGuard], data: {permittedRoles: ['Admin']}
     ,
     {path: ':type', component: AddCompanyComponent, canActivate: [AuthGuard], data: {permittedRoles: ['Admin']}},
@@ -92,14 +94,14 @@ const routes: Routes = [
   children: [
     // tslint:disable-next-line:max-line-length
     {path: 'profile/edit-profile', component: EditProfileComponent, canActivate: [ProfileGuard], data: {permittedRoles: ['RentACarServiceAdmin']}},
-    {path: '', component: RacAdminHomeComponent},
-    {path: 'branches', component: RacBranchesComponent},
+    {path: '', component: RacAdminHomeComponent, canActivate: [AuthGuard], data: {permittedRoles: ['RentACarServiceAdmin']}},
+    {path: 'branches', component: RacBranchesComponent, canActivate: [AuthGuard], data: {permittedRoles: ['RentACarServiceAdmin']}},
     {path: 'cars',
     children : [
-      {path: '', component: RacCarsComponent},
-      {path: 'add-car', component: AddCarComponent},
-      {path: ':car/edit-car', component: EditCarComponent},
-      {path: ':branch', component: RacCarsComponent},
+      {path: '', component: RacCarsComponent, canActivate: [AuthGuard], data: {permittedRoles: ['RentACarServiceAdmin']}},
+      {path: 'add-car', component: AddCarComponent, canActivate: [AuthGuard], data: {permittedRoles: ['RentACarServiceAdmin']}},
+      {path: ':car/edit-car', component: EditCarComponent, canActivate: [AuthGuard], data: {permittedRoles: ['RentACarServiceAdmin']}},
+      {path: ':branch', component: RacCarsComponent, canActivate: [AuthGuard], data: {permittedRoles: ['RentACarServiceAdmin']}},
     ]},
     {path: 'special-car-offers',
     children : [
@@ -107,7 +109,7 @@ const routes: Routes = [
       // tslint:disable-next-line:max-line-length
       {path: 'add-car-special-offer', component: AddCarSpecialOfferComponent, canActivate: [AuthGuard], data: {permittedRoles: ['RentACarServiceAdmin']}},
     ]},
-    {path: 'stats', component: RacStatsComponent},
+    {path: 'stats', component: RacStatsComponent, canActivate: [AuthGuard], data: {permittedRoles: ['RentACarServiceAdmin']}},
     {path: ':type', component: CompanyProfileComponent, canActivate: [AuthGuard], data: {permittedRoles: ['RentACarServiceAdmin']}},
   ]},
 
@@ -123,7 +125,7 @@ const routes: Routes = [
     children: [
       {path: '', component: AirlinesComponent},
       {
-        path: ':id/airline-info',
+        path: ':airline/airline-info',
         children: [
           {path: '', component: AirlineInfoComponent},
           {path: 'flight-special-offers', component: SpecialOffersComponent}
@@ -136,7 +138,7 @@ const routes: Routes = [
     children: [
       {path: '', component: RentACarServicesComponent},
       {
-        path: ':id/rent-a-car-service-info',
+        path: ':rac/rent-a-car-service-info',
         children: [
           {path: '', component: RentACarServiceInfoComponent},
           {path: 'car-special-offers', component: AllCarSpecialOffersComponent}
@@ -173,12 +175,32 @@ const routes: Routes = [
     children: [
       {path: '', component: CarsComponent},
       {path: 'car-filter', component: CarFilterComponent},
-      // {
-      //   path: 'trip-reservation',
-      //   children: [
-      //     {path: '', component: FlightReservationComponent},
-      //   ]
-      // }
+    ]
+  },
+  {
+    path: ':id/airlines',
+    children: [
+      {path: '', component: AirlinesComponent},
+      {
+        path: ':airline/airline-info',
+        children: [
+          {path: '', component: AirlineInfoComponent},
+          {path: 'flight-special-offers', component: SpecialOffersComponent}
+        ]
+      },
+    ]
+  },
+  {
+    path: ':id/rent-a-car-services',
+    children: [
+      {path: '', component: RentACarServicesComponent},
+      {
+        path: ':rac/rent-a-car-service-info',
+        children: [
+          {path: '', component: RentACarServiceInfoComponent},
+          {path: 'car-special-offers', component: AllCarSpecialOffersComponent}
+        ]
+      }
     ]
   },
   {

@@ -109,25 +109,12 @@ export class SignupComponent implements OnInit {
     if (this.validateFirstStep() && this.validateSecondStep()) {
       this.userService.userRegistration().subscribe(
         (res: any) => {
-          if (res.status === 201) {
             this.userService.formModel.reset();
             this.toastr.success('Success!');
-          } else {
-            res.errors.array.forEach(element => {
-              switch (element.code) {
-                case 'DuplicateUserName':
-                  this.toastr.error('Username is already taken', 'Registration failed.');
-                  break;
-
-                default:
-                  this.toastr.error(element.description, 'Registration failed.');
-                  break;
-              }
-            });
-          }
+            this.router.navigate(['']);
         },
         err => {
-          this.toastr.error(err.statusText, 'Error.');
+          this.toastr.error(err.error, 'Error.');
         }
       );
     }

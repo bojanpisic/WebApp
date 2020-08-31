@@ -64,32 +64,24 @@ export class AddCompanyComponent implements OnInit {
 
   onRegister() {
     if (this.companyType === 'register-airline') {
-      this.adminService.registerAirline(this.data).subscribe(
+      console.log('OVDE');
+      const a = this.adminService.registerAirline(this.data).subscribe(
         (res: any) => {
           this.toastr.success('Success!');
+          this.router.navigate(['/system-admin/' + this.adminId]);
         },
         err => {
-          alert(err.error.description);
-          // tslint:disable-next-line: triple-equals
-          if (err.status == 400) {
-            this.toastr.error('Incorrect username or password.', 'Authentication failed.');
-          } else {
-            this.toastr.error(err.statusText, 'Error.');
-          }
+          this.toastr.error(err.statusText, 'Error.');
         }
       );
     } else {
-      this.adminService.registerRACService(this.data).subscribe(
+      const a = this.adminService.registerRACService(this.data).subscribe(
         (res: any) => {
           this.toastr.success('Success!');
+          this.router.navigate(['/system-admin/' + this.adminId]);
         },
         err => {
-          // tslint:disable-next-line: triple-equals
-          if (err.status == 400) {
-            this.toastr.error('Incorrect username or password.', 'Authentication failed.');
-          } else {
-            this.toastr.error(err.statusText, 'Error.');
-          }
+          this.toastr.error(err.statusText, 'Error.');
         }
       );
     }

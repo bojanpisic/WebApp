@@ -3,6 +3,7 @@ import { User } from 'src/app/entities/user';
 import { UserService } from 'src/services/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { RegisteredUser } from 'src/app/entities/registeredUser';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-friends',
@@ -22,8 +23,10 @@ export class FriendsComponent implements OnInit {
   searchText = '';
 
   isOk = false;
+  friendsId;
 
-  constructor(private route: ActivatedRoute, private userService: UserService) {
+  constructor(private route: ActivatedRoute, private userService: UserService,
+              private toastr: ToastrService) {
     route.params.subscribe(params => {
       this.userId = params.id;
     });
@@ -52,24 +55,31 @@ export class FriendsComponent implements OnInit {
             };
             this.nonFriends.push(b);
           });
-          const c = this.userService.getFriends().subscribe(
-            (res1: any[]) => {
-              if (res1.length) {
-                res1.forEach(element1 => {
-                  const b1 = {
-                    firstName: element1.firstname,
-                    lastName: element1.lastname,
-                    email: element1.email,
-                    id: element1.id
-                  };
-                  this.friends.push(b1);
-                });
-                this.isOk = true;
-              }
-            }
-          );
-          this.isOk = true;
         }
+        const c = this.userService.getFriends().subscribe(
+          (res1: any[]) => {
+            console.log(res1);
+            if (res1.length) {
+              res1.forEach(element1 => {
+                const b1 = {
+                  firstName: element1.firstname,
+                  lastName: element1.lastname,
+                  email: element1.email,
+                  id: element1.id
+                };
+                this.friends.push(b1);
+              });
+              this.isOk = true;
+            }
+            this.isOk = true;
+          },
+          err => {
+            this.toastr.error(err.error, 'ERROR');
+          }
+        );
+      },
+      err => {
+        this.toastr.error(err.error, 'ERROR');
       }
     );
   }
@@ -85,27 +95,36 @@ export class FriendsComponent implements OnInit {
   addFriend(id: number) {
     const c = this.userService.addFriend(id).subscribe(
       (res1: any) => {
+        console.log('SUCCESS');
         this.loadAll();
       },
       err => {
-        alert(err.error.description);
+        console.log('ERROR');
+        console.log(err.error);
+        console.log(err);
+        this.toastr.error(err.error, 'ERROR');
       }
     );
   }
 
   removeFriend(remove: boolean) {
-    // const c = this.userService.removeFriend(email).subscribe(
-    //   (res1: any) => {
-    //     this.loadAll();
-    //   },
-    //   err => {
-    //     alert(err.error.description);
-    //   }
-    // );
+    if (remove) {
+      const c = this.userService.removeFriend(this.myProps.friend.id).subscribe(
+        (res1: any) => {
+          console.log('SUCCESS');
+          this.loadAll();
+        },
+        err => {
+          console.log('ERROR');
+          this.toastr.error(err.error, 'ERROR');
+        }
+      );
+    }
+    this.myProps.show = !this.myProps.show;
   }
 
-  toggleModal(id: number) {
-    this.myProps.friend = this.userService.getUser(id);
+  toggleModal(friend: any) {
+    this.myProps.friend = friend;
     this.myProps.show = !this.myProps.show;
   }
 }

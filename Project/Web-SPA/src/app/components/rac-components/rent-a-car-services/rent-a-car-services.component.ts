@@ -47,6 +47,7 @@ export class RentACarServicesComponent implements OnInit {
   loadRACs() {
     const a = this.service.getRACs().subscribe(
       (res: any[]) => {
+        console.log(res);
         if (res.length > 0) {
           res.forEach(element => {
             const rac = {
@@ -56,14 +57,16 @@ export class RentACarServicesComponent implements OnInit {
               name: element.name,
               logo: (element.logo === null) ? null : this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.logo}`),
               about: element.about,
-              branches: element.branches
+              branches: element.branches,
+              rate: element.rate
             };
             this.allRentServices.push(rac);
           });
         }
       },
       err => {
-        this.toastr.error(err.statusText, 'Error!');
+        this.toastr.error(err.error, 'Error!');
+        console.log(err);
       }
     );
   }

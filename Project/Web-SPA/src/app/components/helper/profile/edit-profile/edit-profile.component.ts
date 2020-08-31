@@ -5,6 +5,7 @@ import { UserService } from 'src/services/user.service';
 import { FormGroup, FormControl, Validators, ValidatorFn, AbstractControl} from '@angular/forms';
 import { CustomValidationService } from 'src/services/custom-validation.service';
 import { RegisteredUser } from 'src/app/entities/registeredUser';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-edit-profile',
@@ -42,7 +43,7 @@ export class EditProfileComponent implements OnInit {
   lastGoodAddress: string;
   errorAddress = false;
 
-  userId: number;
+  userId: any;
   user: {
     username: string,
     firstName: string,
@@ -53,7 +54,7 @@ export class EditProfileComponent implements OnInit {
   };
 
   constructor(private route: ActivatedRoute, private userService: UserService, private customValidator: CustomValidationService,
-              private router: Router) {
+              private router: Router, private toastr: ToastrService) {
     route.params.subscribe(params => {
       this.userId = params.id;
     });
@@ -91,16 +92,7 @@ export class EditProfileComponent implements OnInit {
         this.ok = true;
       },
       err => {
-        console.log('dada' + err.status);
-        // tslint:disable-next-line: triple-equals
-        if (err.status == 400) {
-          console.log(err);
-        // tslint:disable-next-line: triple-equals
-        } else if (err.status == 401) {
-          console.log(err);
-        } else {
-          console.log(err);
-        }
+        this.toastr.error(err.error, 'Error!');
       }
     );
   }
@@ -212,16 +204,7 @@ export class EditProfileComponent implements OnInit {
           this.editUsername();
         },
         err => {
-          console.log('dada' + err.status);
-          // tslint:disable-next-line: triple-equals
-          if (err.status == 400) {
-            console.log(err);
-          // tslint:disable-next-line: triple-equals
-          } else if (err.status == 401) {
-            console.log(err);
-          } else {
-            console.log(err);
-          }
+          this.toastr.error(err.error, 'Error!');
         }
       );
     }
@@ -239,16 +222,7 @@ export class EditProfileComponent implements OnInit {
           this.editFirstName();
         },
         err => {
-          console.log('dada' + err.status);
-          // tslint:disable-next-line: triple-equals
-          if (err.status == 400) {
-            console.log(err);
-          // tslint:disable-next-line: triple-equals
-          } else if (err.status == 401) {
-            console.log(err);
-          } else {
-            console.log(err);
-          }
+          this.toastr.error(err.error, 'Error!');
         }
       );
     }
@@ -266,16 +240,7 @@ export class EditProfileComponent implements OnInit {
           this.editLastName();
         },
         err => {
-          console.log('dada' + err.status);
-          // tslint:disable-next-line: triple-equals
-          if (err.status == 400) {
-            console.log(err);
-          // tslint:disable-next-line: triple-equals
-          } else if (err.status == 401) {
-            console.log(err);
-          } else {
-            console.log(err);
-          }
+          this.toastr.error(err.error, 'Error!');
         }
       );
     }
@@ -294,16 +259,7 @@ export class EditProfileComponent implements OnInit {
           window.location.reload();
         },
         err => {
-          console.log('dada' + err.status);
-          // tslint:disable-next-line: triple-equals
-          if (err.status == 400) {
-            console.log(err);
-          // tslint:disable-next-line: triple-equals
-          } else if (err.status == 401) {
-            console.log(err);
-          } else {
-            console.log(err);
-          }
+          this.toastr.error(err.error, 'Error!');
         }
       );
     }
@@ -320,24 +276,28 @@ export class EditProfileComponent implements OnInit {
         };
         this.userService.changePassword(data).subscribe(
           (res: any) => {
-            if (!this.userService.hasChangedPassword()) {
-              localStorage.removeItem('token');
-              this.router.navigate(['']);
-            }
+            // if (!this.userService.hasChangedPassword()) {
+            //   localStorage.removeItem('token');
+            //   this.router.navigate(['']);
+            // }
             this.editPassword();
+            // this.toastr.success('Success!');
+            const payLoad = JSON.parse(window.atob(localStorage.getItem('token').split('.')[1]));
+            const userRole = payLoad.Roles;
+            const passwordChanged = payLoad.PasswordChanged;
+            if (userRole === 'AirlineAdmin' && passwordChanged === 'False') {
+              localStorage.setItem('token', res.token);
+              this.router.navigate(['/admin/' + this.userId]);
+            } else if (userRole === 'RentACarServiceAdmin' && passwordChanged === 'False') {
+              localStorage.setItem('token', res.token);
+              this.router.navigate(['/rac-admin/' + this.userId]);
+            } else if (userRole === 'Admin' && passwordChanged === 'False') {
+              localStorage.setItem('token', res.token);
+              this.router.navigate(['/system-admin/' + this.userId]);
+            }
           },
           err => {
-            alert(err.error.description);
-            console.log('dada' + err.status);
-            // tslint:disable-next-line: triple-equals
-            if (err.status == 400) {
-              console.log(err);
-            // tslint:disable-next-line: triple-equals
-            } else if (err.status == 401) {
-              console.log(err);
-            } else {
-              console.log(err);
-            }
+            this.toastr.error(err.error, 'Error!');
           }
         );
       }
@@ -365,16 +325,7 @@ export class EditProfileComponent implements OnInit {
           this.editPhone();
         },
         err => {
-          console.log('dada' + err.status);
-          // tslint:disable-next-line: triple-equals
-          if (err.status == 400) {
-            console.log(err);
-          // tslint:disable-next-line: triple-equals
-          } else if (err.status == 401) {
-            console.log(err);
-          } else {
-            console.log(err);
-          }
+          this.toastr.error(err.error, 'Error!');
         }
       );
     }
@@ -393,16 +344,7 @@ export class EditProfileComponent implements OnInit {
             this.editAddress();
           },
           err => {
-            console.log('dada' + err.status);
-            // tslint:disable-next-line: triple-equals
-            if (err.status == 400) {
-              console.log(err);
-            // tslint:disable-next-line: triple-equals
-            } else if (err.status == 401) {
-              console.log(err);
-            } else {
-              console.log(err);
-            }
+            this.toastr.error(err.error, 'Error!');
           }
         );
       }
@@ -430,5 +372,10 @@ export class EditProfileComponent implements OnInit {
 
   removeErrorClass() {
     this.errorAddress = false;
+  }
+
+  onLogOut() {
+    localStorage.clear();
+    this.router.navigate(['/']);
   }
 }

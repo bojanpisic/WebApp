@@ -5,6 +5,9 @@
     <span>Special offers</span>
 </header>
 <main *ngIf="itsOk">
+    <h3 *ngIf="specialOffers.length === 0" style="color: rgb(34, 34, 34); margin-top: 40px;">
+        You have no added any special offers yet.<br>Add them now!
+    </h3>
     <ul>
         <li *ngFor="let specialOffer of specialOffers">
             <div class="specialOffer">

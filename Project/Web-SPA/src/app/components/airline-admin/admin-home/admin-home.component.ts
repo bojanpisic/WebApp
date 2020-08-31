@@ -17,11 +17,14 @@ export class AdminHomeComponent implements OnInit {
   admin: AirlineAdmin;
   adminId: string;
   home = true;
+  isOk = false;
 
   constructor(private airlineService: AirlineService, private userService: UserService, private routes: ActivatedRoute) {
     routes.params.subscribe(route => {
       this.adminId = route.id;
     });
+    this.isOk = true;
+    console.log(this.adminId);
   }
 
   ngOnInit(): void {

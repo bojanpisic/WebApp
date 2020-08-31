@@ -123,7 +123,6 @@ export class AirlineDestinationsComponent implements OnInit {
             this.destinations.push(new1);
           }
         });
-        this.toastr.success('Success!');
       },
       err => {
         this.toastr.error(err.statusText, 'Error.');

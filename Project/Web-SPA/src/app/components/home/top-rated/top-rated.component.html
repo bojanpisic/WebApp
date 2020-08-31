@@ -17,8 +17,8 @@
     </div>
 </div>
 <form>
-    <input *ngIf="option === 'fly'" id="submit" type="submit" routerLink='/airlines' value="SHOW ALL">
-    <input *ngIf="option === 'drive'" id="submit" type="submit" routerLink='/rent-a-car-services' value="SHOW ALL">
+    <input *ngIf="option === 'fly'" id="submit" type="submit" (click)="onAirlines()" value="SHOW ALL">
+    <input *ngIf="option === 'drive'" id="submit" type="submit" (click)="onRAC()" value="SHOW ALL">
 </form>
 <div class="separator-div">
     <hr class="separator">

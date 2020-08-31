@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { FlightService } from 'src/services/flight.service';
 import { Flight } from 'src/app/entities/flight';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
@@ -95,7 +94,12 @@ export class ConfigureSeatsComponent implements OnInit {
       column = ((index + 1) % 3 === 1) ? 'D' : ((index + 1) % 3 === 2) ? 'E' : 'F';
       // this.seats.push(new Seat('F', column, row, 400));
     }
-    const previousSeat = this.findPreviosSeat(row, column, classParam);
+    console.log(row, column, classParam);
+    let previousSeat = this.findPreviosSeat(row, column, classParam);
+    if (previousSeat === 'NEMA') {
+      previousSeat = {price: 100};
+    }
+    console.log(previousSeat);
     // const insertIndex = this.seats.indexOf(previousSeat);
     // console.log(index, side, classParam);
     // console.log(previousSeat);
@@ -160,9 +164,22 @@ export class ConfigureSeatsComponent implements OnInit {
   findPreviosSeat(row: number, column: string, classParam: string) {
     let indexOfSeat = ((row - 1) * 6) + ((column === 'A') ? 0 : (column === 'B') ? 1 : (column === 'C') ? 2 :
                         (column === 'D') ? 3 : (column === 'E') ? 4 : 5);
-    while (indexOfSeat > 0) {
+    if (indexOfSeat === 0) {
+      while (indexOfSeat >= 0) {
+        const seat = (classParam === 'F') ? this.firstClassSeats[indexOfSeat] : (classParam === 'B') ? this.businessSeats[indexOfSeat] :
+                     (classParam === 'E') ? this.economySeats[indexOfSeat] : this.basicEconomySeats[indexOfSeat];
+        console.log(seat);
+        if (seat !== 'left' && seat !== 'right') {
+          return seat;
+        }
+        indexOfSeat++;
+      }
+      return 'NEMA';
+    }
+    while (indexOfSeat >= 0) {
       const seat = (classParam === 'F') ? this.firstClassSeats[indexOfSeat] : (classParam === 'B') ? this.businessSeats[indexOfSeat] :
                    (classParam === 'E') ? this.economySeats[indexOfSeat] : this.basicEconomySeats[indexOfSeat];
+      console.log(seat);
       if (seat !== 'left' && seat !== 'right') {
         return seat;
       }
@@ -214,7 +231,7 @@ export class ConfigureSeatsComponent implements OnInit {
             this.setBusinessSeats();
             this.setBasicEconomySeats();
             this.itsOk = true;
-            this.toastr.success('Success!');
+            // this.toastr.success('Success!');
           }
         },
         err => {
@@ -239,8 +256,6 @@ export class ConfigureSeatsComponent implements OnInit {
   }
 
   onChangePrice(value: number) {
-    this.blur = false;
-    this.showModify = false;
     // const index = this.seats.indexOf(this.pickedSeat);
     // this.seats[index].price = value;
     const data = {
@@ -249,6 +264,14 @@ export class ConfigureSeatsComponent implements OnInit {
     };
     this.airlineService.changeSeat(data).subscribe(
       (res: any) => {
+        // tslint:disable-next-line:prefer-for-of
+        for (let i = 0; i < this.seats.length; i++) {
+          if (this.seats[i].seatId === this.pickedSeat.seatId) {
+            this.seats[i].price = data.price;
+          }
+        }
+        this.blur = false;
+        this.showModify = false;
         if (res.length) {
           this.seats = [];
           res.forEach(element => {
@@ -276,6 +299,8 @@ export class ConfigureSeatsComponent implements OnInit {
       },
       err => {
         this.toastr.error(err.statusText, 'Error.');
+        this.blur = false;
+        this.showModify = false;
       }
     );
     // if (this.pickedSeat.class === 'F') {

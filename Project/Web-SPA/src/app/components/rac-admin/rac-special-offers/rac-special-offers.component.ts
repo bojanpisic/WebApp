@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CarRentService } from 'src/services/car-rent.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-rac-special-offers',
@@ -27,8 +28,14 @@ export class RacSpecialOffersComponent implements OnInit {
     seatsNumber: number
   }>;
   itsOk = false;
+  monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'];
 
-  constructor(private router: Router, private routes: ActivatedRoute, private carService: CarRentService, private san: DomSanitizer) {
+  constructor(private router: Router,
+              private routes: ActivatedRoute,
+              private carService: CarRentService,
+              private san: DomSanitizer,
+              private toastr: ToastrService) {
     routes.params.subscribe(param => {
       this.adminId = param.id;
     });
@@ -40,6 +47,14 @@ export class RacSpecialOffersComponent implements OnInit {
       (res: any[]) => {
         if (res.length) {
           res.forEach(element => {
+            const yearFrom = element.fromDate.split('T')[0].split('-')[0];
+            const monthFrom = this.monthNames[+element.fromDate.split('T')[0].split('-')[1] - 1];
+            const dayFrom = +element.fromDate.split('T')[0].split('-')[2];
+            const fromDate1 = monthFrom + ' ' + dayFrom + ', ' + yearFrom;
+            const yearTo = element.toDate.split('T')[0].split('-')[0];
+            const monthTo = this.monthNames[+element.toDate.split('T')[0].split('-')[1] - 1];
+            const dayTo = +element.toDate.split('T')[0].split('-')[2];
+            const toDate1 = monthTo + ' ' + dayTo + ', ' + yearTo;
             const new1 = {
               name: element.name,
               brand: element.brand,
@@ -48,28 +63,21 @@ export class RacSpecialOffersComponent implements OnInit {
               type: element.type,
               newPrice: element.newPrice,
               oldPrice: element.oldPrice,
-              fromDate: element.fromDate.split('T')[0],
-              toDate: element.toDate.split('T')[0],
+              fromDate: fromDate1,
+              toDate: toDate1,
               seatsNumber: element.seatsNumber,
               rate: element.rate === undefined ? null : element.rate
             };
             this.specialOffers.push(new1);
+            const month = new1.fromDate.split('-')[1];
+            console.log(month);
           });
-          this.itsOk = true;
         }
+        this.itsOk = true;
         console.log(res);
       },
       err => {
-        console.log('dada' + err.status);
-        // tslint:disable-next-line: triple-equals
-        if (err.status == 400) {
-          console.log('400' + err);
-          // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
-        } else if (err.status === 401) {
-          console.log(err);
-        } else {
-          console.log(err);
-        }
+        this.toastr.error(err.error, 'Error!');
       }
     );
   }

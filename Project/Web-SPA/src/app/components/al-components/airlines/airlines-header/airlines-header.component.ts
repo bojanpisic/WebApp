@@ -1,5 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { LiteralArrayExpr } from '@angular/compiler';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-airlines-header',
@@ -15,10 +16,24 @@ export class AirlinesHeaderComponent implements OnInit {
   citydown = false;
   @Input() rac = false;
   @Output() sort = new EventEmitter<Array<boolean>>();
+  userId;
 
-  constructor() { }
+  constructor(private route: ActivatedRoute, private router: Router) {
+    route.params.subscribe(params => {
+      this.userId = params.id;
+    });
+  }
 
   ngOnInit(): void {
+
+  }
+
+  onBack() {
+    if (this.userId === undefined) {
+      this.router.navigate(['/']);
+    } else {
+      this.router.navigate(['/' + this.userId + '/home']);
+    }
   }
 
   sortClick() {

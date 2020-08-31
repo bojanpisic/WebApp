@@ -3,6 +3,7 @@ import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router, UrlTr
 import { Observable } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { UserService } from 'src/services/user.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,8 @@ import { UserService } from 'src/services/user.service';
 export class AuthGuard implements CanActivate {
 
 
-  constructor(private router: Router, private cookieService: CookieService, private userService: UserService) {
+  constructor(private router: Router, private cookieService: CookieService,
+              private userService: UserService, private toastr: ToastrService) {
   }
   canActivate(
     next: ActivatedRouteSnapshot,
@@ -24,14 +26,18 @@ export class AuthGuard implements CanActivate {
               if (!this.userService.hasChangedPassword()) {
                 const payload = JSON.parse(window.atob(localStorage.getItem('token').split('.')[1]));
                 const userId = payload.UserID;
-                alert('You have to change password first!');
-                this.router.navigate(['/admin/' + userId + '/profile/edit-profile']);
+                this.toastr.error('You have to change password first!', 'Error!');
+                if (roles.includes('AirlineAdmin')) {
+                  this.router.navigate(['/admin/' + userId + '/profile/edit-profile']);
+                } else {
+                  this.router.navigate(['/rac-admin/' + userId + '/profile/edit-profile']);
+                }
                 return false;
               }
             }
             return true;
           } else {
-            alert('You have no premission!');
+            this.toastr.error('You have no permission for this route', 'Error!');
             return false;
           }
         }
@@ -43,7 +49,7 @@ export class AuthGuard implements CanActivate {
         //   alert('You have no premission!');
         // }
       } else {
-        alert('You are not logged in!');
+        this.toastr.error('You are not loggen in!', 'Error!');
         this.router.navigate(['/signin']);
         return false;
       }

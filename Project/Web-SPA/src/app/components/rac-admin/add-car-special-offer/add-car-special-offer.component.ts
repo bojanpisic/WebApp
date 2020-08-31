@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CarRentService } from 'src/services/car-rent.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-add-car-special-offer',
@@ -22,7 +23,9 @@ export class AddCarSpecialOfferComponent implements OnInit {
   configureOffer = false;
   choosenCar: any;
 
-  constructor(private router: Router, private routes: ActivatedRoute, private carService: CarRentService, private san: DomSanitizer) {
+  constructor(private router: Router, private routes: ActivatedRoute,
+              private carService: CarRentService, private san: DomSanitizer,
+              private toastr: ToastrService) {
     routes.params.subscribe(param => {
       this.adminId = param.id;
     });
@@ -58,16 +61,7 @@ export class AddCarSpecialOfferComponent implements OnInit {
         }
       },
       err => {
-        console.log('dada' + err.status);
-        // tslint:disable-next-line: triple-equals
-        if (err.status == 400) {
-          console.log(err);
-        // tslint:disable-next-line: triple-equals
-        } else if (err.status == 401) {
-          console.log(err);
-        } else {
-          console.log(err);
-        }
+        this.toastr.error(err.error, 'Error!');
       }
     );
   }
@@ -108,20 +102,9 @@ export class AddCarSpecialOfferComponent implements OnInit {
     this.carService.addSpecialOffer(data).subscribe(
       (res: any) => {
         this.exit();
-        console.log('okkkkky');
       },
       err => {
-        console.log('dada' + err.status);
-        alert(err.error.description);
-        // tslint:disable-next-line: triple-equals
-        if (err.status == 400) {
-          console.log(err);
-        // tslint:disable-next-line: triple-equals
-        } else if (err.status == 401) {
-          console.log(err);
-        } else {
-          console.log(err);
-        }
+        this.toastr.error(err.error, 'Error!');
       }
     );
   }

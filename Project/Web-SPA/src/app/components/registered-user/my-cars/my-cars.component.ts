@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CarRentService } from 'src/services/car-rent.service';
 import { ToastrService } from 'ngx-toastr';
 
@@ -17,16 +17,19 @@ export class MyCarsComponent implements OnInit {
 
   constructor(private routes: ActivatedRoute,
               private carService: CarRentService,
-              private toastr: ToastrService) {
+              private toastr: ToastrService,
+              private router: Router) {
     routes.params.subscribe(param => {
       this.userId = param.id;
     });
     this.cars = new Array<any>();
+    this.previousReservations = [];
+    this.upcomingReservations = [];
   }
 
   ngOnInit(): void {
     // ovde podesi nazive parametara koje primam ukoliko se razlikuju
-    const c = this.carService.getUsersUpcomingCarReservations().subscribe(
+    const c = this.carService.getUsersCarReservations().subscribe(
       (res: any[]) => {
         if (res.length > 0) {
           res.forEach(el => {
@@ -48,9 +51,17 @@ export class MyCarsComponent implements OnInit {
               dep: el.dep,
               ret: el.ret,
               totalPrice: el.totalPrice,
-              reservationId: el.reservationId
+              reservationId: el.reservationId,
+              isCarRated: el.isCarRated,
+              isRACSRated: el.isRACSRated,
+              canCancel: el.canCancel
             };
-            this.upcomingReservations.push(r);
+            console.log(r, el.isUpcoming, el.canCancel);
+            if (el.isUpcoming) {
+              this.upcomingReservations.push(r);
+            } else {
+              this.previousReservations.push(r);
+            }
           });
         }
       },
@@ -58,8 +69,10 @@ export class MyCarsComponent implements OnInit {
         console.log(err);
       }
     );
+  }
 
-    const c1 = this.carService.getUsersPreviousCarReservations().subscribe(
+  loadAll() {
+    const c = this.carService.getUsersCarReservations().subscribe(
       (res: any[]) => {
         if (res.length > 0) {
           res.forEach(el => {
@@ -81,9 +94,17 @@ export class MyCarsComponent implements OnInit {
               dep: el.dep,
               ret: el.ret,
               totalPrice: el.totalPrice,
-              reservationId: el.reservationId
+              reservationId: el.reservationId,
+              isCarRated: el.isCarRated,
+              isRACSRated: el.isRACSRated,
+              canCancel: el.canCancel
             };
-            this.previousReservations.push(r);
+            console.log(r, el.isUpcoming, el.canCancel);
+            if (el.isUpcoming) {
+              this.upcomingReservations.push(r);
+            } else {
+              this.previousReservations.push(r);
+            }
           });
         }
       },
@@ -94,7 +115,7 @@ export class MyCarsComponent implements OnInit {
   }
 
   goBack() {
-    console.log('bla');
+    this.router.navigate(['/' + this.userId + '/profile']);
   }
 
   onRateCar(value: any, id: any) {
@@ -131,14 +152,7 @@ export class MyCarsComponent implements OnInit {
         this.toastr.success('Success!');
       },
       err => {
-        // tslint:disable-next-line: triple-equals
-        if (err.status == 400) {
-          console.log(err);
-          // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
-          this.toastr.error(err.statusText, 'Error!');
-        } else {
-          this.toastr.error(err.error.statusText, 'Error!');
-        }
+        this.toastr.error(err.error, 'Error!');
       }
     );
   }
@@ -150,16 +164,11 @@ export class MyCarsComponent implements OnInit {
     this.carService.quitReservation(data).subscribe(
       (res: any) => {
         this.toastr.success('Success!');
+        this.cars = [];
+        this.loadAll();
       },
       err => {
-        // tslint:disable-next-line: triple-equals
-        if (err.status == 400) {
-          console.log(err);
-          // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
-          this.toastr.error(err.statusText, 'Error!');
-        } else {
-          this.toastr.error(err.error.statusText, 'Error!');
-        }
+        this.toastr.error(err.error, 'Error!');
       }
     );
   }

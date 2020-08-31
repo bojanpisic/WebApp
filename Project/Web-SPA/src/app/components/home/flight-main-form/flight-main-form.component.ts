@@ -135,8 +135,8 @@ export class FlightMainFormComponent implements OnInit {
       });
     }
 
-    array.push({minPrice: 0, maxPrice: 3000, air: '', mind: '0h 0min', maxd: '40h 0min'});
-
+    array.push({minPrice: 0, maxPrice: 3000, air: '', mind: '0h 0min', maxd: '23h 0min'});
+    console.log(array);
     queryParams.array = JSON.stringify(array);
 
     const navigationExtras: NavigationExtras = {

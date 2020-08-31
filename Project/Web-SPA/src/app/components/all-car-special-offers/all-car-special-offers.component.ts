@@ -13,26 +13,20 @@ export class AllCarSpecialOffersComponent implements OnInit {
 
   racId: number;
   userId: number;
+  showModal = false;
 
-  specialOffers: Array<{
-    name: string,
-    brand: string,
-    model: string,
-    year: number,
-    type: string,
-    newPrice: number,
-    oldPrice: number,
-    fromDate: string,
-    toDate: string,
-    seatsNumber: number
-  }>;
+  specialOffers: Array<any>;
   itsOk = false;
+  noOffers = false;
+  monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'];
+
 
   constructor(private router: Router, private routes: ActivatedRoute, private carService: CarRentService
             , private san: DomSanitizer, private toastr: ToastrService) {
     routes.params.subscribe(param => {
-      this.racId = param.id;
-      this.userId = param.user;
+      this.racId = param.rac;
+      this.userId = param.id;
     });
     this.specialOffers = [];
   }
@@ -41,9 +35,22 @@ export class AllCarSpecialOffersComponent implements OnInit {
     window.scroll(0, 0);
     if (this.racId === undefined) {
       this.carService.getAllSpecialOffers().subscribe(
+
         (res: any[]) => {
+          if (res.length === 0) {
+            this.noOffers = true;
+            this.itsOk = true;
+          }
           if (res.length) {
             res.forEach(element => {
+              const yearFrom = element.fromDate.split('T')[0].split('-')[0];
+              const monthFrom = this.monthNames[+element.fromDate.split('T')[0].split('-')[1] - 1];
+              const dayFrom = +element.fromDate.split('T')[0].split('-')[2];
+              const fromDate1 = monthFrom + ' ' + dayFrom + ', ' + yearFrom;
+              const yearTo = element.toDate.split('T')[0].split('-')[0];
+              const monthTo = this.monthNames[+element.toDate.split('T')[0].split('-')[1] - 1];
+              const dayTo = +element.toDate.split('T')[0].split('-')[2];
+              const toDate1 = monthTo + ' ' + dayTo + ', ' + yearTo;
               const new1 = {
                 name: element.name,
                 brand: element.brand,
@@ -52,9 +59,13 @@ export class AllCarSpecialOffersComponent implements OnInit {
                 type: element.type,
                 newPrice: element.newPrice,
                 oldPrice: element.oldPrice,
-                fromDate: element.fromDate.split('T')[0],
-                toDate: element.toDate.split('T')[0],
-                seatsNumber: element.seatsNumber
+                fromDate: fromDate1,
+                toDate: toDate1,
+                seatsNumber: element.seatsNumber,
+                rate: element.rate,
+                id: element.id,
+                from: element.from,
+                to: element.to
               };
               this.specialOffers.push(new1);
             });
@@ -69,8 +80,20 @@ export class AllCarSpecialOffersComponent implements OnInit {
     } else {
       this.carService.getRACSpecialOffers(this.racId).subscribe(
         (res: any[]) => {
+          if (res.length === 0) {
+            this.noOffers = true;
+            this.itsOk = true;
+          }
           if (res.length) {
             res.forEach(element => {
+              const yearFrom = element.fromDate.split('T')[0].split('-')[0];
+              const monthFrom = this.monthNames[+element.fromDate.split('T')[0].split('-')[1] - 1];
+              const dayFrom = +element.fromDate.split('T')[0].split('-')[2];
+              const fromDate1 = monthFrom + ' ' + dayFrom + ', ' + yearFrom;
+              const yearTo = element.toDate.split('T')[0].split('-')[0];
+              const monthTo = this.monthNames[+element.toDate.split('T')[0].split('-')[1] - 1];
+              const dayTo = +element.toDate.split('T')[0].split('-')[2];
+              const toDate1 = monthTo + ' ' + dayTo + ', ' + yearTo;
               const new1 = {
                 name: element.name,
                 brand: element.brand,
@@ -79,11 +102,17 @@ export class AllCarSpecialOffersComponent implements OnInit {
                 type: element.type,
                 newPrice: element.newPrice,
                 oldPrice: element.oldPrice,
-                fromDate: element.fromDate.split('T')[0],
-                toDate: element.toDate.split('T')[0],
-                seatsNumber: element.seatsNumber
+                fromDate: fromDate1,
+                toDate: toDate1,
+                seatsNumber: element.seatsNumber,
+                rate: element.rate,
+                id: element.id,
+                from: element.from,
+                to: element.to
               };
               this.specialOffers.push(new1);
+              const year = new1.fromDate.split('-')[0];
+              console.log(year);
             });
             this.itsOk = true;
           }
@@ -110,6 +139,41 @@ export class AllCarSpecialOffersComponent implements OnInit {
         this.router.navigate(['/']);
       }
     }
+  }
+
+  viewDeal(value: any) {
+    if (this.userId !== undefined) {
+      const data = {
+        id: value
+      };
+      this.carService.reserveCarSpecialOffer(data).subscribe(
+        (res: any) => {
+          this.toastr.success('Success!');
+          this.router.navigate(['/' + this.userId + '/home']);
+          this.showModal = false;
+        },
+        err => {
+          // tslint:disable-next-line: triple-equals
+          if (err.status == 400) {
+            console.log(err);
+            // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
+            this.toastr.error(err.error, 'Error!');
+          } else {
+            this.toastr.error(err.error, 'Error!');
+          }
+          this.showModal = false;
+        }
+      );
+    } else {
+      this.showModal = true;
+    }
+  }
+
+  onModal(value: any) {
+    if (value) {
+      this.router.navigate(['/signin']);
+    }
+    this.showModal = false;
   }
 
 }

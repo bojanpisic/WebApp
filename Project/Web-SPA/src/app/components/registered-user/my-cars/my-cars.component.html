@@ -6,12 +6,12 @@
 </header>
 <ul>
     <li *ngFor="let car of previousReservations">
-        <app-car (emitRateCar)="onRateCar($event, car.carId)" (emitRateService)="onRateService($event, car.carServiceId)" [carRate]="true" [car]="car"></app-car>
+        <app-car [fromDate]="car.dep" [toDate]="car.ret" [carRated]="car.isCarRated" [racsRated]="car.isRACSRated" (emitRateCar)="onRateCar($event, car.carId)" (emitRateService)="onRateService($event, car.carServiceId)" [carRate]="true" [car]="car"></app-car>
     </li>
     <div class="addMore">
-        <span>Previous reservations</span>
+        <span>Upcoming reservations</span>
     </div>
     <li *ngFor="let car of upcomingReservations">
-        <app-car (quitButtonClicked)="onQuitReservation($event)" [quitReservation]="true" [car]="car"></app-car>
+        <app-car [fromPlace]="car.from" [toPlace]="car.to" [fromDate]="car.dep" [toDate]="car.ret" [canQuit]="car.canCancel" (quitButtonClicked)="onQuitReservation($event)" [quitReservation]="true" [car]="car"></app-car>
     </li>
 </ul>

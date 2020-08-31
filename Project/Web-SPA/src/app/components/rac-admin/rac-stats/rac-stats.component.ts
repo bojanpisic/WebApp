@@ -20,11 +20,22 @@ export class RacStatsComponent implements OnInit {
   pickedTypeChart;
   from = '2020-08-30';
   to = '2020-10-30';
-  pickedDate = '2020-08-30';
+  pickedYear = '2020';
   pickedWeek = '2020-W35';
   pickedMonth = '2020-09';
   cars: Array<any>;
   labels; dataset; myChart;
+  noCars = false;
+
+  myChartTickets;
+  typesTickets: Array<any>;
+  dropdownTickets = false;
+  pickedTypeTickets;
+  pickedDateTickets = '2020-08-30';
+  pickedWeekTickets = '2020-W35';
+  pickedMonthTickets = '2020-09';
+  labelsTickets: Array<any>;
+  datasetTickets: Array<any>;
 
   constructor(private router: Router,
               private routes: ActivatedRoute,
@@ -44,22 +55,38 @@ export class RacStatsComponent implements OnInit {
     });
     this.pickedType = this.types[0];
     this.chartTypes.push({
-      type: 'date', displayedType: 'By date'
-    });
-    this.chartTypes.push({
       type: 'week', displayedType: 'By week'
     });
     this.chartTypes.push({
       type: 'month', displayedType: 'By month'
     });
+    this.chartTypes.push({
+      type: 'year', displayedType: 'By year'
+    });
+    this.typesTickets = new Array<any>();
+    this.typesTickets.push({
+      type: 'date', displayedType: 'By date'
+    });
+    this.typesTickets.push({
+      type: 'week', displayedType: 'By week'
+    });
+    this.typesTickets.push({
+      type: 'month', displayedType: 'By month'
+    });
     this.pickedTypeChart = this.chartTypes[0];
+    this.pickedTypeTickets = this.typesTickets[0];
     this.labels = new Array<any>();
+    this.labelsTickets = new Array<any>();
     this.dataset = new Array<any>();
+    this.datasetTickets = new Array<any>();
   }
 
   ngOnInit(): void {
     this.getValues();
+    this.onWeekSelected();
+    this.onDateTicketsSelected();
     this.updateChart();
+    this.updateChartTickets();
   }
 
   updateChart() {
@@ -69,7 +96,7 @@ export class RacStatsComponent implements OnInit {
         labels: this.labels,
         datasets: [{
           data: this.dataset,
-          label: this.pickedTypeChart.type === 'date' ? this.pickedDate :
+          label: this.pickedTypeChart.type === 'year' ? this.pickedYear :
                 this.pickedTypeChart.type === 'week' ? this.pickedWeek :
                 this.pickedMonth,
           borderColor: 'rgba(75, 192, 192, 1)',
@@ -80,7 +107,7 @@ export class RacStatsComponent implements OnInit {
       options: {
         title: {
           display: true,
-          text: this.pickedTypeChart.type === 'date' ? 'Income for  ' + this.pickedDate :
+          text: this.pickedTypeChart.type === 'year' ? 'Income for  ' + this.pickedYear :
                 this.pickedTypeChart.type === 'week' ? 'Income for  ' + this.pickedWeek :
                 'Income for  ' + this.pickedMonth,
         }
@@ -88,14 +115,17 @@ export class RacStatsComponent implements OnInit {
     });
   }
 
-  onDateSelected() {
+  onYearSelected() {
     const data = {
-      date: this.pickedDate
+      year: this.pickedYear
     };
-    const a = this.carService.getStatsForDate(data).subscribe(
+    const a = this.carService.getStatsForYear(data).subscribe(
       (res: any) => {
-        this.labels.push(this.pickedDate);
-        this.dataset.push(res.result);
+        res.forEach(element => {
+          this.labels.push(element.item1.split('T')[0]);
+          this.dataset.push(element.item2);
+        });
+        this.updateChart();
       },
       err => {
         this.toastr.error(err.statusText, 'Error.');
@@ -109,19 +139,11 @@ export class RacStatsComponent implements OnInit {
     };
     const a = this.carService.getStatsForWeek(data).subscribe(
       (res: any) => {
-        // ovde mi moras vratiti dane te nedelje tipa:
-        // [2020-05-20, 2020-05-21, 2020-05-22, 2020-05-23...]
-        // nek bude u days
-        // tslint:disable-next-line:forin
-        for (const key in res.days) {
-          this.labels.push(key);
-        }
-        // a onda mi u tickets vrati niz prodatih karti za te dane tih 7
-        // tipa [200, 245, 233, 432, ...]
-        // tslint:disable-next-line:forin
-        for (const key in res.tickets) {
-          this.dataset.push(key);
-        }
+        res.forEach(element => {
+          this.labels.push(element.item1.split('T')[0]);
+          this.dataset.push(element.item2);
+        });
+        this.updateChart();
       },
       err => {
         this.toastr.error(err.statusText, 'Error.');
@@ -135,16 +157,11 @@ export class RacStatsComponent implements OnInit {
     };
     const a = this.carService.getStatsForMonth(data).subscribe(
       (res: any) => {
-        // isto ko i sa week samo ovde nema 7 vec 28,29,30 ili 31 dan
-        // tslint:disable-next-line:forin
-        for (const key in res.days) {
-          this.labels.push(key);
-        }
-        // isto ko i sa week samo ovde nema 7 vec 28,29,30 ili 31 dan
-        // tslint:disable-next-line:forin
-        for (const key in res.tickets) {
-          this.dataset.push(key);
-        }
+        res.forEach(element => {
+          this.labels.push(element.item1.split('T')[0]);
+          this.dataset.push(element.item2);
+        });
+        this.updateChart();
       },
       err => {
         this.toastr.error(err.statusText, 'Error.');
@@ -153,15 +170,16 @@ export class RacStatsComponent implements OnInit {
   }
 
   setChartType(value: any) {
-    if (value.type === 'date') {
-      this.onDateSelected();
+    this.labels = [];
+    this.dataset = [];
+    if (value.type === 'year' && this.pickedYear !== null) {
+      this.onYearSelected();
     } else if (value.type === 'week') {
       this.onWeekSelected();
     } else {
       this.onMonthSelected();
     }
     this.pickedTypeChart = value;
-    this.updateChart();
   }
 
   toggleChartDropDown() {
@@ -178,6 +196,9 @@ export class RacStatsComponent implements OnInit {
     const a = this.carService.getStats(data).subscribe(
       (res: any) => {
         console.log(res);
+        if (res.length === 0) {
+          this.noCars = true;
+        }
         if (res.length > 0) {
           res.forEach(el => {
             const r = {
@@ -203,7 +224,7 @@ export class RacStatsComponent implements OnInit {
   }
 
   onExit() {
-    this.router.navigate(['/admin/' + this.adminId]);
+    this.router.navigate(['/rac-admin/' + this.adminId]);
   }
 
   setType(value: any) {
@@ -218,5 +239,100 @@ export class RacStatsComponent implements OnInit {
   onSearch() {
     this.cars = [];
     this.getValues();
+  }
+
+  updateChartTickets() {
+    this.myChartTickets = new Chart('myChartTickets', {
+      type: 'line',
+      data: {
+        labels: this.labelsTickets,
+        datasets: [{
+          data: this.datasetTickets,
+          label: this.pickedTypeTickets.type === 'date' ? this.pickedDateTickets :
+                this.pickedTypeTickets.type === 'week' ? this.pickedWeekTickets :
+                this.pickedMonthTickets,
+          borderColor: 'rgba(75, 192, 192, 1)',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        }]
+      },
+      options: {
+        title: {
+          display: true,
+          text: this.pickedTypeTickets.type === 'date' ? 'Income for  ' + this.pickedDateTickets :
+                this.pickedTypeTickets.type === 'week' ? 'Income for  ' + this.pickedWeekTickets :
+                'Income for  ' + this.pickedMonthTickets,
+        }
+      }
+    });
+  }
+
+  onDateTicketsSelected() {
+    const data = {
+      date: this.pickedDateTickets
+    };
+    const a = this.carService.getReservationStatsForDate(data).subscribe(
+      (res: any) => {
+        this.labelsTickets.push(res.item1.split('T')[0]);
+        this.datasetTickets.push(res.item2);
+        this.updateChartTickets();
+      },
+      err => {
+        this.toastr.error(err.statusText, 'Error.');
+      }
+    );
+  }
+
+  onWeekTicketsSelected() {
+    const data = {
+      week: this.pickedWeekTickets
+    };
+    const a = this.carService.getReservationStatsForWeek(data).subscribe(
+      (res: any) => {
+        res.forEach(element => {
+          this.labelsTickets.push(element.item1.split('T')[0]);
+          this.datasetTickets.push(element.item2);
+        });
+        this.updateChartTickets();
+      },
+      err => {
+        this.toastr.error(err.statusText, 'Error.');
+      }
+    );
+  }
+
+  onMonthTicketsSelected() {
+    const data = {
+      month: this.pickedMonthTickets
+    };
+    const a = this.carService.getReservationStatsForMonth(data).subscribe(
+      (res: any) => {
+        console.log(res);
+        res.forEach(element => {
+          this.labelsTickets.push(element.item1.split('T')[0]);
+          this.datasetTickets.push(element.item2);
+        });
+        this.updateChartTickets();
+      },
+      err => {
+        this.toastr.error(err.statusText, 'Error.');
+      }
+    );
+  }
+
+  setTypeTickets(value: any) {
+    this.labelsTickets = [];
+    this.datasetTickets = [];
+    if (value.type === 'date') {
+      this.onDateTicketsSelected();
+    } else if (value.type === 'week') {
+      this.onWeekTicketsSelected();
+    } else {
+      this.onMonthTicketsSelected();
+    }
+    this.pickedTypeTickets = value;
+  }
+
+  toggleDropDownTickets() {
+    this.dropdownTickets = !this.dropdownTickets;
   }
 }

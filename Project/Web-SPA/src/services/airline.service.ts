@@ -4,7 +4,6 @@ import { Destination } from 'src/app/entities/destination';
 import { Flight } from 'src/app/entities/flight';
 import { TripId } from 'src/app/entities/trip-id';
 import { Address } from 'src/app/entities/address';
-import { FlightService } from './flight.service';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
@@ -14,13 +13,71 @@ import { tap } from 'rxjs/operators';
 })
 export class AirlineService {
 
-  readonly BaseURI = 'http://localhost:5001/api';
+  readonly BaseURI = 'http://192.168.43.54:5001/api';
 
   airlines: Array<Airline>;
-  constructor(private flightService: FlightService, private http: HttpClient) {
+  constructor(private http: HttpClient) {
     this.airlines = new Array<Airline>();
     this.allMockedAirlines();
    }
+
+   reserveTrip(data) {
+    const body = {
+      MySeatsIds: data.mySeatsIds,
+      MyPassport: data.myPassport,
+      Friends: data.friends,
+      UnregisteredFriends: data.unregisteredFriends
+    };
+    const url = this.BaseURI + '/user/flight-reservation';
+    return this.http.post(url, body);
+  }
+
+  reserveSpecialOffer(data) {
+    console.log(data);
+    const body = {
+      Id: data.id,
+      Passport: data.passport
+    };
+    const url = this.BaseURI + '/user/reserve-special-offer-flight';
+    return this.http.post(url, body);
+  }
+
+  getPreviousFlights(): Observable<any> {
+    return this.http.get<any>(this.BaseURI + '/user/get-previous-flights');
+  }
+
+  getUpcomingTrips(): Observable<any> {
+    return this.http.get<any>(this.BaseURI + '/user/get-upcoming-trips');
+  }
+
+  quitReservation(data: any) {
+    const body = {
+      ReservationId: data.reservationId
+    };
+
+    const url = `${this.BaseURI + '/user/cancel-flight-reservation'}/${data.reservationId}`;
+    return this.http.delete(url); // promeni u delete ako treba
+  }
+
+  rateFlight(data) {
+    console.log(data);
+    const body = {
+      Id: data.id,
+      Rate: data.rate,
+    };
+    const url = this.BaseURI + '/user/rate-flight';
+    return this.http.post(url, body);
+  }
+
+  rateAirline(data) {
+    console.log(data);
+    const body = {
+      Id: data.id,
+      Rate: data.rate,
+    };
+    const url = this.BaseURI + '/user/rate-airline';
+    return this.http.post(url, body);
+  }
 
    test(data: any): Observable<any> {
     console.log(data);
@@ -39,6 +96,17 @@ export class AirlineService {
     };
     const url = this.BaseURI + '/home/flights';
     return this.http.get<any>(url, {params: param});
+  }
+
+  getTripInfo(data: any): Observable<any> {
+    console.log(data);
+    const body = {
+      MySeatsIds: data.mySeatsIds,
+      Friends: data.friends,
+      UnregisteredFriends: data.unregisteredFriends
+    };
+    const url = this.BaseURI + '/user/get-trip-info';
+    return this.http.post(url, body);
   }
 
   getAirline(data: any): Observable<any> {
@@ -78,7 +146,7 @@ export class AirlineService {
     const url = `${this.BaseURI + '/airlineadmin/get-airline-logo'}/${data}`;
     console.log(url);
     return this.http.get(url);
-  }s
+  }
 
   changePhoto(data: any) {
     const formData = new FormData();
@@ -116,11 +184,11 @@ export class AirlineService {
     return this.http.post(url, body);
   }
 
-  getStatsForDate(data: any): Observable<any> {
+  getStatsForYear(data: any): Observable<any> {
     const param = {
-      date: data.date // 2020-09-25
+      year: data.year // 2020
     };
-    const url = this.BaseURI + '/airlineadmin/get-stats-date';
+    const url = this.BaseURI + '/airlineadmin/get-income-year';
     return this.http.get<any>(url, {params: param});
   }
 
@@ -128,11 +196,35 @@ export class AirlineService {
     const param = {
       week: data.week // 2020-W34 to je 34. nedelja
     };
-    const url = this.BaseURI + '/airlineadmin/get-stats-week';
+    const url = this.BaseURI + '/airlineadmin/get-income-week';
     return this.http.get<any>(url, {params: param});
   }
 
   getStatsForMonth(data: any): Observable<any> {
+    const param = {
+      month: data.month // 2020-09
+    };
+    const url = this.BaseURI + '/airlineadmin/get-income-month';
+    return this.http.get<any>(url, {params: param});
+  }
+
+  getTicketStatsForDate(data: any): Observable<any> {
+    const param = {
+      date: data.date // 2020
+    };
+    const url = this.BaseURI + '/airlineadmin/get-stats-date';
+    return this.http.get<any>(url, {params: param});
+  }
+
+  getTicketStatsForWeek(data: any): Observable<any> {
+    const param = {
+      week: data.week // 2020-W34 to je 34. nedelja
+    };
+    const url = this.BaseURI + '/airlineadmin/get-stats-week';
+    return this.http.get<any>(url, {params: param});
+  }
+
+  getTicketStatsForMonth(data: any): Observable<any> {
     const param = {
       month: data.month // 2020-09
     };
@@ -244,18 +336,12 @@ export class AirlineService {
     return retVal;
   }
 
-  getFlight(airlineId: number, flightNumber: string) {
-    let f: Flight;
-    this.airlines.forEach(airline => {
-      if (airline.id === airlineId) {
-        airline.flights.forEach(flight => {
-          if (flight.flightNumber === flightNumber) {
-            f = flight;
-          }
-        });
-      }
-    });
-    return f;
+  getFlightSeats(data): Observable<any> {
+    const param = {
+      ids: data
+    };
+    const url = this.BaseURI + '/home/flight-seats';
+    return this.http.get<any>(url, {params: param});
   }
 
   getFlights(airlineId: number) {

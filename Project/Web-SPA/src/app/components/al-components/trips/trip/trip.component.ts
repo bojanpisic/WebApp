@@ -30,11 +30,11 @@ export class TripComponent implements OnInit {
 
   ngOnInit(): void {
     console.log(this.trip);
-    // this.i = this.showInfo.length;
-    // this.showInfo.push(false);
-    // this.trip.flights.forEach(flight => {
-    //   this.arrayOfValues.push(new TripParameter(flight.airlineId, flight.flightNumber));
-    // });
+    this.i = this.showInfo.length;
+    this.showInfo.push(false);
+    this.trip.flightsObject.forEach(flight => {
+      this.arrayOfValues.push(new TripParameter(flight.airlineId, flight.flightId));
+    });
   }
   getAirlineName(airlineId: number) {
     // const airline = this.airlineService.getAirline(airlineId);

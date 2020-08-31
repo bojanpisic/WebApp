@@ -26,6 +26,11 @@ header {
     }
 }
 
+.blur {
+    filter: blur(8px);
+}
+
+
 main {
     padding: 79px 24px 63px 24px;
 
@@ -61,6 +66,31 @@ main {
             box-shadow: $smallest-shadow;
             border: 2px solid hotpink;
             border-radius: 3px;
+
+            .book {    
+                display: block;  
+                text-align: center;
+                a {
+                    cursor: pointer;
+                    display: inline-block;
+                    margin: 0px 10px 10px 10px;
+                    
+                    width: calc(100% - 20px);
+                    line-height: 20px;
+                    font-size: 16px;
+                    font-weight: bold;
+                    text-align: center;
+                    padding: 9px 20px;
+                    height: auto;
+                    background: transparent;
+                    color: hotpink;
+                    text-decoration: none;
+                    border-radius: 3px;
+                    border-bottom-left-radius: 0px;
+                    border-bottom-right-radius: 0px;
+                    border: 2px solid hotpink;
+                }
+            }
 
             .specialOffer {
                 background-color: hotpink;

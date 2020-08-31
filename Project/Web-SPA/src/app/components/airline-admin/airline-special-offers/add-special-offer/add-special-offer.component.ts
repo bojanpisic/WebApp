@@ -1,12 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AirlineService } from 'src/services/airline.service';
-import { FlightService } from 'src/services/flight.service';
 import { Flight } from 'src/app/entities/flight';
 import { Seat } from 'src/app/entities/seat';
 import { SpecialOffer } from 'src/app/entities/special-offer';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AddSeatsSpecialOfferComponent } from './add-seats-special-offer/add-seats-special-offer.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-add-special-offer',
@@ -31,7 +31,8 @@ export class AddSpecialOfferComponent implements OnInit {
   @ViewChild(AddSeatsSpecialOfferComponent) child: AddSeatsSpecialOfferComponent;
 
   constructor(private router: Router, private routes: ActivatedRoute, private airlineService: AirlineService,
-              private flightService: FlightService, private san: DomSanitizer) {
+              private san: DomSanitizer,
+              private toastr: ToastrService) {
     routes.params.subscribe(param => {
       this.adminId = param.id;
     });
@@ -124,20 +125,9 @@ export class AddSpecialOfferComponent implements OnInit {
     this.airlineService.addSpecialOffer(data).subscribe(
       (res: any) => {
         this.exit();
-        console.log('okkkkky');
       },
       err => {
-        console.log('dada' + err.status);
-        alert(err.error.description);
-        // tslint:disable-next-line: triple-equals
-        if (err.status == 400) {
-          console.log(err);
-        // tslint:disable-next-line: triple-equals
-        } else if (err.status == 401) {
-          console.log(err);
-        } else {
-          console.log(err);
-        }
+        this.toastr.error(err.error, 'Error!');
       }
     );
   }

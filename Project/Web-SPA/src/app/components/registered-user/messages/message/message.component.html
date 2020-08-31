@@ -10,5 +10,5 @@
         <span id="text">I would like to be your friend!</span>
     </div>
     <!-- <button id="delete" (click)='deleteMessage()'>Delete</button> -->
-    <button id="read" (click)='readMessage()'>Read</button>
+    <button *ngIf="!message.accepted" id="read" (click)='readMessage()'>OPEN</button>
 </div>

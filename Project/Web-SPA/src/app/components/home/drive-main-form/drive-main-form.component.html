@@ -19,11 +19,11 @@
     <app-places-search [right] = "true" (focused)="removeErrorClassDropOff()" [error]="errorDropOffLocation" (inputValue)="onDropOffLocationInputChange($event)" *ngIf="!sameLocationChoosed" [pickUpLocation] = "false" (cityName)='onDropOffLocation($event)'></app-places-search>
     <p id="checkin">PICK-UP DATE</p>
     <p id="checkout">DROP-OFF DATE</p>
-    <input formControlName="pickupDate" [ngStyle]="{'grid-column': '1/ 1',
+    <input onkeydown="return false" id="fromDate" formControlName="pickupDate" [ngStyle]="{'grid-column': '1/ 1',
                        'border-top-right-radius': '0px',
                        'border-bottom-right-radius': '0px'}"
                         class="left-input" type="date">
-    <input formControlName="dropoffDate" style="border-left: 0px;" class="right-input" type="date">
+    <input onkeydown="return false" id="toDate" formControlName="dropoffDate" style="border-left: 0px;" class="right-input" type="date">
     <p id = "travellers">TRAVELLERS</p>
     <app-person-num-search id = "travellers-div"></app-person-num-search>
     <input class="submit" type="submit" value="SEARCH">

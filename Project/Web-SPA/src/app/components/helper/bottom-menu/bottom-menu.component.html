@@ -1,17 +1,13 @@
 <div [ngStyle]="{'visibility': scrolled ? 'visible' : 'hidden',
                 'opacity': scrolled ? '1' : '0',
-                'grid-template-columns': userId !== undefined? '33% 33% auto' : 'none'}"
+                'grid-template-columns': userId !== undefined && decoded.Roles === 'RegularUser' ? 
+                '50% 50%' : userId !== undefined && decoded.Roles !== 'RegularUser' ?
+                '100%' : 'none'}"
                  class="bottom-menu-div">
-    <div *ngIf='userId !== undefined'>
+    <div *ngIf='userId !== undefined && decoded.Roles === "RegularUser"'>
         <a href="#" routerLink='/{{userId}}/messages'>
             <img src="../../../../assets/bottom-menu/message.svg" alt="" >
             <p>Messages</p>
-        </a>
-    </div>
-    <div *ngIf='userId !== undefined'>
-        <a href="#" routerLink='/{{userId}}/profile'>
-            <img src="../../../../assets/bottom-menu/building.svg" alt="" >
-            <p>Home</p>
         </a>
     </div>
     <div *ngIf='userId !== undefined'>

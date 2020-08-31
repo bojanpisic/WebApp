@@ -11,6 +11,9 @@
             <input id="searchInput" type="text" [(ngModel)]="searchText" placeholder="Find flight by name">
         </button>
    </div>
+   <h3 *ngIf="flights.length === 0" style="color: rgb(34, 34, 34); margin-top: 40px;">
+    You have no added any flights yet.<br>Add them now!
+    </h3>
     <ul>
         <li *ngFor="let flight of (flights | findFlight:searchText); let i = index">
             <app-flight [flight]="flight" [markFlightName]="true"></app-flight>

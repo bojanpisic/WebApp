@@ -15,7 +15,17 @@
         <p>{{seat.class}}</p><p>{{seat.column}}</p><p>{{seat.row}}</p>
     </div>
     <div class="content">
-        <form *ngIf="option === 'fill'" [formGroup]="form" (ngSubmit)="confirm()">
+        <form *ngIf="option === 'fill' && pickSeatForMe" [formGroup]="form" (ngSubmit)="confirm()">
+            <p>YOUR PASSPORT:</p>
+            <input [ngClass]="{'error-input': (form.controls.passport.touched || passportInvalid) && form.controls.passport.invalid}" formControlName="passport" type="text">
+            <div class="error" *ngIf="(form.controls.passport.touched || passportInvalid) && form.controls.passport.invalid">
+                Passport is required!
+            </div>
+            <button id="confirm" type="submit" [ngClass]="{'firstButton': seat.class === 'F', 'businessButton' : seat.class === 'B', 'economyButton' : seat.class === 'E', 'basicEconomyButton' : seat.class === 'BE'}">
+                Confirm
+            </button>
+        </form>
+        <form *ngIf="option === 'fill' && !pickSeatForMe" [formGroup]="form" (ngSubmit)="confirm()">
             <p>FIRST NAME:</p>
             <input [ngClass]="{'error-input': (form.controls.firstName.touched || firstNameInvalid) && form.controls.firstName.invalid}" formControlName="firstName" type="text">
             <div class="error" *ngIf="(form.controls.firstName.touched || firstNameInvalid) && form.controls.firstName.invalid">
@@ -43,10 +53,10 @@
                 </button>
             </div>
             <ul *ngIf="person === undefined" class="my-friend">
-                <div *ngIf="user.friends.length === 0" class="no-friends">
+                <div *ngIf="friends.length === 0" class="no-friends">
                     You are not friends with anyone yet, find your friends now!
                 </div>
-                <li *ngFor="let friend of (user.friends | findFriend:searchText)">
+                <li *ngFor="let friend of (friends | findFriend:searchText)">
                     <span id="add" class="material-icons" (click)='inviteFriend(friend)'>person_add</span>
                     <div id="image" class="image"></div>
                     <span id="name">{{friend.firstName}} {{friend.lastName}}</span>
@@ -61,6 +71,6 @@
     </div>
     <div class="footer">
         <button [ngStyle]="{'visibility': (person === undefined) ? 'hidden' : 'visible' }" id="discard" (click)='onDiscard()'>Discard</button>
-        <button [ngStyle]="{'visibility': (person === undefined) ? 'visible' : 'hidden' }" id="{{(option === 'fill') ? 'invite' : 'fill'}}" (click)='onClick()'>{{btnContent}}</button>
+        <button *ngIf="!pickSeatForMe" [ngStyle]="{'visibility': (person === undefined) ? 'visible' : 'hidden' }" id="{{(option === 'fill') ? 'invite' : 'fill'}}" (click)='onClick()'>{{btnContent}}</button>
     </div>
 </div>

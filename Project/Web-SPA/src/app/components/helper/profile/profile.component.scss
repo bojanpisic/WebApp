@@ -63,6 +63,7 @@ main {
   }
 
   .container {
+    max-width: 100%;
     margin: 30px 30px 40px 30px;
     display: grid;
     grid-template-columns: auto 120px;
@@ -79,6 +80,7 @@ main {
       margin: 0;
       margin-top: 3px;
       color: rgb(80, 80, 80);
+      max-width: 195px;
     }
 
     #changePhoto {
