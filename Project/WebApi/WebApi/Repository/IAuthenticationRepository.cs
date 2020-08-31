@@ -26,11 +26,13 @@ namespace WebApi.Repository
         bool CheckPasswordMatch(string password, string confirmPassword);
         Task<IdentityResult> SendConfirmationMail(Person user, string usertype, string password = "");
         Task<IdentityResult> SendRentConfirmationMail(Person user, CarRent rent);
-        Task<IdentityResult> SendTicketConfirmationMail(Person user, Ticket ticket);
-        Task<IdentityResult> SendMailToFriend(string email, Person inviter);
+        Task<IdentityResult> SendTicketConfirmationMail(Person user, FlightReservation reservation);
+        Task<IdentityResult> SendMailToFriend(Invitation invitation);
 
         Task<IdentityResult> ConfirmEmail(Person user, string token);
         Task<Person> GetUserById(string id);
-        Task<Person> GetPersonBy(string usrNameOrEmail);
+        Task<Person> GetPersonByUserName(string username);
+        Task<Person> GetPersonByEmail(string email);
+
     }
 }

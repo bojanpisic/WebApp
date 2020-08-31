@@ -37,5 +37,13 @@ namespace WebApi.Repository
                 .ThenInclude(c => c.Rates)
                 .FirstOrDefaultAsync(r=>r.AdminId == adminId);
         }
+
+        public async Task<RentACarService> GetRacsWithRates(int racsId)
+        {
+            return await context.RentACarServices
+                .Include(r => r.Rates)
+                .ThenInclude(r => r.User)
+                .FirstOrDefaultAsync(racs => racs.RentACarServiceId == racsId);
+        }
     }
 }

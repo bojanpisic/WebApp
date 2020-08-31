@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebSockets;
+using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
 using WebApi.DTOs;
 using WebApi.Models;
@@ -442,7 +444,7 @@ namespace WebApi.Controllers
                     return NotFound("User not found");
                 }
 
-                var findBranch = await unitOfWork.BranchRepository.Get(b => b.BranchId == id);
+                var findBranch = await unitOfWork.BranchRepository.Get(b => b.BranchId == id,null ,"Cars");
                 var branch = findBranch.FirstOrDefault();
 
                 if (branch == null)
@@ -731,14 +733,14 @@ namespace WebApi.Controllers
                 }
 
                 //var res = await unitOfWork.Branchrepository.Get(b => b.BranchId == id, null, "Cars,RentACarService");
-                var res = await unitOfWork.CarRepository.Get(car => car.Branch.BranchId == id, null, "Rates");
+                var res = await unitOfWork.CarRepository.CarsOfBranch(id);
 
-                var branch = res.FirstOrDefault();
+                //var branch = res.FirstOrDefault();
 
-                if (branch == null)
-                {
-                    return BadRequest("Branch not found");
-                }
+                //if (branch == null)
+                //{
+                //    return BadRequest("Branch not found");
+                //}
 
                 //var allCars = branch.Cars;
 
@@ -756,7 +758,7 @@ namespace WebApi.Controllers
 
                     objs.Add(new
                     {
-                        branch.RentACarService.Name,
+                        item.Branch.RentACarService.Name,
                         item.CarId,
                         item.ImageUrl,
                         item.Model,
@@ -803,6 +805,16 @@ namespace WebApi.Controllers
                 if (user == null)
                 {
                     return NotFound("User not found" );
+                }
+
+                if (carDto.PricePerDay < 0)
+                {
+                    return BadRequest("Price should be greater then 0");
+                }
+
+                if (carDto.SeatsNumber < 2 || carDto.SeatsNumber > 10)
+                {
+                    return BadRequest("Seats number can be between 2 and 10");
                 }
 
                 var res = await unitOfWork.RentACarRepository.Get(racs => racs.AdminId == userId);
@@ -877,6 +889,11 @@ namespace WebApi.Controllers
                     return NotFound("User not found");
                 }
 
+                if (carDto.PricePerDay < 0)
+                {
+                    return BadRequest("Price should be greater then 0");
+                }
+
                 var branch = await unitOfWork.BranchRepository.GetByID(carDto.BranchId);
 
                 if (branch == null)
@@ -947,6 +964,11 @@ namespace WebApi.Controllers
                     return NotFound("User not found");
                 }
 
+                if (dto.PricePerDay < 0)
+                {
+                    return BadRequest("Price should be greater then 0");
+                }
+
                 var cars = await unitOfWork.CarRepository.Get(car => car.CarId == id, null, "Rents");
                 var car = cars.FirstOrDefault();
 
@@ -971,6 +993,10 @@ namespace WebApi.Controllers
                 {
                     unitOfWork.CarRepository.Update(car);
                     await unitOfWork.Commit();
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    return BadRequest("Something is changed. Cant change");
                 }
                 catch (Exception)
                 {
@@ -1035,6 +1061,10 @@ namespace WebApi.Controllers
                 {
                     unitOfWork.CarRepository.Update(car);
                     await unitOfWork.Commit();
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    return BadRequest("Something is changed. Cant change");
                 }
                 catch (Exception)
                 {
@@ -1174,6 +1204,10 @@ namespace WebApi.Controllers
                     unitOfWork.CarRepository.Delete(car);
                     await unitOfWork.Commit();
                 }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    return BadRequest("Something is changed. Cant delete");
+                }
                 catch (Exception)
                 {
                     return StatusCode(500, "Failed to delete car");
@@ -1218,7 +1252,12 @@ namespace WebApi.Controllers
                     return NotFound("User not found");
                 }
 
-                var ress = await unitOfWork.CarRepository.Get(c => c.CarId == id, null , "SpecialOffers");
+                if (specialOfferDto.NewPrice < 0)
+                {
+                    return BadRequest("Price should be greater then 0");
+                }
+
+                var ress = await unitOfWork.CarRepository.Get(c => c.CarId == id, null , "SpecialOffers,Rents");
                 var car = ress.FirstOrDefault();
 
                 if (car == null)
@@ -1232,19 +1271,35 @@ namespace WebApi.Controllers
                 var specialFromDate = Convert.ToDateTime(specialOfferDto.FromDate);
                 var specialToDate = Convert.ToDateTime(specialOfferDto.ToDate);
 
+                if (specialFromDate < DateTime.Now.Date)
+                {
+                    return BadRequest("Date is in past");
+                }
+
                 if (specialFromDate > specialToDate)
                 {
                     return BadRequest("From date should be lower then to date");
                 }
 
-
                 foreach (var item in oldSpecOffers)
                 {
-                    if (item.FromDate >= specialFromDate && item.ToDate <= specialFromDate
-                        || item.FromDate >= specialToDate && item.ToDate <= specialToDate
-                        || item.FromDate <= specialFromDate && item.ToDate >= specialToDate)
+                    if (item.FromDate <= specialFromDate && item.ToDate >= specialToDate
+                        || item.FromDate >= specialFromDate && item.ToDate <= specialToDate
+                        || item.FromDate <= specialFromDate && item.ToDate >= specialFromDate
+                        || item.FromDate <= specialToDate && item.ToDate >= specialToDate)
                     {
                         return BadRequest("Dates are unavailable. Car has another special offers in that time.");
+                    }
+                }
+
+                foreach (var item in car.Rents)
+                {
+                    if (item.TakeOverDate <= specialFromDate && item.ReturnDate >= specialToDate
+                        || item.TakeOverDate >= specialFromDate && item.ReturnDate <= specialToDate
+                        || item.TakeOverDate <= specialFromDate && item.ReturnDate >= specialFromDate
+                        || item.TakeOverDate <= specialToDate && item.ReturnDate >= specialToDate)
+                    {
+                        return BadRequest("Dates are unavailable. Car has reservation in that time.");
                     }
                 }
 
@@ -1254,12 +1309,13 @@ namespace WebApi.Controllers
                     Car = car,
                     NewPrice = specialOfferDto.NewPrice,
                     FromDate = specialFromDate,
-                    ToDate = specialToDate
+                    ToDate = specialToDate,
+                    OldPrice = car.PricePerDay * (float)(specialToDate - specialFromDate).TotalDays
                 };
 
-                var oldPrice = Math.Abs(specialFromDate.Day - specialToDate.Day + 1) * car.PricePerDay;
+                //var oldPrice = Math.Abs(specialFromDate.Day - specialToDate.Day + 1) * car.PricePerDay;
 
-                specialOffer.OldPrice = oldPrice;
+                //specialOffer.OldPrice = oldPrice;
 
                 car.SpecialOffers.Add(specialOffer);
 
@@ -1330,6 +1386,13 @@ namespace WebApi.Controllers
 
                 foreach (var item in specOffers)
                 {
+                    var sum = 0.0;
+                    foreach (var r in item.Car.Rates)
+                    {
+                        sum += r.Rate;
+                    }
+
+                    float rate = sum == 0 ? 0 : (float)sum / item.Car.Rates.ToArray().Length;
                     objs.Add(new
                     {
                         racs.Name,
@@ -1343,7 +1406,8 @@ namespace WebApi.Controllers
                         item.Car.Model,
                         item.Car.SeatsNumber,
                         item.Car.Type,
-                        item.Car.Year
+                        item.Car.Year,
+                        rate = rate
                     });
                 }
 
@@ -1401,7 +1465,7 @@ namespace WebApi.Controllers
 
                 foreach (var item in cars)
                 {
-                    if (item.Rents.FirstOrDefault(rent => rent.TakeOverDate == day) != null)
+                    if (item.Rents.FirstOrDefault(rent => rent.RentDate == day) != null)
                     {
                         rentNum++;
                     }
@@ -1480,7 +1544,7 @@ namespace WebApi.Controllers
 
                 foreach (var item in cars)
                 {
-                    if (( r = item.Rents.FirstOrDefault(rent => daysOfWeek.Contains(rent.TakeOverDate))) != null)
+                    if (( r = item.Rents.FirstOrDefault(rent => daysOfWeek.Contains(rent.RentDate))) != null)
                     {
                         var s = stats.Find(s => s.Item1 == r.TakeOverDate);
                         int index = stats.IndexOf(s);
@@ -1565,7 +1629,7 @@ namespace WebApi.Controllers
 
                 foreach (var item in cars)
                 {
-                    if ((r = item.Rents.FirstOrDefault(rent => daysOfMonth.Contains(rent.TakeOverDate))) != null)
+                    if ((r = item.Rents.FirstOrDefault(rent => daysOfMonth.Contains(rent.RentDate))) != null)
                     {
                         var s = stats.Find(s => s.Item1 == r.TakeOverDate);
                         int index = stats.IndexOf(s);
@@ -1581,6 +1645,262 @@ namespace WebApi.Controllers
                 return StatusCode(500, "Failed to get day state");
             }
         }
+
+
+        [HttpGet]
+        [Route("get-income-week")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> GetWeekIncome()
+        {
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("RentACarServiceAdmin"))
+                {
+                    return Unauthorized();
+                }
+
+                var user = await unitOfWork.UserManager.FindByIdAsync(userId);
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                var queryString = Request.Query;
+                var week = queryString["week"].ToString().Split("-W")[1];
+                var year = queryString["week"].ToString().Split("-W")[0];
+
+                int weekNum = 0;
+                int yearNum = 0;
+
+                if (!Int32.TryParse(week, out weekNum))
+                {
+                    return BadRequest();
+                }
+                if (!Int32.TryParse(year, out yearNum))
+                {
+                    return BadRequest();
+                }
+
+                List<DateTime> daysOfWeek = new List<DateTime>();
+
+                var lastDay = new DateTime(yearNum, 1, 1).AddDays((weekNum) * 7);
+                daysOfWeek.Add(lastDay);
+
+                for (int i = 1; i < 7; i++)
+                {
+                    daysOfWeek.Add(lastDay.AddDays(-i));
+                }
+
+                var cars = await unitOfWork.CarRepository.Get(car =>
+                    car.RentACarService == null ?
+                    car.Branch.RentACarService.AdminId == userId : car.RentACarService.AdminId == userId,
+                    null, "Rents");
+
+                List<Tuple<DateTime, float>> income = new List<Tuple<DateTime, float>>();
+
+                foreach (var day in daysOfWeek)
+                {
+                    income.Add(new Tuple<DateTime, float>(day, 0));
+                }
+
+                CarRent r;
+
+                foreach (var item in cars)
+                {
+                    if ((r = item.Rents.FirstOrDefault(rent => daysOfWeek.Contains(rent.RentDate))) != null)
+                    {
+                        var s = income.Find(s => s.Item1 == r.RentDate);
+                        int index = income.IndexOf(s);
+
+                        income[index] = new Tuple<DateTime, float>(s.Item1, s.Item2 + r.TotalPrice);
+                    }
+                }
+
+                return Ok(income);
+
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to get day state");
+            }
+        }
+
+        [HttpGet]
+        [Route("get-income-month")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> GetMonthIncome()
+        {
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("RentACarServiceAdmin"))
+                {
+                    return Unauthorized();
+                }
+
+                var user = await unitOfWork.UserManager.FindByIdAsync(userId);
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                var queryString = Request.Query;
+                var month = queryString["month"].ToString().Split("-")[1];
+                var year = queryString["month"].ToString().Split("-")[0];
+
+                int monthNum = 0;
+                int yearNum = 0;
+
+                if (!Int32.TryParse(month, out monthNum))
+                {
+                    return BadRequest();
+                }
+                if (!Int32.TryParse(year, out yearNum))
+                {
+                    return BadRequest();
+                }
+
+                int numOfDays = DateTime.DaysInMonth(yearNum, monthNum);
+                DateTime firstDayOfMonth = new DateTime(yearNum, monthNum, 1);
+
+
+                List<DateTime> daysOfMonth = new List<DateTime>();
+
+                daysOfMonth.Add(firstDayOfMonth);
+
+                for (int i = 1; i < numOfDays; i++)
+                {
+                    daysOfMonth.Add(firstDayOfMonth.AddDays(i));
+                }
+
+                var cars = await unitOfWork.CarRepository.Get(car =>
+                    car.RentACarService == null ?
+                    car.Branch.RentACarService.AdminId == userId : car.RentACarService.AdminId == userId,
+                    null, "Rents");
+
+                List<Tuple<DateTime, float>> income = new List<Tuple<DateTime, float>>();
+
+                foreach (var day in daysOfMonth)
+                {
+                    income.Add(new Tuple<DateTime, float>(day, 0));
+                }
+
+                CarRent r;
+
+                foreach (var item in cars)
+                {
+                    if ((r = item.Rents.FirstOrDefault(rent => daysOfMonth.Contains(rent.RentDate))) != null)
+                    {
+                        var s = income.Find(s => s.Item1 == r.TakeOverDate);
+                        int index = income.IndexOf(s);
+
+                        income[index] = new Tuple<DateTime, float>(s.Item1, s.Item2 + r.TotalPrice);
+                    }
+                }
+
+                return Ok(income);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to get day state");
+            }
+        }
+
+        [HttpGet]
+        [Route("get-income-year")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> GetYearIncome()
+        {
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("RentACarServiceAdmin"))
+                {
+                    return Unauthorized();
+                }
+
+                var user = await unitOfWork.UserManager.FindByIdAsync(userId);
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                var queryString = Request.Query;
+                var year = queryString["year"].ToString();
+
+                int yearNum = 0;
+
+                if (!Int32.TryParse(year, out yearNum))
+                {
+                    return BadRequest();
+                }
+                if (yearNum < 1)
+                {
+                    return BadRequest();
+                }
+
+                var retVal = new List<Tuple<string, float>>();
+
+                var cars = await unitOfWork.CarRepository.Get(car =>
+                                                            car.RentACarService == null ?
+                                                            car.Branch.RentACarService.AdminId == userId : car.RentACarService.AdminId == userId,
+                                                            null, "Rents");
+
+                for (int m = 1; m < 13; m++)
+                {
+
+                    int numOfDays = DateTime.DaysInMonth(yearNum, m);
+                    DateTime firstDayOfMonth = new DateTime(yearNum, m, 1);
+
+
+                    List<DateTime> daysOfMonth = new List<DateTime>();
+
+                    daysOfMonth.Add(firstDayOfMonth);
+
+                    for (int i = 1; i < numOfDays; i++)
+                    {
+                        daysOfMonth.Add(firstDayOfMonth.AddDays(i));
+                    }
+
+                    float monthIncome = 0;
+
+                    CarRent r;
+
+                    foreach (var item in cars)
+                    {
+                        if ((r = item.Rents.FirstOrDefault(rent => daysOfMonth.Contains(rent.RentDate))) != null)
+                        {
+                            monthIncome += r.TotalPrice;
+                        }
+                    }
+
+                    string monthName = new DateTime(yearNum, m, 1)
+                         .ToString("MMM", CultureInfo.InvariantCulture);
+
+                    retVal.Add(new Tuple<string, float>(monthName, monthIncome));
+                }
+
+                return Ok(retVal);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to get day state");
+            }
+        }
+
         #endregion
     }
 }

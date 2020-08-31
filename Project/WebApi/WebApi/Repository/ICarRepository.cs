@@ -9,5 +9,6 @@ namespace WebApi.Repository
     public interface ICarRepository: IGenericRepository<Car>
     {
         Task<IEnumerable<Car>> AllCars();
+        Task<IEnumerable<Car>> CarsOfBranch(int id);
     }
 }

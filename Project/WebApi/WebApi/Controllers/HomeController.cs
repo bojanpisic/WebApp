@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -30,23 +31,58 @@ namespace WebApi.Controllers
         {
             var racs = await unitOfWork.RentACarRepository.Get(null, null, "Rates,Address,Branches");
 
-            List<Tuple<float, RentACarService>> newList = new List<Tuple<float, RentACarService>>();
+            var tupleList = new List<Tuple<float, object>>();
+
             float sum = 0;
 
             foreach (var item in racs)
             {
-                sum = 0;
-                foreach (var rate in item.Rates)
+                var branches = new List<object>();
+                foreach (var d in item.Branches)
                 {
-                    sum += rate.Rate;
+                    branches.Add(new
+                    {
+                        City = d.City,
+                        State = d.State
+                    });
                 }
 
-                newList.Add(new Tuple<float, RentACarService>(sum == 0 ? 0 : sum /item.Rates.Count, item));
+                sum = 0;
+
+                foreach (var r in item.Rates)
+                {
+                    sum += r.Rate;
+                }
+
+                float rate = sum == 0 ? 0 : (float)sum / item.Rates.ToArray().Length;
+                
+                var obj  = new
+                {
+                    Name = item.Name,
+                    Logo = item.LogoUrl,
+                    City = item.Address.City,
+                    State = item.Address.State,
+                    //Lon = item.Address.Lon,
+                    //Lat = item.Address.Lat,
+                    rate = rate,
+                    About = item.About,
+                    Id = item.RentACarServiceId,
+                    Branches = branches,
+                };
+
+                tupleList.Add(new Tuple<float, object>(obj.rate, obj));
             }
 
-            var tuples = newList.OrderBy(n => n.Item1).Take(5);
+            var ordredList = tupleList.OrderByDescending(x => x.Item1).Take(5);
 
-            return Ok(tuples);
+            var retlist = new List<object>();
+
+            foreach (var item in ordredList)
+            {
+                retlist.Add(item.Item2);
+            }
+
+            return Ok(retlist);
         }
         [HttpGet]
         [Route("rent-car-services")]
@@ -128,11 +164,10 @@ namespace WebApi.Controllers
                         State = item.Address.State,
                         //Lon = item.Address.Lon,
                         //Lat = item.Address.Lat,
-                        Rate = rate,
+                        rate = rate,
                         About = item.About,
                         Id = item.RentACarServiceId,
                         Branches = branches,
-                        rate = rate
                     });
                 }
 
@@ -199,7 +234,6 @@ namespace WebApi.Controllers
         {
             try
             {
-
                 var queryString = Request.Query;
                 var fromDate = queryString["dep"].ToString();
                 var toDate = queryString["ret"].ToString();
@@ -209,6 +243,10 @@ namespace WebApi.Controllers
                 if (!String.IsNullOrEmpty(fromDate))
                 {
                     DateFrom = Convert.ToDateTime(fromDate);
+                }
+                if (DateFrom < DateTime.Now.Date)
+                {
+                    return BadRequest("Selected date is in past. Choose another date.");
                 }
                 if (!String.IsNullOrEmpty(toDate))
                 {
@@ -228,22 +266,27 @@ namespace WebApi.Controllers
                 float priceFrom = 0;
                 float priceTo = 3000;
 
-                if (String.IsNullOrEmpty(queryString["minprice"].ToString()))
+                if (!String.IsNullOrEmpty(queryString["minprice"].ToString()))
                 {
                     float.TryParse(queryString["minprice"].ToString(), out priceFrom);
                 }
 
-                if (String.IsNullOrEmpty(queryString["maxprice"].ToString()))
+                if (!String.IsNullOrEmpty(queryString["maxprice"].ToString()))
                 {
                     float.TryParse(queryString["maxprice"].ToString(), out priceTo);
                 }
+                int num = 0;
 
                 List<int> ids = new List<int>();
                 if (!String.IsNullOrEmpty(queryString["racs"].ToString()))
                 {
-                    foreach (var item in queryString["racs"].ToString().Split(','))
+                    foreach (var item in queryString["racs"].ToString().Trim().Split(','))
                     {
-                        ids.Add(int.Parse(item));
+                        if (!Int32.TryParse(item, out num))
+                        {
+                            return BadRequest("Wrong parameter");
+                        }
+                        ids.Add(num);
                     }
                 }
 
@@ -306,7 +349,7 @@ namespace WebApi.Controllers
                         address.State,
                         logo,
                         name,
-                        rate = rate
+                        rate = rate,
                     });
                 }
 
@@ -347,6 +390,7 @@ namespace WebApi.Controllers
                     car.Brand,
                     Name = car.Branch == null ? car.RentACarService.Name : car.Branch.RentACarService.Name,
                     Logo = car.Branch == null ? car.RentACarService.LogoUrl : car.Branch.RentACarService.LogoUrl,
+                    rate = rate
                 };
 
                 return Ok(obj);
@@ -369,6 +413,19 @@ namespace WebApi.Controllers
 
                 foreach (var item in specOffers)
                 {
+                    if (item.FromDate < DateTime.Now.Date)
+                    {
+                        continue;
+                    }
+
+                    var sum = 0.0;
+                    foreach (var r in item.Car.Rates)
+                    {
+                        sum += r.Rate;
+                    }
+
+                    float rate = sum == 0 ? 0 : (float)sum / item.Car.Rates.ToArray().Length;
+
                     objs.Add(new
                     {
                         Name = item.Car.Branch == null ? item.Car.RentACarService.Name : item.Car.Branch.RentACarService.Name,
@@ -383,7 +440,9 @@ namespace WebApi.Controllers
                         item.Car.Model,
                         item.Car.SeatsNumber,
                         item.Car.Type,
-                        item.Car.Year
+                        item.Car.Year,
+                        Id = item.CarSpecialOfferId,
+                        rate = rate
                     });
                 }
 
@@ -395,11 +454,64 @@ namespace WebApi.Controllers
                 return StatusCode(500, "Failed to return special offers");
             }
         }
+        [HttpGet]
+        [Route("all-racs-specialoffers")]
+        public async Task<IActionResult> AllRacsSpecialOffers(int id)
+        {
+            try
+            {
+                var specOffers = await unitOfWork.RACSSpecialOfferRepository.GetSpecialOffersOfAllRacs();
 
+                List<object> objs = new List<object>();
+
+                foreach (var item in specOffers)
+                {
+                    if (item.FromDate < DateTime.Now.Date || item.IsReserved)
+                    {
+                        continue;
+                    }
+
+                    var sum = 0.0;
+                    foreach (var r in item.Car.Rates)
+                    {
+                        sum += r.Rate;
+                    }
+
+                    float rate = sum == 0 ? 0 : (float)sum / item.Car.Rates.ToArray().Length;
+
+                    objs.Add(new
+                    {
+                        Name = item.Car.Branch == null ? item.Car.RentACarService.Name : item.Car.Branch.RentACarService.Name,
+                        Logo = item.Car.Branch == null ? item.Car.RentACarService.LogoUrl : item.Car.Branch.RentACarService.LogoUrl,
+                        item.NewPrice,
+                        item.OldPrice,
+                        FromDate = item.FromDate.Date,
+                        ToDate = item.ToDate.Date,
+                        item.Car.Brand,
+                        item.Car.CarId,
+                        item.Car.ImageUrl,
+                        item.Car.Model,
+                        item.Car.SeatsNumber,
+                        item.Car.Type,
+                        item.Car.Year,
+                        Id = item.CarSpecialOfferId,
+                        rate = rate
+                    });
+                }
+
+                return Ok(objs);
+
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to return special offers");
+            }
+        }
         private bool FilterPass(Car item, List<int> ids, float priceFrom, float priceTo, string fromCity,
             string toCity, string carType, DateTime from, DateTime to, int seatFrom, int seatTo)
         {
-            int numOfDays = Math.Abs(from.Day - to.Day);
+            //int numOfDays = Math.Abs(from.Day - to.Day);
+            int numOfDays = (int)(to - from).TotalDays;
             if (ids.Count > 0)
             {
                 if (item.RentACarService != null)
@@ -438,14 +550,28 @@ namespace WebApi.Controllers
                 racs = item.Branch.RentACarService;
             }
 
-
-
-            foreach (var offer in item.SpecialOffers)
+            foreach (var res in item.Rents)
             {
-                if (offer.FromDate.Date >= from && offer.FromDate <= to || offer.ToDate.Date >= from && offer.ToDate <= to)
+                if (from >= res.TakeOverDate && from <= res.ReturnDate
+                    || to >= res.TakeOverDate && to <= res.ReturnDate
+                    || from <= res.TakeOverDate && to >= res.ReturnDate)
                 {
                     return false;
                 }
+            }
+
+            foreach (var offer in item.SpecialOffers)
+            {
+                if (from >= offer.FromDate && from <= offer.ToDate 
+                    || to >= offer.FromDate && to <= offer.ToDate
+                    || from <= offer.FromDate && to >= offer.ToDate)
+                {
+                    return false;
+                }
+                //if (offer.FromDate.Date >= from && offer.FromDate <= to || offer.ToDate.Date >= from && offer.ToDate <= to)
+                //{
+                //    return false;
+                //}
             }
 
             if (item.SeatsNumber < seatFrom || item.SeatsNumber > seatTo)
@@ -497,7 +623,6 @@ namespace WebApi.Controllers
         {
             var airlines = await unitOfWork.AirlineRepository.GetAllAirlines();
 
-            var airlineList = new List<object>();
             var tupleList = new List<Tuple<float, object>>();
 
             float sum = 0;
@@ -535,10 +660,9 @@ namespace WebApi.Controllers
                     Destinations = allDest
                 };
                 tupleList.Add(new Tuple<float, object>(airlineObj.rate, airlineObj));
-                airlineList.Add(airlineObj);
             }
 
-            var ordredList = tupleList.OrderBy(x => x.Item1).Take(5);
+            var ordredList = tupleList.OrderByDescending(x => x.Item1).Take(5);
 
             var retlist = new List<object>();
 
@@ -722,14 +846,21 @@ namespace WebApi.Controllers
                 List<object> objs = new List<object>();
                 List<object> flights = new List<object>();
                 List<object> fstops = new List<object>();
-
+                bool passed = true;
 
                 foreach (var item in offers)
                 {
+
                     flights = new List<object>();
 
                     foreach (var seat in item.Seats)
                     {
+                        if (seat.Flight.TakeOffDateTime < DateTime.Now.Date)
+                        {
+                            passed = false;
+                            continue;
+                        }
+
                         fstops = new List<object>();
 
                         foreach (var stop in seat.Flight.Stops)
@@ -739,6 +870,7 @@ namespace WebApi.Controllers
                                 city = stop.Destination.City
                             });
                         }
+
 
                         flights.Add(new
                         {
@@ -762,8 +894,10 @@ namespace WebApi.Controllers
                         }
                         );
                     }
-
-                    objs.Add(new { airline.LogoUrl, airline.Name, item.NewPrice, item.OldPrice, item.SpecialOfferId, flights });
+                    if (passed)
+                    {
+                        objs.Add(new { airline.LogoUrl, airline.Name, item.NewPrice, item.OldPrice, item.SpecialOfferId, flights });
+                    }
                 }
 
                 return Ok(objs);
@@ -857,6 +991,10 @@ namespace WebApi.Controllers
                 {
                     foreach (var flight in flights)
                     {
+                        if (flight.TakeOffDateTime < DateTime.Now)
+                        {
+                            continue;
+                        }
 
                         if (!(await FilterFromPassed(flight, to, from, ids, minDuration, maxDuration, departures, minPrice, maxPrice)))
                         {
@@ -883,10 +1021,11 @@ namespace WebApi.Controllers
                             landingDate = flight.LandingDateTime.Date,
                             airlineLogo = flight.Airline.LogoUrl,
                             airlineName = flight.Airline.Name,
+                            airlineId = flight.Airline.AirlineId,
                             from = flight.From.City,
                             to = flight.To.City,
                             takeOffTime = flight.TakeOffDateTime.TimeOfDay,
-                            landingTime = flight.TakeOffDateTime.TimeOfDay,
+                            landingTime = flight.LandingDateTime.TimeOfDay,
                             flightTime = flight.TripTime,
                             flightLength = flight.tripLength,
                             flightNumber = flight.FlightNumber,
@@ -903,7 +1042,10 @@ namespace WebApi.Controllers
                 {
                     foreach (var flight in flights)
                     {
-
+                        if (flight.TakeOffDateTime < DateTime.Now.Date)
+                        {
+                            continue;
+                        }
                         if (!(await FilterFromPassed(flight, to, from, ids, minDuration, maxDuration, departures, minPrice, maxPrice)))
                         {
                             continue;
@@ -929,10 +1071,11 @@ namespace WebApi.Controllers
                             landingDate = flight.LandingDateTime.Date,
                             airlineLogo = flight.Airline.LogoUrl,
                             airlineName = flight.Airline.Name,
+                            airlineId = flight.Airline.AirlineId,
                             from = flight.From.City,
                             to = flight.To.City,
                             takeOffTime = flight.TakeOffDateTime.TimeOfDay,
-                            landingTime = flight.TakeOffDateTime.TimeOfDay,
+                            landingTime = flight.LandingDateTime.TimeOfDay,
                             flightTime = flight.TripTime,
                             flightLength = flight.tripLength,
                             flightNumber = flight.FlightNumber,
@@ -943,6 +1086,10 @@ namespace WebApi.Controllers
 
                         foreach (var returnFlights in flights)
                         {
+                            if (returnFlights.TakeOffDateTime < DateTime.Now.Date)
+                            {
+                                continue;
+                            }
                             if (!(await FilterReturnPassed(flight, from, to, ids, minDuration, maxDuration, ret, minPrice, maxPrice)))
                             {
                                 continue;
@@ -968,10 +1115,11 @@ namespace WebApi.Controllers
                                 landingDate = flight.LandingDateTime.Date,
                                 airlineLogo = flight.Airline.LogoUrl,
                                 airlineName = flight.Airline.Name,
+                                airlineId = returnFlights.Airline.AirlineId,
                                 from = flight.From.City,
                                 to = flight.To.City,
                                 takeOffTime = flight.TakeOffDateTime.TimeOfDay,
-                                landingTime = flight.TakeOffDateTime.TimeOfDay,
+                                landingTime = flight.LandingDateTime.TimeOfDay,
                                 flightTime = flight.TripTime,
                                 flightLength = flight.tripLength,
                                 flightNumber = flight.FlightNumber,
@@ -995,6 +1143,10 @@ namespace WebApi.Controllers
 
                     foreach (var flight in flights)
                     {
+                        if (flight.TakeOffDateTime < DateTime.Now.Date)
+                        {
+                            continue;
+                        }
                         List<string> tempFrom = fromList;
                         List<string> tempTo = toList;
                         List<DateTime> tempDepartures = departures;
@@ -1027,10 +1179,11 @@ namespace WebApi.Controllers
                             landingDate = flight.LandingDateTime.Date,
                             airlineLogo = flight.Airline.LogoUrl,
                             airlineName = flight.Airline.Name,
+                            airlineId = flight.Airline.AirlineId,
                             from = flight.From.City,
                             to = flight.To.City,
                             takeOffTime = flight.TakeOffDateTime.TimeOfDay,
-                            landingTime = flight.TakeOffDateTime.TimeOfDay,
+                            landingTime = flight.LandingDateTime.TimeOfDay,
                             flightTime = flight.TripTime,
                             flightLength = flight.tripLength,
                             flightNumber = flight.FlightNumber,
@@ -1045,6 +1198,10 @@ namespace WebApi.Controllers
 
                         foreach (var returnFlights in flights)
                         {
+                            if (returnFlights.TakeOffDateTime < DateTime.Now.Date)
+                            {
+                                continue;
+                            }
                             if (tempFrom.Count == 0)
                             {
                                 break;
@@ -1081,10 +1238,11 @@ namespace WebApi.Controllers
                                 landingDate = returnFlights.LandingDateTime.Date,
                                 airlineLogo = returnFlights.Airline.LogoUrl,
                                 airlineName = returnFlights.Airline.Name,
+                                airlineId = returnFlights.Airline.AirlineId,
                                 from = returnFlights.From.City,
                                 to = returnFlights.To.City,
                                 takeOffTime = returnFlights.TakeOffDateTime.TimeOfDay,
-                                landingTime = returnFlights.TakeOffDateTime.TimeOfDay,
+                                landingTime = returnFlights.LandingDateTime.TimeOfDay,
                                 flightTime = returnFlights.TripTime,
                                 flightLength = returnFlights.tripLength,
                                 flightNumber = returnFlights.FlightNumber,
@@ -1114,32 +1272,108 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        [Route("flight-seats/{id}")]
-        public async Task<IActionResult> FlightSeats(int id)
+        [Route("flight-seats")]
+        public async Task<IActionResult> FlightSeats()
         {
             try
             {
-                var res = await unitOfWork.FlightRepository.Get(f => f.FlightId == id, null, "Seats");
-                var flight = res.FirstOrDefault();
+                var queryString = Request.Query;
+                var idsOfFlights = queryString["ids"].ToList();
 
-                if (flight == null)
+                //var flights = await unitOfWork.FlightRepository.GetAllFlightsWithAllProp();
+                var flights = await unitOfWork.FlightRepository.GetFlights(idsOfFlights);
+                //var flight = res.FirstOrDefault();
+
+                if (flights == null || flights.ToArray().Length == 0)
                 {
-                    return NotFound("Flight not found");
+                    return NotFound("Flights not found");
                 }
 
-                //var seats = await unitOfWork.AirlineRepository.GetAllSeats(flight);
-
+                var retVal = new List<object>();
                 List<object> obj = new List<object>();
-                foreach (var item in flight.Seats)
+                var stops = new List<object>();
+
+                foreach (var flight in flights)
                 {
-                    obj.Add(new { item.Column, item.Row, item.Flight.FlightId, item.Class, item.SeatId, item.Price });
+                    stops = new List<object>();
+
+                    foreach (var item in flight.Stops)
+                    {
+                        stops.Add(new
+                        {
+                            City = item.Destination.City,
+                            State = item.Destination.State,
+                        });
+                    }
+                    obj = new List<object>();
+                    foreach (var item in flight.Seats)
+                    {
+                        var invite = (await unitOfWork.TripInvitationRepository.Get(t => t.Seat.SeatId == item.SeatId, null, "Sender,Receiver")).FirstOrDefault();
+                        if (invite != null)
+                        {
+                            if (invite.Expires <= DateTime.Now)
+                            {
+                                invite.Receiver.TripRequests.Remove(invite);
+                                invite.Sender.TripInvitations.Remove(invite);
+
+                                invite.Seat.Available = true;
+                                invite.Seat.Reserved = false;
+
+                                try
+                                {
+                                    unitOfWork.UserRepository.Update(invite.Receiver);
+                                    unitOfWork.UserRepository.Update(invite.Sender);
+                                    unitOfWork.SeatRepository.Update(invite.Seat);
+
+                                    unitOfWork.TripInvitationRepository.Delete(invite);
+
+                                    await unitOfWork.Commit();
+
+                                    item.Available = true;
+                                }
+                                catch (Exception)
+                                {
+
+                                }
+                            }
+                        }
+
+                        obj.Add(new
+                        {
+                            item.Column,
+                            item.Row,
+                            item.Flight.FlightId,
+                            item.Class,
+                            item.SeatId,
+                            item.Price,
+                            available = item.Available
+                        });
+                    }
+
+                    retVal.Add(new
+                    {
+                        seats = obj.ToArray(),
+                        takeOffDate = flight.TakeOffDateTime.Date,
+                        landingDate = flight.LandingDateTime.Date,
+                        from = flight.From.City,
+                        to = flight.To.City,
+                        takeOffTime = flight.TakeOffDateTime.TimeOfDay,
+                        landingTime = flight.LandingDateTime.TimeOfDay,
+                        flightTime = flight.TripTime,
+                        flightLength = flight.tripLength,
+                        flightNumber = flight.FlightNumber,
+                        flightId = flight.FlightId,
+                        stops = stops,
+                        airlineLogo = flight.Airline.LogoUrl,
+                        airlineName = flight.Airline.Name
+                    });
                 }
 
-                return Ok(obj);
+                return Ok(retVal);
             }
             catch (Exception)
             {
-                return StatusCode(500, "Failed to return flight seats");
+                return StatusCode(500, "Failed to return flight and seats");
             }
         }
 
@@ -1155,13 +1389,24 @@ namespace WebApi.Controllers
                 List<object> flights = new List<object>();
                 List<object> fstops = new List<object>();
 
-
+                bool passed = true;
                 foreach (var item in specOffers)
                 {
+                    if (item.IsReserved)
+                    {
+                        continue;
+                    }
                     flights = new List<object>();
+                    passed = true;
 
                     foreach (var seat in item.Seats)
                     {
+                        if (seat.Flight.TakeOffDateTime <= DateTime.Now)
+                        {
+                            passed = false;
+                            break;
+                        }
+
                         fstops = new List<object>();
 
                         foreach (var stop in seat.Flight.Stops)
@@ -1196,8 +1441,9 @@ namespace WebApi.Controllers
                         }
                         );
                     }
-
-                    objs.Add(
+                    if (passed)
+                    {
+                        objs.Add(
                         new
                         {
                             item.Airline.Name,
@@ -1207,6 +1453,7 @@ namespace WebApi.Controllers
                             item.SpecialOfferId,
                             flights
                         });
+                    }
                 }
 
                 return Ok(objs);
@@ -1361,19 +1608,27 @@ namespace WebApi.Controllers
             {
                 return false;
             }
-            if (minPrice > flight.Seats.OrderBy(s => s.Price).FirstOrDefault().Price || flight.Seats.OrderBy(s => s.Price).FirstOrDefault().Price > maxPrice)
+            if (minPrice > flight.Seats.OrderBy(s => s.Price).FirstOrDefault().Price || flight.Seats.OrderByDescending(s => s.Price).FirstOrDefault().Price > maxPrice)
             {
                 return false;
             }
             if (!String.IsNullOrEmpty(minDuration) || !String.IsNullOrEmpty(maxDuration))
             {
-                if (int.Parse(flight.TripTime.Split('h', ' ', 'm')[0]) < int.Parse(minDuration.Split('h', ' ', 'm')[0])
-                    || int.Parse(flight.TripTime.Split('h', ' ', 'm')[2]) < int.Parse(minDuration.Split('h', ' ', 'm')[2])
-                    || int.Parse(flight.TripTime.Split('h', ' ', 'm')[0]) > int.Parse(maxDuration.Split('h', ' ', 'm')[0])
-                    || int.Parse(flight.TripTime.Split('h', ' ', 'm')[2]) > int.Parse(maxDuration.Split('h', ' ', 'm')[2]))
+                var flightTime = new DateTime(1,1,1, int.Parse(flight.TripTime.Split('h', ' ', 'm')[0]), int.Parse(flight.TripTime.Split('h', ' ', 'm')[2]), 0);
+                var fliterTimeMin = new DateTime(1, 1, 1, int.Parse(minDuration.Split('h', ' ', 'm')[0]), int.Parse(minDuration.Split('h', ' ', 'm')[2]), 0);
+                var fliterTimeMax = new DateTime(1, 1, 1, int.Parse(maxDuration.Split('h', ' ', 'm')[0]), int.Parse(maxDuration.Split('h', ' ', 'm')[2]), 0);
+
+                if (flightTime > fliterTimeMax || flightTime < fliterTimeMin)
                 {
                     return false;
                 }
+                //if (int.Parse(flight.TripTime.Split('h', ' ', 'm')[0]) < int.Parse(minDuration.Split('h', ' ', 'm')[0])
+                //    || int.Parse(flight.TripTime.Split('h', ' ', 'm')[2]) < int.Parse(minDuration.Split('h', ' ', 'm')[2])
+                //    || int.Parse(flight.TripTime.Split('h', ' ', 'm')[0]) > int.Parse(maxDuration.Split('h', ' ', 'm')[0])
+                //    || int.Parse(flight.TripTime.Split('h', ' ', 'm')[2]) > int.Parse(maxDuration.Split('h', ' ', 'm')[2]))
+                //{
+                //    return false;
+                //}
             }
             return true;
         }

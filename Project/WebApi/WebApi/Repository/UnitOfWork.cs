@@ -34,7 +34,10 @@ namespace WebApi.Repository
         private IBranchRepository branchRepository;
         private IRACSSpecialOffer racsSpecialOfferRepository;
         private ICarRentRepository carRentRepository;
-
+        private IBonusRepository bonusRepository;
+        private IFlightReservationRepository flightReservationRepository;
+        private ITicketRepository ticketRepository;
+        private ITripInvitationRepository tripInvitationRepository;
         public UnitOfWork(DataContext _context, RoleManager<IdentityRole> _roleManager, 
             UserManager<Person> _userManager, SignInManager<Person> _signInManager)
         {
@@ -66,6 +69,34 @@ namespace WebApi.Repository
             get
             {
                 return flightRepository = flightRepository ?? new FlightRepository(this.context);
+            }
+        }
+        public ITripInvitationRepository TripInvitationRepository
+        {
+            get
+            {
+                return tripInvitationRepository = tripInvitationRepository ?? new TripInvitationRepository(this.context);
+            }
+        }
+        public IFlightReservationRepository FlightReservationRepository
+        {
+            get
+            {
+                return flightReservationRepository = flightReservationRepository ?? new FlightReservationRepository(this.context);
+            }
+        }
+        public IBonusRepository BonusRepository
+        {
+            get
+            {
+                return bonusRepository = bonusRepository ?? new BonusRepository(this.context);
+            }
+        }
+        public ITicketRepository TicketRepository
+        {
+            get
+            {
+                return ticketRepository = ticketRepository ?? new TicketRepository(this.context);
             }
         }
 

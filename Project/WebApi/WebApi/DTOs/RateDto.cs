@@ -11,7 +11,7 @@ namespace WebApi.DTOs
         [Required]
         public int Id { get; set; }
         [Required]
-        public float Rate { get; set; }
+        public int Rate { get; set; }
 
     }
 }

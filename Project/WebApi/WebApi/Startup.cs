@@ -21,7 +21,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Identity;
 using WebApi.Controllers;
-using WebApi.Facebook;
 
 namespace WebApi
 {
@@ -45,6 +44,8 @@ namespace WebApi
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
+            services.AddScoped<IProfileRepository, ProfileRepository>();
+
             //services.AddScoped<IAirlineRepository, AirlineRepository>();
             //services.AddScoped<IProfileRepository, ProfileRepository>();
             //services.AddScoped<ISystemAdminRepository, SystemAdminRepository>();
@@ -109,8 +110,6 @@ namespace WebApi
             {
                 options.AppId = "176053310509690";
                 options.AppSecret = "b8369edaa6c01c05dd8466ed045c7e81";
-                options.BackchannelHttpHandler = new FacebookBackChannelHandler();
-                options.UserInformationEndpoint = "https://graph.facebook.com/v2.4/me?fields=id,email";
             });
             
         }

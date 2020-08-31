@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +13,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Query.Internal;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using WebApi.Data;
 using WebApi.DTOs;
 using WebApi.Models;
@@ -23,9 +28,12 @@ namespace WebApi.Controllers
     public class ProfileController : Controller
     {
         IUnitOfWork unitOfWork;
-        public ProfileController(IUnitOfWork _unitOfWork)
+        private readonly IConfiguration configuration;
+
+        public ProfileController(IUnitOfWork _unitOfWork, IConfiguration config)
         {
             unitOfWork = _unitOfWork;
+            this.configuration = config;
         }
 
         [HttpPost]
@@ -309,14 +317,40 @@ namespace WebApi.Controllers
                     return BadRequest("Passwords dont match");
                 }
 
-                var result = await unitOfWork.ProfileRepository.ChangePassword(user, profile.Password);
-
-                if (result.Succeeded)
+                bool firstLogin = false;
+                if (!user.PasswordChanged && !userRole.Equals("ReqularUser"))
                 {
-                    return Ok(result);
+                    firstLogin = true;
                 }
 
-                return BadRequest(result.Errors);
+                var result = await unitOfWork.ProfileRepository.ChangePassword(user, profile.Password);
+
+                if (!userRole.Equals("ReqularUser") && firstLogin)
+                {
+                    var tokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Subject = new ClaimsIdentity(new Claim[]
+                   {
+                        new Claim("UserID",user.Id.ToString()),
+                        new Claim("Roles", userRole),
+                        new Claim("PasswordChanged", user.PasswordChanged.ToString())
+                       //new Claim("EmailConfirmed", user.EmailConfirmed.ToString())
+                   }),
+                        Expires = DateTime.UtcNow.AddDays(1),
+                        SigningCredentials = new SigningCredentials(
+                       new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetSection("AppSettings:Token").Value)),
+                           SecurityAlgorithms.HmacSha256Signature)
+                    };
+
+                    var tokenHandler = new JwtSecurityTokenHandler();
+                    var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+                    var token = tokenHandler.WriteToken(securityToken);
+
+                    return Ok(new { token });
+                }
+
+                return Ok();
+                
             }
             catch (Exception)
             {
@@ -442,7 +476,8 @@ namespace WebApi.Controllers
                     user.ImageUrl,
                     user.FirstName,
                     user.LastName,
-                    user.PhoneNumber
+                    user.PhoneNumber,
+                    bonus = userRole != "RegularUser" ? 0 : (user as User).BonusPoints
                 };
             }
             catch (Exception ex)

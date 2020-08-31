@@ -15,5 +15,11 @@ namespace WebApi.Models
         public bool Accepted { get; set; }
         public bool Rejacted { get; set; }
 
+        public Friendship()
+        {
+            Accepted = false;
+            Rejacted = false;
+        }
+
     }
 }

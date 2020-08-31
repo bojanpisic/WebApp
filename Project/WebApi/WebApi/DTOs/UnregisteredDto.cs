@@ -18,6 +18,6 @@ namespace WebApi.DTOs
         public string Passport { get; set; }
         [Required]
 
-        public List<int> SeatsIds { get; set; }
+        public int SeatId { get; set; }
     }
 }

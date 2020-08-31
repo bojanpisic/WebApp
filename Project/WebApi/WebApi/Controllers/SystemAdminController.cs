@@ -40,24 +40,33 @@ namespace WebApi.Controllers
             {
                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
                 string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+                var user = await unitOfWork.UserManager.FindByIdAsync(userId);
 
                 if (!userRole.Equals("Admin"))
                 {
                     return Unauthorized();
                 }
 
-                if (unitOfWork.AuthenticationRepository.GetPersonBy(registerDto.Email) != null)
+                if (user == null)
                 {
-                    return BadRequest("User with that email already exists!");
+                    return NotFound("User not found");
                 }
-                if (unitOfWork.AuthenticationRepository.GetPersonBy(registerDto.UserName) != null)
+
+                //if ((await unitOfWork.AuthenticationRepository.GetPersonByEmail(registerDto.Email)) != null)
+                //{
+                //    return BadRequest("User with that email already exists!");
+                //}
+                if ((await unitOfWork.AuthenticationRepository.GetPersonByUserName(registerDto.UserName)) != null)
                 {
                     return BadRequest("User with that usermane already exists!");
                 }
-
+                if (registerDto.Password.Length > 20 || registerDto.Password.Length < 8)
+                {
+                    return BadRequest("Password length has to be between 8-20");
+                }
                 if (!unitOfWork.AuthenticationRepository.CheckPasswordMatch(registerDto.Password, registerDto.ConfirmPassword))
                 {
-                    return BadRequest(new IdentityError() { Description = "Passwords dont match" });
+                    return BadRequest("Passwords dont match");
                 }
 
                 var admin = new AirlineAdmin()
@@ -103,8 +112,7 @@ namespace WebApi.Controllers
                         return StatusCode(500, "Failed to register airline admin. One of transactions failed");
                     }
                 //}
-
-                return StatusCode(201, "Registered");
+                return Ok();
             }
             catch (Exception)
             {
@@ -127,24 +135,33 @@ namespace WebApi.Controllers
             {
                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
                 string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+                var user = await unitOfWork.UserManager.FindByIdAsync(userId);
 
                 if (!userRole.Equals("Admin"))
                 {
                     return Unauthorized();
                 }
 
-                if (unitOfWork.AuthenticationRepository.GetPersonBy(registerDto.Email) != null)
+                if (user == null)
                 {
-                    return BadRequest("User with that email already exists!");
+                    return NotFound("User not found");
                 }
-                if (unitOfWork.AuthenticationRepository.GetPersonBy(registerDto.UserName) != null)
+
+                //if ((await unitOfWork.AuthenticationRepository.GetPersonByEmail(registerDto.Email)) != null)
+                //{
+                //    return BadRequest("User with that email already exists!");
+                //}
+                if ((await unitOfWork.AuthenticationRepository.GetPersonByUserName(registerDto.UserName)) != null)
                 {
                     return BadRequest("User with that usermane already exists!");
                 }
-
+                if (registerDto.Password.Length > 20 || registerDto.Password.Length < 8)
+                {
+                    return BadRequest("Password length has to be between 8-20");
+                }
                 if (!unitOfWork.AuthenticationRepository.CheckPasswordMatch(registerDto.Password, registerDto.ConfirmPassword))
                 {
-                    return BadRequest(new IdentityError() { Description = "Passwords dont match" });
+                    return BadRequest("Passwords dont match");
                 }
                 var admin = new RentACarServiceAdmin()
                 {
@@ -192,11 +209,133 @@ namespace WebApi.Controllers
                     return StatusCode(500, "Failed to send registration email");
                 }
 
-                return StatusCode(201, "Registered");
+                return Ok();
             }
             catch (Exception)
             {
                 return StatusCode(500, "Failed to register racs admin");
+            }
+        }
+
+        [HttpPost]
+        [Route("set-bonus")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
+        public async Task<IActionResult> SetBonus([FromBody] BonusDto dto) 
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+                var user = await unitOfWork.UserManager.FindByIdAsync(userId);
+
+                if (!userRole.Equals("Admin"))
+                {
+                    return Unauthorized();
+                }
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                if (dto.Bonus < 0 || dto.Discount < 0 || dto.Discount > 100)
+                {
+                    return BadRequest("Inputs are not valid");
+                }
+
+                var bonus = await unitOfWork.BonusRepository.GetByID(1);
+
+                if (bonus == null)
+                {
+                    bonus = new Bonus()
+                    {
+                        BonusPerKilometer = dto.Bonus,
+                        DiscountPerReservation = dto.Discount
+                    };
+
+                    try
+                    {
+                        await unitOfWork.BonusRepository.Insert(bonus);
+                        await unitOfWork.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        return StatusCode(500, "Transaction failed");
+                    }
+                    return Ok();
+                }
+
+                bonus.BonusPerKilometer = dto.Bonus;
+                bonus.DiscountPerReservation = dto.Discount;
+
+                try
+                {
+                    unitOfWork.BonusRepository.Update(bonus);
+                    await unitOfWork.Commit();
+                }
+                catch (Exception)
+                {
+                    return StatusCode(500, "Transaction failed");
+                }
+
+                return Ok();
+
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to set bonus");
+            }
+        }
+
+
+        [HttpGet]
+        [Route("get-bonus")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
+        public async Task<IActionResult> GetBonus()
+        {
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+                var user = await unitOfWork.UserManager.FindByIdAsync(userId);
+
+                if (!userRole.Equals("Admin"))
+                {
+                    return Unauthorized();
+                }
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                var bonus = await unitOfWork.BonusRepository.GetByID(1);
+
+                if (bonus == null)
+                {
+                    return Ok(new { bonus = 0, discount = 0});
+
+                }
+
+                var retVal = new 
+                {
+                    bonus = bonus.BonusPerKilometer,
+                    discount = bonus.DiscountPerReservation,
+                };
+
+                return Ok(retVal);
+
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to set bonus");
             }
         }
     }

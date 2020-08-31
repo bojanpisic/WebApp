@@ -10,12 +10,13 @@ namespace WebApi.Models
         public int SpecialOfferId { get; set; }
         public float OldPrice { get; set; }
         public float NewPrice { get; set; }
-
+        public bool IsReserved { get; set; }
         public Airline Airline { get; set; }
         public ICollection<Seat> Seats { get; set; }
         public SpecialOffer()
         {
             Seats = new HashSet<Seat>();
+            IsReserved = false;
         }
     }
 }

@@ -47,5 +47,13 @@ namespace WebApi.Repository
                 .ThenInclude(st => st.Destination)
                 .Where(s => s.Airline == airline).ToListAsync();
         }
+        public async Task<SpecialOffer> GetSpecialOfferById(int id)
+        {
+            return await context.SpecialOffers
+                .Include(s => s.Seats)
+                .ThenInclude(seat => seat.Flight)
+                .FirstOrDefaultAsync(s => s.SpecialOfferId == id);
+        }
+
     }
 }

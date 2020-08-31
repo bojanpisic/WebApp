@@ -12,6 +12,11 @@ namespace WebApi.Models
         public User User { get; set; }
         public IEnumerable<Ticket> Tickets { get; set; }
         public IEnumerable<Ticket2> UnregistredFriendsTickets { get; set; }
+        public float Price { get; set; }
+        public DateTime ReservationDate { get; set; }
+
+        public int? CarRentId { get; set; }
+        public CarRent CarRent { get; set; }
 
         public FlightReservation()
         {

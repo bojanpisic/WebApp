@@ -27,6 +27,8 @@ namespace WebApi.Repository
                 .Include(c => c.RentedCar)
                 .ThenInclude(car => car.RentACarService)
                 .ThenInclude(racs => racs.Address)
+                .Include(c => c.RentedCar)
+                .ThenInclude(c => c.Rates)
                 .Where(c => c.User == user).ToListAsync();
         }
     }
