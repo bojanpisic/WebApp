@@ -10,5 +10,6 @@ namespace WebApi.Repository
     {
         Task<IEnumerable<SpecialOffer>> GetAllSpecOffers();
         Task<IEnumerable<SpecialOffer>> GetSpecialOffersOfAirline(Airline airline);
+        Task<SpecialOffer> GetSpecialOfferById(int id);
     }
 }

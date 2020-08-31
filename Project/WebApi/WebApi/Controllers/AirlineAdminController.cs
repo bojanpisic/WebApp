@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -15,6 +16,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
@@ -331,7 +333,7 @@ namespace WebApi.Controllers
                     Airline = airline,
                     tripLength = flightDto.TripLength
                 };
-                var tripTime = await GetLocalDateByCityName(flight.From.City, flight.To.City,
+                var tripTime = await GetFlightTime(flight.From.City, flight.From.State, flight.To.City, flight.To.City,
                                                               flight.TakeOffDateTime, flight.LandingDateTime);
                 flight.TripTime = tripTime;
 
@@ -446,7 +448,7 @@ namespace WebApi.Controllers
                             from = flight.From.City,
                             to = flight.To.City,
                             takeOffTime = flight.TakeOffDateTime.TimeOfDay,
-                            landingTime = flight.TakeOffDateTime.TimeOfDay,
+                            landingTime = flight.LandingDateTime.TimeOfDay,
                             flightTime = flight.TripTime,
                             flightLength = flight.tripLength,
                             flightNumber = flight.FlightNumber,
@@ -488,8 +490,9 @@ namespace WebApi.Controllers
                 {
                     return NotFound("User not found");
                 }
+                var res = await unitOfWork.AirlineRepository.Get(a => a.AdminId == userId);
 
-                var res = await unitOfWork.AirlineRepository.Get(a => a.AdminId == userId, null, "Flights,Address");
+                //var res = await unitOfWork.AirlineRepository.Get(a => a.AdminId == userId, null, "Flights,Address");
                 var airline = res.FirstOrDefault();
 
                 if (airline == null)
@@ -554,6 +557,13 @@ namespace WebApi.Controllers
                 if (airline == null)
                 {
                     return NotFound("Airline not found");
+                }
+
+                var airlineDestinations = await unitOfWork.DestinationRepository.GetAirlineDestinations(airline);
+
+                if (airlineDestinations.FirstOrDefault(d => d.City == destinationDto.City && d.State == destinationDto.State) != null)
+                {
+                    return BadRequest("Airline already has selected destination");
                 }
 
 
@@ -712,10 +722,19 @@ namespace WebApi.Controllers
                 {
                     return NotFound("Seat not found");
                 }
+
+                if (!seat.Available || seat.Reserved)
+                {
+                    return BadRequest("Cant delete seat. Seat is reserved");
+                }
                 try
                 {
                     unitOfWork.SeatRepository.Delete(seat);
                     await unitOfWork.Commit();
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    return BadRequest("Something is changed. Cant delete");
                 }
                 catch (Exception)
                 {
@@ -768,6 +787,11 @@ namespace WebApi.Controllers
                     return NotFound("User not found");
                 }
 
+                if (seatDto.Price < 0)
+                {
+                    return BadRequest("Price input is wrong");
+                }
+
                 var res = await unitOfWork.FlightRepository.Get(f => f.FlightId == seatDto.FlightId);
                 var flight = res.FirstOrDefault();
 
@@ -775,6 +799,7 @@ namespace WebApi.Controllers
                 {
                     return NotFound("Flight not found");
                 }
+
                 var seat = new Seat()
                 {
                     Column = seatDto.Column,
@@ -842,6 +867,11 @@ namespace WebApi.Controllers
                     return NotFound("User not found");
                 }
 
+                if (seatDto.Price < 0)
+                {
+                    return BadRequest("Price input is wrong");
+                }
+
                 var seat = await unitOfWork.SeatRepository.GetByID(id);
 
                 if (seat == null)
@@ -849,11 +879,21 @@ namespace WebApi.Controllers
                     return NotFound("Seat not found.");
                 }
 
+                if (!seat.Available || seat.Reserved)
+                {
+                    return BadRequest("Cant change seat. Seat is reserved");
+                }
+
                 seat.Price = seatDto.Price;
+
                 try
                 {
                     unitOfWork.SeatRepository.Update(seat);
                     await unitOfWork.Commit();
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    return BadRequest("Something is changed. Cant change");
                 }
                 catch (Exception)
                 {
@@ -1064,6 +1104,11 @@ namespace WebApi.Controllers
                     return NotFound("User not found");
                 }
 
+                if (specialOfferDto.NewPrice < 0)
+                {
+                    return BadRequest("Price should be greater then 0");
+                }
+
                 var res = await unitOfWork.AirlineRepository.Get(a=>a.AdminId == userId);
                 var airline = res.FirstOrDefault();
 
@@ -1077,19 +1122,33 @@ namespace WebApi.Controllers
 
                 foreach (var seatId in specialOfferDto.SeatsIds)
                 {
-                    var seatt = await unitOfWork.SeatRepository.GetByID(seatId);
+                    var seatt = (await unitOfWork.SeatRepository.Get(s => s.SeatId == seatId, null, "SpecialOffer")).FirstOrDefault();
+
+                    if (seatt == null)
+                    {
+                        return BadRequest("One of seats not found");
+                    }
+
+                    if (seatt.SpecialOffer != null)
+                    {
+                        return BadRequest("Seat is in special offer already");
+                    }
+
                     oldPrice += seatt.Price;
                     seats.Add(seatt);
+                }
+                if (seats.Count == 0 || seats.Count != specialOfferDto.SeatsIds.Count)
+                {
+                    return BadRequest("Wrong seats number");
                 }
 
                 var specialOffer = new SpecialOffer()
                 {
                     Airline = airline,
                     OldPrice = oldPrice,
-                    NewPrice = specialOfferDto.NewPrice
+                    NewPrice = specialOfferDto.NewPrice,
+                    Seats = seats
                 };
-
-                specialOffer.Seats = seats;
 
                 airline.SpecialOffers.Add(specialOffer);
 
@@ -1116,8 +1175,7 @@ namespace WebApi.Controllers
                         return StatusCode(500, "Failed to add special offer. One of transactions failed.");
                     }
                 //}
-                
-                return StatusCode(201, "Special offer created.");
+                return Ok();   
             }
             catch (Exception)
             {
@@ -1185,45 +1243,528 @@ namespace WebApi.Controllers
 
         #endregion
 
-        private async Task<string> GetLocalDateByCityName(string departureCity, string arrivalCity, DateTime departureDate, DateTime arrivalDate)
+        private async Task<string> GetFlightTime(string departureCity,string depState, string arrivalCity, string arrState, DateTime departureDate, DateTime arrivalDate)
         {
             await Task.Yield();
 
             var timeZoneInfoDeparture = TimeZoneInfo.GetSystemTimeZones()
-                        .Where(k => k.DisplayName.Substring(k.DisplayName.IndexOf(')') + 2).ToLower().IndexOf("tokyo") >= 0)
+                        .Where(k => k.DisplayName.Substring(k.DisplayName.IndexOf(')') + 2).ToLower().IndexOf(departureCity.ToLower()) >= 0)
                         .ToList();
             var timeZoneInfoLanding = TimeZoneInfo.GetSystemTimeZones()
-            .Where(k => k.DisplayName.Substring(k.DisplayName.IndexOf(')') + 2).ToLower().IndexOf("belgrade") >= 0)
+            .Where(k => k.DisplayName.Substring(k.DisplayName.IndexOf(')') + 2).ToLower().IndexOf(arrivalCity.ToLower()) >= 0)
             .ToList();
+
+            if (timeZoneInfoDeparture.Count == 0) 
+            {
+                timeZoneInfoDeparture = TimeZoneInfo.GetSystemTimeZones()
+                       .Where(k => k.DisplayName.Substring(k.DisplayName.IndexOf(')') + 2).ToLower().IndexOf(depState.ToLower()) >= 0)
+                       .ToList();
+            }
+            if (timeZoneInfoLanding.Count == 0)
+            {
+                timeZoneInfoLanding = TimeZoneInfo.GetSystemTimeZones()
+                .Where(k => k.DisplayName.Substring(k.DisplayName.IndexOf(')') + 2).ToLower().IndexOf(arrState.ToLower()) >= 0)
+                .ToList();
+            }
 
             if (timeZoneInfoDeparture.Count == 0 || timeZoneInfoLanding.Count == 0)
             {
-                return "";
+                var hourr = Math.Abs(arrivalDate.Hour - (departureDate.Hour));
+                var minutess = Math.Abs(departureDate.Minute - arrivalDate.Minute);
+
+                string flightTimee = hourr + "h " + minutess + "min";
+
+                return flightTimee;
             }
 
             int departureZone = (int)timeZoneInfoDeparture[0].BaseUtcOffset.TotalHours;
             int landingZone = (int)timeZoneInfoLanding[0].BaseUtcOffset.TotalHours;
             //int year, int month, int day, int hour, int minute, int second
 
-            var day = (arrivalDate.Day - departureDate.Day) * 12;
             int hour;
-            if (day > 0)
+            if (departureZone >= landingZone)
             {
-                hour = Math.Abs(departureDate.Hour + arrivalDate.Hour) + day;
+                hour = Math.Abs(arrivalDate.Hour - (departureDate.Hour - (departureZone - landingZone)));
             }
-            else
+            else // (departureZone < landingZone)
             {
-                hour = Math.Abs(departureDate.Hour - arrivalDate.Hour);
+                hour = Math.Abs(arrivalDate.Hour - (departureDate.Hour + (landingZone - departureZone)));
             }
 
             var minutes = Math.Abs(departureDate.Minute - arrivalDate.Minute);
 
-            var offset = departureZone - landingZone;
-
-            string flightTime = hour + offset + "h " + minutes + "min";
+            string flightTime = hour + "h " + minutes + "min";
 
             return flightTime;
         }
+
+        #region Chart methods
+        [HttpGet]
+        [Route("get-stats-date")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> GetDayStats()
+        {
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("AirlineAdmin"))
+                {
+                    return Unauthorized();
+                }
+
+                var user = await unitOfWork.UserManager.FindByIdAsync(userId);
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                var queryString = Request.Query;
+                var date = queryString["date"].ToString();
+
+                var day = DateTime.Now;
+
+                if (!DateTime.TryParse(date, out day))
+                {
+                    return BadRequest("Date format is incorrect");
+                }
+
+                var reservations = await unitOfWork.FlightReservationRepository.Get(f => 
+                                                    f.Tickets.FirstOrDefault(t =>t.Seat.Flight.Airline.AdminId == userId) != null);
+
+                int rentNum = 0;
+
+                foreach (var item in reservations)
+                {
+                    if (item.ReservationDate == day)
+                    {
+                        rentNum++;
+                    }
+                }
+
+                return Ok(new Tuple<DateTime, int>(day, rentNum));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to get day state");
+            }
+        }
+
+        [HttpGet]
+        [Route("get-stats-week")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> GetWeekStats()
+        {
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("AirlineAdmin"))
+                {
+                    return Unauthorized();
+                }
+
+                var user = await unitOfWork.UserManager.FindByIdAsync(userId);
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                var queryString = Request.Query;
+                var week = queryString["week"].ToString().Split("-W")[1];
+                var year = queryString["week"].ToString().Split("-W")[0];
+
+                int weekNum = 0;
+                int yearNum = 0;
+
+                if (!Int32.TryParse(week, out weekNum))
+                {
+                    return BadRequest();
+                }
+                if (!Int32.TryParse(year, out yearNum))
+                {
+                    return BadRequest();
+                }
+
+                List<DateTime> daysOfWeek = new List<DateTime>();
+
+                var lastDay = new DateTime(yearNum, 1, 1).AddDays((weekNum) * 7);
+                daysOfWeek.Add(lastDay);
+
+                for (int i = 1; i < 7; i++)
+                {
+                    daysOfWeek.Add(lastDay.AddDays(-i));
+                }
+
+                var reservations = await unitOfWork.FlightReservationRepository.Get(f =>
+                                                                   f.Tickets.FirstOrDefault(t => t.Seat.Flight.Airline.AdminId == userId) != null);
+
+                List<Tuple<DateTime, int>> stats = new List<Tuple<DateTime, int>>();
+
+                foreach (var day in daysOfWeek)
+                {
+                    stats.Add(new Tuple<DateTime, int>(day, 0));
+                }
+
+                CarRent r;
+
+                foreach (var item in reservations)
+                {
+                    if (daysOfWeek.Contains(item.ReservationDate))
+                    {
+                        var s = stats.Find(s => s.Item1 == item.ReservationDate);
+                        int index = stats.IndexOf(s);
+
+                        stats[index] = new Tuple<DateTime, int>(s.Item1, s.Item2 + 1);
+                    }
+                }
+
+                return Ok(stats);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to get day state");
+            }
+        }
+
+        [HttpGet]
+        [Route("get-stats-month")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> GetMonthStats()
+        {
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("AirlineAdmin"))
+                {
+                    return Unauthorized();
+                }
+
+                var user = await unitOfWork.UserManager.FindByIdAsync(userId);
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                var queryString = Request.Query;
+                var month = queryString["month"].ToString().Split("-")[1];
+                var year = queryString["month"].ToString().Split("-")[0];
+
+                int monthNum = 0;
+                int yearNum = 0;
+
+                if (!Int32.TryParse(month, out monthNum))
+                {
+                    return BadRequest();
+                }
+                if (!Int32.TryParse(year, out yearNum))
+                {
+                    return BadRequest();
+                }
+
+                int numOfDays = DateTime.DaysInMonth(yearNum, monthNum);
+                DateTime firstDayOfMonth = new DateTime(yearNum, monthNum, 1);
+
+
+                List<DateTime> daysOfMonth = new List<DateTime>();
+
+                daysOfMonth.Add(firstDayOfMonth);
+
+                for (int i = 1; i < numOfDays; i++)
+                {
+                    daysOfMonth.Add(firstDayOfMonth.AddDays(i));
+                }
+
+                var reservations = await unitOfWork.FlightReservationRepository.Get(f =>
+                                                                                f.Tickets.FirstOrDefault(t => t.Seat.Flight.Airline.AdminId == userId) != null);
+
+                List<Tuple<DateTime, int>> stats = new List<Tuple<DateTime, int>>();
+
+                foreach (var day in daysOfMonth)
+                {
+                    stats.Add(new Tuple<DateTime, int>(day, 0));
+                }
+
+                CarRent r;
+
+                foreach (var item in reservations)
+                {
+                    if (daysOfMonth.Contains(item.ReservationDate))
+                    {
+                        var s = stats.Find(s => s.Item1 == item.ReservationDate);
+                        int index = stats.IndexOf(s);
+
+                        stats[index] = new Tuple<DateTime, int>(s.Item1, s.Item2 + 1);
+                    }
+                }
+
+                return Ok(stats);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to get day state");
+            }
+        }
+
+
+        [HttpGet]
+        [Route("get-income-week")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> GetWeekIncome()
+        {
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("AirlineAdmin"))
+                {
+                    return Unauthorized();
+                }
+
+                var user = await unitOfWork.UserManager.FindByIdAsync(userId);
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                var queryString = Request.Query;
+                var week = queryString["week"].ToString().Split("-W")[1];
+                var year = queryString["week"].ToString().Split("-W")[0];
+
+                int weekNum = 0;
+                int yearNum = 0;
+
+                if (!Int32.TryParse(week, out weekNum))
+                {
+                    return BadRequest();
+                }
+                if (!Int32.TryParse(year, out yearNum))
+                {
+                    return BadRequest();
+                }
+
+                List<DateTime> daysOfWeek = new List<DateTime>();
+
+                var lastDay = new DateTime(yearNum, 1, 1).AddDays((weekNum) * 7);
+                daysOfWeek.Add(lastDay);
+
+                for (int i = 1; i < 7; i++)
+                {
+                    daysOfWeek.Add(lastDay.AddDays(-i));
+                }
+
+                var reservations = await unitOfWork.FlightReservationRepository.Get(f =>
+                                                   f.Tickets.FirstOrDefault(t => t.Seat.Flight.Airline.AdminId == userId) != null);
+
+                List<Tuple<DateTime, float>> income = new List<Tuple<DateTime, float>>();
+
+                foreach (var day in daysOfWeek)
+                {
+                    income.Add(new Tuple<DateTime, float>(day, 0));
+                }
+
+                foreach (var item in reservations)
+                {
+                    if (daysOfWeek.Contains(item.ReservationDate))
+                    {
+                        var s = income.Find(s => s.Item1 == item.ReservationDate);
+                        int index = income.IndexOf(s);
+
+                        income[index] = new Tuple<DateTime, float>(s.Item1, s.Item2 + item.Price);
+                    }
+                }
+
+                return Ok(income);
+
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to get day state");
+            }
+        }
+
+        [HttpGet]
+        [Route("get-income-month")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> GetMonthIncome()
+        {
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("AirlineAdmin"))
+                {
+                    return Unauthorized();
+                }
+
+                var user = await unitOfWork.UserManager.FindByIdAsync(userId);
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                var queryString = Request.Query;
+                var month = queryString["month"].ToString().Split("-")[1];
+                var year = queryString["month"].ToString().Split("-")[0];
+
+                int monthNum = 0;
+                int yearNum = 0;
+
+                if (!Int32.TryParse(month, out monthNum))
+                {
+                    return BadRequest();
+                }
+                if (!Int32.TryParse(year, out yearNum))
+                {
+                    return BadRequest();
+                }
+
+                int numOfDays = DateTime.DaysInMonth(yearNum, monthNum);
+                DateTime firstDayOfMonth = new DateTime(yearNum, monthNum, 1);
+
+
+                List<DateTime> daysOfMonth = new List<DateTime>();
+
+                daysOfMonth.Add(firstDayOfMonth);
+
+                for (int i = 1; i < numOfDays; i++)
+                {
+                    daysOfMonth.Add(firstDayOfMonth.AddDays(i));
+                }
+
+                var reservations = await unitOfWork.FlightReservationRepository.Get(f =>
+                                                    f.Tickets.FirstOrDefault(t => t.Seat.Flight.Airline.AdminId == userId) != null);
+
+
+                List<Tuple<DateTime, float>> income = new List<Tuple<DateTime, float>>();
+
+                foreach (var day in daysOfMonth)
+                {
+                    income.Add(new Tuple<DateTime, float>(day, 0));
+                }
+
+                foreach (var item in reservations)
+                {
+                    if (daysOfMonth.Contains(item.ReservationDate))
+                    {
+                        var s = income.Find(s => s.Item1 == item.ReservationDate);
+                        int index = income.IndexOf(s);
+
+                        income[index] = new Tuple<DateTime, float>(s.Item1, s.Item2 + item.Price);
+                    }
+                }
+
+                return Ok(income);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to get day state");
+            }
+        }
+
+        [HttpGet]
+        [Route("get-income-year")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> GetYearIncome()
+        {
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("AirlineAdmin"))
+                {
+                    return Unauthorized();
+                }
+
+                var user = await unitOfWork.UserManager.FindByIdAsync(userId);
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                var queryString = Request.Query;
+                var year = queryString["year"].ToString();
+
+                int yearNum = 0;
+
+                if (!Int32.TryParse(year, out yearNum))
+                {
+                    return BadRequest();
+                }
+
+                if (yearNum < 1)
+                {
+                    return BadRequest();
+                }
+
+                var retVal = new List<Tuple<string, float>>();
+
+                var reservations = await unitOfWork.FlightReservationRepository.Get(f =>
+                                                                   f.Tickets.FirstOrDefault(t => t.Seat.Flight.Airline.AdminId == userId) != null);
+
+
+                for (int m = 1; m < 13; m++)
+                {
+
+                    int numOfDays = DateTime.DaysInMonth(yearNum, m);
+                    DateTime firstDayOfMonth = new DateTime(yearNum, m, 1);
+
+
+                    List<DateTime> daysOfMonth = new List<DateTime>();
+
+                    daysOfMonth.Add(firstDayOfMonth);
+
+                    for (int i = 1; i < numOfDays; i++)
+                    {
+                        daysOfMonth.Add(firstDayOfMonth.AddDays(i));
+                    }
+
+                    float monthIncome = 0;
+
+                    CarRent r;
+
+                    foreach (var item in reservations)
+                    {
+                        if (daysOfMonth.Contains(item.ReservationDate))
+                        {
+                            monthIncome += item.Price;
+                        }
+                    }
+
+                    string monthName = new DateTime(yearNum, m, 1)
+                         .ToString("MMM", CultureInfo.InvariantCulture);
+
+                    retVal.Add(new Tuple<string, float>(monthName, monthIncome));
+                }
+
+                return Ok(retVal);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to get day state");
+            }
+        }
+
+        #endregion
 
     }
 }

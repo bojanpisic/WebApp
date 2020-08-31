@@ -23,6 +23,11 @@ namespace WebApi.Repository
         IRACSSpecialOffer RACSSpecialOfferRepository { get; }
         ICarRepository CarRepository { get; }
         ICarRentRepository CarRentRepository { get; }
+        IBonusRepository BonusRepository { get; }
+        IFlightReservationRepository FlightReservationRepository { get; }
+        ITripInvitationRepository TripInvitationRepository { get; }
+
+        ITicketRepository TicketRepository { get; }
         UserManager<Person> UserManager { get; }
         RoleManager<IdentityRole> RoleManager { get; }
 

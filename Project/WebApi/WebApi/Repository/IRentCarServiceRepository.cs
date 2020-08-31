@@ -11,5 +11,6 @@ namespace WebApi.Repository
     {
         Task<RentACarService> GetRACSAndCars(string adminId);
         Task<IdentityResult> UpdateAddress(Address2 addr);
+        Task<RentACarService> GetRacsWithRates(int racsId);
     }
 }

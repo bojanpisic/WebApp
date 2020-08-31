@@ -10,5 +10,8 @@ namespace WebApi.Repository
     {
         Task<IEnumerable<Flight>> GetAirlineFlights(int airlineId);
         Task<IEnumerable<Flight>> GetAllFlightsWithAllProp();
+        Task<IEnumerable<Flight>> GetFlights(List<string> ids);
+
+
     }
 }

@@ -10,13 +10,14 @@ namespace WebApi.Models
         public int CarSpecialOfferId { get; set; }
         public float OldPrice { get; set; }
         public float NewPrice { get; set; }
-
+        public bool IsReserved { get; set; }
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
 
         public Car Car { get; set; }
         public CarSpecialOffer()
         {
+            IsReserved = false;
         }
     }
 }

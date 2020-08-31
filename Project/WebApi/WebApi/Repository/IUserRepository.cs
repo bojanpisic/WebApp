@@ -9,15 +9,11 @@ namespace WebApi.Repository
 {
     public interface IUserRepository: IGenericRepository<Person>
     {
-        //Task<IdentityResult> CreateFriendshipInvitation(Person sender, Person receiver);
         Task<IEnumerable<Friendship>> GetRequests(Person user);
+        Task<IEnumerable<Friendship>> GetInvitations(Person user);
         Task<IEnumerable<Person>> GetAllUsers();
-        Task<IEnumerable<User>> GetFriends(User user);
-        Task<Friendship> GetRequestWhere(string user, string inviteSender);
-        //void UpdateUser(Person user);
+        Task<IEnumerable<Friendship>> GetFriends(User user);
+        Task<Friendship> GetSpecificRequest(string user, string inviteSender);
         void DeleteFriendship(Friendship friendship);
-
-        //Task<CarRent> GetRent(int id);
-        //Task<IEnumerable<CarRent>> GetRents(User user);
     }
 }

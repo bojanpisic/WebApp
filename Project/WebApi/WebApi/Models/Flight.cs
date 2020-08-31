@@ -21,5 +21,14 @@ namespace WebApi.Models
         public Destination From { get; set; }
         public Destination To { get; set; }
         public ICollection<Seat> Seats { get; set; }
+        public ICollection<FlightRate> Rates { get; set; }
+
+        public Flight()
+        {
+            Rates = new HashSet<FlightRate>();
+            Seats = new HashSet<Seat>();
+            Stops = new HashSet<FlightDestination>();
+        }
+
     }
 }

@@ -16,7 +16,11 @@ namespace WebApi.Models
             FriendshipInvitations = new HashSet<Friendship>();
             Friends = new HashSet<User>();
             CarRents = new HashSet<CarRent>();
+            TripRequests = new HashSet<Invitation>();
+            TripInvitations = new HashSet<Invitation>();
+            BonusPoints = 100;
         }
+        public int BonusPoints { get; set; }
         public ICollection<FlightReservation> FlightReservations { get; set; }
         public ICollection<CarRent> CarRents { get; set; }
         public ICollection<AirlineRate> RateAirline { get; set; }
@@ -24,7 +28,7 @@ namespace WebApi.Models
         public virtual ICollection<User> Friends { get; set; }
         public virtual ICollection<Friendship> FriendshipRequests { get; set; }
         public virtual ICollection<Friendship> FriendshipInvitations { get; set; }
-
-        //public virtual ICollection<User> Friends { get; set; }
+        public virtual ICollection<Invitation> TripRequests { get; set; }
+        public virtual ICollection<Invitation> TripInvitations { get; set; }
     }
 }

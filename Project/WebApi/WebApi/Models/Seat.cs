@@ -21,7 +21,12 @@ namespace WebApi.Models
         //public int TicketId { get; set; }
         public Ticket Ticket { get; set; }
         public Ticket2 Ticket2 { get; set; }
+        //public int InvitationId { get; set; }
+        public Invitation Invitation { get; set; }
 
         public SpecialOffer SpecialOffer { get; set; }
+
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
     }
 }

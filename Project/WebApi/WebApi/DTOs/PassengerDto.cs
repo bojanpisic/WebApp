@@ -9,12 +9,9 @@ namespace WebApi.DTOs
     public class PassengerDto
     {
         [Required]
-        [EmailAddress]
-        public string Email { get; set; }
+        public string Id { get; set; }
         [Required]
-        public string Passport { get; set; }
-        [Required]
-        public List<int> SeatsIds { get; set; }
+        public int SeatId { get; set; }
 
     }
 }

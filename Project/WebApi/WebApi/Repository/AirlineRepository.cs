@@ -25,7 +25,9 @@ namespace WebApi.Repository
             return await context.Airlines
                 .Include(a=>a.Destinations)
                 .ThenInclude(d=>d.Destination)
-                .Include(a => a.Address).ToListAsync();
+                .Include(a => a.Rates)
+                .Include(a => a.Address)
+                .ToListAsync();
         }
 
         public void UpdateAddress(Address addr)

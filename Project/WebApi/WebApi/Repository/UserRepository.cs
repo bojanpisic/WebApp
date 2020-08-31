@@ -60,23 +60,36 @@ namespace WebApi.Repository
             return await context.Persons.ToListAsync();
         }
 
-        public Task<IEnumerable<User>> GetFriends(User user)
+        public async Task<IEnumerable<Friendship>> GetFriends(User user)
         {
-            throw new NotImplementedException();
+            return await context.Friendships
+                .Include(f => f.User2)
+                .Include(f => f.User1)
+                .Where(f => (f.User1 == user || f.User2 == user) && f.Accepted ).ToListAsync();
         }
 
-
+        public async Task<IEnumerable<Friendship>> GetInvitations(Person user)
+        {
+            return await context.Friendships
+                .Include(f => f.User2)
+                .Include(f => f.User1)
+                .Where(f => f.User1Id == user.Id || f.User2Id == user.Id).ToListAsync();
+        }
 
         public async Task<IEnumerable<Friendship>> GetRequests(Person user)
         {
             return await context.Friendships.Include(f=>f.User1).Where(f => f.User2Id == user.Id).ToListAsync();
         }
 
-        public async Task<Friendship> GetRequestWhere(string user, string inviteSender)
+        public async Task<Friendship> GetSpecificRequest(string user, string inviteSender)
         {
-            return await context.Friendships.Include(f => f.User1).FirstOrDefaultAsync(f => f.User1Id == inviteSender);
+            return await context.Friendships
+                .Include(f => f.User1)
+                .Include(f => f.User2)
+                .FirstOrDefaultAsync(f => f.User1Id == inviteSender && f.User2Id == user 
+                                    || f.User2Id == inviteSender && f.User1Id == user);
         }
 
-      
+     
     }
 }

@@ -15,6 +15,11 @@ namespace WebApi.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //one to one
+            modelBuilder.Entity<CarRent>()
+                .HasOne(a => a.FlightReservation)
+                .WithOne(b => b.CarRent)
+                .HasForeignKey<FlightReservation>(b => b.CarRentId);
+
             //airline-address
             modelBuilder.Entity<Airline>()
                 .HasOne(a => a.Address)
@@ -39,8 +44,19 @@ namespace WebApi.Data
                 .HasOne(a => a.Ticket2)
                 .WithOne(b => b.Seat)
                 .HasForeignKey<Ticket2>(b => b.SeatId);
+            modelBuilder.Entity<Seat>()
+            .HasOne(a => a.Invitation)
+            .WithOne(b => b.Seat)
+            .HasForeignKey<Invitation>(b => b.SeatId);
 
             //one to many
+
+            modelBuilder.Entity<User>()
+               .HasMany(c => c.TripRequests)
+               .WithOne(e => e.Receiver);
+            modelBuilder.Entity<User>()
+               .HasMany(c => c.TripInvitations)
+               .WithOne(e => e.Sender);
 
             modelBuilder.Entity<Airline>()
                .HasMany(c => c.SpecialOffers)
@@ -169,6 +185,9 @@ namespace WebApi.Data
             modelBuilder.Entity<Airline>()
                .HasMany(c => c.Rates)
                .WithOne(e => e.Airline);
+            modelBuilder.Entity<Flight>()
+               .HasMany(c => c.Rates)
+               .WithOne(e => e.Flight);
             modelBuilder.Entity<RentACarService>()
                .HasMany(c => c.Rates)
                .WithOne(e => e.RentACarService);
@@ -191,6 +210,7 @@ namespace WebApi.Data
         public DbSet<Seat> Seats { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Ticket2> Tickets2 { get; set; }
+        public DbSet<Invitation> Invitations { get; set; }
 
         public DbSet<RentACarService> RentACarServices { get; set; }
         public DbSet<Car> Cars { get; set; }
@@ -203,7 +223,8 @@ namespace WebApi.Data
         public DbSet<CarSpecialOffer> CarSpecialOffers { get; set; }
         public DbSet<CarRent> CarRents { get; set; }
         public DbSet<CarRate> CarRates { get; set; }
-
+        public DbSet<FlightRate> FlightRates { get; set; }
+        public DbSet<Bonus> Bonus { get; set; }
 
         public DbSet<Friendship> Friendships { get; set; }
 

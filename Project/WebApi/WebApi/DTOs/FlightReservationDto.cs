@@ -14,5 +14,9 @@ namespace WebApi.DTOs
         public List<int> MySeatsIds { get; set; }
         [Required]
         public string MyPassport { get; set; }
+        [Required]
+        public bool WithBonus { get; set; }
+
+        public CarRentDto CarReservation { get; set; }
     }
 }
