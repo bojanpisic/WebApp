@@ -3,7 +3,7 @@
     <span>Filters</span>
     <!-- <a href="#" id="clear">Clear</a> -->
 </nav>
-<main>
+<main *ngIf="isOk">
     <h3>Price range</h3>
     <div class="middle">
         <div class="multi-range-slider">
@@ -32,11 +32,11 @@
     <h3>Seats</h3>
     <div id="min-dur">
         <p style="margin-top: 0px">MIN SEATS:</p><!--treba dodati da kad ovde izmenim da se i tamo izmeni-->
-        <input type="number" id="min" [(ngModel)]="minSeatsNumber">
+        <input type="number" id="minSeats" [(ngModel)]="minSeatsNumber">
     </div>
     <div id="max-dur">
         <p style="margin-top: 0px">MAX SEATS:</p><!--treba dodati da kad ovde izmenim da se i tamo izmeni-->
-        <input type="number" id="min" [(ngModel)]="maxSeatsNumber">
+        <input type="number" id="maxSeats" [(ngModel)]="maxSeatsNumber">
     </div>
     <div class="sep-div">
         <hr class="sep">

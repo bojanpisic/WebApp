@@ -6,12 +6,15 @@ import { Subject } from 'rxjs';
 })
 export class FlightPlusCarService {
 
-  observer = new Subject();
-  public subscriber$ = this.observer.asObservable();
+  flightReservation;
 
   constructor() { }
 
-  emitData(data) {
-    this.observer.next(data);
+  addFlightReservation(data: any) {
+    this.flightReservation = data;
+  }
+
+  getFlightReservation() {
+    return this.flightReservation;
   }
 }

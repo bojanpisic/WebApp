@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { NavigationExtras, Router, ActivatedRoute } from '@angular/router';
 import { CarRentService } from 'src/services/car-rent.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-car-filter',
@@ -11,7 +12,7 @@ export class CarFilterComponent implements OnInit {
 
   slidingMinPriceValue: number;
   slidingMaxPriceValue: number;
-  minSeatsNumber = 0;
+  minSeatsNumber = 2;
   maxSeatsNumber = 10;
 
   airlinesButton: string;
@@ -26,11 +27,13 @@ export class CarFilterComponent implements OnInit {
   userId: number;
   url: any;
   allCompaniesBool = false;
+  isOk = false;
   @Output() closeFilter = new EventEmitter<boolean>();
   @Output() appliedFilters = new EventEmitter<any>();
 
   constructor(private racService: CarRentService,
-              private router: Router, private route: ActivatedRoute) {
+              private router: Router, private route: ActivatedRoute,
+              private toastr: ToastrService) {
     const array = route.snapshot.queryParamMap.get('array');
     this.urlParams = JSON.parse(array);
     this.route.params.subscribe(param => {
@@ -46,6 +49,7 @@ export class CarFilterComponent implements OnInit {
   ngOnInit(): void {
     let data;
     data = this.generateFilter();
+    console.log(data);
 
     console.log(this.urlParams);
 
@@ -57,13 +61,15 @@ export class CarFilterComponent implements OnInit {
       ret: data.ret,
       minPrice: data.minPrice,
       maxPrice: data.maxPrice,
+      seatFrom: data.seatFrom,
+      seatTo: data.seatTo,
       racs: data.racs,
     };
 
     this.slidingMinPriceValue = (this.url.minPrice === 0) ? 0 : this.url.minPrice / 30;
     this.slidingMaxPriceValue = (this.url.maxPrice === 0) ? 0 : this.url.maxPrice / 30;
-    this.minSeatsNumber = this.url.seatFrom;
-    this.maxSeatsNumber = this.url.seatTo;
+    this.minSeatsNumber = +this.url.seatFrom;
+    this.maxSeatsNumber = +this.url.seatTo;
     this.allCompaniesBool = (this.url.racs === '') ? true : false;
 
     this.loadCars();
@@ -118,12 +124,12 @@ export class CarFilterComponent implements OnInit {
               };
               this.allCompanies.push(airline);
               this.checkedCompanies.push(true);
-              console.log(airline);
+              this.isOk = true;
             });
           }
         },
         err => {
-          console.log(err);
+          this.toastr.error(err.error, 'Error!');
         }
       );
     } else {
@@ -136,20 +142,19 @@ export class CarFilterComponent implements OnInit {
                 name: element.name,
               };
               this.allCompanies.push(airline);
-              console.log(this.url.racs);
               const a111 = this.url.racs.split(',');
-              console.log(airline.id);
               if (this.url.racs.split(',').includes(airline.id.toString())) {
                 this.checkedCompanies.push(true);
               } else {
                 this.checkedCompanies.push(false);
               }
               console.log(airline);
+              this.isOk = true;
             });
           }
         },
         err => {
-          console.log(err);
+          this.toastr.error(err.error, 'Error!');
         }
       );
     }
@@ -178,28 +183,6 @@ export class CarFilterComponent implements OnInit {
 
     const queryParams: any = {};
     const array = [];
-    // if (this.url.type === 'one') {
-    //   array.push({type: 'one'});
-    //   array.push({from: this.url.from, to: this.url.to, dep: this.url.dep});
-    // }
-    // if (this.url.type === 'two') {
-    //   array.push({type: 'two'});
-    //   array.push({from: this.url.from, to: this.url.to,
-    //               dep: this.url.dep, ret: this.url.ret});
-    // }
-    // if (this.url.type === 'multi') {
-    //   array.push({type: 'multi'});
-    //   this.fromString = this.url.from;
-    //   this.toString = this.url.to;
-    //   this.depString = this.url.dep;
-    //   const fromSplitted = this.fromString.split(',');
-    //   const toSplitted = this.toString.split(',');
-    //   const depSplitted = this.depString.split(',');
-    //   for (let i = 0; i < fromSplitted.length - 1; i++) {
-    //     const element = fromSplitted[i];
-    //     array.push({from: element, to: toSplitted[i], dep: depSplitted[i]});
-    //   }
-    // }
 
     array.push({
       type: '',

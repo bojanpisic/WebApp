@@ -37,6 +37,11 @@ export class AirlineDestinationsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadDestionations();
+  }
+
+  loadDestionations() {
+    this.destinations = [];
     this.airlineService.getAdminsDestinations().subscribe(
       (res: any[]) => {
         if (res.length) {
@@ -57,42 +62,42 @@ export class AirlineDestinationsComponent implements OnInit {
     );
   }
 
-  onDelete(index: number) {
-    this.indexOfPickedDestination = index;
-    this.pickedDestinationAddress = {city: this.destinations[index].city, state: this.destinations[index].state};
-    this.showModal = true;
-  }
+  // onDelete(index: number) {
+  //   this.indexOfPickedDestination = index;
+  //   this.pickedDestinationAddress = {city: this.destinations[index].city, state: this.destinations[index].state};
+  //   this.showModal = true;
+  // }
 
-  onDeleteDestination(value: boolean) {
-    if (value) {
-      const data = {
-        id: this.destinations.find(x => x.city === this.pickedDestinationAddress.city).destinationId
-      };
-      this.airlineService.deleteDestination(data).subscribe(
-        (res: any) => {
-          this.destinations = [];
-          res.forEach(element => {
-            if (!this.destinations.find(x => x.city === element.city)) {
-              console.log(element);
-              const new1 = {
-                destinationId: element.destinationId,
-                imageUrl: this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.imageUrl}`),
-                city: element.city,
-                state: element.state
-              };
-              this.destinations.push(new1);
-            }
-          });
-          this.toastr.success('Success!');
-          console.log('deleted');
-        },
-        err => {
-          this.toastr.error(err.statusText, 'Error.');
-        }
-      );
-    }
-    this.showModal = false;
-  }
+  // onDeleteDestination(value: boolean) {
+  //   if (value) {
+  //     const data = {
+  //       id: this.destinations.find(x => x.city === this.pickedDestinationAddress.city).destinationId
+  //     };
+  //     this.airlineService.deleteDestination(data).subscribe(
+  //       (res: any) => {
+  //         this.destinations = [];
+  //         res.forEach(element => {
+  //           if (!this.destinations.find(x => x.city === element.city)) {
+  //             console.log(element);
+  //             const new1 = {
+  //               destinationId: element.destinationId,
+  //               imageUrl: this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.imageUrl}`),
+  //               city: element.city,
+  //               state: element.state
+  //             };
+  //             this.destinations.push(new1);
+  //           }
+  //         });
+  //         this.toastr.success('Success!');
+  //         console.log('deleted');
+  //       },
+  //       err => {
+  //         this.toastr.error(err.statusText, 'Error.');
+  //       }
+  //     );
+  //   }
+  //   this.showModal = false;
+  // }
 
   addDestination(value: any) {
     const obj = JSON.parse(value);
@@ -111,18 +116,7 @@ export class AirlineDestinationsComponent implements OnInit {
     };
     this.airlineService.addDestination(data).subscribe(
       (res: any) => {
-        res.forEach(element => {
-          if (!this.destinations.find(x => x.city === element.city)) {
-            console.log(element);
-            const new1 = {
-              destinationId: element.destinationId,
-              imageUrl: this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.imageUrl}`),
-              city: element.city,
-              state: element.state
-            };
-            this.destinations.push(new1);
-          }
-        });
+        this.loadDestionations();
       },
       err => {
         this.toastr.error(err.statusText, 'Error.');

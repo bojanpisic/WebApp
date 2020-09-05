@@ -181,6 +181,7 @@ export class TripsComponent implements OnInit {
   }
 
   generateFilter() {
+    console.log('USAO');
     if (this.urlParams === null && this.userId === undefined) {
       this.router.navigate(['']);
       return;
@@ -190,13 +191,14 @@ export class TripsComponent implements OnInit {
       return;
     }
     if (this.urlParams !== null) {
+      console.log(this.urlParams);
       if (this.urlParams[0].type === 'one') {
         return {type: 'one', from: this.urlParams[1].from, to: this.urlParams[1].to,
                 dep: this.urlParams[1].dep, ret: '', minPrice: this.urlParams[2].minPrice, maxPrice: this.urlParams[2].maxPrice,
                 air: this.urlParams[2].air, mind: this.urlParams[2].mind, maxd: this.urlParams[2].maxd};
       } else if (this.urlParams[0].type === 'two') {
         // tslint:disable-next-line:max-line-length
-        return {type: 'one', from: this.urlParams[1].from, to: this.urlParams[1].to,
+        return {type: 'two', from: this.urlParams[1].from, to: this.urlParams[1].to,
                 dep: this.urlParams[1].dep, ret: this.urlParams[1].ret,
                 minPrice: this.urlParams[2].minPrice, maxPrice: this.urlParams[2].maxPrice,
                 air: this.urlParams[2].air, mind: this.urlParams[2].mind, maxd: this.urlParams[2].maxd};

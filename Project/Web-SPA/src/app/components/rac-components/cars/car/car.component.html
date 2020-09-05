@@ -29,7 +29,7 @@
                 {{car.seatsNumber}} passengers
             </span>
         </div>
-        <div *ngIf="customerView || carRate || adminView" class="price">
+        <div *ngIf="customerView || adminView" class="price">
             <span id="price">${{car.pricePerDay}}</span>
             <span> / day</span>
         </div>

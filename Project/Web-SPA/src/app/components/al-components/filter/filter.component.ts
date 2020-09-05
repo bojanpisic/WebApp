@@ -82,7 +82,7 @@ export class FilterComponent implements OnInit {
     console.log(this.maxHoursDuration);
     console.log(this.maxMinutesDuration);
 
-    // this.loadAirlines();
+    this.loadAirlines();
   }
 
   generateFilter() {
@@ -101,7 +101,7 @@ export class FilterComponent implements OnInit {
                 air: this.urlParams[2].air, mind: this.urlParams[2].mind, maxd: this.urlParams[2].maxd};
       } else if (this.urlParams[0].type === 'two') {
         // tslint:disable-next-line:max-line-length
-        return {type: 'one', from: this.urlParams[1].from, to: this.urlParams[1].to,
+        return {type: 'two', from: this.urlParams[1].from, to: this.urlParams[1].to,
                 dep: this.urlParams[1].dep, ret: this.urlParams[1].ret,
                 minPrice: this.urlParams[2].minPrice, maxPrice: this.urlParams[2].maxPrice,
                 air: this.urlParams[2].air, mind: this.urlParams[2].mind, maxd: this.urlParams[2].maxd};
@@ -182,12 +182,13 @@ export class FilterComponent implements OnInit {
                 name: element.name,
               };
               this.allAirlines.push(airline);
-              if (this.url.air.split(',').contains(airline.airlineId)) {
+              if (this.url.air.split(',').includes(airline.airlineId.toString())) {
                 this.checkedAirlines.push(true);
               } else {
                 this.checkedAirlines.push(false);
               }
             });
+            console.log('AAAAAAAA', this.checkedAirlines);
           }
         },
         err => {
@@ -207,15 +208,13 @@ export class FilterComponent implements OnInit {
 
   onApplyFilters() {
     let airIds = '';
-    if (this.checkedAirlines.length !== this.allAirlines.length) {
-      const airlines = this.getIdsOfCheckedAirlines();
-      for (let i = 0; i < airlines.length; i++) {
-        const element = airlines[i];
-        if (i === airlines.length - 1) {
-          airIds += element;
-        } else {
-          airIds += element + ',';
-        }
+    const airlines = this.getIdsOfCheckedAirlines();
+    for (let i = 0; i < airlines.length; i++) {
+      const element = airlines[i];
+      if (i === airlines.length - 1) {
+        airIds += element;
+      } else {
+        airIds += element + ',';
       }
     }
 

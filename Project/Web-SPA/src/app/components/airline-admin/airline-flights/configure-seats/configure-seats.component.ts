@@ -59,6 +59,15 @@ export class ConfigureSeatsComponent implements OnInit {
 
   ngOnInit(): void {
     window.scroll(0, 0);
+    this.loadAll();
+  }
+
+  loadAll() {
+    this.seats = [];
+    this.firstClassSeats = [];
+    this.businessSeats = [];
+    this.economySeats = [];
+    this.basicEconomySeats = [];
     const air1 = this.airlineService.getFlightsSeats(this.flightId).subscribe(
       (res: any[]) => {
         if (res.length) {
@@ -92,7 +101,6 @@ export class ConfigureSeatsComponent implements OnInit {
       column = ((index + 1) % 3 === 1) ? 'A' : ((index + 1) % 3 === 2) ? 'B' : 'C';
     } else {
       column = ((index + 1) % 3 === 1) ? 'D' : ((index + 1) % 3 === 2) ? 'E' : 'F';
-      // this.seats.push(new Seat('F', column, row, 400));
     }
     console.log(row, column, classParam);
     let previousSeat = this.findPreviosSeat(row, column, classParam);
@@ -100,14 +108,6 @@ export class ConfigureSeatsComponent implements OnInit {
       previousSeat = {price: 100};
     }
     console.log(previousSeat);
-    // const insertIndex = this.seats.indexOf(previousSeat);
-    // console.log(index, side, classParam);
-    // console.log(previousSeat);
-    // if (previousSeat !== null) {
-    //   this.seats.splice(insertIndex + 1, 0, new Seat(classParam, column, row, this.setPrice(classParam)));
-    // } else {
-    //   this.seats.splice(insertIndex + 1, 0, new Seat(classParam, column, row, this.setPrice(classParam)));
-    // }
     const data = {
       // tslint:disable-next-line:object-literal-shorthand
       column: column,
@@ -119,46 +119,12 @@ export class ConfigureSeatsComponent implements OnInit {
     };
     this.airlineService.addSeat(data).subscribe(
       (res: any) => {
-        if (res.length) {
-          res.forEach(element => {
-            const new1 = {
-              column: element.column,
-              row: element.row,
-              class: element.class,
-              price: element.price,
-              seatId: element.seatId
-            };
-            this.seats.push(new1);
-          });
-          this.firstClassSeats = [];
-          this.businessSeats = [];
-          this.economySeats = [];
-          this.basicEconomySeats = [];
-          this.setEconomySeats();
-          this.setFirstClassSeats();
-          this.setBusinessSeats();
-          this.setBasicEconomySeats();
-          this.itsOk = true;
-          this.toastr.success('Success!');
-        }
+        this.loadAll();
       },
       err => {
         this.toastr.error(err.statusText, 'Error.');
       }
     );
-    // if (classParam === 'F') {
-    //   this.firstClassSeats = [];
-    //   this.setFirstClassSeats();
-    // } else if (classParam === 'B') {
-    //   this.businessSeats = [];
-    //   this.setBusinessSeats();
-    // } else if (classParam === 'E') {
-    //   this.economySeats = [];
-    //   this.setEconomySeats();
-    // } else {
-    //   this.basicEconomySeats = [];
-    //   this.setBasicEconomySeats();
-    // }
   }
 
   findPreviosSeat(row: number, column: string, classParam: string) {
@@ -207,95 +173,23 @@ export class ConfigureSeatsComponent implements OnInit {
     if (value) {
       this.airlineService.deleteSeat(this.pickedSeat.seatId).subscribe(
         (res: any) => {
-          console.log('obrisao1');
-          if (res.length) {
-            console.log('obrisao2');
-            this.seats = [];
-            res.forEach(element => {
-              const new1 = {
-                column: element.column,
-                row: element.row,
-                class: element.class,
-                price: element.price,
-                seatId: element.seatId
-              };
-              this.seats.push(new1);
-              console.log('obrisao3');
-            });
-            this.firstClassSeats = [];
-            this.businessSeats = [];
-            this.economySeats = [];
-            this.basicEconomySeats = [];
-            this.setEconomySeats();
-            this.setFirstClassSeats();
-            this.setBusinessSeats();
-            this.setBasicEconomySeats();
-            this.itsOk = true;
-            // this.toastr.success('Success!');
-          }
+          this.loadAll();
         },
         err => {
           this.toastr.error(err.statusText, 'Error.');
         }
       );
-      // this.seats.splice(indexOfSeat, 1);
-      // if (this.pickedSeat.class === 'F') {
-      //   this.firstClassSeats = [];
-      //   this.setFirstClassSeats();
-      // } else if (this.pickedSeat.class === 'B') {
-      //   this.businessSeats = [];
-      //   this.setBusinessSeats();
-      // } else if (this.pickedSeat.class === 'E') {
-      //   this.economySeats = [];
-      //   this.setEconomySeats();
-      // } else {
-      //   this.basicEconomySeats = [];
-      //   this.setBasicEconomySeats();
-      // }
     }
   }
 
   onChangePrice(value: number) {
-    // const index = this.seats.indexOf(this.pickedSeat);
-    // this.seats[index].price = value;
     const data = {
       id: this.pickedSeat.seatId,
       price: value,
     };
     this.airlineService.changeSeat(data).subscribe(
       (res: any) => {
-        // tslint:disable-next-line:prefer-for-of
-        for (let i = 0; i < this.seats.length; i++) {
-          if (this.seats[i].seatId === this.pickedSeat.seatId) {
-            this.seats[i].price = data.price;
-          }
-        }
-        this.blur = false;
-        this.showModify = false;
-        if (res.length) {
-          this.seats = [];
-          res.forEach(element => {
-            const new1 = {
-              column: element.column,
-              row: element.row,
-              class: element.class,
-              price: element.price,
-              seatId: element.seatId
-            };
-            this.seats.push(new1);
-            console.log('obrisao');
-          });
-          this.firstClassSeats = [];
-          this.businessSeats = [];
-          this.economySeats = [];
-          this.basicEconomySeats = [];
-          this.setEconomySeats();
-          this.setFirstClassSeats();
-          this.setBusinessSeats();
-          this.setBasicEconomySeats();
-          this.itsOk = true;
-          this.toastr.success('Success!');
-        }
+        this.loadAll();
       },
       err => {
         this.toastr.error(err.statusText, 'Error.');

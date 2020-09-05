@@ -11,8 +11,8 @@
 </header>
 <ul [ngClass]="{'blur': showModal}">
     <li *ngFor="let destination of destinations; let i = index">
-        <app-airline-destination (delete)='onDelete(i)' [editable]="true" [destination]="destination"></app-airline-destination>
+        <app-airline-destination [editable]="true" [destination]="destination"></app-airline-destination>
     </li>
     <h3 *ngIf="destinations.length === 0">You are not flying to any destination. Add them now!</h3>
 </ul>
-<app-modal *ngIf="showModal" (remove)="onDeleteDestination($event)" [destination]="pickedDestinationAddress" [type]="'deleteDestination'"></app-modal>
+<app-modal *ngIf="showModal" [destination]="pickedDestinationAddress" [type]="'deleteDestination'"></app-modal>

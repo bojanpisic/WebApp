@@ -8,7 +8,7 @@ import { catchError } from 'rxjs/operators';
 })
 export class SystemAdminService {
 
-  readonly BaseURI = 'http://192.168.43.54:5001/api';
+  readonly BaseURI = 'http://192.168.0.11:5001/api';
 
 
   constructor(private http: HttpClient) { }
@@ -20,7 +20,7 @@ export class SystemAdminService {
       ConfirmPassword: data.confirmPassword,
       Password: data.password,
     };
-    return this.http.post(this.BaseURI + '/authentication/register-systemadmin', body);
+    return this.http.post(this.BaseURI + '/systemadmin/register-systemadmin', body);
   }
 
   registerAirline(data: any) {

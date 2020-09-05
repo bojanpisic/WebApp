@@ -53,6 +53,7 @@ export class FlightReservationComponent implements OnInit {
   toDateWithCar;
 
   userId;
+  errorToDate = false;
 
   constructor(private activatedRoute: ActivatedRoute, private location: Location, private router: Router,
               private airlineService: AirlineService,
@@ -360,25 +361,16 @@ export class FlightReservationComponent implements OnInit {
       if (this.withCar) {
         const queryParams: any = {};
         const array = [];
-        // let toDate = '';
-        // if (this.flights.length === 2) {
-        //   toDate = (this.flights[0].from === this.flights[1].to &&
-        //             this.flights[0].to === this.flights[1].from) ?
-        //             this.flights[1].takeOffDate : '';
-        // }
-        console.log(this.flights[0].landingDate);
-        const fromDateee = new Date(this.flights[0].landingDate);
-        const rettt = new Date(this.flights[0].landingDate);
-        rettt.setDate(fromDateee.getDate() + 1);
-        console.log(rettt);
-        console.log(fromDateee);
-        console.log(this.flights[0].landingDate);
+        if (this.toDateWithCar === undefined) {
+          this.errorToDate = true;
+          return;
+        }
         array.push({
           type: '',
           from: this.flights[0].to,
           to: this.flights[0].to,
           dep: this.flights[0].landingDate,
-          ret: rettt,
+          ret: this.toDateWithCar,
           minPrice: 0,
           maxPrice: 3000,
           racs: '',
@@ -390,12 +382,13 @@ export class FlightReservationComponent implements OnInit {
         const navigationExtras: NavigationExtras = {
           queryParams
         };
-        this.flightPlusCar.emitData({
+        this.flightPlusCar.addFlightReservation({
           mySeatsIds: this.mySeats.map(res => res.seatId),
           myPassport: this.myPassport,
           friends: this.friends,
           unregisteredFriends: this.unregisteredFriends,
-          withBonus: this.withBonus
+          withBonus: this.withBonus,
+          toDate: this.toDateWithCar
         });
         if (this.userId !== undefined) {
           this.router.navigate(['/' + this.userId + '/cars'], navigationExtras);
@@ -408,7 +401,8 @@ export class FlightReservationComponent implements OnInit {
           myPassport: this.myPassport,
           friends: this.friends,
           unregisteredFriends: this.unregisteredFriends,
-          withBonus: this.withBonus
+          withBonus: this.withBonus,
+          carReservation: null
         };
         this.airlineService.reserveTrip(data).subscribe(
           (res: any) => {
@@ -458,6 +452,7 @@ export class FlightReservationComponent implements OnInit {
   }
 
   onDateEmitter(value: any) {
+    this.errorToDate = true;
     this.toDateWithCar = value;
   }
 

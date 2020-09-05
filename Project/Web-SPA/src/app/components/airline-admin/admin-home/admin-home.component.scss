@@ -3,6 +3,7 @@
 @import '../../../scss/layout/footer';
 
 .app {
+    min-height: 120vh;
     @extend %app;
     margin: 10vh 0 20vh 0;
 
