@@ -155,18 +155,6 @@ export class AddFlightComponent implements OnInit {
     };
     this.airlineService.addFlight(data).subscribe(
       (res: any) => {
-        // res.forEach(element => {
-        //   if (!this.destinations.find(x => x.city === element.city)) {
-        //     console.log(element);
-        //     const new1 = {
-        //       destinationId: element.destinationId,
-        //       imageUrl: this.san.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${element.imageUrl}`),
-        //       city: element.city,
-        //       state: element.state
-        //     };
-        //     this.destinations.push(new1);
-        //   }
-        // });
         this.toastr.success('Success!');
         setTimeout(() => {
           this.exit();

@@ -72,6 +72,8 @@ export class MyCarsComponent implements OnInit {
   }
 
   loadAll() {
+    this.upcomingReservations = [];
+    this.previousReservations = [];
     const c = this.carService.getUsersCarReservations().subscribe(
       (res: any[]) => {
         if (res.length > 0) {
@@ -127,6 +129,7 @@ export class MyCarsComponent implements OnInit {
     this.carService.rateCar(data).subscribe(
       (res: any) => {
         this.toastr.success('Success!');
+        this.loadAll();
       },
       err => {
         // tslint:disable-next-line: triple-equals
@@ -150,6 +153,7 @@ export class MyCarsComponent implements OnInit {
     this.carService.rateCarService(data).subscribe(
       (res: any) => {
         this.toastr.success('Success!');
+        this.loadAll();
       },
       err => {
         this.toastr.error(err.error, 'Error!');

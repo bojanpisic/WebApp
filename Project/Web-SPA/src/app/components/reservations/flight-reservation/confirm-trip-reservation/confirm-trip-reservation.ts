@@ -8,6 +8,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 export class ConfirmTripReservationComponent implements OnInit {
 
   @Input() data: any;
+  @Input() errorToDate: any;
   @Output() bonusEmitter = new EventEmitter<any>();
   @Output() carEmitter = new EventEmitter<any>();
   @Output() dateEmitter = new EventEmitter<any>();

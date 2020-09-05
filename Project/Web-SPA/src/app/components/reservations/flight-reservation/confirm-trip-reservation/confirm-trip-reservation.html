@@ -44,17 +44,11 @@
             <span></span>
         </label>
     </div>
-    <!-- <div *ngIf="this.data.flights.length !== 1">
-        <div class="content" *ngIf="!(this.data.flights[0].from === this.data.flights[1].to &&
-        this.data.flights[0].to === this.data.flights[1].from) && withCar">
-            <p class="required">To:</p>
-            <input (input)="onInputToDateCar($event)" type="date" onkeydown="return false" [value]="toDate">
+    <div class="content">
+        <p class="required">To date:</p>
+        <input (input)="onInputToDateCar($event)" onkeydown="return false" [ngClass]="{'error-input': errorToDate}" type="date">
+        <div class="error" *ngIf="errorToDate">
+            To date is required!
         </div>
     </div>
-    <div *ngIf="this.data.flights.length === 1">
-        <div class="content" *ngIf="withCar">
-            <p class="required">To:</p>
-            <input (input)="onInputToDateCar($event)" type="date" onkeydown="return false" [value]="toDate">
-        </div>
-    </div> -->
 </main>

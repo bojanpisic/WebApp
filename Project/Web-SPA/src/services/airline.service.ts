@@ -13,7 +13,7 @@ import { tap } from 'rxjs/operators';
 })
 export class AirlineService {
 
-  readonly BaseURI = 'http://192.168.0.13:5001/api';
+  readonly BaseURI = 'http://192.168.0.11:5001/api';
 
   airlines: Array<Airline>;
   constructor(private http: HttpClient) {
@@ -22,11 +22,14 @@ export class AirlineService {
    }
 
    reserveTrip(data) {
+    console.log('SALJEM:', data);
     const body = {
       MySeatsIds: data.mySeatsIds,
       MyPassport: data.myPassport,
       Friends: data.friends,
-      UnregisteredFriends: data.unregisteredFriends
+      UnregisteredFriends: data.unregisteredFriends,
+      CarReservation: data.carReservation,
+      WithBonus: data.withBonus
     };
     const url = this.BaseURI + '/user/flight-reservation';
     return this.http.post(url, body);
@@ -63,7 +66,7 @@ export class AirlineService {
     console.log(data);
     const body = {
       Id: data.id,
-      Rate: data.rate,
+      Rate: data.rate.rate,
     };
     const url = this.BaseURI + '/user/rate-flight';
     return this.http.post(url, body);

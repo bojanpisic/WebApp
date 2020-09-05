@@ -141,7 +141,7 @@ export class DriveMainFormComponent implements OnInit {
         minPrice: 0,
         maxPrice: 3000,
         racs: '',
-        seatFrom: 0,
+        seatFrom: 2,
         seatTo: 10
       });
       queryParams.array = JSON.stringify(array);

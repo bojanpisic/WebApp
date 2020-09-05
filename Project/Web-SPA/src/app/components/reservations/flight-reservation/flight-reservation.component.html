@@ -12,7 +12,7 @@
 <app-modal *ngIf="exit" (remove)='onExitReservation($event)' [type]='exitReservation'></app-modal>
 <app-modal *ngIf="error" (remove)='onErrorReservation($event)' [type]='errorReservation'></app-modal>
 <app-invite-friends [pickSeatForMe]="pickSeatForMe" *ngIf="fillInfo" (passenger)="addPassenger($event)" [seat]="pickedSeat" [flight]="flights[(index < 0 || index > flights.length) ? 0 : index]" [person]="passenger"></app-invite-friends>
-<app-confirm-trip-reservation (dateEmitter)="onDateEmitter($event)" (bonusEmitter)="onBonusEmitter($event)" (carEmitter)="onCarEmitter($event)" [data]="confirmData" *ngIf="showConfirmReservation"></app-confirm-trip-reservation>
+<app-confirm-trip-reservation [errorToDate]="errorToDate" (dateEmitter)="onDateEmitter($event)" (bonusEmitter)="onBonusEmitter($event)" (carEmitter)="onCarEmitter($event)" [data]="confirmData" *ngIf="showConfirmReservation"></app-confirm-trip-reservation>
 <app-offer-car *ngIf="showOfferCar"></app-offer-car>
 <footer [ngClass]="{'blur': fillInfo || exit || error}">
     <button id="bookNow" *ngIf="showTripDetails" (click)="nextStep()">BOOK NOW!</button>

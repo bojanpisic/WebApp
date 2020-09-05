@@ -8,6 +8,6 @@
         <app-trip (showModal)="onShowModal($event)" [trip]="trip" [userId]="userId" [indexOfTrip]="i"></app-trip>
     </li>
 </ul>
-<h2 *ngIf="trips.length === 0" style="padding: 44px; color: rgb(36,36,36)">There is no available flights for selected dates!</h2>
+<h2 *ngIf="trips.length === 0 && !filter" style="padding: 44px; color: rgb(36,36,36)">There is no available flights for selected dates!</h2>
 <app-filter [ngClass]="{blur: showModal}" *ngIf="filter" (appliedFilters)="onApplyFilter($event)" (closeFilter)="toggleFilter()"></app-filter>
 <app-modal *ngIf="showModal" [type]="'bookError'" (remove)="onModal($event)"></app-modal>

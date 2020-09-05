@@ -7,6 +7,7 @@ import { Location } from '@angular/common';
 import { CarRentService } from 'src/services/car-rent.service';
 import { ToastrService } from 'ngx-toastr';
 import { FlightPlusCarService } from 'src/services/flight-plus-car.service';
+import { AirlineService } from 'src/services/airline.service';
 
 @Component({
   selector: 'app-cars',
@@ -35,7 +36,8 @@ export class CarsComponent implements OnInit {
               private routes: ActivatedRoute, private location: Location,
               private router: Router,
               private toastr: ToastrService,
-              private flightPlusCar: FlightPlusCarService) {
+              private flightPlusCar: FlightPlusCarService,
+              private airlineService: AirlineService) {
     const array = routes.snapshot.queryParamMap.get('array');
     this.urlParams = JSON.parse(array);
     console.log(this.urlParams);
@@ -55,18 +57,11 @@ export class CarsComponent implements OnInit {
       }
     });
     this.cars = new Array<any>();
-    this.flightPlusCar.subscriber$.subscribe(data => {
-      console.log(data);
-      this.flights = data;
-    });
    }
 
   ngOnInit(): void {
     this.loadCars();
-    this.flightPlusCar.subscriber$.subscribe(data => {
-      console.log(data);
-      this.flights = data;
-    });
+    this.flights = this.flightPlusCar.getFlightReservation();
     console.log(this.flights);
   }
 
@@ -138,24 +133,57 @@ export class CarsComponent implements OnInit {
         userId: this.userId,
         totalPrice: this.selectedOffer.totalPrice
       };
-      this.carService.reserveCar(data).subscribe(
-        (res: any) => {
-          this.toastr.success('Success!');
-          this.router.navigate(['/' + this.userId + '/home']);
-          this.showModal = false;
-        },
-        err => {
-          // tslint:disable-next-line: triple-equals
-          if (err.status == 400) {
-            console.log(err);
-            // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
-            this.toastr.error(err.error, 'Error!');
-          } else {
-            this.toastr.error(err.error, 'Error!');
+      if (this.flights !== undefined) {
+        const data1 = {
+          mySeatsIds: this.flights.mySeatsIds,
+          myPassport: this.flights.myPassport,
+          friends: this.flights.friends,
+          unregisteredFriends: this.flights.unregisteredFriends,
+          withBonus: this.flights.withBonus,
+          carReservation: {
+            takeOverCity: this.url.from,
+            returnCity: this.url.to,
+            takeOverDate: this.url.dep,
+            returnDate: this.flights.toDate,
+            carRentId: this.selectedOffer.carId,
           }
-          this.showModal = false;
-        }
-      );
+        };
+        this.airlineService.reserveTrip(data1).subscribe(
+          (res: any) => {
+            this.toastr.success('Success!');
+            this.router.navigate(['/' + this.userId + '/home']);
+          },
+          err => {
+            // tslint:disable-next-line: triple-equals
+            if (err.status == 400) {
+              // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
+              this.toastr.error(err.error, 'Error!');
+            } else {
+              this.toastr.error(err.error, 'Error!');
+            }
+          }
+        );
+      } else {
+        console.log('QQQQQQQQQQQQQQQQQ');
+        this.carService.reserveCar(data).subscribe(
+          (res: any) => {
+            this.toastr.success('Success!');
+            this.router.navigate(['/' + this.userId + '/home']);
+            this.showModal = false;
+          },
+          err => {
+            // tslint:disable-next-line: triple-equals
+            if (err.status == 400) {
+              console.log(err);
+              // this.toastr.error('Incorrect username or password.', 'Authentication failed.');
+              this.toastr.error(err.error, 'Error!');
+            } else {
+              this.toastr.error(err.error, 'Error!');
+            }
+            this.showModal = false;
+          }
+        );
+      }
     } else {
       this.showModal = false;
     }
@@ -170,9 +198,7 @@ export class CarsComponent implements OnInit {
         dep: this.url.dep,
         ret: this.url.ret,
       };
-  
       const selectedCar = this.cars.find(x => x.carId === value);
-  
       this.selectedOffer = {
         from: this.url.from,
         to: this.url.to,
@@ -187,7 +213,6 @@ export class CarsComponent implements OnInit {
         type: selectedCar.type,
         year: selectedCar.year
       };
-  
       const a = this.carService.getTotalPriceForResevation(data).subscribe(
           (res: any) => {
             this.selectedOffer.totalPrice = res;
@@ -201,29 +226,6 @@ export class CarsComponent implements OnInit {
     } else {
       this.showModalError = true;
     }
-    
-
-    // ******************************************* ODKOMENTARISI OVO GORE A ZAKOMENTASI OVO DOLE
-
-
-
-    // this.selectedCar = {
-    //   from: this.url.from,
-    //   to: this.url.to,
-    //   dep: this.url.dep,
-    //   ret: this.url.ret,
-    //   brand: 'Range Rover',
-    //   carId: 1,
-    //   city: 'Berlin',
-    //   model: 'Evoque',
-    //   name: 'Hertz',
-    //   pricePerDay: 50,
-    //   seatsNumber: 4,
-    //   state: 'Germany',
-    //   type: 'Luxury',
-    //   year: 2020
-    // };
-    // this.showModal = true;
   }
 
   generateFilter() {
