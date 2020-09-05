@@ -13,7 +13,7 @@ import { tap } from 'rxjs/operators';
 })
 export class AirlineService {
 
-  readonly BaseURI = 'http://192.168.43.54:5001/api';
+  readonly BaseURI = 'http://192.168.0.13:5001/api';
 
   airlines: Array<Airline>;
   constructor(private http: HttpClient) {

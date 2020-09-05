@@ -24,7 +24,86 @@ namespace WebApi.Controllers
             unitOfWork = _unitOfWork;
         }
 
+        [HttpPost("register-systemadmin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
+        public async Task<IActionResult> RegisterSystemAdmin([FromBody] RegisterSystemAdminDto userDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            Person createUser;
+
+            try
+            {
+                string userId = User.Claims.First(c => c.Type == "UserID").Value;
+                string userRole = User.Claims.First(c => c.Type == "Roles").Value;
+
+                if (!userRole.Equals("Admin"))
+                {
+                    return Unauthorized();
+                }
+
+                //if ((await unitOfWork.AuthenticationRepository.GetPersonByEmail(userDto.Email)) != null)
+                //{
+                //    return BadRequest("User with that email already exists!");
+                //}
+                if ((await unitOfWork.AuthenticationRepository.GetPersonByUserName(userDto.UserName)) != null)
+                {
+                    return BadRequest("User with that usermane already exists!");
+                }
+
+                if (userDto.Password.Length > 20 || userDto.Password.Length < 8)
+                {
+                    return BadRequest("Password length has to be between 8-20");
+                }
+
+                if (!unitOfWork.AuthenticationRepository.CheckPasswordMatch(userDto.Password, userDto.ConfirmPassword))
+                {
+                    return BadRequest("Passwords dont match");
+                }
+                createUser = new Person()
+                {
+                    Email = userDto.Email,
+                    UserName = userDto.UserName,
+                };
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to register system admin");
+            }
+
+            //using (var transaction = new TransactionScope())
+            try
+            {
+                var result = await this.unitOfWork.AuthenticationRepository.RegisterSystemAdmin(createUser, userDto.Password);
+                //unitOfWork.Commit();
+
+                var addToRoleResult = await unitOfWork.AuthenticationRepository.AddToRole(createUser, "Admin");
+                await unitOfWork.Commit();
+
+                //await transaction.Result.CommitAsync();
+            }
+            catch (Exception)
+            {
+                //unitOfWork.Rollback();
+                //await transaction.Result.RollbackAsync();
+                return StatusCode(500, "Internal server error. Registration failed.");
+            }
+
+            try
+            {
+                var emailSent = await unitOfWork.AuthenticationRepository.SendConfirmationMail(createUser, "admin", userDto.Password);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Internal server error. Sending email failed.");
+            }
+
+            return Ok();
+        }
         [HttpPost]
         [Route("register-airline")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]

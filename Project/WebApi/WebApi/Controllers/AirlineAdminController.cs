@@ -117,8 +117,7 @@ namespace WebApi.Controllers
                     return NotFound("User not found.");
                 }
 
-                var findRes = await unitOfWork.AirlineRepository.Get(a => a.AdminId == userId, null, "Address");
-                var airline = findRes.FirstOrDefault();
+                var airline = (await unitOfWork.AirlineRepository.Get(a => a.AdminId == userId, null, "Address")).FirstOrDefault();
 
                 if (airline == null)
                 {
@@ -145,25 +144,17 @@ namespace WebApi.Controllers
                 var result = IdentityResult.Success;
                 if (addressChanged)
                 {
-                    //using (var transaction = new TransactionScope())
-                    //{
-                        try
-                        {
-                            unitOfWork.AirlineRepository.Update(airline);
-                            //unitOfWork.Commit();
+                    try
+                    {
+                        unitOfWork.AirlineRepository.Update(airline);
+                        unitOfWork.AirlineRepository.UpdateAddress(airline.Address);
 
-                            unitOfWork.AirlineRepository.UpdateAddress(airline.Address);
-                            await unitOfWork.Commit();
-
-                            //transaction.Complete();
-                        }
-                        catch (Exception)
-                        {
-                        //unitOfWork.Rollback();
-                        //transaction.Dispose();
-                        return StatusCode(500, "Failed to change airline info. One of transactions failed.");
-                        }
-                    //}
+                        await unitOfWork.Commit();
+                    }
+                    catch (Exception)
+                    {
+                    return StatusCode(500, "Failed to change airline info. One of transactions failed.");
+                    }
                 }
                 else
                 {
@@ -174,7 +165,6 @@ namespace WebApi.Controllers
                     }
                     catch (Exception)
                     {
-                        //unitOfWork.Rollback();
                         return StatusCode(500, "Failed to change airline info. Transaction failed.");
                     }
         }
@@ -241,7 +231,6 @@ namespace WebApi.Controllers
                 }
                 catch (Exception)
                 {
-                    //unitOfWork.Rollback();
                     return StatusCode(500, "Failed to change. Transaction failed.");
                 }
 
@@ -285,21 +274,18 @@ namespace WebApi.Controllers
                     return NotFound("User not found");
                 }
 
-                var res = await unitOfWork.AirlineRepository.Get(a => a.AdminId == userId);
-
-                var airline = res.FirstOrDefault();
+                var airline = (await unitOfWork.AirlineRepository.Get(a => a.AdminId == userId)).FirstOrDefault();
 
                 if (airline == null)
                 {
                     return NotFound("Airline not found");
                 }
 
-                var exists = await unitOfWork.FlightRepository.Get(f => f.Airline == airline && 
-                                                                    f.FlightNumber == flightDto.FlightNumber);
+                var exists = (await unitOfWork.FlightRepository.Get(f => f.Airline == airline && 
+                                                                    f.FlightNumber == flightDto.FlightNumber)).FirstOrDefault();
 
-                //var exists = await unitOfWork.AirlineRepository.GetFlightByNumber(airline, flightDto.FlightNumber);
                 //proveri da li postoji vec takav naziv leta
-                if (exists.ToList().Count > 0)
+                if (exists != null)
                 {
                     return BadRequest("Flight num already exist");
                 }
@@ -355,7 +341,6 @@ namespace WebApi.Controllers
 
                 foreach (var stop in stops)
                 {
-                    //flight.Stops.Add(new FlightDestination() { Destination = stop, Flight = flight });
                     flight.Stops = new List<FlightDestination>
                     {
                         new FlightDestination{
@@ -371,13 +356,13 @@ namespace WebApi.Controllers
                 }
                 catch (Exception)
                 {
-                    //unitOfWork.Rollback();
                     return StatusCode(500, "Failed to add flight.");
                 }
 
-                var flights = await unitOfWork.FlightRepository.Get(f => f.AirlineId == airline.AirlineId);
+                return Ok();
+                //var flights = await unitOfWork.FlightRepository.Get(f => f.AirlineId == airline.AirlineId);
 
-                return Ok(flights);
+                //return Ok(flights);
             }
             catch (Exception)
             {
@@ -423,46 +408,45 @@ namespace WebApi.Controllers
 
                 ICollection<object> flightsObject = new List<object>();
 
-                if (flights != null)
+                foreach (var flight in flights)
                 {
-                    foreach (var flight in flights)
+                    List<object> stops = new List<object>();
+
+                    if (flight.Stops != null)
                     {
-                        List<object> stops = new List<object>();
-
-                        if (flight.Stops != null)
+                        foreach (var stop in flight.Stops)
                         {
-                            foreach (var stop in flight.Stops)
-                            {
-                                //var s = await unitOfWork.AirlineRepository.GetDestination(stop.DestinationId);
-                                stops.Add(new { stop.Destination.City });
-                            }
+                            stops.Add(new 
+                            { 
+                                stop.Destination.City
+                            });
                         }
-
-
-                        flightsObject.Add(new
-                        {
-                            takeOffDate = flight.TakeOffDateTime.Date,
-                            landingDate = flight.LandingDateTime.Date,
-                            airlineLogo = airline.LogoUrl,
-                            airlineName = airline.Name,
-                            from = flight.From.City,
-                            to = flight.To.City,
-                            takeOffTime = flight.TakeOffDateTime.TimeOfDay,
-                            landingTime = flight.LandingDateTime.TimeOfDay,
-                            flightTime = flight.TripTime,
-                            flightLength = flight.tripLength,
-                            flightNumber = flight.FlightNumber,
-                            flightId = flight.FlightId,
-                            stops = stops
-                        });
                     }
+
+
+                    flightsObject.Add(new
+                    {
+                        takeOffDate = flight.TakeOffDateTime.Date,
+                        landingDate = flight.LandingDateTime.Date,
+                        airlineLogo = airline.LogoUrl,
+                        airlineName = airline.Name,
+                        from = flight.From.City,
+                        to = flight.To.City,
+                        takeOffTime = flight.TakeOffDateTime.TimeOfDay,
+                        landingTime = flight.LandingDateTime.TimeOfDay,
+                        flightTime = flight.TripTime,
+                        flightLength = flight.tripLength,
+                        flightNumber = flight.FlightNumber,
+                        flightId = flight.FlightId,
+                        stops = stops
+                    });
                 }
+                
                 return Ok(flightsObject);
             }
             catch (Exception)
             {
                 return StatusCode(500, "Failed to return flights.");
-                throw;
             }
         }
 
@@ -490,10 +474,8 @@ namespace WebApi.Controllers
                 {
                     return NotFound("User not found");
                 }
-                var res = await unitOfWork.AirlineRepository.Get(a => a.AdminId == userId);
-
+                var airline = (await unitOfWork.AirlineRepository.Get(a => a.AdminId == userId)).FirstOrDefault();
                 //var res = await unitOfWork.AirlineRepository.Get(a => a.AdminId == userId, null, "Flights,Address");
-                var airline = res.FirstOrDefault();
 
                 if (airline == null)
                 {
@@ -534,7 +516,6 @@ namespace WebApi.Controllers
 
             try
             {
-
                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
 
                 string userRole = User.Claims.First(c => c.Type == "Roles").Value;
@@ -561,7 +542,8 @@ namespace WebApi.Controllers
 
                 var airlineDestinations = await unitOfWork.DestinationRepository.GetAirlineDestinations(airline);
 
-                if (airlineDestinations.FirstOrDefault(d => d.City == destinationDto.City && d.State == destinationDto.State) != null)
+                if (airlineDestinations.FirstOrDefault(d => d.City == destinationDto.City
+                                                        && d.State == destinationDto.State) != null)
                 {
                     return BadRequest("Airline already has selected destination");
                 }
@@ -595,25 +577,25 @@ namespace WebApi.Controllers
                 }
                 catch (Exception)
                 {
-                    //unitOfWork.Rollback();
                     return StatusCode(500, "Failed to add destination.");
                 }
 
-                var allDestinations = await unitOfWork.DestinationRepository.GetAirlineDestinations(airline);
+                return Ok();
+                //var allDestinations = await unitOfWork.DestinationRepository.GetAirlineDestinations(airline);
 
-                List<object> obj = new List<object>();
+                //List<object> obj = new List<object>();
 
-                foreach (var item in allDestinations)
-                {
-                    obj.Add(new
-                    {
-                        city = item.City,
-                        state = item.State,
-                        destinationId = item.DestinationId,
-                        imageUrl = item.ImageUrl
-                    });
-                }
-                return Ok(obj);
+                //foreach (var item in allDestinations)
+                //{
+                //    obj.Add(new
+                //    {
+                //        city = item.City,
+                //        state = item.State,
+                //        destinationId = item.DestinationId,
+                //        imageUrl = item.ImageUrl
+                //    });
+                //}
+                //return Ok(obj);
             }
             catch (Exception)
             {
@@ -714,9 +696,7 @@ namespace WebApi.Controllers
                     return Unauthorized();
                 }
 
-                var res = await unitOfWork.SeatRepository.Get(s => s.SeatId == id, null, "Flight");
-
-                var seat = res.FirstOrDefault();
+                var seat = (await unitOfWork.SeatRepository.Get(s => s.SeatId == id, null, "Flight")).FirstOrDefault();
 
                 if (seat == null)
                 {
@@ -732,25 +712,25 @@ namespace WebApi.Controllers
                     unitOfWork.SeatRepository.Delete(seat);
                     await unitOfWork.Commit();
                 }
-                catch (DbUpdateConcurrencyException ex)
+                catch (DbUpdateConcurrencyException)
                 {
                     return BadRequest("Something is changed. Cant delete");
                 }
                 catch (Exception)
                 {
-                    //unitOfWork.Rollback();
                     return StatusCode(500, "Failed to delete seat. Transaction failed.");
                 }
 
-                var seats = await unitOfWork.SeatRepository.Get(s => s.Flight == seat.Flight);
+                return Ok();
+                //var seats = await unitOfWork.SeatRepository.Get(s => s.Flight == seat.Flight);
 
-                List<object> obj = new List<object>();
+                //List<object> obj = new List<object>();
 
-                foreach (var item in seats)
-                {
-                    obj.Add(new { item.Column, item.Row, item.Flight.FlightId, item.Class, item.SeatId, item.Price });
-                }
-                return Ok(obj);
+                //foreach (var item in seats)
+                //{
+                //    obj.Add(new { item.Column, item.Row, item.Flight.FlightId, item.Class, item.SeatId, item.Price });
+                //}
+                //return Ok(obj);
             }
             catch (Exception)
             {
@@ -822,15 +802,16 @@ namespace WebApi.Controllers
                     return StatusCode(500, "Failed to add seat. Transaction failed.");
                 }
 
-                var allSeats = await unitOfWork.SeatRepository.Get(s => s.Flight == flight);
-                List<object> obj = new List<object>();
+                return Ok();
+                //var allSeats = await unitOfWork.SeatRepository.Get(s => s.Flight == flight);
+                //List<object> obj = new List<object>();
 
-                foreach (var item in allSeats)
-                {
-                    obj.Add(new { item.Column, item.Row, item.Flight.FlightId, item.Class, item.SeatId, item.Price });
-                }
+                //foreach (var item in allSeats)
+                //{
+                //    obj.Add(new { item.Column, item.Row, item.Flight.FlightId, item.Class, item.SeatId, item.Price });
+                //}
 
-                return Ok(obj);
+                //return Ok(obj);
             }
             catch (Exception)
             {
@@ -891,7 +872,7 @@ namespace WebApi.Controllers
                     unitOfWork.SeatRepository.Update(seat);
                     await unitOfWork.Commit();
                 }
-                catch (DbUpdateConcurrencyException ex)
+                catch (DbUpdateConcurrencyException)
                 {
                     return BadRequest("Something is changed. Cant change");
                 }
@@ -901,16 +882,17 @@ namespace WebApi.Controllers
                     return StatusCode(500, "Failed to update seat. Transaction failed.");
                 }
 
-                var seats = await unitOfWork.SeatRepository.Get(s => s.Flight == seat.Flight);
+                return Ok();
+                //var seats = await unitOfWork.SeatRepository.Get(s => s.Flight == seat.Flight);
 
-                List<object> obj = new List<object>();
+                //List<object> obj = new List<object>();
 
-                foreach (var item in seats)
-                {
-                    obj.Add(new { item.Column, item.Row, item.Flight.FlightId, item.Class, item.SeatId, item.Price });
-                }
+                //foreach (var item in seats)
+                //{
+                //    obj.Add(new { item.Column, item.Row, item.Flight.FlightId, item.Class, item.SeatId, item.Price });
+                //}
 
-                return Ok(obj);
+                //return Ok(obj);
             }
             catch (Exception)
             {
@@ -968,7 +950,14 @@ namespace WebApi.Controllers
 
                 foreach (var item in seats)
                 {
-                    obj.Add(new { item.Column, item.Row, item.Flight.FlightId, item.Class, item.SeatId, item.Price });
+                    obj.Add(new { 
+                        item.Column, 
+                        item.Row, 
+                        item.Flight.FlightId, 
+                        item.Class, 
+                        item.SeatId, 
+                        item.Price 
+                    });
                 }
 
                 return Ok(obj);
@@ -1008,8 +997,7 @@ namespace WebApi.Controllers
                     return NotFound("User not found.");
                 }
 
-                var res = await unitOfWork.AirlineRepository.Get(a => a.AdminId == userId);
-                var airline = res.FirstOrDefault();
+                var airline = (await unitOfWork.AirlineRepository.Get(a => a.AdminId == userId)).FirstOrDefault();
 
                 if (airline == null)
                 {
@@ -1017,10 +1005,6 @@ namespace WebApi.Controllers
                 }
 
                 var specOffers = await unitOfWork.SpecialOfferRepository.GetSpecialOffersOfAirline(airline);
-
-                //var airlineName = specOffers.First().Airline.Name;
-                //var airlineLogo = specOffers.First().Airline.LogoUrl;
-                
 
                 List<object> objs = new List<object>();
                 List<object> flights = new List<object>();
@@ -1059,7 +1043,14 @@ namespace WebApi.Controllers
                         );
                     }
 
-                    objs.Add(new { airline.LogoUrl, airline.Name, item.NewPrice, item.OldPrice, item.SpecialOfferId, flights});
+                    objs.Add(new { 
+                        airline.LogoUrl,
+                        airline.Name, 
+                        item.NewPrice,
+                        item.OldPrice,
+                        item.SpecialOfferId,
+                        flights
+                    });
                 }
 
                 return Ok(objs);
@@ -1109,8 +1100,7 @@ namespace WebApi.Controllers
                     return BadRequest("Price should be greater then 0");
                 }
 
-                var res = await unitOfWork.AirlineRepository.Get(a=>a.AdminId == userId);
-                var airline = res.FirstOrDefault();
+                var airline = (await unitOfWork.AirlineRepository.Get(a=>a.AdminId == userId)).FirstOrDefault();
 
                 if (airline == null)
                 {
@@ -1126,12 +1116,12 @@ namespace WebApi.Controllers
 
                     if (seatt == null)
                     {
-                        return BadRequest("One of seats not found");
+                        return BadRequest("Something went wrong");
                     }
 
                     if (seatt.SpecialOffer != null)
                     {
-                        return BadRequest("Seat is in special offer already");
+                        return BadRequest("Seat have special offer already");
                     }
 
                     oldPrice += seatt.Price;
@@ -1139,7 +1129,7 @@ namespace WebApi.Controllers
                 }
                 if (seats.Count == 0 || seats.Count != specialOfferDto.SeatsIds.Count)
                 {
-                    return BadRequest("Wrong seats number");
+                    return BadRequest("Something went wrong");
                 }
 
                 var specialOffer = new SpecialOffer()
@@ -1152,29 +1142,24 @@ namespace WebApi.Controllers
 
                 airline.SpecialOffers.Add(specialOffer);
 
-                //using (var transaction = new TransactionScope()) {
-                    try
-                    {
-                        await unitOfWork.SpecialOfferRepository.Insert(specialOffer);
-                        //unitOfWork.Commit();
+                try
+                {
+                    await unitOfWork.SpecialOfferRepository.Insert(specialOffer);
+                    unitOfWork.AirlineRepository.Update(airline);
 
-                        unitOfWork.AirlineRepository.Update(airline);
-                        //unitOfWork.Commit();
-
-                        foreach (var seat in seats)
-                        {
-                            seat.Available = false;
-                            unitOfWork.SeatRepository.Update(seat);
-                            //unitOfWork.Commit();
-                        }
-                        await unitOfWork.Commit();
-                    }
-                    catch (Exception)
+                    foreach (var seat in seats)
                     {
-                        //unitOfWork.Rollback();
-                        return StatusCode(500, "Failed to add special offer. One of transactions failed.");
+                        seat.Available = false;
+                        unitOfWork.SeatRepository.Update(seat);
                     }
-                //}
+
+                    await unitOfWork.Commit();
+                }
+                catch (Exception)
+                {
+                    return StatusCode(500, "Failed to add special offer. One of transactions failed.");
+                }
+
                 return Ok();   
             }
             catch (Exception)
@@ -1207,8 +1192,7 @@ namespace WebApi.Controllers
                     return NotFound("User not found");
                 }
 
-                var res = await unitOfWork.AirlineRepository.Get(a => a.AdminId == userId);
-                var airline = res.FirstOrDefault();
+                var airline = (await unitOfWork.AirlineRepository.Get(a => a.AdminId == userId)).FirstOrDefault();
 
                 if (airline == null)
                 {
@@ -1229,8 +1213,7 @@ namespace WebApi.Controllers
                 }
                 catch (Exception)
                 {
-                    //unitOfWork.Rollback();
-                    return StatusCode(500, "Failed to delete special offer. Transaction failed.");
+                    return StatusCode(500, "Failed to delete special offer");
                 }
 
                 return Ok();
@@ -1290,8 +1273,15 @@ namespace WebApi.Controllers
             {
                 hour = Math.Abs(arrivalDate.Hour - (departureDate.Hour + (landingZone - departureZone)));
             }
-
-            var minutes = Math.Abs(departureDate.Minute - arrivalDate.Minute);
+            var minutes = 0;
+            if (arrivalDate.Minute >= departureDate.Minute)
+            {
+                minutes = Math.Abs(departureDate.Minute - arrivalDate.Minute);
+            }
+            else 
+            {
+                minutes = 60 - departureDate.Minute - arrivalDate.Minute;
+            }
 
             string flightTime = hour + "h " + minutes + "min";
 
@@ -1412,8 +1402,6 @@ namespace WebApi.Controllers
                     stats.Add(new Tuple<DateTime, int>(day, 0));
                 }
 
-                CarRent r;
-
                 foreach (var item in reservations)
                 {
                     if (daysOfWeek.Contains(item.ReservationDate))
@@ -1494,8 +1482,6 @@ namespace WebApi.Controllers
                 {
                     stats.Add(new Tuple<DateTime, int>(day, 0));
                 }
-
-                CarRent r;
 
                 foreach (var item in reservations)
                 {

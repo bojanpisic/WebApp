@@ -16,15 +16,11 @@ namespace WebApi.Models
         public float TotalPrice { get; set; }
         public Car RentedCar { get; set; }
         public User User { get; set; }
-        public bool IsCarRated { get; set; }
-        public bool IsRACSRated { get; set; }
         public DateTime RentDate { get; set; }
         public FlightReservation FlightReservation { get; set; }
 
         public CarRent()
         {
-            IsCarRated = false;
-            IsRACSRated = false;
         }
     }
 }

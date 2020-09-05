@@ -519,8 +519,10 @@ namespace WebApi.Controllers
                     return BadRequest("Takeover date shoud be lower then return date.");
                 }
 
-                var res = await unitOfWork.CarRepository.Get(c => c.CarId == dto.CarRentId, null, "Branch,Rents,SpecialOffers");
-                var car = res.FirstOrDefault();
+                //var res = await unitOfWork.CarRepository.Get(c => c.CarId == dto.CarRentId, null, "Branch,Rents,SpecialOffers");
+                //var car = res.FirstOrDefault();
+
+                var car = (await unitOfWork.CarRepository.AllCars(c => c.CarId == dto.CarRentId)).FirstOrDefault();
 
                 if (car == null)
                 {
@@ -548,15 +550,15 @@ namespace WebApi.Controllers
                     }
                 }
 
-                var racsId = car.BranchId == null ? car.RentACarServiceId : car.Branch.RentACarServiceId;
+                //var racsId = car.BranchId == null ? car.RentACarServiceId : car.Branch.RentACarServiceId;
 
-                var result = await unitOfWork.RentACarRepository.Get(r => r.RentACarServiceId ==racsId, null, "Address,Branches");
-                var racs = result.FirstOrDefault();
+                //var result = await unitOfWork.RentACarRepository.Get(r => r.RentACarServiceId ==racsId, null, "Address,Branches");
+                //var racs = result.FirstOrDefault();
 
-                if (racs == null)
-                {
-                    return NotFound("RACS not found");
-                }
+                //if (racs == null)
+                //{
+                //    return NotFound("RACS not found");
+                //}
                 if (car.Branch != null)
                 {
                     if (!car.Branch.City.Equals(dto.TakeOverCity))
@@ -565,22 +567,24 @@ namespace WebApi.Controllers
 
                     }
                 }
-
-                if (!racs.Address.City.Equals(dto.TakeOverCity))
+                else 
                 {
-                    return BadRequest("Takeover city and rent service/branch city dont match");
+                    if (!car.RentACarService.Address.City.Equals(dto.TakeOverCity))
+                    {
+                        return BadRequest("Takeover city and rent service/branch city dont match");
+                    }
                 }
 
                 //provera da li postoje branch gde moze da se vrati auto
 
                 var citiesToReturn = new List<string>();
 
-                foreach (var item in racs.Branches)
+                foreach (var item in car.RentACarService == null ? car.Branch.RentACarService.Branches : car.RentACarService.Branches)
                 {
                     citiesToReturn.Add(item.City);
                 }
 
-                citiesToReturn.Add(racs.Address.City);
+                citiesToReturn.Add(car.RentACarService == null ? car.Branch.RentACarService.Address.City : car.RentACarService.Address.City);
 
                 if (!citiesToReturn.Contains(dto.ReturnCity))
                 {
@@ -810,6 +814,7 @@ namespace WebApi.Controllers
 
                 var rents = await unitOfWork.CarRentRepository.GetRents(user);
                 var retVal = new List<object>();
+
                 foreach (var rent in rents)
                 {
                     var sum = 0.0;
@@ -841,8 +846,10 @@ namespace WebApi.Controllers
                                        rent.RentedCar.Branch.RentACarService.Address.City : rent.RentedCar.RentACarService.Address.City,
                         state = rent.RentedCar.RentACarService == null ?
                                        rent.RentedCar.Branch.RentACarService.Address.State : rent.RentedCar.RentACarService.Address.State,
-                        isCarRated = rent.IsCarRated,
-                        isRACSRated = rent.IsRACSRated,
+                        isCarRated = rent.RentedCar.Rates.FirstOrDefault(r => r.UserId == userId) != null ? true : false,
+                        isRACSRated = (await unitOfWork.RentACarRepository.Get(r => r.RentACarServiceId == (rent.RentedCar.RentACarService == null ?
+                                       rent.RentedCar.Branch.RentACarService.RentACarServiceId : rent.RentedCar.RentACarService.RentACarServiceId), null, "Rates"))
+                                       .FirstOrDefault().Rates.FirstOrDefault(r => r.UserId == userId) == null ? false : true,
                         canCancel = rent.TakeOverDate.AddDays(-2) >= DateTime.Now.Date,
                         canRate = rent.ReturnDate < DateTime.Now.Date,
                         isUpcoming = rent.TakeOverDate >= DateTime.Now.Date,
@@ -895,18 +902,19 @@ namespace WebApi.Controllers
                     return BadRequest("Invalid rate. Rate from 1 to 5");
                 }
 
-                var rents = await unitOfWork.CarRentRepository.Get(crr => crr.User == user, null, "RentedCar");
+                var rent = await unitOfWork.CarRentRepository.GetRentByFilter(r => r.User == user && r.RentedCar.CarId == dto.Id);
 
-                var rent = rents.FirstOrDefault(r => r.RentedCar.CarId == dto.Id);
+                //var rents = await unitOfWork.CarRentRepository.Get(crr => crr.User == user, null, "RentedCar");
+
+                //var rent = rents.FirstOrDefault(r => r.RentedCar.CarId == dto.Id);
 
                 if (rent == null)
                 {
                     return BadRequest("This car is not on your rent list");
                 }
-
-                if (rent.IsCarRated)
+                if (rent.RentedCar.Rates.FirstOrDefault(r => r.UserId == userId) != null)
                 {
-                    return BadRequest("you already rate this car");
+                    return BadRequest("You already rated this car");
                 }
 
                 if (rent.ReturnDate > DateTime.Now)
@@ -924,12 +932,9 @@ namespace WebApi.Controllers
                     Car = rentedCar
                 });
 
-                rent.IsCarRated = true;
-
                 try
                 {
                     unitOfWork.CarRepository.Update(rentedCar);
-                    unitOfWork.CarRentRepository.Update(rent);
 
                     await unitOfWork.Commit();
                 }
@@ -937,8 +942,6 @@ namespace WebApi.Controllers
                 {
                     return StatusCode(500, "Failed to rate car. One of transactions failed");
                 }
-
-                //nesto treba vratiti
 
                 return Ok();
             }
@@ -1013,13 +1016,9 @@ namespace WebApi.Controllers
                     RentACarService = racs
                 });
 
-                rent.IsRACSRated = true;
-
                 try
                 {
                     unitOfWork.RentACarRepository.Update(racs);
-                    unitOfWork.CarRentRepository.Update(rent);
-
                     await unitOfWork.Commit();
                 }
                 catch (Exception)
@@ -1266,8 +1265,7 @@ namespace WebApi.Controllers
                         return BadRequest("Takeover date shoud be lower then return date.");
                     }
 
-                    var res = await unitOfWork.CarRepository.Get(c => c.CarId == dto.CarReservation.CarRentId, null, "Branch,Rents,SpecialOffers");
-                    car = res.FirstOrDefault();
+                    car = (await unitOfWork.CarRepository.AllCars(c => c.CarId == dto.CarReservation.CarRentId)).FirstOrDefault();
 
                     if (car == null)
                     {
@@ -1295,15 +1293,15 @@ namespace WebApi.Controllers
                         }
                     }
 
-                    var racsId = car.BranchId == null ? car.RentACarServiceId : car.Branch.RentACarServiceId;
+                    //var racsId = car.BranchId == null ? car.RentACarServiceId : car.Branch.RentACarServiceId;
 
-                    var result = await unitOfWork.RentACarRepository.Get(r => r.RentACarServiceId == racsId, null, "Address,Branches");
-                    var racs = result.FirstOrDefault();
+                    //var result = await unitOfWork.RentACarRepository.Get(r => r.RentACarServiceId == racsId, null, "Address,Branches");
+                    //var racs = result.FirstOrDefault();
 
-                    if (racs == null)
-                    {
-                        return NotFound("RACS not found");
-                    }
+                    //if (racs == null)
+                    //{
+                    //    return NotFound("RACS not found");
+                    //}
                     if (car.Branch != null)
                     {
                         if (!car.Branch.City.Equals(dto.CarReservation.TakeOverCity))
@@ -1312,22 +1310,24 @@ namespace WebApi.Controllers
 
                         }
                     }
-
-                    if (!racs.Address.City.Equals(dto.CarReservation.TakeOverCity))
+                    else 
                     {
-                        return BadRequest("Takeover city and rent service/branch city dont match");
+                        if (!car.RentACarService.Address.City.Equals(dto.CarReservation.TakeOverCity))
+                        {
+                            return BadRequest("Takeover city and rent service/branch city dont match");
+                        }
                     }
 
                     //provera da li postoje branch gde moze da se vrati auto
 
                     var citiesToReturn = new List<string>();
 
-                    foreach (var item in racs.Branches)
+                    foreach (var item in car.RentACarService == null ? car.Branch.RentACarService.Branches : car.RentACarService.Branches)
                     {
                         citiesToReturn.Add(item.City);
                     }
 
-                    citiesToReturn.Add(racs.Address.City);
+                    citiesToReturn.Add(car.RentACarService == null ? car.Branch.RentACarService.Address.City : car.RentACarService.Address.City);
 
                     if (!citiesToReturn.Contains(dto.CarReservation.ReturnCity))
                     {
@@ -1344,7 +1344,7 @@ namespace WebApi.Controllers
                         ReturnDate = dto.CarReservation.ReturnDate,
                         RentedCar = car,
                         User = user,
-                        TotalPrice = await CalculateTotalPrice(dto.CarReservation.TakeOverDate, dto.CarReservation.ReturnDate, car.PricePerDay),
+                        TotalPrice = (await CalculateTotalPrice(dto.CarReservation.TakeOverDate, dto.CarReservation.ReturnDate, car.PricePerDay)),
                         RentDate = DateTime.Now
                     };
 
@@ -1401,7 +1401,7 @@ namespace WebApi.Controllers
                 {
                     try
                     {
-                        await unitOfWork.AuthenticationRepository.SendMailToFriend(invitation); //rebalo bi slati i letove
+                        await unitOfWork.AuthenticationRepository.SendMailToFriend(invitation);
                     }
                     catch (Exception)
                     {

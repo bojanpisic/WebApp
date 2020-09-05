@@ -62,8 +62,6 @@ namespace WebApi.Controllers
                     Logo = item.LogoUrl,
                     City = item.Address.City,
                     State = item.Address.State,
-                    //Lon = item.Address.Lon,
-                    //Lat = item.Address.Lat,
                     rate = rate,
                     About = item.About,
                     Id = item.RentACarServiceId,
@@ -260,21 +258,19 @@ namespace WebApi.Controllers
                 var fromCity = queryString["from"].ToString();
                 var toCity = queryString["to"].ToString();
                 var carType = queryString["type"].ToString();
-                var seatFrom = Int32.Parse(queryString["seatfrom"].ToString());
-                var seatTo = Int32.Parse(queryString["seatto"].ToString());
+
+                int seatFrom;
+                int seatTo;
+                Int32.TryParse(queryString["seatfrom"].ToString(), out seatFrom);
+                Int32.TryParse(queryString["seatto"].ToString(), out seatTo);
+                seatFrom = seatFrom == 0 ? 2 : seatFrom;
+                seatTo = seatTo == 0 ? 10 : seatTo;
 
                 float priceFrom = 0;
                 float priceTo = 3000;
+                float.TryParse(queryString["minprice"].ToString(), out priceFrom);
+                float.TryParse(queryString["maxprice"].ToString(), out priceTo);
 
-                if (!String.IsNullOrEmpty(queryString["minprice"].ToString()))
-                {
-                    float.TryParse(queryString["minprice"].ToString(), out priceFrom);
-                }
-
-                if (!String.IsNullOrEmpty(queryString["maxprice"].ToString()))
-                {
-                    float.TryParse(queryString["maxprice"].ToString(), out priceTo);
-                }
                 int num = 0;
 
                 List<int> ids = new List<int>();
@@ -290,7 +286,15 @@ namespace WebApi.Controllers
                     }
                 }
 
-                var allCars = await unitOfWork.CarRepository.AllCars();
+                int numOfDays = (int)(DateTo - DateFrom).TotalDays;
+
+
+                var allCars = await unitOfWork.CarRepository.AllCars(c => 
+                                    (c.RentACarService != null ? c.RentACarService.Address.City == fromCity
+                                    && (c.RentACarService.Branches.FirstOrDefault(b => b.City == toCity) != null || c.RentACarService.Address.City == toCity) 
+                                    : c.Branch.City == fromCity && (c.Branch.RentACarService.Branches.FirstOrDefault(b => b.City == toCity) != null || c.Branch.RentACarService.Address.City == toCity))
+                                    && c.PricePerDay * numOfDays >= priceFrom && c.PricePerDay * numOfDays <= priceTo 
+                                    && c.SeatsNumber >= seatFrom && c.SeatsNumber <= seatTo);
 
                 List<object> objs = new List<object>();
                 RentACarService rentService = new RentACarService();
@@ -511,7 +515,7 @@ namespace WebApi.Controllers
             string toCity, string carType, DateTime from, DateTime to, int seatFrom, int seatTo)
         {
             //int numOfDays = Math.Abs(from.Day - to.Day);
-            int numOfDays = (int)(to - from).TotalDays;
+            //int numOfDays = (int)(to - from).TotalDays;
             if (ids.Count > 0)
             {
                 if (item.RentACarService != null)
@@ -528,27 +532,25 @@ namespace WebApi.Controllers
                         return false;
                     }
                 }
-
             }
-            if (item.PricePerDay * numOfDays < priceFrom || item.PricePerDay * numOfDays > priceTo)
+            //if (item.PricePerDay * numOfDays < priceFrom || item.PricePerDay * numOfDays > priceTo)
+            //{
+            //    return false;
+            //}
+
+            if (!item.Type.ToLower().Equals(carType.ToLower()) && carType != "")
             {
                 return false;
             }
-
-            //rezervacije proveriti da li je slobodan
-            if (!item.Type.Equals(carType) && carType != "")
-            {
-                return false;
-            }
-            RentACarService racs = null;
-            if (item.RentACarService != null)
-            {
-                racs = item.RentACarService;
-            }
-            else
-            {
-                racs = item.Branch.RentACarService;
-            }
+            //RentACarService racs = null;
+            //if (item.RentACarService != null)
+            //{
+            //    racs = item.RentACarService;
+            //}
+            //else
+            //{
+            //    racs = item.Branch.RentACarService;
+            //}
 
             foreach (var res in item.Rents)
             {
@@ -574,38 +576,38 @@ namespace WebApi.Controllers
                 //}
             }
 
-            if (item.SeatsNumber < seatFrom || item.SeatsNumber > seatTo)
-            {
-                return false;
-            }
-            bool fromFound = false;
-            bool toFound = false;
+            //if (item.SeatsNumber < seatFrom || item.SeatsNumber > seatTo)
+            //{
+            //    return false;
+            //}
+            //bool fromFound = false;
+            //bool toFound = false;
 
-            if (racs.Address.City == fromCity)
-            {
-                fromFound = true;
-            }
-            if (racs.Address.City == toCity)
-            {
-                toFound = true;
-            }
+            //if (racs.Address.City == fromCity)
+            //{
+            //    fromFound = true;
+            //}
+            //if (racs.Address.City == toCity)
+            //{
+            //    toFound = true;
+            //}
 
-            foreach (var branch in racs.Branches)
-            {
-                if (branch.City == fromCity && !fromFound)
-                {
-                    fromFound = true;
-                }
-                if (branch.City == toCity && !toFound)
-                {
-                    toFound = true;
-                }
-            }
+            //foreach (var branch in racs.Branches)
+            //{
+            //    if (branch.City == fromCity && !fromFound)
+            //    {
+            //        fromFound = true;
+            //    }
+            //    if (branch.City == toCity && !toFound)
+            //    {
+            //        toFound = true;
+            //    }
+            //}
 
-            if (!toFound || !fromFound)
-            {
-                return false;
-            }
+            //if (!toFound || !fromFound)
+            //{
+            //    return false;
+            //}
 
 
             return true;
@@ -926,6 +928,10 @@ namespace WebApi.Controllers
                 {
                     foreach (var item in queryString["dep"].ToString().Split(','))
                     {
+                        if (Convert.ToDateTime(item) < DateTime.Now)
+                        {
+                            return BadRequest("Selected date is in past");
+                        }
                         departures.Add(Convert.ToDateTime(item));
                     }
                 }
@@ -975,9 +981,11 @@ namespace WebApi.Controllers
                 var minDuration = queryString["mind"].ToString();
                 var maxDuration = queryString["maxd"].ToString();
 
-
-
-                var flights = await unitOfWork.FlightRepository.GetAllFlightsWithAllProp();
+                var flights = await unitOfWork.FlightRepository
+                                                .GetAllFlightsWithAllProp(f => f.TakeOffDateTime >= DateTime.Now 
+                                                                        && tripType.Equals("one") ? (f.From.City.Equals(from) && f.To.City.Equals(to)  && departures.Contains(f.TakeOffDateTime.Date)) : true
+                                                                        && tripType.Equals("two") ? (f.From.City.Equals(from) && f.To.City.Equals(to) && departures.Contains(f.TakeOffDateTime.Date)) || (f.From.City.Equals(to) && f.To.City.Equals(from) && ret.Equals(f.TakeOffDateTime.Date)) : true
+                                                                        );
 
                 ICollection<object> flightsObject = new List<object>();
                 ICollection<object> twoWayFlights = new List<object>();
@@ -1090,16 +1098,16 @@ namespace WebApi.Controllers
                             {
                                 continue;
                             }
-                            if (!(await FilterReturnPassed(flight, from, to, ids, minDuration, maxDuration, ret, minPrice, maxPrice)))
+                            if (!(await FilterReturnPassed(returnFlights, to, from, ids, minDuration, maxDuration, ret, minPrice, maxPrice, flight.Seats.OrderBy(s => s.Price).FirstOrDefault().Price , flight.Seats.OrderByDescending(s => s.Price).FirstOrDefault().Price)))
                             {
                                 continue;
                             }
 
                             stops = new List<object>();
 
-                            if (flight.Stops != null)
+                            if (returnFlights.Stops != null)
                             {
-                                foreach (var stop in flight.Stops)
+                                foreach (var stop in returnFlights.Stops)
                                 {
                                     //var s = await unitOfWork.AirlineRepository.GetDestination(stop.DestinationId);
                                     //stops.Add(new { s.City });
@@ -1111,21 +1119,21 @@ namespace WebApi.Controllers
 
                             flightsObject.Add(new
                             {
-                                takeOffDate = flight.TakeOffDateTime.Date,
-                                landingDate = flight.LandingDateTime.Date,
-                                airlineLogo = flight.Airline.LogoUrl,
-                                airlineName = flight.Airline.Name,
+                                takeOffDate = returnFlights.TakeOffDateTime.Date,
+                                landingDate = returnFlights.LandingDateTime.Date,
+                                airlineLogo = returnFlights.Airline.LogoUrl,
+                                airlineName = returnFlights.Airline.Name,
                                 airlineId = returnFlights.Airline.AirlineId,
-                                from = flight.From.City,
-                                to = flight.To.City,
-                                takeOffTime = flight.TakeOffDateTime.TimeOfDay,
-                                landingTime = flight.LandingDateTime.TimeOfDay,
-                                flightTime = flight.TripTime,
-                                flightLength = flight.tripLength,
-                                flightNumber = flight.FlightNumber,
-                                flightId = flight.FlightId,
+                                from = returnFlights.From.City,
+                                to = returnFlights.To.City,
+                                takeOffTime = returnFlights.TakeOffDateTime.TimeOfDay,
+                                landingTime = returnFlights.LandingDateTime.TimeOfDay,
+                                flightTime = returnFlights.TripTime,
+                                flightLength = returnFlights.tripLength,
+                                flightNumber = returnFlights.FlightNumber,
+                                flightId = returnFlights.FlightId,
                                 stops = stops,
-                                minPrice = flight.Seats.OrderBy(s => s.Price).FirstOrDefault().Price
+                                minPrice = returnFlights.Seats.OrderBy(s => s.Price).FirstOrDefault().Price
                             });
 
                             twoWayFlights.Add(new { flightsObject });
@@ -1593,10 +1601,10 @@ namespace WebApi.Controllers
         {
             await Task.Yield();
 
-            if (!flight.From.City.Equals(from) || !flight.To.City.Equals(to))
-            {
-                return false;
-            }
+            //if (!flight.From.City.Equals(from) || !flight.To.City.Equals(to))
+            //{
+            //    return false;
+            //}
             if (airlines.Count > 0)
             {
                 if (!airlines.Contains(flight.AirlineId))
@@ -1604,10 +1612,10 @@ namespace WebApi.Controllers
                     return false;
                 }
             }
-            if (departures[0].Date != flight.TakeOffDateTime.Date)
-            {
-                return false;
-            }
+            //if (departures[0].Date != flight.TakeOffDateTime.Date)
+            //{
+            //    return false;
+            //}
             if (minPrice > flight.Seats.OrderBy(s => s.Price).FirstOrDefault().Price || flight.Seats.OrderByDescending(s => s.Price).FirstOrDefault().Price > maxPrice)
             {
                 return false;
@@ -1634,14 +1642,14 @@ namespace WebApi.Controllers
         }
 
         private async Task<bool> FilterReturnPassed(Flight flight, string from, string to, List<int> airlines,
-          string minDuration, string maxDuration, DateTime departure, float minPrice, float maxPrice)
+          string minDuration, string maxDuration, DateTime departure, float minPrice, float maxPrice, float firstflightMin, float firstFlightMax)
         {
             await Task.Yield();
 
-            if (!flight.From.City.Equals(from) || !flight.To.City.Equals(to))
-            {
-                return false;
-            }
+            //if (!flight.From.City.Equals(from) || !flight.To.City.Equals(to))
+            //{
+            //    return false;
+            //}
             if (airlines.Count > 0)
             {
                 if (!airlines.Contains(flight.AirlineId))
@@ -1649,11 +1657,11 @@ namespace WebApi.Controllers
                     return false;
                 }
             }
-            if (departure.Date != flight.TakeOffDateTime.Date)
-            {
-                return false;
-            }
-            if (minPrice > flight.Seats.OrderBy(s => s.Price).FirstOrDefault().Price || flight.Seats.OrderBy(s => s.Price).FirstOrDefault().Price > maxPrice)
+            //if (departure.Date != flight.TakeOffDateTime.Date)
+            //{
+            //    return false;
+            //}
+            if (minPrice > firstflightMin + flight.Seats.OrderBy(s => s.Price).FirstOrDefault().Price  || flight.Seats.OrderBy(s => s.Price).FirstOrDefault().Price + firstFlightMax > maxPrice)
             {
                 return false;
             }

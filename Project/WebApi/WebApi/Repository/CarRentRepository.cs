@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using WebApi.Data;
 using WebApi.Models;
@@ -30,6 +31,14 @@ namespace WebApi.Repository
                 .Include(c => c.RentedCar)
                 .ThenInclude(c => c.Rates)
                 .Where(c => c.User == user).ToListAsync();
+        }
+
+        public async Task<CarRent> GetRentByFilter(Expression<Func<CarRent, bool>> filter = null)
+        {
+            return await context.CarRents
+                .Include(c => c.RentedCar)
+                    .ThenInclude(c => c.Rates)
+                .FirstOrDefaultAsync(filter);
         }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using WebApi.Data;
 using WebApi.Models;
@@ -16,7 +17,8 @@ namespace WebApi.Repository
 
         public async Task<IEnumerable<Flight>> GetAirlineFlights(int airlineId)
         {
-            return await context.Flights.Where(f => f.AirlineId == airlineId)
+            return await context.Flights
+                .Where(f => f.AirlineId == airlineId)
                 .Include(f => f.Seats)
                 .Include(f => f.From)
                 .Include(f => f.To)
@@ -26,7 +28,7 @@ namespace WebApi.Repository
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Flight>> GetAllFlightsWithAllProp()
+        public async Task<IEnumerable<Flight>> GetAllFlightsWithAllProp(Expression<Func<Flight, bool>> filter = null)
         {
             return await context.Flights
                 .Include(f => f.Seats)
@@ -35,7 +37,8 @@ namespace WebApi.Repository
                 .Include(f => f.Airline)
                 .Include(f => f.Stops)
                 .ThenInclude(d => d.Destination)
-                .Where(f => f.TakeOffDateTime >= DateTime.Now)
+                //.Where(f => f.TakeOffDateTime >= DateTime.Now)
+                .Where(filter)
                 .ToListAsync();
         }
 

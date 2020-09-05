@@ -17,7 +17,10 @@ namespace WebApi.Repository
         public async Task<IEnumerable<Destination>> GetAirlineDestinations(Airline airline)
         {
             //return await context.Destinations.Where(d => d.Airlines.Any( a=> a.Airline == airline)).ToListAsync(); 
-            return await context.AirlineDestination.Where(ad => ad.AirlineId == airline.AirlineId).Select(ad => ad.Destination).ToListAsync();
+            return await context.AirlineDestination
+                .Where(ad => ad.AirlineId == airline.AirlineId)
+                .Select(ad => ad.Destination)
+                .ToListAsync();
         }
     }
 }

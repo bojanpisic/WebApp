@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using WebApi.Data;
 using WebApi.Models;
@@ -14,18 +15,23 @@ namespace WebApi.Repository
         {
         }
 
-        public async Task<IEnumerable<Car>> AllCars()
+        public async Task<IEnumerable<Car>> AllCars(Expression<Func<Car, bool>> filter = null)
         {
             return await context.Cars
                 .Include(c => c.SpecialOffers)
                 .Include(c => c.Branch)
-                .ThenInclude(b => b.RentACarService)
+                    .ThenInclude(b => b.RentACarService)
+                        .ThenInclude(r => r.Address)
+                .Include(c => c.Branch)
+                    .ThenInclude(b => b.RentACarService)
+                        .ThenInclude(r => r.Branches)
                 .Include(c => c.RentACarService)
-                .ThenInclude(r => r.Address)
+                    .ThenInclude(r => r.Address)
                 .Include(c => c.RentACarService)
-                .ThenInclude(r => r.Branches)
+                    .ThenInclude(r => r.Branches)
                 .Include(c => c.Rates)
-                .Include(c =>c.Rents)
+                .Include(c => c.Rents)
+                .Where(filter)
                 .ToListAsync();
         }
 

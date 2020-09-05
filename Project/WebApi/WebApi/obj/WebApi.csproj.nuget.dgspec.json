@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Bojan\\Desktop\\final\\web2_projekat\\Project\\WebApi\\WebApi\\WebApi.csproj": {}
+    "C:\\Users\\Bojan\\Desktop\\ghhghgh\\web2_projekat\\Project\\WebApi\\WebApi\\WebApi.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Bojan\\Desktop\\final\\web2_projekat\\Project\\WebApi\\WebApi\\WebApi.csproj": {
+    "C:\\Users\\Bojan\\Desktop\\ghhghgh\\web2_projekat\\Project\\WebApi\\WebApi\\WebApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Bojan\\Desktop\\final\\web2_projekat\\Project\\WebApi\\WebApi\\WebApi.csproj",
+        "projectUniqueName": "C:\\Users\\Bojan\\Desktop\\ghhghgh\\web2_projekat\\Project\\WebApi\\WebApi\\WebApi.csproj",
         "projectName": "WebApi",
-        "projectPath": "C:\\Users\\Bojan\\Desktop\\final\\web2_projekat\\Project\\WebApi\\WebApi\\WebApi.csproj",
+        "projectPath": "C:\\Users\\Bojan\\Desktop\\ghhghgh\\web2_projekat\\Project\\WebApi\\WebApi\\WebApi.csproj",
         "packagesPath": "C:\\Users\\Bojan\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Bojan\\Desktop\\final\\web2_projekat\\Project\\WebApi\\WebApi\\obj\\",
+        "outputPath": "C:\\Users\\Bojan\\Desktop\\ghhghgh\\web2_projekat\\Project\\WebApi\\WebApi\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
